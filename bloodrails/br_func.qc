@@ -1,0 +1,1800 @@
+
+// prototypes
+void () W_WeaponFrame;
+void() W_SetCurrentAmmo;
+void() player_pain;
+void() player_stand1;
+void (vector org) spawn_tfog;
+void (vector org, entity death_owner) spawn_tdeath;
+
+/*
+void (entity ent, float flag, float onoff) do_brflag =
+{
+	if(onoff == 1)
+	{
+		if(!(ent.brflags & flag)) ent.brflags = ent.brflags | flag;
+	}
+	
+	if(onoff == 0)
+	{
+		if(ent.brflags & flag) ent.brflags = ent.brflags - flag;
+	}
+}
+*/
+
+void() Called_in_PreThink =
+{
+		if (self.classname == "player" && self.frags == top_score_global && self.hascrown == 0 && self.frags > 0 && crown_out == 0)   //CROWN
+		{
+			make_crown();
+			self.hascrown = 1;
+			crown_out = 1;
+		}
+	
+		rune_regen();
+		WaterMove ();
+		spawn_protection ();
+		racing_countdown();
+		make_speedlines();
+		make_hookx();
+		turn_indicator();
+		
+	
+		
+
+		//bprint(ftos(self.rune_bang));
+		//bprint("rune_bang\n");
+		if(quasar_owner !=self && gravity_owner != self) self.smoke_frags =0; //10/5/23
+		
+		if(self.impulse == 225 && self.style & ELOHIM_ADMINISTRATOR) PutDummyInServer();
+		
+		
+		if(quasar_origin1 != '0 0 0' && gravity_origin1 != '0 0 0')    //repulsor effect diminished by grav well
+		{
+			if(vlen(quasar_origin1-gravity_origin1) < 500)
+			{
+				quasar_time -=0.01;
+				quasar_flash_time = time;
+			}
+		}
+		
+		
+		
+		
+		if((elohim_playmode & ELOHIM_WRAITH) && (self.items & IT_INVISIBILITY) && (self.items & IT_SUIT) && !(self.items & IT_RAILGUN) && self.wraith == 0)
+		{
+			self.items = self.items - IT_INVISIBILITY;
+			self.items = self.items - IT_SUIT;
+			self.items = self.items | IT_RAILGUN;
+			self.alpha = 1;
+		}
+
+		else if((elohim_playmode & ELOHIM_WRAITH) && !(self.items & IT_INVISIBILITY) && !(self.items & IT_SUIT) && (self.items & IT_RAILGUN) && self.wraith == 1)
+		{
+			self.items = self.items | IT_INVISIBILITY;
+			self.items = self.items | IT_SUIT;
+			self.items = self.items - IT_RAILGUN;
+		}
+	
+	
+
+		if(time - self.blast_time > 0.40 && time - self.blast_time < 0.45)   //disable steering after push
+		{
+			stuffcmd(self, "cl_forwardspeed 200\n");
+			stuffcmd(self, "cl_sidespeed 350\n");
+		}
+		
+		
+		
+		
+		
+		
+		if(self.hookhead)                   //allow to rehook after firing while hook swinging LOL
+		{
+			local vector dir = normalize((self.origin + (v_forward*16) + '0 0 16') - self.hookhead.origin);
+			local vector dist;
+			traceline(self.origin + (v_forward*16) + '0 0 16', self.hookhead.origin + dir*50, FALSE, self);    //NOVEM
+			if(trace_ent.takedamage && trace_ent.classname == "player") //trace_ent.classname == "player") 
+			{
+				dist = trace_endpos-trace_ent.origin;
+				if(vlen(dist) < 33)   //want the hit detection to be tighter
+				{
+					dist_z=0;
+					if(vlen(dist) < 18)
+					{
+						
+						local vector dir1 = normalize(trace_ent.origin - self.hookhead.origin);                  //Bloodrails - rail momentum add
+						local vector dir2 = normalize(trace_ent.origin - self.origin); 
+						local vector dir3 = normalize(dir1 + dir2);
+		
+						trace_ent.velocity = trace_ent.velocity + dir3*400;
+						T_Damage(trace_ent, self, self, 20.4);
+					}
+				}
+			}
+			
+			if(self.tarzan_time ==1 && !self.button0) self.hookhead.tarzan_time =1;
+			
+			if(self.impulse ==22 && self.hookhead.tarzan_time ==1)
+			{
+					local entity oself;
+					oself=self;
+					self = self.hookhead;
+					HookVanish();
+			}	
+		}
+		
+			
+			
+			
+			
+			
+		if(self.hookhead && !(self.player_flag & PF_ITEM_RUNE1_FLAG))                      //HOOK FIX
+		{	
+			if (self.height == elohim_team1) self.hookhead.skin = 1;   //red
+			else if (self.height == elohim_team2) self.hookhead.skin = 2;   //blue
+			else self.hookhead.skin = 0;   //blue
+			
+			if( vlen(self.origin - self.hookhead.origin) < 75) self.hookhead.alpha = 0.001;
+			else if( vlen(self.origin - self.hookhead.origin) < 100) self.hookhead.alpha = 0.003;
+			else if( vlen(self.origin - self.hookhead.origin) < 200) self.hookhead.alpha = 0.10;
+			else if( vlen(self.origin - self.hookhead.origin) < 300) self.hookhead.alpha = 0.3;
+			else if( vlen(self.origin - self.hookhead.origin) >= 300) self.hookhead.alpha = 0.7;
+			
+			if(self.hook_is_anchored == 1) self.hookhead.alpha = 0.7;
+			
+			local vector dir_adj  = normalize(self.adjusted_hook_impact - self.hookhead.origin);
+			if(self.hookhead.weapon == 1800) self.hookhead.velocity = self.hookhead.velocity + dir_adj*200;
+			if(self.hookhead.weapon == 2400) self.hookhead.velocity = self.hookhead.velocity + dir_adj*400;
+			
+			if(self.hookhead.max_health > 1000) self.hookhead.velocity = normalize(self.hookhead.velocity)*self.hookhead.max_health;
+			else self.hookhead.velocity = normalize(self.hookhead.velocity)*self.hookhead.weapon;	
+		}
+
+		
+
+
+		if(!self.button0 && self.hook_button_released == 1) self.hook_button_released = 0; // hook button check
+
+		if(!self.button0 && self.rail_button_released == 1) 
+		{
+			self.rail_button_released = 0; // rail button check
+			self.rail_power_time =0;
+		}
+
+
+		if(!self.button0 && self.axe_button_released == 1) 
+		{
+			self.axe_button_released = 0; // axe button check
+			self.axe_power_time = 0;
+		}
+	
+
+		if(self.axe_powered == 1 && time - self.axe_power_time > 0.50 && time - self.axe_power_time < 1.25 && vlen(self.velocity) > 500 && self.old_vel > vlen(self.velocity) )
+		{
+			self.velocity = normalize(self.velocity)*self.old_vel;
+		}
+	
+		//if(self.shields_up == 1 && time - self.axe_power_time > 0.50 && time - self.axe_power_time < 1.25 && vlen(self.velocity) > 500 && self.old_vel > vlen(self.velocity) )
+		//{
+		//	makevectors(self.v_angle);
+		//	self.velocity = v_forward*self.old_vel;
+		//}
+		
+		
+		
+		if (self.axe_powered == 1 && !self.button0)
+		{
+			self.shield_recharge_time = time;
+			sound (self, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+			self.axe_powered = 0; 
+			self.shield_time = time;
+			self.weaponmodel = "progs/v_br_axe_red1.mdl";
+			if (self.height == elohim_team2) self.weaponmodel = "progs/v_br_axe_blu1.mdl";
+		
+			if (self.shields_up == 0) 
+			{
+				make_shield ();
+				self.shields_up = 1;
+			}
+		}
+	
+	
+		if (time - self.shield_time >= 0 && time - self.shield_time < 0.75 && self.old_vel > 400 && self.old_vel > vlen(self.velocity) && self.flags & FL_ONGROUND )
+		{
+			self.velocity = normalize(self.velocity)*self.old_vel;
+		}
+
+
+		self.ammo_shells = self.frags;    // uncommented these
+		self.currentammo = self.frags;
+		if(self.frags < 0)  
+		{
+			self.currentammo = 0;
+			self.ammo_shells = 0;
+		}
+}
+
+
+
+vector(vector a, vector b, float mix) lerpVector =
+{
+    if (mix <= 0) return a;
+    if (mix >= 1) return b;
+    return (b * mix + a * ( 1 - mix ) );
+}
+
+
+float (float x, float y) angle_difference =
+{
+    local float a;
+    a = x - y;
+    a = (a + 180) % 360 - 180;
+    if (a > 180) a -= 360;
+    if (a < -180) a += 360;
+    
+    return a;
+}
+
+
+void() turn_indicator =
+{
+    self.turn_speed += angle_difference(self.v_angle[1], self.last_angle);
+    self.last_angle = self.v_angle[1];
+    
+    if (self.turn_speed > 0)
+    {
+        self.turn_speed -= turn_cooldown * frametime;
+        if(self.turn_speed <0) self.turn_speed =0;
+    }
+    else if (self.turn_speed < 0)
+    {
+        self.turn_speed += turn_cooldown * frametime;
+        if(self.turn_speed >0) self.turn_speed =0;
+    }
+    
+    if(self.turn_speed > 120) self.turn_speed = 120;
+    else if(self.turn_speed < -120) self.turn_speed = -120;
+}
+
+
+
+
+void() Called_in_PostThink =
+{
+	FlickCurves();
+	check_jump (); //checks for long presses for wallrun and also for faster rail reload time when looking down
+	
+	WallRun();
+	ceiling_ride(); 
+	
+	Skiing();
+	Water_bounce();
+	
+	top_score();
+	AirControl ();            //Bloodrails - call the AirControl mechanics
+	DeathAura();             //Bloodrails - call the Death Aura effects
+	LandingCheck ();
+	CheckPowerups ();
+	//movement_check();     [400 0 0] =forward,  [-400 0 0] =backward, [0 -700 0] =left strafe, [0 700 0] =right strafe, 
+	Rail_HUD();
+	Shield_HUD();
+	You_Have_Flag();
+	You_Have_Rune();
+	Flag_Status();
+	make_press_move();
+	make_jumbo_red();
+	make_jumbo_blue();
+	Axe_Splash();
+	goomba_stomp();
+	make_rail_ammo();
+	rune_check();
+	Stairs();
+        
+	flag_carry();
+	
+	
+	if(self.tarzan_time ==0 && self.hook_out ==1 && vlen(self.hookhead.velocity) ==0)
+	{
+		if ( self.flags & FL_ONGROUND ) self.flags = self.flags - FL_ONGROUND;
+	}
+	
+	//if(((self.hook_out ==1 || (self.weapon == IT_HOOK && self.tarzan_time ==1)) || (self.hook_out ==1 && self.tarzan_time ==1 && !self.button0) ) && self.weaponframe ==0) self.weaponframe = 18;    //show lowered viewmodel when hooking
+	if(((self.hook_out ==1 || (self.weapon == IT_HOOK && self.tarzan_time ==1)) || (self.hook_out ==1 && self.tarzan_time ==1 && !self.button0) ) && self.weaponframe ==0) 
+	{
+
+				self.weaponframe = 18;    //show lowered viewmodel when hooking
+
+	}
+	
+	if (   (self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG) && self.weapon == IT_HOOK &&  time-self.hook_time < 0.9   )
+		{
+				self.weaponframe = 18;    //show lowered viewmodel when hooking
+				//bprint("hook frame 18\n");
+		}
+	
+	//if (((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG) ))
+
+	if(self.weapon == IT_HOOK && self.airborn_pos > 200 && self.weaponframe ==0 && (time-self.hook_time > 0.75)) self.weaponframe = 18; 
+
+	
+	
+	
+	
+	if(!(self.player_flag & PF_ITEM_RUNE3_FLAG))
+	{
+		if(self.ammo_slugs == 0 && (self.ammo_zero_time ==0 || !(time-self.ammo_zero_time <= 7.1)) )    // Add 1 ammo every 4s up to a max of 1    9-17-23
+		{
+			self.ammo_zero_time = time;    
+		}
+		else if(time-self.ammo_zero_time > 7 && time-self.ammo_zero_time < 8.3 && time - self.shot_time > 0.5)     // && self.ammo_slugs ==0)    //10/8/23
+		{
+			self.ammo_zero_time = time;   //10/8/23
+			if(self.ammo_slugs < 3)
+			{
+				ex_localsound(self, "weapons/ammo_ding.wav");  // ammo added noise
+				ex_localsound(self, "items/cells.wav");  // ammo added noise
+			}
+			
+			if(self.ammo_slugs <3) self.ammo_slugs +=1;
+		}
+	}
+	else if(self.player_flag & PF_ITEM_RUNE3_FLAG)  //9-24-23
+	{
+		if(self.ammo_slugs == 0 && (self.ammo_zero_time ==0 || !(time-self.ammo_zero_time <= 4.6)) )    // Add 1 ammo every 4s up to a max of 1    9-17-23
+		{
+			self.ammo_zero_time = time;    
+		}
+		else if(time-self.ammo_zero_time > 4.5 && time-self.ammo_zero_time < 5.8 && time - self.shot_time > 0.3) 
+		{
+			self.ammo_zero_time = time;   //10/8/23
+			if(self.ammo_slugs < 3)
+			{
+				ex_localsound(self, "weapons/ammo_ding.wav");  // ammo added noise
+				ex_localsound(self, "items/cells.wav");  // ammo added noise
+			}
+			if(self.ammo_slugs <3) self.ammo_slugs +=1;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	if(self.grind_side_is == 0 && self.health > 0)
+	{
+		//local float oldalpha = self.alpha;
+		if(self.leaning ==1) 				//NOVEM fixing bug for when a gib has player model
+		{
+			setmodel (self, "progs/player.mdl");
+			self.leaning =0;
+		}
+		setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+	
+	
+		if(self.hook_out ==0 && vlen(self.velocity) > 300)
+		{
+			if(self.turn_speed < -8)
+			{
+					setmodel (self, "progs/player_right_5.mdl");
+					setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+					self.leaning =1;
+			}
+			else if(self.turn_speed > 8)
+			{
+					setmodel (self, "progs/player_left_5.mdl");
+					setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+					self.leaning =1;
+			}
+		}
+	
+	
+	
+		if(self.hook_out ==0 && vlen(self.velocity) > 440)
+		{
+			if(self.turn_speed < -21)
+			{
+				setmodel (self, "progs/player_right_10.mdl");
+				setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+			}
+	
+			else if(self.turn_speed > 21)
+			{
+				setmodel (self, "progs/player_left_10.mdl");
+				setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+			}
+		}
+		
+		//self.alpha =oldalpha;
+		
+	}
+	
+
+	
+	
+	if ( !(self.flags & FL_ONGROUND) && ((self.turn_speed > 3 && self.turn_speed < 12) || (self.turn_speed <- 3 && self.turn_speed > -12)))   //bhop b-hop
+	{	
+		
+		
+		if(vlen(self.velocity) < 475)
+		{
+			if(self.movement_x == 400) self.velocity = self.velocity + v_forward*5.3;
+			else if(self.movement_x == -400) self.velocity = self.velocity + v_forward*(-5.3);
+		}
+		else if(vlen(self.velocity) < 550)
+		{
+			if(self.movement_x == 400) self.velocity = self.velocity + v_forward*4.8;
+			else if(self.movement_x == -400) self.velocity = self.velocity + v_forward*(-4.8);
+		}
+		else if(vlen(self.velocity) < 725)
+		{
+			if(self.movement_x == 400) self.velocity = self.velocity + v_forward*4.4;
+			else if(self.movement_x == -400) self.velocity = self.velocity + v_forward*(-4.4);
+		}
+		else if(vlen(self.velocity) < 925)
+		{
+			if(self.movement_x == 400) self.velocity = self.velocity + v_forward*4.0;
+			else if(self.movement_x == -400) self.velocity = self.velocity + v_forward*(-4.0);
+		}
+		else if(vlen(self.velocity) < 1025)
+		{
+			if(self.movement_x == 400) self.velocity = self.velocity + v_forward*0.7;
+			else if(self.movement_x == -400) self.velocity = self.velocity + v_forward*(-0.7);
+		}
+	
+	}
+	
+	else if ( !(self.flags & FL_ONGROUND) && ((self.turn_speed >= 12 && self.turn_speed < 18) || (self.turn_speed <=- 12 && self.turn_speed > -18)))   //bhop b-hop
+	{	
+		
+		
+		if(vlen(self.velocity) < 450)
+		{
+			if(self.movement_x == 400) self.velocity = self.velocity + v_forward*2.4;
+			else if(self.movement_x == -400) self.velocity = self.velocity + v_forward*(-2.4);
+		}
+	
+	
+	}
+	
+	
+
+
+	
+}
+
+
+
+
+void() movement_check =                           //when called from post think - prints out which of the WASD buttons is pressed
+{
+	
+	//if(time - self.grind_time < 0.25 && self.grind_completed == 1) 
+	//{
+	//	self.movement_x = 0;
+	//	self.movement_y = 0;
+	//}
+	
+	sprint(self, ftos(self.movement_x)); 
+	sprint(self, " ");
+	sprint(self, ftos(self.movement_y));
+	sprint(self, " ");
+	sprint(self, ftos(self.movement_z));
+	sprint(self, " \n");
+}
+
+
+void() spawn_protection =                  // spawn protection
+{
+	if(time - self.spawn_protect_time < 3 && !(elohim_playmode & ELOHIM_PRACTICE_MODE) && !(elohim_playmode & ELOHIM_NO_SPAWN_PROTECT))     //ammo_rockets = spawn_protect_time
+	{
+		//if (self.runetime > time)
+		//return;
+   
+		//self.runetime = time + 2;
+
+		//any = 0;
+
+		
+
+		if (self.armorvalue > 100 && self.armortype == 40.001)
+		{
+			//any = 1;
+			if(self.KDR > 2.1 && self.frags == top_score_global) self.armorvalue = self.armorvalue - 0.5;
+			else self.armorvalue = self.armorvalue - 0.25;
+			
+			if (self.armorvalue > 100 && self.armorvalue < 101)
+			{
+				if(self.items & IT_ARMOR1)
+				{
+					self.armorvalue = 0;
+					self.items = self.items - IT_ARMOR1;
+					self.ammo_cells = 0;      //ammo_cells = spawn_protected
+					return;
+				}
+			}
+			self.ammo_cells = 1;    //ammo_cells = spawn_protected
+		}
+	}
+	else self.ammo_cells = 0; // persistent spawn protect visual fix     //ammo_cells = spawn_protected
+}
+
+
+
+
+
+
+void(entity inflictor, vector org, entity attacker, float radius, float damage, entity ignore) areaDMG =                //area damage function for axe splash damage
+    {
+    
+    
+	local	entity	head = findradius(org, radius);
+	attacker.thor_frag_count = 0;
+	
+	if(damage == 400 && vlen(org - quasar_origin1) < 200)            //thor slam reduces quasar and gravity duration 9-24-23
+	{
+		quasar_time -=8;
+		quasar_flash_time = time;
+		//bprint("quasar\n");
+	}
+	
+	if(damage == 400 && vlen(org - gravity_origin1) < 200) 
+	{
+		gravity_time -=10;
+		gravity_flash_time = time;
+		//bprint("grav well\n");
+	}
+	
+	while (head)
+	{
+		if (head != ignore || head.classname == "smoke" || head.classname == "plasma")
+		{
+			if (head.takedamage  || head.classname == "smoke" || head.classname == "plasma")
+			{				
+				if (CanDamage (head, inflictor)  || head.classname == "smoke" || head.classname == "plasma")
+				{	
+					if(damage == 400 && head.shields_up !=1) //9-17-23
+					{
+						attacker.thor_frag_count = attacker.thor_frag_count + 1; //thor frags
+						attacker.thor_slam = 1;   //misidentified thor //comet
+						
+						local vector dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
+						dir5 = normalize(dir5);
+						head.velocity = head.velocity + 900*dir5 + v_up*100;
+					}
+					if(head.shields_up !=1) 
+					{
+						T_DamageOrg (head, inflictor, attacker, damage, org);
+						head.armorvalue -= damage/2;
+					}
+				}			
+			}
+		}
+		head = head.chain;
+	}
+	attacker.thor_slam = 0;
+    }
+  
+void(entity inflictor, vector org, entity attacker, float radius, float throw_high, entity ignore) areaTHROW =                //Area throw effect function for axe splash damage
+    {
+    
+    
+    local	entity	head = findradius(org, radius);
+    local vector dir;
+
+	while (head)
+	{
+		if (head != ignore )
+		{
+				if (head.takedamage)           //Thor slam doest move items
+			{
+					        //traceline(attacker.origin, head.origin, TRUE, attacker);           
+						//dir = trace_plane_normal;
+						//dir = dir + v_up*50;
+						dir = v_up;
+						dir = normalize(dir);
+						head.velocity = head.velocity + v_up*throw_high;  //throw	
+					}
+					
+							
+			
+		}
+		head = head.chain;
+	}
+    }
+
+void(entity inflictor, vector org, entity attacker, float radius, float damage, entity ignore) areaKDR =                //area damage function for high KDR
+    {
+    local entity head = findradius(org, radius);
+  
+	while (head)
+	{
+		if (head != ignore && head.KDR > 2.4 && head.classname == "player")
+		{
+			if (head.takedamage)
+			{				
+				if (CanDamage (head, inflictor))
+				{	
+					T_DamageOrg (head, inflictor, attacker, damage, org);
+				}			
+			}
+		}
+		head = head.chain;
+	}
+    }
+
+
+
+void(entity inflictor, vector org, entity attacker, float radius, float damage, entity ignore) areaKDR2 =                //area damage function for high KDR
+{
+
+	local entity head;
+	
+	//bprint(ftos(attacker.KDR));
+	//bprint("attacker KDR\n");
+
+	if(attacker.KDR >= 2.1 && attacker.frags == top_score_global) // if score leader - reduced AOE radius
+	{	
+		head = findradius(org, radius*0.9);
+
+		while (head)
+		{
+			if (head != ignore && head.classname == "player")
+			{
+				if (head.takedamage)
+				{				
+					if (CanDamage (head, inflictor))
+					{	
+						T_DamageOrg (head, inflictor, attacker, damage, org);
+						attacker.done_damage = 1;
+					}			
+				}
+			}
+		
+
+		head = head.chain;
+		}
+		return;
+	}	
+	
+	
+	
+	head = findradius(org, radius*1.25);
+
+	while (head)
+	{
+		
+		if (head != ignore && head.KDR >= 2.0 && head.classname == "player")
+		{
+			if (head.takedamage)
+			{				
+				if (CanDamage (head, inflictor))
+				{	
+					T_DamageOrg (head, inflictor, attacker, damage, org);
+					attacker.done_damage = 1;
+				}			
+			}
+		}
+		head = head.chain;
+	}
+	
+	
+	
+	
+	
+	head = findradius(org, radius*1);
+   
+	while (head)
+	{
+		if (head != ignore && head.KDR < 2.0 && head.classname == "player")
+		{
+			if (head.takedamage)
+			{				
+				if (CanDamage (head, inflictor))
+				{	
+					T_DamageOrg (head, inflictor, attacker, damage, org);
+					attacker.done_damage = 1;
+				}			
+			}
+		}
+		
+
+		head = head.chain;
+	}
+	
+	
+
+		
+}
+
+
+
+
+///////// THOR /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// check to see if player landed and play landing sound or perform THOR Landing 
+   
+void () LandingCheck =
+{ 
+   
+	if (!(self.flags & FL_ONGROUND))
+		self.jump_flag = self.velocity_z;
+    else if (self.jump_flag < -320)       // 
+    {
+	 makevectors(self.v_angle);
+	 local vector v_ang;
+	 v_ang = vectoangles (v_forward*(-1));   
+	
+        if (self.health > 0)
+        {
+            if (self.watertype == CONTENT_WATER)
+                sound (self, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
+            else if ((self.jump_flag < -900 || vlen(self.velocity) > 1200) && self.weapon == IT_AXE && v_ang_x > 40 && v_ang_x < 120)                     // Thor smash only when holding axe Bloodrails - no fall damage, but explosion particle effect at 950 vertical speed, 1200 ->1500
+            {
+		
+	
+		areaTHROW(self, self.origin, self, 600, 400, self); // Bloodrails Thor landing throw
+		areaTHROW(self, self.origin, self, 450, 100, self);
+		areaTHROW(self, self.origin, self, 300, 100, self);
+		areaDMG(self, self.origin, self, 175, 400, self);      //Bloodrails - damage zone 165 - > 175     //9-17-23
+	
+                make_impact('0 0 0');
+                self.thor_time = time;
+             
+        
+            }
+            else
+                {
+			if(random()<0.33) sound (self, CHAN_AUTO, "player/br_land1.wav", 0.7, ATTN_NORM);  // 1 -> 0.5      
+			else if(random()<0.62) sound (self, CHAN_AUTO, "player/br_land2.wav", 0.7, ATTN_NORM);
+			else if(random()<0.8) sound (self, CHAN_AUTO, "player/br_land3.wav", 0.7, ATTN_NORM);
+			else if(random()<=1) sound (self, CHAN_AUTO, "player/br_land4.wav", 0.7, ATTN_NORM);
+		}
+    
+            self.jump_flag = 0;
+        }
+        
+    }
+    
+    
+}
+
+
+
+void() goomba_stomp =						//NOVEM
+{
+        if (self.velocity_z < -800)  
+	{
+			//bprint("goomba\n");
+			local entity head = findradius(self.origin + '0 0 -33', 44);
+  
+			while (head)
+			{
+				if (head != self && (head.classname == "player" || head.classname == "dummy"))
+				{			
+					T_DamageOrg (head, self, self, 400, self.origin);
+				}
+				head = head.chain;
+			}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+void() PlayerJump =
+{
+	if (self.flags & FL_WATERJUMP)
+		return;
+	
+	if (self.waterlevel >= 2)
+	{
+		if (self.watertype == CONTENT_LAVA)		self.velocity_z = 50;
+		else if (self.watertype == CONTENT_SLIME)	self.velocity_z = 80;
+		
+		if (self.swim_flag < time)  // play swiming sound
+		{
+			self.swim_flag = time + 1;
+			if (random() < 0.5) 		sound (self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
+			else 				sound (self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
+		}
+		return;
+	}
+	local vector horiz;
+	horiz = self.velocity;
+	horiz_z=0;
+	if (!(self.flags & FL_ONGROUND) || self.tarzan_time == 1)  return;
+	//if ( !(self.flags & FL_JUMPRELEASED) && ((vlen(self.velocity) < 410) || self.hook_out ))    return;		// don't pogo stick	
+	if ( !(self.flags & FL_JUMPRELEASED) && ((vlen(horiz) < 400) || self.hook_out ))    return;
+	
+	if(self.front_slope >0.6) return;
+		
+
+	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk 
+	
+	if(self.angles_not_zero ==0) // && !self.landed_on_decline)   //dont make jumping noise if wallrunning
+	{
+		if (random() < 0.6) sound (self, CHAN_BODY, "player/br_jump1.wav", 0.9, ATTN_NORM);   // 1 -> 0.9
+		else if (random() < 0.8) sound (self, CHAN_BODY, "player/br_jump2.wav", 0.9, ATTN_NORM);  
+		else sound (self, CHAN_BODY, "player/br_jump3.wav", 0.9, ATTN_NORM);   // alternative jump noise
+	}
+	if (self.waterlevel <= 2) self.velocity_z = self.velocity_z + 270;
+		
+};
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void() update_power =
+{
+	if(self.alpha <= 0.04)
+	{
+		if(self.classname == "power") self.think = SUB_Remove; 
+	}
+	else
+	{
+		self.alpha = self.alpha - 0.04;
+		if(self.alpha < 0.6) self.frame = 1;
+	}
+	
+	self.nextthink = time + 0.01;
+}
+
+
+
+
+void(vector origin, float _alpha, float _frame) make_power =
+{
+	local entity power;
+	power = spawn();
+	setmodel (power, "progs/ef_power.mdl");
+	setorigin(power, origin + '0 0 5');
+	power.frame = 6;   //6 -> 7
+	power.frame = _frame;
+	power.movetype = MOVETYPE_NOCLIP;
+	power.solid = SOLID_NOT;
+	power.classname = "power";
+	setsize (power, 0,0);
+	power.alpha = 0.7;
+	power.alpha = _alpha;
+	power.owner = self;
+	power.nextthink = time + 0.01;
+	power.think = update_power;
+}
+
+
+
+void() update_haste =
+{
+	makevectors(self.owner.owner.v_angle);
+    
+	setorigin(self, (self.owner.origin + v_up * 5)  );
+	if(hasteeffect == 0)
+	{
+		self.alpha = self.alpha + 0.05;
+		if (self.alpha >= 0.4) 
+		{
+			hasteeffect = 1;
+			self.alpha = 0.4;
+		}
+	}
+	
+	if(hasteeffect == 1)
+	{
+		if(self.alpha <= 0.03)
+		{
+			self.think = SUB_Remove; 
+			hasteeffect = 0;
+			//return;
+		}
+		self.alpha = self.alpha - 0.03;
+	}
+	
+	
+
+    
+	if (self.frame_count == 1000) self.frame = self.frame + 1;  //49 -> 64
+	if (self.frame >= 5) self.frame = 0;
+	
+	
+	if(self.frame_count != 1001) self.frame_count = self.frame_count + 1;
+	if(self.frame_count >= 1001) self.frame_count = 0;
+	
+	if (!(self.owner.items2 & IT2_SIGIL3) || self.owner.health <= 0)
+	{
+		self.think = SUB_Remove;
+		hasteeffect = 0;
+	}
+		
+	self.nextthink = time + 0.01;
+}
+
+
+
+void() make_haste =              //Bloodrails - Death Aura effect
+{
+
+	if (self.items2 & IT2_SIGIL3)
+		{
+			local entity haura;
+			haura = spawn();
+			setmodel (haura, "progs/ef_haste.mdl");
+			setorigin(haura, self.origin + '0 0 5');
+			haura.movetype = MOVETYPE_NOCLIP;
+			haura.solid = SOLID_NOT;
+			haura.classname = "haura";
+			setsize (haura, 0,0);
+			haura.alpha = 0.01;
+			haura.owner = self;
+			haura.nextthink = time + 0.01;
+			haura.think = update_haste;
+		}
+}     
+
+
+
+void() update_aura =
+{
+	makevectors(self.owner.owner.v_angle);
+	setorigin(self, self.owner.origin + '0 0 8');
+    
+	if(self.alpha <= 0.07)
+	{
+		self.think = SUB_Remove; 
+	}
+	else
+	{
+		self.alpha = self.alpha - 0.07;
+		if(self.alpha < 0.6) self.frame = 4;
+		if ((self.owner.player_flag & PF_ITEM_RUNE_MASK) && (self.owner.player_flag & PF_ITEM_RUNE1_FLAG)) self.frame = 5;
+	}
+	
+	
+	
+	
+	self.nextthink = time + 0.01;
+}
+
+
+
+
+void() make_aura =
+{
+	local entity aura;
+	aura = spawn();
+	setmodel (aura, "progs/ef_aura1.mdl");
+	setorigin(aura, self.origin + '0 0 8');
+	aura.movetype = MOVETYPE_NOCLIP;
+	aura.solid = SOLID_NOT;
+	aura.frame = 3;
+	aura.classname = "aura";
+	setsize (aura, 0,0);
+	aura.alpha = 0.7;
+	aura.owner = self;
+	aura.nextthink = time + 0.01;
+	aura.think = update_aura;
+}
+
+
+
+
+void() DeathAura =              //Bloodrails - Death Aura effect
+{
+		if (self.height == elohim_team1) self.skin = 1;
+		else if (self.height == elohim_team2) self.skin =2;
+
+	if (((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE4_FLAG) ))
+	{
+		if (self.height == elohim_team1) 
+		{
+			self.skin = 6;
+		}
+		else if (self.height == elohim_team2) 
+		{
+			self.skin = 7;	
+		}
+		
+		local float origin_hit = 0;
+		local	entity	head;
+		
+		if(self.wraith == 1 || (self.KDR >= 2.1 && self.frags == top_score_global))
+		{
+			head = findradius(self.origin, 42);
+			while (head)
+			{
+				if (head != self)
+				{
+					if (head.takedamage)
+					{				
+						if (CanDamage (head, self))
+						{	
+							if(death_aura_counter ==0 || death_aura_counter%4 == 0) 
+							{
+								T_DamageOrg (head, self, self, 51, self.origin);     //changed damage value for armor damage logic
+								make_aura();
+								sound(self, CHAN_AUTO, "items/zap.wav", 1, ATTN_NORM);
+								//bprint("Death Aura\n");
+							}
+							death_aura_counter+=1;
+							origin_hit = 1;
+						}			
+					}
+				}
+			head = head.chain;
+			}
+		}
+		else
+		{
+		
+		
+			head = findradius(self.origin, 50);
+			while (head)
+			{
+				if (head != self)
+				{
+					if (head.takedamage)
+					{				
+						if (CanDamage (head, self))
+						{	
+							if(death_aura_counter ==0 || death_aura_counter%4 == 0) 
+							{
+							T_DamageOrg (head, self, self, 51, self.origin);     //changed damage value for armor damage logic
+							make_aura();
+							sound(self, CHAN_AUTO, "items/zap.wav", 1, ATTN_NORM);
+							//bprint("Death Aura\n");
+							}
+							death_aura_counter+=1;
+							
+							origin_hit = 1;
+						}			
+					}
+				}
+			head = head.chain;
+			}
+		}
+		
+		
+		
+		
+		if(origin_hit == 0)
+		{
+			head = findradius(self.origin + '0 0 -20', 42);
+			while (head)
+			{
+				if (head != self)
+				{
+					if (head.takedamage)
+					{				
+						if (CanDamage (head, self))
+						{	
+							if(death_aura_counter ==0 || death_aura_counter%4 == 0) 
+							{
+								T_Damage (head, self, self, 51);     //changed damage value for armor damage logic
+								make_aura();
+								sound(self, CHAN_AUTO, "items/zap.wav", 1, ATTN_NORM);
+								//bprint("Death Aura\n");
+							}
+							death_aura_counter+=1;
+							
+						}			
+					}
+				}
+				head = head.chain;
+			}
+		}
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+}     
+
+
+void() AirControl =              //Bloodrails - additional +forward Air control 
+{
+
+	local float V_len;
+	local vector for_XY;
+	local vector vel_XY;
+	local float velz;
+	
+	
+	if (!(self.flags & FL_ONGROUND) && !(self.hook_out) && self.movement_x > 320)
+	{
+		makevectors (self.v_angle);
+	
+		for_XY = v_forward;
+		for_XY_z = 0;  
+		for_XY = normalize(for_XY);
+	
+		vel_XY = self.velocity;
+		vel_XY_z = 0;
+		V_len = vlen(vel_XY);
+
+		
+		velz = self.velocity_z;   
+     
+	
+			vel_XY = vel_XY + for_XY*11;     //Extent of standard Air control 10 -> 11
+			self.velocity = V_len*normalize(vel_XY);
+			self.velocity_z = velz;
+		
+	}
+        
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	
+
+void() update_crown =
+{
+ 
+    
+	makevectors(self.owner.owner.v_angle);
+	setorigin(self, (self.owner.origin + v_up * 33)  );
+    
+	if (self.owner.deadflag != DEAD_NO) 
+	{
+		self.alpha = 0.01;
+	}
+	
+	if (self.owner.frags < top_score_global || elohim_playmode & ELOHIM_CLASSIC) 
+	{
+		self.owner.hascrown = 0;
+		self.think = SUB_Remove;
+		crown_out = 0;
+	}
+
+	self.nextthink = time + 0.01;
+}
+
+
+
+
+void() make_crown =
+{
+	local entity crown;
+	crown = spawn();
+	setmodel (crown, "progs/null_trail.mdl");
+	setorigin(crown, self.origin + '0 0 33');
+	crown.movetype = MOVETYPE_NOCLIP;
+	crown.solid = SOLID_NOT;
+	crown.nextthink = time + 0.5;
+	crown.think = update_crown;
+	crown.classname = "crown";
+	setsize (crown, 0,0);
+	crown.alpha = 0.01;
+	crown.owner = self;
+	crown.nextthink = time + 0.01;
+	crown.think = update_crown;
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+void() update_impact =
+{
+	makevectors(self.owner.owner.v_angle);
+	
+	if (self.frame == 9) 
+	{
+		self.think = SUB_Remove;
+	}
+	else self.frame = self.frame +1;
+	
+	self.nextthink = time + 0.025;
+}
+
+
+void(vector z_offset) make_impact =
+{
+	local entity impact;
+	local vector exp_org = self.origin;
+	exp_org_z = exp_org_z + z_offset_z;
+	
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord (MSG_BROADCAST, exp_org_x);
+	WriteCoord (MSG_BROADCAST, exp_org_y);
+	WriteCoord (MSG_BROADCAST, exp_org_z);
+        sound (self, CHAN_AUTO, "weapons/br_exp1.wav", 0.75, ATTN_NORM);
+	
+	impact = spawn();
+	setmodel (impact, "progs/ef_thor_big.mdl");
+	impact.skin = 0;
+	impact.frame = 0;
+    
+	setorigin(impact, self.origin + '0 0 -5' + z_offset);
+	impact.movetype = MOVETYPE_NOCLIP;
+	impact.solid = SOLID_NOT;
+	impact.classname = "shield";
+	setsize (impact, 0,0);
+	impact.alpha = 0.8;
+	impact.owner = self;
+	impact.nextthink = time + 0.01;
+	impact.think = update_impact;	
+}
+
+
+
+
+
+
+/////////////////////PLAYER AND TEAM STATS//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void() top_score =
+{
+	local entity player;
+	local float new_frag, new_kdr;
+	player = find(world, classname, "player");                                         //Bloodrails - count players in game
+	
+	top_KDR_global = 0;
+	bottom_KDR_global = 0;
+	
+	total_players_global = 0;
+	red_count_global = 0;
+	blue_count_global = 0;
+	
+	
+	total_score_global = 0;  //sum of all players' scores
+	top_score_global = 0;
+	bottom_score_global = 0;
+	
+	red_topscore_global = 0;
+	red_secondscore_global = 0;
+	red_thirdscore_global = 0;
+	red_bottomscore_global = 0;
+	red_teamscore_global = 0; 
+	
+	blue_topscore_global = 0;
+	blue_secondscore_global = 0;
+	blue_thirdscore_global = 0;
+	blue_bottomscore_global = 0;
+	blue_teamscore_global = 0; 
+	
+	winning_team_global = 0;
+	teams_are_even = 0;
+	
+	while (player)
+	{
+		if ((player.style & ELOHIM_CONNECTED))
+		{
+			if(player.total_deaths <= 0) player.KDR = 0;           // TODO FIX KDR CALCULATOR
+			else if (player.total_deaths > 0) player.KDR = player.total_kills/player.total_deaths; 
+	    
+			new_frag = player.frags;
+			new_kdr  = player.KDR;
+	  
+			if(new_frag > top_score_global) top_score_global = new_frag;           //top and bottom score counts
+			if(new_frag < bottom_score_global) bottom_score_global = new_frag;
+            
+			if(new_kdr > top_KDR_global) top_KDR_global = new_kdr;           //top and bottom KDR counts
+			if(new_kdr < bottom_KDR_global) bottom_KDR_global = new_kdr;
+            
+			if(player.frags != -99) total_players_global = total_players_global + 1;           //total players count in game
+			if(player.frags != -99) total_score_global = total_score_global + player.frags;
+			
+			
+			if(player.frags != -99 && player.height == 4) total_score_global = total_score_global + player.frags;
+			
+			if(player.frags != -99 && player.height == 4) red_count_global = red_count_global + 1;         // team player counts
+			if(player.frags != -99 && player.height == 13) blue_count_global = blue_count_global + 1; 
+			
+			
+			if(new_frag > red_topscore_global && player.height == 4) red_topscore_global = new_frag;           //top and bottom RED TEAM scores
+			if(new_frag < red_bottomscore_global && player.height == 4) red_bottomscore_global = new_frag;
+		
+			
+			if(new_frag > blue_topscore_global && player.height == 13) blue_topscore_global = new_frag;           //top and bottom RED TEAM scores
+			if(new_frag < blue_bottomscore_global && player.height == 12) blue_bottomscore_global = new_frag;
+			
+			if(player.frags != -99 && player.height == 4) red_teamscore_global = red_teamscore_global + player.frags;       // team score count
+			if(player.frags != -99 && player.height == 13) blue_teamscore_global = blue_teamscore_global + player.frags;
+			
+			if (red_teamscore_global > blue_teamscore_global) winning_team_global = 4;             //which team is winning?
+			else if(blue_teamscore_global > red_teamscore_global) winning_team_global = 13;
+			else if(blue_teamscore_global == red_teamscore_global) winning_team_global = 0;
+            
+
+			if(red_count_global == blue_count_global) teams_are_even = 1;
+			if(red_count_global != blue_count_global) teams_are_even = 0;
+			
+            
+        }
+        player = find(player, classname, "player");
+        
+    }
+    
+	while (player)    //2nd place score calc
+	{
+		if ((player.style & ELOHIM_CONNECTED) && (!(player.style & CRMOD_QSMACK)))
+		{
+			if(new_frag > red_secondscore_global && new_frag < red_topscore_global && player.height == 4) red_secondscore_global = new_frag; 
+			if(new_frag > blue_secondscore_global && new_frag < blue_topscore_global && player.height == 4) blue_secondscore_global = new_frag; 
+		}
+		
+	player = find(player, classname, "player");
+	
+	}
+	
+	while (player)   //3rd place score calc
+	{
+		if ((player.style & ELOHIM_CONNECTED) && (!(player.style & CRMOD_QSMACK)))
+		{
+			if(new_frag > red_thirdscore_global && new_frag < red_secondscore_global && player.height == 4) red_thirdscore_global = new_frag; 
+			if(new_frag > blue_thirdscore_global && new_frag < blue_secondscore_global && player.height == 4) blue_thirdscore_global = new_frag; 
+		}
+		
+	player = find(player, classname, "player");
+	
+	}
+
+}
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+void () Shuffle_Teams =
+
+{
+	local entity player;
+	player = find(world, classname, "player");      
+	local float number_set_red = 0;
+	local float number_set_blue = 0;                   
+
+	
+	bprint(ftos(total_players_global));
+	bprint(" TOTAL PLAYERS \n");
+	
+	if (total_players_global < 4)
+	{
+			bprint("Must have at least 4 players to shuffle teams");
+			return;
+	}
+	
+	while (player)
+	{
+		if ((player.style & ELOHIM_CONNECTED))           // && total_players_global % 2 == 0)
+		{
+			local float rnd = random();
+			if((rnd< 0.5 && number_set_blue < total_players_global / 2) || number_set_red >= total_players_global / 2)      
+			{
+				//stuffcmd(player, "color 13\n");                        //BLUE
+				setcolor(player, 221);
+				player.team = 14;
+				number_set_blue = number_set_blue +1;
+				bprint(ftos(number_set_blue));
+				bprint(" another blue \n");
+				
+			}
+			else if ((rnd>= 0.5 && number_set_red < total_players_global / 2) || number_set_blue >= total_players_global / 2) 
+			{
+				//stuffcmd(player, "color 4\n");                           //RED
+				setcolor(player, 68);
+				player.team = 5;
+				number_set_red = number_set_red +1;
+				bprint(ftos(number_set_red));
+				bprint(" another red \n");
+			}
+			
+		}
+		
+	
+		
+		
+        player = find(player, classname, "player");
+        
+	}
+    
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void () Rebalance_Teams =
+{
+	local entity player;
+	player = find(world, classname, "player");                                         //Bloodrails - count players in game
+
+	if (total_players_global < 4)
+	{
+			bprint("Must have at least 4 players to rebalance teams");
+			return;
+	}
+	
+	else if (total_players_global <= 5)
+	{
+		while (player)
+		{
+			if ((player.style & ELOHIM_CONNECTED) && player.frags != -99)
+			{
+				//bprint("parse <5 \n");
+				if (winning_team_global == 4 && red_secondscore_global > blue_secondscore_global) 
+				{	
+					if (player.frags == red_secondscore_global && player.height == 4) stuffcmd(player, "color 13\n");   //if second on winning team has more points than second on losing team - swap them
+					if (player.frags == blue_secondscore_global && player.height == 13) stuffcmd(player, "color 4\n"); 
+				}
+				else if (winning_team_global == 13 && blue_secondscore_global > red_secondscore_global) 
+				{	
+					if (player.frags == blue_secondscore_global && player.height == 13) stuffcmd(player, "color 4\n");   //if second on winning team has more points than second on losing team - swap them
+					if (player.frags == red_secondscore_global && player.height == 4) stuffcmd(player, "color 13\n"); 
+				}
+				else 
+				{
+					bprint("Unable to achieve better team balance");
+					return;
+				}
+			player = find(player, classname, "player");
+        
+			}
+		}
+	}
+	
+	else if (total_players_global > 5)
+	{
+		while (player)
+		{
+			if ((player.style & ELOHIM_CONNECTED) && player.frags != -99)
+			{
+				//bprint("parse >5 \n");
+				if (winning_team_global == 4 && (red_secondscore_global > blue_secondscore_global || red_secondscore_global > blue_thirdscore_global)) 
+				{	
+					if(player.frags == red_secondscore_global && player.height == 4) stuffcmd(player, "color 13\n");   //if second on winning team has more points than second on losing team - swap them
+					if (player.frags == blue_thirdscore_global && player.height == 13) stuffcmd(player, "color 4\n"); 
+				}
+				else if (winning_team_global == 13 && (blue_secondscore_global > red_secondscore_global || blue_secondscore_global > red_thirdscore_global)) 
+				{	
+					if(player.frags == blue_secondscore_global && player.height == 13) stuffcmd(player, "color 4\n");   //if second on winning team has more points than second on losing team - swap them
+					if (player.frags == red_thirdscore_global && player.height == 4) stuffcmd(player, "color 13\n"); 
+				}
+				else 
+				{
+					bprint("Unable to achieve better team balance");
+					return;
+				}
+            
+			}
+			player = find(player, classname, "player");
+        
+		}
+	}
+	
+	
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+void() CheckPowerups =
+{
+	if (self.health <= 0)	return;
+	
+	local float selfalpha;
+	
+	if (self.invisible_finished)				// invisibility
+	{
+		if (self.invisible_sound < time)
+		{
+			sound (self, CHAN_AUTO, "items/br_inv3.wav", 0.5, ATTN_IDLE);
+			self.invisible_sound = time + ((random() * 3) + 1);
+		}
+
+
+		if (self.invisible_finished < time + 3)
+		{
+			if (self.invisible_time == 1)
+			{
+				sprint (self, "Adaptive camouflage is running out\n");
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/br_inv2.wav", 1, ATTN_NORM);
+				self.invisible_time = time + 1;
+			}
+			
+			if (self.invisible_time < time)
+			{
+				self.invisible_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if (self.invisible_finished < time)
+		{
+			self.items = self.items - IT_INVISIBILITY;
+			self.invisible_finished = 0;
+			self.invisible_time = 0;
+		}
+		
+
+		if(vlen(self.velocity) < 100) selfalpha = 0.08;
+		else if(vlen(self.velocity) < 300) selfalpha = 0.12;
+		else if(vlen(self.velocity) < 500) selfalpha = 0.20;
+		else if(vlen(self.velocity) < 700) selfalpha = 0.30;
+		else if(vlen(self.velocity) < 900) selfalpha = 0.45;
+		else selfalpha = 0.5;
+			
+		
+			
+			if(self.alpha > selfalpha) 
+			{
+				self.alpha = self.alpha - 0.02;
+			}
+			else if(self.alpha < selfalpha) 
+			{
+				self.alpha = self.alpha + 0.02;
+			}
+			//self.alpha = 0.2;
+	}
+	
+	else
+	{
+		if(elohim_playmode & ELOHIM_WRAITH && (self.items & IT_INVISIBILITY) && self.wraith == 1)
+		{
+			if(vlen(self.velocity) < 100) selfalpha = 0.08;
+			else if(vlen(self.velocity) < 300) selfalpha = 0.12;
+			else if(vlen(self.velocity) < 500) selfalpha = 0.20;
+			else if(vlen(self.velocity) < 700) selfalpha = 0.30;
+			else if(vlen(self.velocity) < 900) selfalpha = 0.45;
+			else selfalpha = 0.5;
+			
+			
+			
+			if(self.alpha > selfalpha) 
+			{
+				self.alpha = self.alpha - 0.02;
+			}
+			else if(self.alpha < selfalpha) 
+			{
+				self.alpha = self.alpha + 0.02;
+			}
+			
+			
+			
+		}
+		else if (!(self.style & ELOHIM_OBSERVER)) self.alpha = 1;
+	}
+	
+		
+
+	// invincibility
+	if (self.invincible_finished)
+	{
+		if (self.invincible_finished < time + 3)
+		{
+			if (self.invincible_time == 1)
+			{
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/br_protect2.wav", 1, ATTN_NORM);
+				self.invincible_time = time + 1;
+			}
+			
+			if (self.invincible_time < time)
+			{
+				self.invincible_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+		
+		if (self.invincible_finished < time)
+		{	// just stopped
+			//self.items = self.items - IT_INVULNERABILITY;
+			self.invincible_time = 0;
+			self.invincible_finished = 0;
+		}
+	
+	}
+
+	// super damage
+	if (self.super_damage_finished)
+	{
+
+	// sound and screen flash when items starts to run out
+
+		if (self.super_damage_finished < time + 3)
+		{
+			if (self.super_time == 1)
+			{
+				sprint (self, "Quad Damage is wearing off\n");
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/br_damage2.wav", 1, ATTN_NORM);
+				self.super_time = time + 1;
+			}	  
+			
+			if (self.super_time < time)
+			{
+				self.super_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if (self.super_damage_finished < time)
+		{	// just stopped
+			self.items = self.items - IT_QUAD;
+			self.super_damage_finished = 0;
+			self.super_time = 0;
+		}
+		if (self.super_damage_finished > time)
+		{
+				self.effects = self.effects | EF_DIMLIGHT;
+				self.effects = self.effects | EF_FLICKER;
+		}
+		else
+		{
+				self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+				self.effects = self.effects - (self.effects & EF_FLICKER);
+		}
+	}	
+
+	// suit	
+	if (self.radsuit_finished)
+	{
+		self.air_finished = time + 12;		// don't drown
+
+	// sound and screen flash when items starts to run out
+		if (self.radsuit_finished < time + 3)
+		{
+			if (self.rad_time == 1)
+			{
+				sprint (self, "Air supply in Biosuit expiring\n");
+				stuffcmd (self, "bf\n");
+				self.rad_time = time + 1;
+			}
+			
+			if (self.rad_time < time)
+			{
+				self.rad_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if (self.radsuit_finished < time)
+		{	// just stopped
+			self.items = self.items - IT_SUIT;
+			self.rad_time = 0;
+			self.radsuit_finished = 0;
+		}
+	}	
+
+
+		
+
+};
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+void() racing_start =
+{
+	if(self.racing_on == 0)
+	{
+		chrono_time = time;
+		self.racing_on = 1;
+		sprint(self, "START\n");
+		self.race_completed = 0;
+	
+	}
+	else if(self.racing_on == 1)
+	{
+		chrono_time = time;
+		self.racing_on = 1;
+		sprint(self, "TIMER RE-STARTED\n");
+		self.race_completed = 0;
+	
+	}
+
+}
+
+
+void() racing_countdown =
+{
+	self.racing_on = racing_on_global;
+	
+	if(countdown == 1)
+	{
+				
+				
+				if(countdown_ct == 60)
+				{
+					bprint("3\n");
+					sound(self, CHAN_AUTO, "weapons/axe_charge.wav", 0.5, ATTN_NORM);
+
+				}
+				
+				else if(countdown_ct == 120)
+				{
+					bprint("2\n");
+					sound(self, CHAN_AUTO, "weapons/axe_charge.wav", 0.5, ATTN_NORM);
+				}
+				
+				else if(countdown_ct == 180)
+				{
+					bprint("1\n");
+					sound(self, CHAN_AUTO, "weapons/axe_charge.wav", 0.5, ATTN_NORM);
+				}
+				
+				else if(countdown_ct == 240)
+				{
+					bprint("GO!!!\n");
+					sound(self, CHAN_AUTO, "misc/ding1.wav", 1, ATTN_NORM);
+					chrono_time = time;
+					racing_on_global = 1;
+				}
+				countdown_ct = countdown_ct + 1;
+	
+	}
+
+}
+
+
+string (float t) utils_get_time =
+{
+    local float minutes;
+    local float seconds;
+    local float csec;
+    local string temp;
+    local string tmin="",tsec="",tcsec="";
+
+    minutes = floor((t/60));
+    seconds = floor(    (  (t/60)-minutes  )*60   );
+    csec    = floor((((((t/60)-minutes)*60)-seconds)*100));
+
+    temp = ftos(minutes);
+    if ((minutes < 10))
+        tmin = sprintf("0%s", temp);
+    else
+        tmin = temp;
+
+    temp = ftos(seconds);
+    if ((seconds < 10))
+        tsec = sprintf("0%s", temp);
+    else
+        tsec = temp;
+
+    temp = ftos(csec);
+    if ((csec < 10))
+        tcsec = sprintf("0%s", temp);
+    else
+        tcsec = temp;
+
+    return sprintf("%s:%s.%s",tmin,tsec,tcsec);
+};
+
+
+
+
