@@ -117,6 +117,7 @@ void () public_verify_team =
     if (self.style & ELOHIM_OBSERVER) return;
     if (gameover) return;
     if (!(self.team > 0 && self.height > -1 && self.player_flag > 0)) return;
+    
 
     if (self.height != self.team - 1)
     {
@@ -125,11 +126,18 @@ void () public_verify_team =
         {
             self.player_flag = self.player_flag - (self.player_flag & PF_TEAM_RED);
             elohim_teamsize1 = elohim_teamsize1 - 1;
+            elohim_teamfrags1 = elohim_teamfrags1 - self.frags;  // DECEM SCORE
+            if(elohim_teamfrags1 < 0) elohim_teamfrags1 =0;	// DECEM SCORE
+            self.frags = 0;
+            
         }
         else if (self.player_flag & PF_TEAM_BLUE)
         {
             self.player_flag = self.player_flag - (self.player_flag & PF_TEAM_BLUE);
             elohim_teamsize2 = elohim_teamsize2 - 1;
+            elohim_teamfrags2 = elohim_teamfrags2 - self.frags;	// DECEM SCORE
+            if(elohim_teamfrags2 < 0) elohim_teamfrags2 =0;	// DECEM SCORE
+            self.frags = 0;
         }
 
         if (!public_put_player_in_team())
@@ -312,6 +320,18 @@ void() ctf_flag_return =
             
 			client_frag(other, 1);
 			other.last_returned_flag = time;
+			
+			/*
+			if (other.player_flag & PF_TEAM_RED)			//DECEM scores
+			{
+				if(other.frags >0) elohim_teamfrags1 = elohim_teamfrags1 +1;
+			}
+			else if (other.player_flag & PF_TEAM_BLUE)
+			{
+				if(other.frags >0) elohim_teamfrags2 = elohim_teamfrags2 +1;
+			}
+			*/
+
 		}
 		else 
 		{

@@ -1451,8 +1451,9 @@ void () elohim_start_frame =
   }
 
   my_ticrate = cvar("sys_ticrate");
-  if (!my_ticrate)
-    my_ticrate = .025;
+  if (!my_ticrate)	 my_ticrate = .016666667;
+   // my_ticrate = .025;
+
 
   // Check for a console command
   command = cvar("temp1");

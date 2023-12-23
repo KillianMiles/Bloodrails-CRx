@@ -41,14 +41,17 @@ void() update_rhud =
 	
 	if(intermission_running)
 	{
-		self.alpha =0.01;
+		self.alpha =0.05;
 	}
 	
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 	if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;  
 	
-	self.nextthink = time + 0.05;
+	if ((self.owner.player_flag & PF_ITEM_RUNE_MASK) && (self.owner.items2 & IT2_SIGIL2)) self.skin = 0; //DECEM no sidewinder with Power
+	
+	//self.nextthink = time + 0.08;
+	self.nextthink = time + my_ticrate*25;  //DECEM
 }
 
 void() update_bolt_sym =
@@ -59,13 +62,14 @@ void() update_bolt_sym =
 	
 	if(intermission_running)
 	{
-		self.alpha =0.01;
+		self.alpha =0.02;
 	}
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 	if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;  
 	 
-	self.nextthink = time + 0.05;
+	//self.nextthink = time + 0.2;
+	self.nextthink = time + my_ticrate*49;  //DECEM
 }
 
 void() Rail_HUD =  
@@ -152,7 +156,11 @@ void() update_shud =
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 	if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;  
 	
-	self.nextthink = time + 0.05;
+	if ((self.owner.player_flag & PF_ITEM_RUNE_MASK) && (self.owner.items2 & IT2_SIGIL3)) self.skin = 0; //DECEM no shield with haste
+	
+	//self.nextthink = time + 0.08;
+	self.nextthink = time + my_ticrate*27;  //DECEM
+	
 }
 
 
@@ -228,7 +236,8 @@ void() update_flag_status =
 		
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 	
-	self.nextthink = time + 0.1;
+	//self.nextthink = time + 0.12;
+	self.nextthink = time + my_ticrate*13;  //DECEM
 }
 
 
@@ -283,7 +292,8 @@ void() update_You_Have_Flag =
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 
-	self.nextthink = time + 0.1;
+	//self.nextthink = time + 0.1;
+	self.nextthink = time + my_ticrate*19;  //DECEM
 }
 
 
@@ -356,7 +366,8 @@ void() update_You_Have_Rune =
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 
-	self.nextthink = time + 0.1;
+	//self.nextthink = time + 0.12;
+	self.nextthink = time + my_ticrate*30;  //DECEM
 }
 
 
@@ -477,7 +488,8 @@ void() update_jumbo_blue =
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 
-	self.nextthink = time + 0.1;
+	//self.nextthink = time + 0.1;
+	self.nextthink = time + my_ticrate*24;  //DECEM
 
 }
 
@@ -594,7 +606,8 @@ void() update_jumbo_red =
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 
-	self.nextthink = time + 0.1;
+	//self.nextthink = time + 0.1;
+	self.nextthink = time + my_ticrate*22;  //DECEM
 }
 
 
@@ -730,7 +743,8 @@ void() update_press_move =
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 	if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;  
 
-	self.nextthink = time + 0.01;
+	if(random() < 0.5) self.nextthink = time + my_ticrate*3;  //DECEM
+	else self.nextthink = time + my_ticrate*4;  //DECEM
 }
 
 
@@ -955,7 +969,8 @@ void() update_rail_ammo =
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
 	if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;   
 
-	self.nextthink = time + 0.01;
+	//self.nextthink = time + 0.07;
+	self.nextthink = time + my_ticrate*21;  //DECEM
 }
 
 

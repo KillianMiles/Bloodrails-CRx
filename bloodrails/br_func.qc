@@ -293,6 +293,13 @@ void() Called_in_PostThink =
         
 	flag_carry();
 	
+	//bprint(ftos(smoke_ent_number));  //DECEM smoke counter 
+	//bprint("\n");
+	
+	if(self.frags <0) self.frags =0; //DECEM score
+	if(elohim_teamfrags1 < 0) elohim_teamfrags1 =0;
+	if(elohim_teamfrags2 < 0) elohim_teamfrags2 =0;
+	
 	
 	if(self.tarzan_time ==0 && self.hook_out ==1 && vlen(self.hookhead.velocity) ==0)
 	{
@@ -562,6 +569,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
 						local vector dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 						dir5 = normalize(dir5);
 						head.velocity = head.velocity + 900*dir5 + v_up*100;
+						
 					}
 					if(head.shields_up !=1) 
 					{
@@ -1004,9 +1012,9 @@ void() DeathAura =              //Bloodrails - Death Aura effect
 		local float origin_hit = 0;
 		local	entity	head;
 		
-		if(self.wraith == 1 || (self.KDR >= 2.1 && self.frags == top_score_global))
+		if(self.wraith == 1 || (self.KDR >= 2.4 && self.frags == top_score_global))  //DECEM 2.1->2.4
 		{
-			head = findradius(self.origin, 42);
+			head = findradius(self.origin, 44);   //DECEM 42 -> 44
 			while (head)
 			{
 				if (head != self)
@@ -1015,7 +1023,7 @@ void() DeathAura =              //Bloodrails - Death Aura effect
 					{				
 						if (CanDamage (head, self))
 						{	
-							if(death_aura_counter ==0 || death_aura_counter%4 == 0) 
+							if(death_aura_counter ==0 || death_aura_counter%2 == 0) 
 							{
 								T_DamageOrg (head, self, self, 51, self.origin);     //changed damage value for armor damage logic
 								make_aura();
@@ -1034,7 +1042,7 @@ void() DeathAura =              //Bloodrails - Death Aura effect
 		{
 		
 		
-			head = findradius(self.origin, 50);
+			head = findradius(self.origin, 55);  //DECEM 50 -> 55
 			while (head)
 			{
 				if (head != self)
@@ -1043,7 +1051,7 @@ void() DeathAura =              //Bloodrails - Death Aura effect
 					{				
 						if (CanDamage (head, self))
 						{	
-							if(death_aura_counter ==0 || death_aura_counter%4 == 0) 
+							if(death_aura_counter ==0 || death_aura_counter%2 == 0) 
 							{
 							T_DamageOrg (head, self, self, 51, self.origin);     //changed damage value for armor damage logic
 							make_aura();

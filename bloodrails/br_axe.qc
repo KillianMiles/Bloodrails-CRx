@@ -83,7 +83,7 @@ void() Axe_Charge_Logic=
 {
 	//SHIELD TIMING LOGIC
 		if (elohim_playmode & ELOHIM_NO_SHIELD) return;
-		
+		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL3)) return; //DECEM no shield with haste
 
 		if (time - self.axe_power_time > 0.59 && self.axe_power_time != 0 && self.axe_powered == 0)
 		{
@@ -136,7 +136,7 @@ void() W_Fire_BR_Axe =
 
 	makevectors (self.v_angle);          
         
-         self.speedlines_are_on = 0; 
+        self.speedlines_are_on = 0; 
                                
 	
 		if (boostspeed < 500) 
@@ -203,8 +203,6 @@ void() W_Fire_BR_Axe =
 
 void() update_spawnprotect =
 {
- 
-    
 	makevectors(self.owner.owner.v_angle);
 	setorigin(self, (self.owner.origin + v_up * 5)  );
     

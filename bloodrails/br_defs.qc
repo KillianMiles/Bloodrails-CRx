@@ -329,6 +329,7 @@ void() bloodrails_precache =
 	precache_model ("progs/br_rune4b.mdl");
 	
 	precache_model ("progs/ef_smoke1.mdl");
+	precache_model ("progs/ef_smoke2.mdl");
 	precache_model ("progs/ef_thor.mdl");
 	precache_model ("progs/ef_thor_big.mdl");
 	precache_model ("progs/ef_power.mdl");
@@ -379,7 +380,7 @@ float	intermission_exittime;
 .float shot_time2;
 
 .float shot_downward;  //used to check if rail recharge time needs to be  reduced
-.float axe_fasthit;      //used to check if axe recharge time needs to be  reduced
+//.float axe_fasthit;      //used to check if axe recharge time needs to be  reduced
 .float done_damage;
 
 .float axe_splash_time;
@@ -544,9 +545,7 @@ float(string) stof = #81;
 .float bounce_yes;
 
 .float pre_vanish_dist;
-.float jump_press_time;
-.float jump_press_is_long;
-.float jump_register;
+
 .float grind_sound_counter;
 .float grind_completed;
 .float grind_side_is;
@@ -555,7 +554,6 @@ float(string) stof = #81;
 .float anglestored;
 .float grind_time;
 .float vel_before_wallrun;
-.float wallrun_counter;
 .float punchang; //dummy roll angle field
 
 .float slope_time;
@@ -704,6 +702,9 @@ float IT2_SIGIL4 = 8;
 entity red_flag_ent;
 entity blue_flag_ent;
 
+
+
+float smoke_ent_number;
 /*
 .float brflags;
 

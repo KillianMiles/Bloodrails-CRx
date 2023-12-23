@@ -384,7 +384,7 @@ void() update_hookx =
 		self.owner.hookx = 0;
 	}
     
-	self.nextthink = time + 0.01;
+	self.nextthink = time + my_ticrate;
 }
 
 
@@ -473,7 +473,7 @@ void () LinkPos =
 	}
 	
 	//self.nextthink = time + 0.01;   //HOOK_THINK_
-	self.nextthink = time + .01;   //NOVEM
+	self.nextthink = time + 0.01;   //NOVEM
 	
 };
 
@@ -488,7 +488,7 @@ void() HookJump =
 	local float old_start, dist, Dist2;
 	local vector v_ang;
 
-makevectors(self.v_angle);
+	makevectors(self.v_angle);
 	 
 	
 	start 	= self.origin;
@@ -511,7 +511,7 @@ makevectors(self.v_angle);
 	//sprint(self, ftos(Dist2));	
 
 	
-makevectors (self.angles); 
+	makevectors (self.angles); 
 	
 	straight_up = v_up;
 	straight_up_x = 0;
@@ -686,14 +686,7 @@ void () HookVanish =
 		self.hook_lookaway = 0;
 		self.hook_is_anchored = 0;
 		
-		self.hookhead = 0;
-		
-		if(self.button2)                             //swing into slide
-		{
-			self.jump_press_time = time;
-			self.jump_register = 1;
-		}
-		
+		self.hookhead = 0;		
 };
 
 
@@ -1198,6 +1191,13 @@ void() Hook_Check =
 		return;
 	}
 	
+	if(vlen(self.origin - self.owner.origin) > 7800)
+	{
+		HookVanish ();
+		return;
+	}
+	
+	
 	if (self)
 	{
 	
@@ -1360,11 +1360,6 @@ void() W_FireChain =
 			self.adjusted_hook_impact = trace_endpos;
 			
 			local vector trace_end_central = trace_endpos;
-			//local vector trace_end_central = normalize(trace_endpos-hook_src)*vlen(trace_endpos-hook_src)*1.1;
-				//bprint(ftos(v_forward_z));
-				//bprint(" v_forward_z\n");
-			//bprint(ftos(vlen(trace_endpos-hook_src)));
-			//bprint(" dist\n");
 			local float sky_dist = vlen(trace_endpos-hook_src);
 			
 			if(sky_dist > 2300 && pointcontents(trace_endpos) == CONTENT_SKY && !(self.flags & FL_ONGROUND && (v_forward_z > -0.12 && v_forward_z < 0.04))) 
@@ -1506,11 +1501,6 @@ void() W_FireChain =
 				
 				
 				
-				
-				///////////////////////////////////////////////////////////////
-				
-				
-				
 				if((sky_dist > 2000) && self.airborn_pos > 500 && v_forward_z > 0.18)  //9-17-23
 				{
 					if(one_more ==1) 
@@ -1615,7 +1605,7 @@ void() W_FireChain =
 
 	local entity link, prevlink;
 	local float currentLinkNum = 0;
-        local float linkCount = 15;// <---------------number of links to draw starting from hookhead and back towards the player
+        local float linkCount = 12;		// <---------------number of links to draw starting from hookhead and back towards the player
 	prevlink = world;
 	
 	local entity oldSelf = self;

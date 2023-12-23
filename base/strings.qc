@@ -859,7 +859,7 @@ string (float mapnum) strings_get_mapname =
         if (mapnum == 28)
             return "ctf_dogrun_b1";
         if (mapnum == 29)
-            return "ctf_daywalkr_c1";
+            return "ctf_daywalker_c1";
         if (mapnum == 30)
             return "ctf_volcano_b2";
         if (mapnum == 31)

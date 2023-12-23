@@ -811,9 +811,7 @@ float(string) stof = #81;
 .float bounce_switch;
 
 .float pre_vanish_dist;
-.float jump_press_time;
-.float jump_press_is_long;
-.float jump_register;
+
 .float grind_sound_counter;
 .float grind_sound_counter1;
 .float grind_completed;

@@ -236,8 +236,6 @@ void() W_Attack =
 
 	if (time < self.attack_finished) return;
 
-	self.show_hostile = time + 1;	// wake monsters up
-
 	if (self.player_flag & PF_ITEM_RUNE_MASK)
 	{
 		if (self.items2 & IT2_SIGIL3) haste_mult = .5; //Bloodrails lower haste multiple
@@ -246,24 +244,22 @@ void() W_Attack =
 	if (self.weapon == IT_AXE)      //Bloodrails
 	{
 		Axe_Charge_Logic();
-		if (self.axe_button_released == 1) return;
+		if (self.axe_button_released == 1 && !(self.items2 & IT2_SIGIL3)) return;  //DECEM
+		
+		
+		if (self.items2 & IT2_SIGIL3) 
+		{
+			if(time - self.axe_time < 0.59*haste_mult) return;   //DECEM
+		}
 		
 		self.axe_button_released = 1;
 		self.axe_power_time = time;    //dont fire axe again until fire button released
 	
-		if((vlen(self.velocity) < 400 || self.flags & FL_ONGROUND))
-		{
-			if(self.axe_fasthit < 3) 
-			{
-				self.axe_time = self.axe_time - 0.18;    //self.flags & FL_ONGROUND    
-				self.axe_fasthit = self.axe_fasthit + 1;                               //checks if axe reload time can be reduced 
-			}
-			else if (self.axe_fasthit < 5)  self.axe_fasthit = self.axe_fasthit + 1;  
-			else if (self.axe_fasthit >=5)  self.axe_fasthit = 0;  
-		}
-	
-	
+		
+		
 		if(time - self.axe_time < 0.44) return;
+		
+		
 		self.axe_splash_time = time;
 		self.done_damage = 0;
 	
@@ -373,7 +369,9 @@ void() W_Attack =
 		self.rail_button_released = 1;
 		self.rail_power_time = time;     //dont fire rail again until button released
 		
-	        self.axe_time = 0;
+	        self.axe_time = self.axe_time - 0.12; //DECEM
+	        if(self.axe_time < 0) self.axe_time =0;
+	        
 		if(time - self.shot_time < 1.3*haste_mult) return;
 		if(time - self.shot_time < 1.33*haste_mult && self.KDR > 2.1 && self.frags == top_score_global) return;   // first place handicap
 		if(time - self.shot_time2 < 0.30) return;
@@ -416,7 +414,7 @@ void() W_ChangeWeapon =
 	it = self.items;
 	am = 0;
 	
-	if (self.impulse == 1)
+	if (self.impulse == 1 && time - self.shot_time > 0.22)  //DECEM
 	{
 		am = 0;
 		fl = IT_AXE;	
@@ -426,7 +424,7 @@ void() W_ChangeWeapon =
 		am = 0;
 		fl = IT_HOOK;
 	}
-	else if (self.impulse == 3)
+	else if (self.impulse == 3 && time - self.axe_time > 0.22)
 	{
 		fl = IT_RAILGUN;
 		am = 0;

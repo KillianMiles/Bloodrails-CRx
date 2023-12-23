@@ -540,7 +540,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				else if (random() <= 1.0) 
 				{
 					//localsound(attacker, "misc/ding2.wav");  // rail ding sound
-					ex_localsound(attacker, "misc/ding2.wav");  // rail ding sound       //csqc changes
+					ex_localsound(attacker, "misc/ding2.wav");  // rail ding sound     
 					//sound (attacker, CHAN_AUTO, "misc/ding2.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
 				}
 					

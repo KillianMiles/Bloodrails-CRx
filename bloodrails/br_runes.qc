@@ -204,33 +204,46 @@ void() rune_clear_player_flags =
 
 void() update_smoke =
 {
+	if(self.flags & FL_ONGROUND) self.flags = self.flags - FL_ONGROUND;
+	
 	local float zoff = random();
 	local float frand;
 	local vector zoffset = '0 0 0';
 	local vector zoffset2 = '0 0 0';
 	
-	zoffset_z = zoff;
-	zoffset_x = 1.0*2*(random() - 0.5);
-	zoffset_y = 1.0*2*(random() - 0.5);
+	zoffset_z = (2.0+0.61*random())*zoff;
+	zoffset_x = 2.1*1.25*2*(random() - 0.5);
+	zoffset_y = 2.1*1.25*2*(random() - 0.5);
 	
-	zoffset2_z = 1.55*zoff;
-	zoffset2_x = 1.25*2*(random() - 0.5);
-	zoffset2_y = 1.25*2*(random() - 0.5);
+	zoffset2_z = (2.0 + 0.61*random())*1.55*zoff;
+	zoffset2_x = 2.1*1.25*2*(random() - 0.5);
+	zoffset2_y = 2.1*1.25*2*(random() - 0.5);
 	
+	if(self.skin ==22) 
+	{
+		zoffset_z = zoffset_z -0.45;
+		zoffset2_z = zoffset_z -0.45;
+	}
+	
+	if(zoffset_z > 1.50) self.alpha = self.alpha + .0042;
 	
 	if(zoff <= 0.33) frand = 4;
 	else if(zoff <= 0.67) frand = 5;
 	else if(zoff <= 1) frand = 6;	
 
-	makevectors(self.owner.owner.v_angle);
+	//makevectors(self.owner.owner.v_angle);   //DECEM
 	
 	if(self.alpha <= 0.04) 
 	{
 		if (self.effects & EF_RED) self.effects   = self.effects - EF_RED;
 		self.think = SUB_Remove; 
+		smoke_ent_number -=1;
+		if(smoke_ent_number < 0) smoke_ent_number =0;
 	}
 
-	self.alpha = self.alpha - 0.0008;
+	self.alpha = self.alpha - (0.0008*2+(.00325*random()));
+	
+	if(self.skin == 28) self.alpha = self.alpha + .00027;
 	
 	self.weapon +=1;
 	
@@ -261,6 +274,8 @@ void() update_smoke =
 	
 	if(vlen(self.origin - smoke_origin) > 250)
 	{
+				if(vlen(self.origin - smoke_origin) > 300) setmodel(self, "progs/ef_smoke1.mdl");
+				
 				local entity head = findradius(self.origin, 48);
 				while (head)
 				{
@@ -295,7 +310,8 @@ void() update_smoke =
 	}
 
 	
-	self.nextthink = time + 0.01;
+	self.nextthink = time + my_ticrate*2;   //decem consider .01 ->.02
+	//self.nextthink = time + 0.01;
 }
 		
 
@@ -387,17 +403,20 @@ void(vector origin1, float radius, float steam) make_smoke =
 
 	local entity smoke;
 	smoke = spawn();
-	setmodel (smoke, "progs/ef_smoke1.mdl");
+	setmodel (smoke, "progs/ef_smoke2.mdl");
 	setorigin(smoke, origin1 + randomizer + '0 0 -10');
 	smoke.frame = frand;
 	smoke.movetype = MOVETYPE_FLY;
 	smoke.solid = SOLID_TRIGGER;
 	smoke.classname = "smoke";
 	setsize (smoke, 0,0);
-	smoke.avelocity = '-50 -50 -500';
+	smoke.avelocity = '-50 -50 -325'; //500 -> 300
 	smoke.tarzan_time = 0;
 	smoke.speed = 0;
 	smoke.velocity = '0 0 0';
+	setsize (smoke, '-16 -16 -8', '16 16 8');
+	
+	smoke_ent_number +=1;
 	
 	
 	if((pointcontents(origin1 + '0 0 20') == CONTENT_WATER || pointcontents(origin1 + '0 0 20') == CONTENT_SLIME) || steam == 1)
@@ -424,10 +443,10 @@ void(vector origin1, float radius, float steam) make_smoke =
 	
 	if(random() < 0.08) smoke.effects = EF_RED;
 	
-	
+	if(smoke.skin == 28) smoke.alpha = 0.23;
 	
 	smoke.owner = self.owner;
-	smoke.nextthink = time + 0.01;
+	smoke.nextthink = time + my_ticrate;
 	smoke.think = update_smoke;
 }
 		
@@ -544,7 +563,7 @@ void() bangs =
 			
 			if((pointcontents(self.origin + '0 0 20') == CONTENT_WATER || pointcontents(self.origin + '0 0 20') == CONTENT_SLIME))
 			{
-				setmodel (self, "progs/ef_smoke1.mdl");
+				setmodel (self, "progs/ef_smoke2.mdl");
 				self.skin = 18; //23;
 				self.alpha =0.4;
 			}
@@ -563,6 +582,13 @@ void() bangs =
 				smoke_offset_counter = 0;
 				smoke_ceiling = 10000;
 				first_smoke = 1;
+				
+				self.is_over_sky =0;				//DECEM
+				local vector start 	= self.origin;
+				local vector end 	= start;
+				end_z 	= self.origin_z - 9000;
+				traceline (start, end, TRUE, self);	
+				if(pointcontents(trace_endpos) == CONTENT_SKY) self.is_over_sky =1;
 			}
 			
 			if(!(self.flags & FL_ONGROUND))
@@ -572,7 +598,7 @@ void() bangs =
 			
 			self.origin = smoke_origin;
 			self.solid = SOLID_NOT;
-			if(time - smoke_time < 40)
+			if(time - smoke_time < 40 && !(self.is_over_sky ==1 && self.flags & FL_ONGROUND))  //DECEM
 			{
 			
 				smoke_counter +=1;
@@ -582,18 +608,18 @@ void() bangs =
 					//bprint(ftos(smoke_ceiling));
 					if(smoke_rate ==2) 
 					{
-						if(random() < 0.3)make_smoke(smoke_origin, smoke_radius, 0);
+						if(random() < 0.28)make_smoke(smoke_origin, smoke_radius, 0);
 					}
 					else if(smoke_rate ==3) 
 					{
-						if(random() < 0.20)make_smoke(smoke_origin, smoke_radius, 0);
-						if(random() < 0.20)make_smoke(smoke_origin, smoke_radius, 0);
+						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
+						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
 					}
 					else if(smoke_rate ==4) 
 					{
-						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
-						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
-						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
+						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
+						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
+						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
 					}
 				}
 			

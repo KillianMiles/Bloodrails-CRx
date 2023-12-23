@@ -252,8 +252,6 @@ void(float num_bubbles) DeathBubbles;
 
 void() PainSound =
 {
-
-
 	if (self.health < 0) return;
 
 	if (damage_attacker.classname == "teledeath")

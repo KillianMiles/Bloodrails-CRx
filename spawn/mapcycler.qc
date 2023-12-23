@@ -40,6 +40,7 @@ __accumulate void() worldspawn =
 	localcmd("scr_sbar 3\n");
 	localcmd("alias scr_sbar bf\n");
 	
+	
 
 	
    // localcmd("fraglimit 40\n");

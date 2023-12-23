@@ -1282,7 +1282,6 @@ void() rail_jump =
 			stuffcmd(self, "cl_screenangle_speed 3\n");
 			stuffcmd(self, "cl_screenangle 0\n");
 			
-			self.jump_press_time = 0;
 			self.grind_completed = 0;
 			self.punchang = 0;
 			self.anglestored = 0;
@@ -1397,6 +1396,7 @@ void() Rail_Charge_Logic=
 {
 	//RAIL TIMING LOGIC
 		if(elohim_playmode & ELOHIM_CLASSIC || self.ammo_slugs <= 0) return;
+		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL2)) return; //DECEM no sidewinder with Power
 		
 		
 		

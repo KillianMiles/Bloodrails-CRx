@@ -358,7 +358,7 @@ void(float episode) admin_show_maps =
         sprint(self, "1: CTF_Spongebob\n");
         sprint(self, "2: CTF_Doglyfe\n");
         sprint(self, "3: CTF_Dogrun\n");
-        sprint(self, "4: CTF_Daywalkr\n");
+        sprint(self, "4: CTF_Daywalker\n");
         sprint(self, "5: CTF_Volcano\n");
         sprint(self, "6: CTF_Fulcrum\n");
         sprint(self, "7: CTF_Tahai\n");

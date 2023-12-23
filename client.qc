@@ -1292,26 +1292,20 @@ WaterMove
 
 void() WaterMove =
 {
-//dprint (ftos(self.waterlevel));
-	if (self.movetype == MOVETYPE_NOCLIP)
-		return;
-	if (self.health < 0)
-		return;
+	if (self.movetype == MOVETYPE_NOCLIP)	return;
+	if (self.health < 0)	return;
 
 	if (self.waterlevel != 3)
 	{
-
-
 		self.air_finished = time + 12;
 		self.dmg = 2;
 	}
 	else if (self.air_finished < time)
-	{	// drown!
+	{
 		if (self.pain_finished < time)
 		{
 			self.dmg = self.dmg + 2;
-			if (self.dmg > 15)
-				self.dmg = 10;
+			if (self.dmg > 15)	self.dmg = 10;
 			T_Damage (self, world, world, self.dmg);
 			self.pain_finished = time + 1;
 		}
@@ -1321,66 +1315,48 @@ void() WaterMove =
 	{
 		if (self.flags & FL_INWATER)
 		{
-            // ELOHIM_MOD - don't play sounds for observers
-			// play leave water sound
-            if (self.style & ELOHIM_OBSERVER == 0)
-                sound (self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);
-            // END_MOD
-
+			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);	// play leave water sound
 			self.flags = self.flags - FL_INWATER;
 		}
 		return;
 	}
 
 	if (self.watertype == CONTENT_LAVA)
-	{	// do damage
+	{	
 		if (self.dmgtime < time)
 		{
-			if (self.radsuit_finished > time)
-				self.dmgtime = time + 1;
-			else
-				self.dmgtime = time + 0.2;
-
-			T_Damage (self, world, world, 8.7);
+			if (self.radsuit_finished > time)	self.dmgtime = time + 1;
+			else	self.dmgtime = time + 0.2;
+			T_Damage (self, world, world, 8.7);		// do damage
 		}
 	}
 	else if (self.watertype == CONTENT_SLIME)
-	{	// do damage
+	{	
 		if (self.dmgtime < time && self.radsuit_finished < time)
 		{
 			self.dmgtime = time + 1;
-			T_Damage (self, world, world, 4.7);
+			T_Damage (self, world, world, 4.7);	// do damage
 		}
 	}
 	
 	if ( !(self.flags & FL_INWATER) )
 	{	
+		// player enter water sound
+		if (!(self.style & ELOHIM_OBSERVER))
+		{
+			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_BODY, "player/inh2o.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
+		}
 
-// player enter water sound
-
-        // ELOHIM_MOD - don't play sounds for observers
-        if (!(self.style & ELOHIM_OBSERVER))
-        {
-            if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)
-                sound (self, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
-            if (self.watertype == CONTENT_WATER)
-                sound (self, CHAN_BODY, "player/inh2o.wav", 1, ATTN_NORM);
-            if (self.watertype == CONTENT_SLIME)
-                sound (self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
-        }
-        // END_MOD
 
 		self.flags = self.flags + FL_INWATER;
 		self.dmgtime = 0;
 	}
 	
-	if (! (self.flags & FL_WATERJUMP) )
-		self.velocity = self.velocity - 0.8*self.waterlevel*frametime*self.velocity;
+	if (! (self.flags & FL_WATERJUMP) )	self.velocity = self.velocity - 0.8*self.waterlevel*frametime*self.velocity;
+	if (self.waterlevel == 2)		CheckWaterJump ();
 
-    // ELOHIM_MOD - moved here from PlayerPreThink
-	if (self.waterlevel == 2)
-		CheckWaterJump ();
-    // END_MOD
 };
 
 void() CheckWaterJump =
@@ -1422,34 +1398,17 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-    // ELOHIM_MOD
-    //
-    // - moved intermission_running test inside of if (gameover)
-    // - go to observer_pre_think when observing
-    // - go to options_pre_think when setting options
-    // - changed gameover test from (self.view_ofs == '0 0 0') to (gameover)
-    // - don't call check rules
-    //      - fraglimit, timelimit are set in elohim_start_frame
-    //      - timelimit is checked in elohim_start_frame
-    //      - fraglimit is checked in client_frag
-    // - removed unnecessary makevectors
-    // - put dead checks inside a single if statement
-    // - removed unused pausetime check
-    // - optimized ammo-out check
-    // - do periodic checks
-    // - moved CheckWaterJump to WaterMove
 
-    if (gameover)
-    {
-        if (intermission_running)
-        {
-            // otherwise a button could be missed between the think tics
-            IntermissionThink ();
+	if (gameover)
+	{
+		if (intermission_running)
+		{
+			// otherwise a button could be missed between the think tics
+			IntermissionThink ();
 			return;
-        }
-		if (self.view_ofs == '0 0 0')
-			return;		// intermission or finale
-    }
+		}
+		if (self.view_ofs == '0 0 0')	return;		// intermission or finale
+	}
 
 	if (mode_is_arena() == TRUE)
 	{
@@ -1462,11 +1421,11 @@ void() PlayerPreThink =
 
 	public_verify_team();
 
-    if (time > self.wait)
-    {
-        elohim_periodic_checks();
-        self.wait = self.wait + 1;
-    }
+	if (time > self.wait)
+	{
+		elohim_periodic_checks();
+		self.wait = self.wait + 1;
+	}
 
 	if (self.style & ELOHIM_SETTING_OPTIONS)
 	{
@@ -1480,57 +1439,34 @@ void() PlayerPreThink =
 	}
 
 	if (self.style & ELOHIM_OBSERVER)
-    {
+	{
 		observer_pre_think();
 		return;
-    }
+	}
 
 	if (self.deadflag)
-    {
-		if (self.deadflag >= DEAD_DEAD)
-            PlayerDeathThink ();
-        return;
-    }
+	{
+		if (self.deadflag >= DEAD_DEAD)	PlayerDeathThink ();
+		return;
+	}
 
-    if (elohim_state & ELOHIM_MATCH_PAUSED)
-    {
-        self.velocity = '0 0 0';
-        return;
-    }
+	if (elohim_state & ELOHIM_MATCH_PAUSED)
+	{
+		self.velocity = '0 0 0';
+		return;
+	}
 
-	if (self.crmod_did_damage + 1 < time)
-		self.crmod_inflicted = world;  // CRMOD - reset inflicted info 
+	if (self.crmod_did_damage + 1 < time)	self.crmod_inflicted = world;  // CRMOD - reset inflicted info 
 		
 
 
-
-Called_in_PreThink();
-
+	Called_in_PreThink();
 
 
 	
 	if (self.button2)						PlayerJump ();
 	else if (!self.button2 || self.waterlevel >2) 			self.flags = self.flags | FL_JUMPRELEASED;
 
-	//if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL4))
-	//	rune_regen ();
-
-// teleporters can force a non-moving pause time  
-//	if (time < self.pausetime)
-//		self.velocity = '0 0 0';
-
-  //  if (self.currentammo == 0)        // TWITCH FIX
-  //  {
-   //     if (self.weapon != IT_AXE && self.weapon != IT_HOOK)
-   //     {
-     //       if (time > self.attack_finished)
-     //       {
-      //          self.weapon = W_BestWeapon ();
-      //          W_SetCurrentAmmo ();
-      //      }
-      //  }
-  //  }
-    // END_MOD
 };
 	
 
@@ -1580,17 +1516,17 @@ void() PlayerPostThink =
 
 
 
-Called_in_PostThink();			
+	Called_in_PostThink();			
 	
 
 
 
 
-    if (self.style & ELOHIM_OBSERVER)
-    {
-        observer_post_think();
-        return;
-    }
+	if (self.style & ELOHIM_OBSERVER)
+	{
+		observer_post_think();
+		return;
+	}
 	else if ((elohim_state & ELOHIM_TIMER_STARTED) && !(elohim_state & ELOHIM_MATCH_STARTED))
 	{
 		if (time >= self.delay)
@@ -1622,8 +1558,7 @@ Called_in_PostThink();
 				//qdp = (elohim_playmode & ELOHIM_QUAD_DROP) ? "       \n" : "        \n";
 				ggp = (elohim_playmode & ELOHIM_GG_MOD) ? "      \n" : "     \n";
 
-				if (self.height == COLOR_RED)
-					centerprint(self, "\n\n\nYou are on the RED team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
+				if (self.height == COLOR_RED)	centerprint(self, "\n\n\nYou are on the RED team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
 				else if (self.height == COLOR_BLUE)
 					centerprint(self, "\n\n\nYou are on the BLUE team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
 			}

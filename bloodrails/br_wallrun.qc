@@ -32,31 +32,29 @@ void() update_sparks =
 
 void() make_sparks =
 {
-    if (self.sparks_out == 0) 
-    {
-    self.wallrun_counter = self.wallrun_counter + 1;
-    //sprint(self, ftos(self.wallrun_counter));
+	if (self.sparks_out == 0) 
+	{
     
-    self.sparks_out = 1;
-    local entity sparks;
-    local vector dir;
-    sparks = spawn();
-    setmodel (sparks, "progs/br_sparks.mdl");
+		self.sparks_out = 1;
+		local entity sparks;
+		local vector dir;
+		sparks = spawn();
+		setmodel (sparks, "progs/br_sparks.mdl");
 
-    setorigin(sparks, self.origin + '0 0 -29');
-    dir = aim (self, 1000);
-    sparks.angles = vectoangles(dir);
-    sparks.movetype = MOVETYPE_NOCLIP;
-    sparks.solid = SOLID_NOT;
-    sparks.nextthink = time + 0.5;
-    sparks.think = update_sparks;
-    sparks.classname = "sparks";
-    setsize (sparks, 0,0);
-    sparks.alpha = 1;
-    sparks.owner = self;
-    sparks.nextthink = time + 0.01;
-    sparks.think = update_sparks;
-    }
+		setorigin(sparks, self.origin + '0 0 -29');
+		dir = aim (self, 1000);
+		sparks.angles = vectoangles(dir);
+		sparks.movetype = MOVETYPE_NOCLIP;
+		sparks.solid = SOLID_NOT;
+		sparks.nextthink = time + 0.5;
+		sparks.think = update_sparks;
+		sparks.classname = "sparks";
+		setsize (sparks, 0,0);
+		sparks.alpha = 1;
+		sparks.owner = self;
+		sparks.nextthink = time + 0.01;
+		sparks.think = update_sparks;
+	}
 }
 
 
@@ -66,41 +64,6 @@ void() make_sparks =
 
 void() check_jump =
 {	
-	
-	if (self.jump_register == 0 && self.button2)
-	{
-		self.jump_press_time = time;
-		self.jump_register = 1;
-		
-	}
-
-
-	if(!(elohim_playmode & ELOHIM_PRACTICE_MODE))
-	{
-		if (time > self.jump_press_time + 0.25 && self.jump_press_time != 0 && self.grind_completed == 0 && self.jump_press_is_long == 0) self.jump_press_is_long = 1; 
-		
-		//if (time > self.jump_press_time + 0.8 && self.jump_press_time != 0 && self.movement_y == 0) self.jump_press_is_long = 0;   //no max jump hold duration requirement
-	}
-	
-	if(elohim_playmode & ELOHIM_PRACTICE_MODE)
-	{
-		if (time > self.jump_press_time + 0.12 && self.jump_press_time != 0 && self.grind_completed == 0 && self.jump_press_is_long == 0) self.jump_press_is_long = 1; 
-		
-		//if(self.wallrun_ski == 1) self.jump_press_is_long = 1;
-		if (time > self.jump_press_time + 2 && self.jump_press_time != 0 && self.movement_y == 0) self.jump_press_is_long = 0;
-	}
-	
-
-
-	if (!(self.button2))
-	{
-	
-		self.jump_press_is_long = 0;
-		
-		self.jump_register = 0;
-		self.jump_press_time = 0;
-		self.grind_completed = 0;
-	}
 	
 	makevectors(self.v_angle);  
 	local vector v_ang = vectoangles (v_forward*(-1));
@@ -112,6 +75,7 @@ void() check_jump =
 
 void() ceiling_ride =
 {
+	
 	local vector start, end; 
 	makevectors (self.v_angle);    
 	start = self.origin + '0 0 27';            
@@ -121,7 +85,8 @@ void() ceiling_ride =
 	local float up_dist = vlen(self.origin - trace_endpos);
 	if(up_dist < 55 && self.angles_not_zero ==1) self.velocity_z +=-75;
 	
-	if(trace_fraction< 1 && (self.button2 || self.ski_button ==1) && !(self.hook_out) && self.airborn_pos > 200 && vlen(self.velocity) > 450)   // && vlen(self.velocity)> 800)
+
+	if(trace_fraction< 1 && (self.ski_button ==1) && !(self.hook_out) && self.airborn_pos > 200 && vlen(self.velocity) > 450)   // && vlen(self.velocity)> 800)
 	{
 		//stuffcmd(self, "cl_screenangle_speed 2.4\n");
 		//stuffcmd(self, "cl_screenangle 180\n");
@@ -181,10 +146,9 @@ void() WallRun =
 	local vector start, end, velo; 
 	local float trace_frac_plus, trace_frac_minus, trace_frac_plus_long, trace_frac_minus_long;
 
-	local float minspeed = 475;
-	if(self.wallrun_counter >= 3  || elohim_playmode & ELOHIM_PRACTICE_MODE) minspeed = 425;
+	local float minspeed = 450;
 	
-	
+	if (!(self.button2))	self.grind_completed = 0;
 
 	velo = self.velocity;
 	velo_z = 0;
@@ -204,16 +168,14 @@ void() WallRun =
 
 	start = self.origin;
 		
-	if(self.wallrun_counter >=3 || elohim_playmode & ELOHIM_PRACTICE_MODE) end   = self.origin + v_right*(-95); //95
-	else end   = self.origin + v_right*(-90); //90
+	end = self.origin + v_right*(-90); //90
 		
 	traceline (start, end, TRUE, self);
 	trace_frac_minus = trace_fraction;
 
 	start = self.origin;
 		
-	if(self.wallrun_counter >=3  || elohim_playmode & ELOHIM_PRACTICE_MODE) end   = self.origin + v_right*(95);  //95
-	else end   = self.origin + v_right*(90); //90
+	end   = self.origin + v_right*(90); //90
 		
 	traceline (start, end, TRUE, self);
 	trace_frac_plus = trace_fraction;
@@ -226,13 +188,13 @@ void() WallRun =
 		
 	if (trace_frac_plus == 1 && trace_frac_minus == 1) tilt_check = 1;
 		
-	if (self.grind_completed == 0 && self.jump_press_is_long == 1) 
+	if (self.grind_completed == 0) 
 	{
 		self.vel_before_wallrun = vlen(self.velocity);
 		//sprint(self, ftos(self.vel_before_wallrun));
 	}
 		
-	if(vlen(velo) > minspeed && ((self.jump_press_is_long == 1 && grind_check == 0 && tilt_check == 0) || self.grind_completed == 2) && !(self.hook_out))  // change 420->525
+	if(vlen(velo) > minspeed && ((grind_check == 0 && tilt_check == 0) || self.grind_completed == 2) && !(self.hook_out) && (self.button2 && (self.movement_y <= -400 || self.movement_y >= 400)))  // change 420->525
 	{
 
 		if (trace_frac_plus == 1 && trace_frac_minus == 1) self.grind_completed = 1;   //added at swing hook debug
@@ -423,8 +385,6 @@ void() WallRun =
 			if (self.grind_completed == 2) 
 			{
 				self.grind_completed = 1;
-				self.jump_press_is_long =0;
-	
 			}
 
 			if (self.angles_not_zero == 0) 
@@ -475,6 +435,8 @@ void(float radius, float force) flag_homing_slide =
 
 	local entity head;
 	local vector old_vel, dir1;
+	//makevectors(self.v_angle);
+
 	
 				head = findradius(self.origin, radius);
 				while (head)
@@ -486,8 +448,11 @@ void(float radius, float force) flag_homing_slide =
 								dir1 = normalize(dir1);
 								old_vel = self.velocity;
 								
-								self.velocity = self.velocity + force*dir1;
-								self.velocity = normalize(self.velocity)*vlen(old_vel);
+								//if(normalize(self.origin - head.origin)*v_forward < 0.4)
+								
+									self.velocity = self.velocity + force*dir1;
+									self.velocity = normalize(self.velocity)*vlen(old_vel);
+								
 							}
 
 							else if (head.classname == "item_flag_team2" && self.flag_carrier && self.height == elohim_team2)
@@ -495,9 +460,12 @@ void(float radius, float force) flag_homing_slide =
 								dir1 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								dir1 = normalize(dir1);
 								old_vel = self.velocity;
-
-								self.velocity = self.velocity + force*dir1;
-								self.velocity = normalize(self.velocity)*vlen(old_vel);
+								
+								//if(normalize(self.origin - head.origin)*v_forward < 0.4)
+								
+									self.velocity = self.velocity + force*dir1;
+									self.velocity = normalize(self.velocity)*vlen(old_vel);
+								
 							}
 							
 							
@@ -507,8 +475,11 @@ void(float radius, float force) flag_homing_slide =
 								dir1 = normalize(dir1);
 								old_vel = self.velocity;
 								
-								self.velocity = self.velocity + force*dir1;
-								self.velocity = normalize(self.velocity)*vlen(old_vel);
+								//if(normalize(self.origin - head.origin)*v_forward < 0.4)
+								
+									self.velocity = self.velocity + force*dir1;
+									self.velocity = normalize(self.velocity)*vlen(old_vel);
+								
 							}
 
 							else if (head.classname == "item_flag_team2" && !self.flag_carrier && self.height == elohim_team1)
@@ -517,8 +488,11 @@ void(float radius, float force) flag_homing_slide =
 								dir1 = normalize(dir1);
 								old_vel = self.velocity;
 
-								self.velocity = self.velocity + force*dir1;
-								self.velocity = normalize(self.velocity)*vlen(old_vel);
+								//if(normalize(self.origin - head.origin)*v_forward < 0.4)
+								
+									self.velocity = self.velocity + force*dir1;
+									self.velocity = normalize(self.velocity)*vlen(old_vel);
+								
 							}
 
 									
@@ -541,22 +515,11 @@ void(float radius, float force) flag_homing_slide =
 .float decline_time;
 void() Skiing =
 {
+		local float slide_duration =3.1;  // flat adjustment
 		
 		if(!self.ski_button && self.impulse ==41) self.ski_button =1;
 		if(self.ski_button && self.impulse ==42) self.ski_button =0;
 		
-		
-		
-		
-		
-		makevectors(self.v_angle);
-		local vector horizon_forward = v_forward;
-		horizon_forward_z = 0;
-		
-		horizon_forward =normalize(horizon_forward);
-		
-		//bprint(ftos(v_forward_z));
-		//bprint("\n");
 		if(self.waterlevel > 1 && v_forward_z < -0.45 && self.velocity_z < -300) self.shark_time = time;
 		
 		if(self.waterlevel > 2 && time-self.shark_time < 3)			//NOVEM Sharking Dolphin
@@ -571,10 +534,47 @@ void() Skiing =
 			self.velocity = self.velocity + v_forward*45;
 		}
 		
+		
+		
+		if((self.impulse == 42 || time-self.ski_time >=slide_duration) || (self.skiing_on ==0 && self.view_ofs_z < 22))
+		{
+			self.skiing_on =0;
+			self.view_ofs_z += 1;
+			if(self.view_ofs_z >= 22) self.view_ofs_z = 22;
+		}
+	
+	
+		if(self.impulse == 42 && time-self.ski_time < slide_duration && self.view_ofs_z < 10 && self.airborn_pos < 18)// && trace_startsolid == TRUE)  //DECEM
+		{
+			if (random() < 0.6) sound (self, CHAN_BODY, "player/br_jump1.wav", 0.8, ATTN_NORM);   // 1 -> 0.9
+			else if (random() < 0.8) sound (self, CHAN_BODY, "player/br_jump2.wav", 0.8, ATTN_NORM);  
+			else sound (self, CHAN_BODY, "player/br_jump3.wav", 0.8, ATTN_NORM);   // alternative jump noise
+			self.velocity_z = self.velocity_z + 255;
+		
+			self.skiing_on =0;
+		
+			//bprint(ftos(time-self.ski_time));
+			//bprint(" ski time\n");
+		}
+		
+		if(self.ski_button ==0) return;     //DECEM
+		//////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		makevectors(self.v_angle);
+		local vector horizon_forward = v_forward;
+		horizon_forward_z = 0;
+		
+		horizon_forward =normalize(horizon_forward);
+		
+		//bprint(ftos(v_forward_z));
+		//bprint("\n");
+		
+		
 	
 		traceline(self.origin + horizon_forward*40, self.origin + horizon_forward*40 + '0 0 -1000', TRUE, self);
 		local float dist = (self.origin_z - trace_endpos_z);
-		local float slide_duration =3.1;  // flat adjustment
+		
 		local float need_vel_adjusted;  // flat adjustment
 		if(dist <1) dist = 0;
 		
@@ -722,26 +722,7 @@ void() Skiing =
 		
 	}
 	
-	if((self.impulse == 42 || time-self.ski_time >=slide_duration) || (self.skiing_on ==0 && self.view_ofs_z < 22))
-	{
-		self.skiing_on =0;
-		self.view_ofs_z += 1;
-		if(self.view_ofs_z >= 22) self.view_ofs_z = 22;
-	}
 	
-	
-	if(self.impulse == 42 && time-self.ski_time < slide_duration && self.view_ofs_z < 10 && trace_startsolid == TRUE)
-	{
-		if (random() < 0.6) sound (self, CHAN_BODY, "player/br_jump1.wav", 0.8, ATTN_NORM);   // 1 -> 0.9
-		else if (random() < 0.8) sound (self, CHAN_BODY, "player/br_jump2.wav", 0.8, ATTN_NORM);  
-		else sound (self, CHAN_BODY, "player/br_jump3.wav", 0.8, ATTN_NORM);   // alternative jump noise
-		self.velocity_z = self.velocity_z + 255;
-		
-		self.skiing_on =0;
-		
-		//bprint(ftos(time-self.ski_time));
-		//bprint(" ski time\n");
-	}
 	//bprint(ftos(self.velocity_z));
 	//bprint(" vel_z\n");
 }
@@ -759,6 +740,7 @@ void() Water_bounce =   	//10/8/23
 	horiz_vel_z =0;
 	
 	if(self.waterlevel == 3) return;	//NOVEM dont trigger underwater
+	//makevectors(self.v_angle);
 	
 	local float slide_duration = 1.5;
 	if(self.button2 && (pointcontents(self.origin + '0 0 -45') == CONTENT_WATER || pointcontents(self.origin + '0 0 -45') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -45') == CONTENT_LAVA))
@@ -771,7 +753,7 @@ void() Water_bounce =   	//10/8/23
 			//bprint("primed\n");
 		}
 	}
-	
+
 	
 	
 	if((pointcontents(self.origin + '0 0 -47') == CONTENT_WATER || pointcontents(self.origin + '0 0 -47') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -47') == CONTENT_LAVA) && (self.bounce_on ==1 || self.bounce_on ==2) && time-self.ski_time < slide_duration)
