@@ -1691,8 +1691,7 @@ void () observer_fly_move =
 {
     local float dz, zvel, right_coef, forward_coef, norm;
     local vector f;
-	
-	//Exit_HorrorScope();
+
     // Check if the observer is pressing up or down by looking at the
     // change in velocity_z.  zvel is set to 1 if the observer is pressing
     // up (or jump), -1 if the observer is pressing down, and 0 otherwise.
@@ -1707,6 +1706,9 @@ void () observer_fly_move =
         zvel = -1;
     else
         zvel = 0;
+        
+ 
+    
 
     // If there is no horizonal movement, then move up/down.
     if (!self.velocity_x && !self.velocity_y)
@@ -1754,6 +1756,34 @@ void () observer_fly_move =
 		observer_fly_through_obstacle();
 	else
 		self.attack_finished = time;
+		
+		///*
+		if(self.ski_button == 1 && self.movement_x > 300)
+		{
+			//bprint("faster\n");
+			self.velocity = self.velocity + v_forward*300;
+			self.velocity_z=self.velocity_z*0.7;
+		}
+		else if(self.ski_button == 1 && self.movement_x < -300)
+		{
+			//bprint("faster\n");
+			self.velocity = self.velocity + v_forward*-300;
+			self.velocity_z=self.velocity_z*0.7;
+		}
+			///*
+		if(self.ski_button == 1 && self.movement_y > 300)
+		{
+			//bprint("faster\n");
+			self.velocity = self.velocity +v_right*300;
+		}
+		else if(self.ski_button == 1 && self.movement_y < -300)
+		{
+			//bprint("faster\n");
+			self.velocity = self.velocity +v_right*-300;
+		}
+		//*/
+		
+		
 };
 
 //

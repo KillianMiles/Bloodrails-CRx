@@ -499,12 +499,32 @@ void() ctf_flag_capture =
 	sprint3(other, " \b[\b", utils_get_time(captime), "\b]\b");
     
     
-	if(other.tarzan_time ==1) bprint(" \b[BATMAN RETURNS]\b "); // 10/5/23
-	else if((other.skiing_on ==1 || other.skiing_on ==2) && other.movement_x ==400) bprint(" \b[POWER SLIDE]\b ");
-	else if((other.skiing_on ==1 || other.skiing_on ==2) && other.movement_x ==-400) bprint(" \b[BACK ASSWARDS]\b ");
+	if(other.tarzan_time ==1) 
+	{
+		bprint(" \b[BATMAN RETURNS]\b "); // 10/5/23
+		other.tier2 +=1;
+	}
+	else if((other.skiing_on ==1 || other.skiing_on ==2) && other.movement_x ==400) 
+	{
+		bprint(" \b[POWER SLIDE]\b ");
+			other.tier1 +=1;
+	}
+	else if((other.skiing_on ==1 || other.skiing_on ==2) && other.movement_x ==-400) 
+	{
+		bprint(" \b[BACK ASSWARDS]\b ");
+			other.tier2 +=1;
+	}
 	
-	if(vlen(other.origin-smoke_origin) < 80 && other.health < 25) bprint(" \b[WITNESS ME!]\b ");
-	else if(timelimit - time < 1.5) bprint(" \b[MIC DROP]\b ");
+	if(vlen(other.origin-smoke_origin) < 80 && other.health < 25) 
+	{
+		bprint(" \b[WITNESS ME!]\b ");
+		other.tier1 +=1;
+	}
+	else if(timelimit - time < 1.5) 
+	{
+		bprint(" \b[MIC DROP]\b ");
+		other.tier2 +=1;
+	}
 	bprint("\n");
 
     

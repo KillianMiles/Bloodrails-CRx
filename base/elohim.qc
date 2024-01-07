@@ -172,9 +172,9 @@ void () elohim_init_world =
   
 
 
-  elohim_version = "BR 12-2-23 .X1"; 
+  elohim_version = "BR 12-31-23 .X1"; 
   elohim_version_info = "Bloodrails CRx";
-  bloodrails_version_number = "12-2-23";   // CRMOD - string to be used throughout
+  bloodrails_version_number = "12-31-23";   // CRMOD - string to be used throughout
           //         code to show version number.
 
   // Initialize user map names, MOTD, and hotspots, etc..
@@ -1515,13 +1515,7 @@ void () show_rules_prematch =
       else
         s5 = "                                        \n";
     }
-    else
-    {
-  		if (elohim_playmode & ELOHIM_GG_MOD)
-        s5 = "\bquad drop\b   off\n\bgg  mod\b      on\n";
-      else
-        s5 = "\bquad drop\b   off\n\bgg  mod\b     off\n";
-    }
+ 
 
     if (elohim_playmode & CLANRING_RUNES)
     {

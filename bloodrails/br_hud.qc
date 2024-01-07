@@ -600,6 +600,8 @@ void() update_jumbo_red =
 		if(self.weapon == 1) setorigin(self, '0 11.7 5' + '-40 165 161');
 		if(self.weapon == 2) setorigin(self, '0 15.2 5' + '-40 165 161');
 		if(self.weapon == 3) setorigin(self, '0 18.7 5' + '-40 165 161');
+		
+		
 	}	
 	
 	self.alpha = 0.9;
@@ -727,11 +729,11 @@ void() update_press_move =
 		
 		else if (self.owner.turn_speed >= 3 && self.owner.turn_speed < 10) self.skin =18;
 		else if (self.owner.turn_speed >= 10 && self.owner.turn_speed < 17) self.skin =19;
-		else if (self.owner.turn_speed >= 17 && self.owner.turn_speed < 22) self.skin =20;
+		else if (self.owner.turn_speed >= 17) self.skin =20;
 		
 		else if (self.owner.turn_speed <= -3 && self.owner.turn_speed > -10) self.skin =21;
 		else if (self.owner.turn_speed <= -10 && self.owner.turn_speed > -17) self.skin =22;
-		else if (self.owner.turn_speed <= -17 && self.owner.turn_speed > -22) self.skin =23;
+		else if (self.owner.turn_speed <= -17) self.skin =23;
 	}
 	
 	if(self.weapon == 6)
@@ -1049,6 +1051,7 @@ void hud_update() =
 	xy_velocity = self.velocity;
 	local float current_speed;
 	current_speed = floor(vlen(xy_velocity));
+	if(self.health<=0) current_speed =0;  //DECEM zero out speedometer when dead
 
         local float dist;                        //Bloodrails - altimeter
 	local vector start, end;

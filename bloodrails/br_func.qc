@@ -39,11 +39,20 @@ void() Called_in_PreThink =
 		make_hookx();
 		turn_indicator();
 		
-	
+		/*
+		if(timelimit - time < 1)
+		{	
+			client_frag(self, self.tier2*1);
+			client_frag(self, self.tier3*2);	//DECEM add achieve scores achievement
+			self.tier2 =0;
+			self.tier3 =0;
+		}
+		*/
 		
 
 		//bprint(ftos(self.rune_bang));
 		//bprint("rune_bang\n");
+		
 		if(quasar_owner !=self && gravity_owner != self) self.smoke_frags =0; //10/5/23
 		
 		if(self.impulse == 225 && self.style & ELOHIM_ADMINISTRATOR) PutDummyInServer();
@@ -91,6 +100,8 @@ void() Called_in_PreThink =
 		
 		if(self.hookhead)                   //allow to rehook after firing while hook swinging LOL
 		{
+			
+			makevectors(self.v_angle);
 			local vector dir = normalize((self.origin + (v_forward*16) + '0 0 16') - self.hookhead.origin);
 			local vector dist;
 			traceline(self.origin + (v_forward*16) + '0 0 16', self.hookhead.origin + dir*50, FALSE, self);    //NOVEM
@@ -107,8 +118,8 @@ void() Called_in_PreThink =
 						local vector dir2 = normalize(trace_ent.origin - self.origin); 
 						local vector dir3 = normalize(dir1 + dir2);
 		
-						trace_ent.velocity = trace_ent.velocity + dir3*400;
-						T_Damage(trace_ent, self, self, 20.4);
+						trace_ent.velocity = trace_ent.velocity + dir3*270;
+						T_Damage(trace_ent, self, self, 40.4);
 					}
 				}
 			}
@@ -294,6 +305,8 @@ void() Called_in_PostThink =
 	flag_carry();
 	
 	//bprint(ftos(smoke_ent_number));  //DECEM smoke counter 
+	//bprint("\n");
+	//bprint(ftos(self.turn_speed));  //DECEM sturn speed
 	//bprint("\n");
 	
 	if(self.frags <0) self.frags =0; //DECEM score

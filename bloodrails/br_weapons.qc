@@ -424,7 +424,7 @@ void() W_ChangeWeapon =
 		am = 0;
 		fl = IT_HOOK;
 	}
-	else if (self.impulse == 3 && time - self.axe_time > 0.22)
+	else if (self.impulse == 3 && time - self.axe_time > 0.18)  // 0.22 -> 0.10
 	{
 		fl = IT_RAILGUN;
 		am = 0;

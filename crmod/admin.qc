@@ -363,7 +363,7 @@ void(float episode) admin_show_maps =
         sprint(self, "6: CTF_Fulcrum\n");
         sprint(self, "7: CTF_Tahai\n");
         sprint(self, "8: CTF_Firestorm\n");
-        sprint(self, "9: -empty-\n");
+        sprint(self, "9: CTF_Feral\n");
         sprint(self, "10: -empty-\n");
         sprint(self, "11: -empty-\n");
         sprint(self, "12: -empty-\n");

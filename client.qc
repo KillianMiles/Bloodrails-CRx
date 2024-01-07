@@ -1558,9 +1558,9 @@ void() PlayerPostThink =
 				//qdp = (elohim_playmode & ELOHIM_QUAD_DROP) ? "       \n" : "        \n";
 				ggp = (elohim_playmode & ELOHIM_GG_MOD) ? "      \n" : "     \n";
 
-				if (self.height == COLOR_RED)	centerprint(self, "\n\n\nYou are on the RED team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
+				if (self.height == COLOR_RED)	centerprint(self, "You are on the RED team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
 				else if (self.height == COLOR_BLUE)
-					centerprint(self, "\n\n\nYou are on the BLUE team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
+					centerprint(self, "You are on the BLUE team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
 			}
 			else
 				hud_update();

@@ -360,7 +360,7 @@ void() bloodrails_precache =
 
 .float turn_speed;
 .float last_angle;
-const float turn_cooldown = 90;
+const float turn_cooldown = 130; //90->125
 
 float	intermission_running;
 float	intermission_exittime;
@@ -586,6 +586,9 @@ float(string) stof = #81;
 .float ammo_slugs;
 .float ammo_zero_time;   //9-17-23
 
+.float tier1;
+.float tier2;
+.float tier3;
 
 //float EF_ADDITIVE = 32;
 float EF_NODEPTHTEST = 8192;
