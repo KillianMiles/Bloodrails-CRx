@@ -15,7 +15,7 @@ __accumulate void() worldspawn =
 	localcmd("fov_adapt 1\n");
 	localcmd("viewsize 110\n");
 	localcmd("fov 100\n");
-	localcmd("alias fov bf\n"); 
+	//localcmd("alias fov bf\n"); 
 	
 	localcmd("cl_gun_fovscale 0\n");
 	localcmd("alias cl_gun_fovscale bf\n");

@@ -52,6 +52,12 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		
 	if (elohim_playmode & ELOHIM_PRACTICE_MODE) return;  //dont deal damage if in racing mode
 	
+	// HorrorScope deathmatch camera - store players last enemy entity
+	if (attacker.flags & FL_CLIENT)
+		if (targ.flags & FL_CLIENT)
+			if (damage < targ.health)
+				attacker.last_enemy = targ;
+	
 	
 	// ELOHIM_MOD - stats
 	if (attacker.classname == "player" && targ != attacker)

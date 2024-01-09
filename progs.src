@@ -3,6 +3,7 @@
 defs.qc
 bloodrails/br_defs.qc
 base/elodefs.qc
+spawn/hrscope_plugin.qc
 
 
 base/array.qc

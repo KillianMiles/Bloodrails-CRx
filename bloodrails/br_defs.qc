@@ -254,6 +254,7 @@ void() bloodrails_precache =
 	
 	// M O D E L S
 	
+	precache_model ("progs/null.spr");
 	
 	precache_model ("progs/player_left_5.mdl");
 	precache_model ("progs/player_left_10.mdl");

@@ -386,6 +386,11 @@ void () observer_start =
     //local float go_auto;
     
       //if (!(self.player_flag & PF_HUD)) self.player_flag = self.player_flag | PF_HUD;
+      
+	if (self.cam)
+	{
+			Exit_HorrorScope();
+	}			
     
     self.crmod_chase_score = ELOHIM_NEGINF;  // CRMOD make sure they don't have some high rating that can't be beat by the other players
 
@@ -1277,10 +1282,9 @@ void () observer_impulse =
             observer_walk_start();
         else if (self.impulse == 142)
         {
-		if(self.oflags & OBSERVER_ACTIONCAM) 
+		if(self.cam) 
 		{
-			self.oflags = self.oflags - OBSERVER_ACTIONCAM;
-
+			Exit_HorrorScope();
 		}
 		observer_fly_start();
 	}
@@ -1288,7 +1292,14 @@ void () observer_impulse =
         else if (self.impulse == 100)
         {	}
         else if (self.impulse == 143)
+        {
+            if(self.cam) 
+		{
+			Exit_HorrorScope();
+		}
+            
             observer_chase_start();
+	}
         else if (self.impulse == 148)
             observer_heads_up();
         else if (self.impulse == 149)

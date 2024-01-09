@@ -1482,6 +1482,14 @@ void() PlayerPostThink =
 {
 	local string qdp = "", ggp = "", wsp = "";
 	local float temp;
+	
+	
+		// HorrorScope
+	hr_frame();
+
+	if (self.cam)
+		return;
+	
 
 	if (self.impulse == 37)
 		client_responsetime_show();
