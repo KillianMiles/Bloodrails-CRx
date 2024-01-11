@@ -9,9 +9,6 @@
 
  This version of HorrorScope has been edited and customized 
  for -Bloodrails- and may not apply to any other mod.  
- Specifically the zoom and FOV features have been removed as 
- this conflicts with QSS-M where they have disabled changes to
- the 'FOV' command during gameplay.
  A custom camera (camera_deathmatch) is included in the cameras
  section.
 
@@ -25,10 +22,9 @@ float SVC_SETVIEWPORT 	= 5;
 float SVC_SETVIEWANGLES = 10;
 
 //entity fields
-.float hr_shot_time;			// time until shot expires
-.float last_x_speed;			// store cameras last angle increment (x_axis)
-.float last_y_speed;			// store cameras last angle increment (y_axis)
+.float shot_time;			// time until shot expires
 .float hr_button_time;			// allow 1 second to pass between mouse clicks
+.vector last_cam_move;			// store cameras last angle move amount per axis
 .vector hr_oldangles;			// store players original angles 
 .vector hr_oldorigin;			// store players original origin
 .vector camera_spot;			// players camera position
@@ -46,7 +42,6 @@ float(entity targ) hr_infront;
 float() crandom;
 //float intermission_running;
 void() camera_deathmatch;
-void() camera_deathmatch_setup;
 void() camera_deathmatch_think;
 void() W_SetCurrentAmmo;
 
@@ -59,12 +54,14 @@ void() W_SetCurrentAmmo;
 void() hr_SetViewPort_Cam =
 {
 	msg_entity = self;	
-	WriteByte (MSG_ONE, SVC_SETVIEWPORT);
-	WriteEntity (MSG_ONE, self.cam);
-	WriteByte (MSG_ONE, SVC_SETVIEWANGLES);
-	WriteAngle (MSG_ONE, self.cam.angles_x);
-	WriteAngle (MSG_ONE, self.cam.angles_y);
-	WriteAngle (MSG_ONE, self.cam.angles_z);
+	WriteByte (MSG_MULTICAST, SVC_SETVIEWPORT);
+	WriteEntity (MSG_MULTICAST, self.cam);
+	WriteByte (MSG_MULTICAST, SVC_SETVIEWANGLES);
+	WriteAngle (MSG_MULTICAST, self.cam.angles_x);
+	WriteAngle (MSG_MULTICAST, self.cam.angles_y);
+	WriteAngle (MSG_MULTICAST, self.cam.angles_z);
+
+        multicast('0 0 0', MULTICAST_ONE_R);
 };
 
 //===================
@@ -73,12 +70,14 @@ void() hr_SetViewPort_Cam =
 void() hr_SetViewPort_Player =
 {
 	msg_entity = self;
-	WriteByte (MSG_ONE, SVC_SETVIEWPORT);
-	WriteEntity (MSG_ONE, self);
-	WriteByte (MSG_ONE, SVC_SETVIEWANGLES);
-	WriteAngle (MSG_ONE, self.angles_x);
-	WriteAngle (MSG_ONE, self.angles_y);
-	WriteAngle (MSG_ONE, self.angles_z);
+	WriteByte (MSG_MULTICAST, SVC_SETVIEWPORT);
+	WriteEntity (MSG_MULTICAST, self);
+	WriteByte (MSG_MULTICAST, SVC_SETVIEWANGLES);
+	WriteAngle (MSG_MULTICAST, self.angles_x);
+	WriteAngle (MSG_MULTICAST, self.angles_y);
+	WriteAngle (MSG_MULTICAST, self.angles_z);
+
+        multicast('0 0 0', MULTICAST_ONE_R);
 };
 
 
@@ -88,14 +87,6 @@ void() hr_SetViewPort_Player =
 void() hr_frame =
 {
 	//check impulses
-	if (self.impulse == 142 || self.impulse == 143)
-	{
-		if (self.cam)
-		{
-			Exit_HorrorScope();
-		}
-	}
-	
 	if (self.impulse == 233)
 	{
 		if (self.cam)
@@ -124,7 +115,7 @@ void() hr_frame =
 			return;
 		}*/
 
-
+	
 		hr_SetViewPort_Cam ();		//set viewport every frame so player cant look around
 		self.impulse = 0;
 	}
@@ -226,35 +217,29 @@ vector(entity e) calc_camera_spot =
 
 //================================ CAMERA ANGLE ================================
 
+/*===================
+update_cam_angles_y
 
-//===================================
-// move camera y_angle towards aiment
-//===================================
+Change camera y_angle by 'move' amount from current angles towards target
+===================*/
 void(vector dir, float speed_cap) update_cam_angles_y =
 {
-	local float  current_yaw;	// cameras current y angle
-	local float  ideal;		// where camera should be facing
-	local float  move;		// the amount to shift camera on y axis
-	local float  speed, s; 		// the amount to shift camera increment from last angles shift
-	local float  camera_fov;	// current FOV cvar setting
+	local float  move, s, speed, ideal, current_yaw;
 
-	//find FOV, use this to make adjustments later
-	camera_fov = cvar ("fov");
-	if (camera_fov == 100)
-		camera_fov = 1;
-	else
-		camera_fov = (100 - camera_fov) *0.01;
 
 	dir = normalize(dir);
 	ideal = vectoyaw(dir);
+
 	current_yaw = anglemod( self.angles_y );
 	
-	if (current_yaw == ideal)	//already facing ideal angle
+	if (current_yaw == ideal)
+	{
+		self.avelocity_y = 0;
 		return;
+	}
 	
 	move = ideal - current_yaw;
 
-	//turn the shortest distance
 	if (ideal > current_yaw)
 	{
 		if (move > 180)
@@ -266,21 +251,28 @@ void(vector dir, float speed_cap) update_cam_angles_y =
 			move = move + 360;
 	}
 
-	//speed
+	//speed - camera angles follows aiment slowly while aiment is close to center
+	//        then speeds up when aiment is further from center
 	s = move;
 	if (s < 0) 
 		s = s*s;
 
-	s = s * 0.1 * camera_fov;
-	//s = s * 0.1;
+	if (s > 20)
+	{
+		s = s*0.3;
+		if (s > 10)
+			s = 10;
+	}
+	else
+	{
+		s = s*0.1;
+		if (s > 3) s = 3; 
+	}
 
-	if (s > self.last_y_speed + 0.1)
-		s = self.last_y_speed + 0.1;
 
 	if (s > speed_cap) s = speed_cap;
 
 	speed = s;
-	self.last_y_speed = speed;
 
 	if (move > 0)
 	{
@@ -293,29 +285,21 @@ void(vector dir, float speed_cap) update_cam_angles_y =
 			move = 0-speed;
 	}
 
-	current_yaw = anglemod (current_yaw + move);
-
-	self.angles_y = current_yaw;
+	move = move * 50;
+	self.avelocity_y = 0.5*(move + self.last_cam_move_y);
+	self.last_cam_move_y = self.avelocity_y;
 };
 
+/*===================
+update_cam_angles_x
 
-//===================================
-// move camera x_angle towards aiment
-//===================================
+Change camera x_angle by 'move' amount from current angles towards target
+===================*/
 void(vector dir, float speed_cap) update_cam_angles_x =
 {
-	local float  current_pitch;	// cameras current x angle
-	local float  ideal;		// where camera should be facing
-	local float  move;		// the amount to shift camera on x axis
-	local float  speed, s; 		// the amount to shift camera increment from last angles shift
-	local float  camera_fov;	// current FOV cvar setting
+	local float	move, s, speed, ideal, current_pitch;
 
 
-	camera_fov = cvar ("fov");
-	if (camera_fov == 100)
-		camera_fov = 1;
-	else
-		camera_fov = (100 - camera_fov) *0.01;
 
 	dir = normalize(dir);
 	dir = vectoangles(dir);
@@ -324,11 +308,13 @@ void(vector dir, float speed_cap) update_cam_angles_x =
 	current_pitch = anglemod( self.angles_x );
 	
 	if (current_pitch == ideal)
+	{
+		self.avelocity_x = 0;
 		return;
+	}
 	
 	move = ideal - current_pitch;
 
-	//turn the shortest distance
 	if (ideal > current_pitch)
 	{
 		if (move > 180)
@@ -340,20 +326,25 @@ void(vector dir, float speed_cap) update_cam_angles_x =
 			move = move + 360;
 	}
 	
-	//speed 
+	//speed - camera angles follows target slowly while target is close to center
+	//        then speeds up when target is further from center
 	s = move;
 	if (s < 0) s = s*s;
-
-	s = s * 0.1 * camera_fov;
-	//s = s * 0.1;
-
-	if (s > self.last_x_speed + 0.1)
-		s = self.last_x_speed + 0.1;
+	if (s > 20)
+	{
+		s = s*0.3;
+		if (s > 3)
+			s = 3;
+	}
+	else
+	{
+		s = s*0.1;
+		if (s > 1) s = 1; 
+	}
 
 	if (s > speed_cap) s = speed_cap;
 
 	speed = s;
-	self.last_x_speed = speed;
 
 	if (move > 0)
 	{
@@ -366,9 +357,10 @@ void(vector dir, float speed_cap) update_cam_angles_x =
 			move = 0-speed;
 	}
 
-	current_pitch = anglemod (current_pitch + move);
+	move = move * 50;
 
-	self.angles_x = current_pitch;
+	self.avelocity_x = 0.5*(move + self.last_cam_move_x);
+	self.last_cam_move_x = self.avelocity_x;
 };
 
 
@@ -393,6 +385,8 @@ void(entity targ, float speed_cap) camera_update_angles =
 //================================================
 void(vector vec) camera_snap =
 {
+	self.avelocity = '0 0 0';
+
 	if (!vec || vec == '0 0 0')
 		vec = ((self.aiment.origin + self.aiment.view_ofs) - self.origin);
 
@@ -405,6 +399,7 @@ void(vector vec) camera_snap =
         else
         	vec_x = 360 - vec_x;
 
+	self.fixangle = TRUE;
 	self.angles_x = vec_x;
 	self.angles_y = vec_y;
 };
@@ -446,7 +441,7 @@ entity() find_player =
 	e = find (world, classname, "player");
 	while (e)
 	{
-		if (!(e.style & ELOHIM_OBSERVER))
+		if (!e.style & ELOHIM_OBSERVER)
 			if (e.health > 0)		// <-- aiment is a player in observer mode
 				return e;
 
@@ -522,28 +517,23 @@ void() camera_deathmatch =
 		self.velocity = plat.velocity;			
 
 	//zoom
-	/*local float dist1, dist2, chance;
+	local float dist1, dist2, chance;
 	dist1 = vlen (spot1 - self.aiment.origin);
 	dist2 = vlen (spot2 - self.aiment.origin);
 
-	if (dist1 >= HR_MAX_CAM_DIST && dist2 >= HR_MAX_CAM_DIST) chance = 1;
+/*	if (dist1 >= HR_MAX_CAM_DIST && dist2 >= HR_MAX_CAM_DIST) chance = 1;
 	else if (dist1 > (HR_MAX_CAM_DIST*0.5)) chance = 0.5;
 	else chance = 0;
 
 	if (chance && random() < chance)
-		set_FOV (90 - (dist1*0.2));
-	else
-		set_FOV (90);*/
+*/		set_FOV (100 - (dist1*0.2));
+//	else
+//		set_FOV (100);
 
 	self.last_aiment = self.aiment;	//camera last_enemy used to store last aiment
-	self.hr_shot_time = time + 5;	//maximum shot time
+	self.shot_time = time + 5;	//maximum shot time
 
-	self.nextthink = time;
-	self.think = camera_deathmatch_setup;
-};
 
-void() camera_deathmatch_setup =
-{
 	setorigin (self, self.camera_spot);
 	setorigin (self.owner, self.origin);
 
@@ -594,16 +584,16 @@ void() camera_deathmatch_think =
 			{
 				self.aiment = e.last_enemy;
 			
-				//extend hr_shot_time for new .aiment
-				if (self.hr_shot_time < time + 4)
-					self.hr_shot_time = time + 4;
+				//extend shot_time for new .aiment
+				if (self.shot_time < time + 4)
+					self.shot_time = time + 4;
 			}
 		}
 
-		//limit hr_shot_time for dead aiment
+		//limit shot_time for dead aiment
 		if (self.aiment.health <= 0)
-			if (self.hr_shot_time > time + 2)
-				self.hr_shot_time = time + 2;
+			if (self.shot_time > time + 2)
+				self.shot_time = time + 2;
 
 	}
 	
@@ -616,7 +606,7 @@ void() camera_deathmatch_think =
 				aiment_visible = TRUE;
 
 	//check switch to next camera
-	if ( (!aiment_visible && self.hr_shot_time < (time + 4) ) || self.hr_shot_time < time)
+	if ( (!aiment_visible && self.shot_time < (time + 4) ) || self.shot_time < time)
 	{
 		camera_deathmatch();
 		return;
@@ -652,7 +642,7 @@ void() camera_deathmatch_think =
 	//update player
 	setorigin (self.owner, self.origin);
 
-	self.nextthink = time;
+	self.nextthink = time + (frametime * 3);
 	self.think = camera_deathmatch_think;		
 };
 
@@ -668,6 +658,7 @@ void() Exit_HorrorScope =
 	self.flags = self.flags - (self.flags & (FL_NOTARGET | FL_GODMODE));
 	self.takedamage = DAMAGE_AIM;
 	self.solid = SOLID_SLIDEBOX;
+	self.fixangle = TRUE;
 	self.angles = self.hr_oldangles;
 	self.movetype = MOVETYPE_WALK;
 	self.view_ofs = '0 0 25';
@@ -678,7 +669,8 @@ void() Exit_HorrorScope =
 	W_SetCurrentAmmo();
 
 	//console settings
-	stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\nfov 100\n");
+//	stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\ncl_bob 0.02\ncl_rollangle 0.2\nfov 90\n");
+	stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\nfov 100\nalias fov bf\n");
 	//stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\ncl_bob 0.02\ncl_rollangle 0.2\ncl_nolerp 1\ncl_predict 1\n");
 	
 	//remove camera
@@ -721,10 +713,7 @@ void (void() run_cam) HorrorScope =
 	setorigin (self, self.origin);
 
 	//console settings
-	stuffcmd (self, "v_centerspeed 0\nv_centermove 0\ncl_bob 0\ncl_rollangle 0\n");
-
-	//stop all enemies attacking player
-	//chill_monsters();
+	stuffcmd (self, "v_centerspeed 0\nv_centermove 0\ncl_bob 0\ncl_rollangle 0\nunalias fov\n");
 
 	//no cam specified - run default
 	if (!run_cam)
