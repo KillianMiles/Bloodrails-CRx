@@ -14,12 +14,13 @@
 
 =====================================- by Matboe 2023 -======*/
 
-//global variables
+//globals
 float HR_MAX_CAM_DIST	= 768;		// maximum distance to spawn a camera position
 float HR_MIN_CAM_DIST	= 256;		// maximum distance to spawn a camera position
-float hr_print_info	= 1;		// print cam info on/off
+float hr_print_info	= FALSE;	// print cam info on/off
 float SVC_SETVIEWPORT 	= 5;
 float SVC_SETVIEWANGLES = 10;
+float HR_ALLOW_FOV	= TRUE;		// allow changes to client FOV on/off
 
 //entity fields
 .float shot_time;			// time until shot expires
@@ -40,7 +41,7 @@ void() hr_frame;
 float(vector org) hr_visible;
 float(entity targ) hr_infront;
 float() crandom;
-//float intermission_running;
+float intermission_running;
 void() camera_deathmatch;
 void() camera_deathmatch_think;
 void() W_SetCurrentAmmo;
@@ -82,7 +83,7 @@ void() hr_SetViewPort_Player =
 
 
 //====================================================
-// check player impulses and  button press every frame
+// check player impulses and button press every frame
 //====================================================
 void() hr_frame =
 {
@@ -102,7 +103,7 @@ void() hr_frame =
 		}
 	}
 
-	//check button click
+	//player is in HorrorScope mode
 	if (self.cam)
 	{
 		//exit on button press
@@ -116,7 +117,7 @@ void() hr_frame =
 		}*/
 
 	
-		hr_SetViewPort_Cam ();		//set viewport every frame so player cant look around
+		hr_SetViewPort_Cam ();		//set viewport every frame to lock player view to camera angles
 		self.impulse = 0;
 	}
 };
@@ -269,14 +270,9 @@ void(vector dir, float speed_cap) update_cam_angles_y =
 		if (s > 3) s = 3; 
 	}
 
-	//if (s > self.last_cam_speed_y + 0.05)
-	//	s = self.last_cam_speed_y + 0.05;
-
-
 	if (s > speed_cap) s = speed_cap;
 
 	speed = s;
-	//self.last_cam_speed_y = speed;
 
 	if (move > 0)
 	{
@@ -288,9 +284,6 @@ void(vector dir, float speed_cap) update_cam_angles_y =
 		if (move < 0-speed )
 			move = 0-speed;
 	}
-
-//	current_yaw = anglemod (current_yaw + move);
-//	self.angles_y = current_yaw;
 
 	move = move * 50;
 	self.avelocity_y = 0.5*(move + self.last_cam_move_y);
@@ -350,14 +343,9 @@ void(vector dir, float speed_cap) update_cam_angles_x =
 	}
 
 
-	//if (s > self.last_cam_speed_x + 0.05)
-	//	s = self.last_cam_speed_x + 0.05;
-
-
 	if (s > speed_cap) s = speed_cap;
 
 	speed = s;
-	//self.last_cam_speed_x = speed;
 
 	if (move > 0)
 	{
@@ -370,11 +358,7 @@ void(vector dir, float speed_cap) update_cam_angles_x =
 			move = 0-speed;
 	}
 
-//	current_pitch = anglemod (current_pitch + move);
-
-//	self.angles_x = current_pitch;
 	move = move * 50;
-
 	self.avelocity_x = 0.5*(move + self.last_cam_move_x);
 	self.last_cam_move_x = self.avelocity_x;
 };
@@ -417,7 +401,12 @@ void(vector vec) camera_snap =
 
 	self.angles_x = vec_x;
 	self.angles_y = vec_y;
-};
+					/////////////////////////////////////
+	self.punchangle = '0 0 0';	// this is suppsed to resolve the  //
+					// issuse where camera angles snap //
+					// to vector one frame too late.   //
+					// the issue persists however...   //
+};					/////////////////////////////////////
 
 //==========================================================
 // message client to set FOV to value, enforce min/max value
@@ -429,9 +418,6 @@ void(float value) set_FOV =
 
 	if (value > 100)
 		value = 100;
-
-	bprint (ftos (cvar ("fov")));
-	bprint (" <-- FOV\n");
 
 	stuffcmd (self.owner, "fov ");
 	stuffcmd (self.owner, ftos (value));
@@ -451,7 +437,7 @@ void(float value) set_FOV =
  * select players enemy as aiment
 =============================================*/
 
-//find a player entity this is not dead and not an observer
+//find a player entity that is not dead and not an observer
 entity() find_player =
 {
 	local entity e;
@@ -480,7 +466,6 @@ void() camera_deathmatch =
 	if (self.aiment.classname != "player" || self.aiment.health <= 0)
 		self.aiment = find_player();
 	
-
 	//no player found! setup camera nearby player start point 
 	//then try to find a player again in 7 seconds
 	if (self.aiment.classname != "player")
@@ -539,14 +524,14 @@ void() camera_deathmatch =
 	dist1 = vlen (spot1 - self.aiment.origin);
 	dist2 = vlen (spot2 - self.aiment.origin);
 
-/*	if (dist1 >= HR_MAX_CAM_DIST && dist2 >= HR_MAX_CAM_DIST) chance = 1;
+	if (dist1 >= HR_MAX_CAM_DIST && dist2 >= HR_MAX_CAM_DIST) chance = 1;
 	else if (dist1 > (HR_MAX_CAM_DIST*0.5)) chance = 0.5;
 	else chance = 0;
 
 	if (chance && random() < chance)
-*/		set_FOV (100 - (dist1*0.2));
-//	else
-//		set_FOV (100);
+		set_FOV (100 - (dist1*0.2));
+	else
+		set_FOV (100);
 
 	self.last_aiment = self.aiment;	//camera last_enemy used to store last aiment
 	self.shot_time = time + 5;	//maximum shot time
@@ -564,17 +549,6 @@ void() camera_deathmatch_think =
 	local float	aiment_visible;
 	local entity 	plat;
 	
-	//dont show player during intermission
-	/*if (intermission_running)
-	{
-		setmodel (self.aiment, "progs/null.spr");
-		makevectors (self.aiment.angles);
-		setorigin (self, self.aiment.origin + v_up * 12);
-		setorigin (self.owner, self.origin);
-		self.angles = self.aiment.angles;
-		return;
-	}*/
-
 
 	if (self.aiment.classname != "player")
 	{
@@ -587,7 +561,7 @@ void() camera_deathmatch_think =
 
 		//no player found - just stay looking at info_player_start
 		//then reset in 7 seconds
-		if (!e)
+		if (!e || intermission_running)
 		{
 			self.nextthink = time + 7;
 			self.think = camera_deathmatch;
@@ -660,7 +634,7 @@ void() camera_deathmatch_think =
 	//update player
 	setorigin (self.owner, self.origin);
 
-	self.nextthink = time + (frametime * 3);
+	self.nextthink = time + (frametime * 3);	//update camera every 3 frames
 	self.think = camera_deathmatch_think;		
 };
 
@@ -676,7 +650,6 @@ void() Exit_HorrorScope =
 	self.flags = self.flags - (self.flags & (FL_NOTARGET | FL_GODMODE));
 	self.takedamage = DAMAGE_AIM;
 	self.solid = SOLID_SLIDEBOX;
-	self.fixangle = TRUE;
 	self.angles = self.hr_oldangles;
 	self.movetype = MOVETYPE_WALK;
 	self.view_ofs = '0 0 25';
@@ -684,12 +657,13 @@ void() Exit_HorrorScope =
 	self.classname = "player";
 	setsize (self, '-16 -16 -24', '-16 -16 -24');
 	setorigin (self, self.hr_oldorigin);
+	self.punchangle = '0 0 0';
 	W_SetCurrentAmmo();
 
 	//console settings
-//	stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\ncl_bob 0.02\ncl_rollangle 0.2\nfov 90\n");
-	stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\nfov 100\nalias fov bf\n");
-	//stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\ncl_bob 0.02\ncl_rollangle 0.2\ncl_nolerp 1\ncl_predict 1\n");
+	stuffcmd (self, "v_centerspeed 500\nv_centermove 0.15\n");	// reinstate camera wobble from movement keys
+	stuffcmd (self, "fov 100\nalias fov bf\n");			// reinstate fixed FOV 
+	stuffcmd (self, "cl_nolerp 1\n");			 	//fix for view jerking when exiting horrorscope
 	
 	//remove camera
 	remove (self.cam);
@@ -705,7 +679,6 @@ void (void() run_cam) HorrorScope =
 {
 	if (self.cam)
 		remove (self.cam);
-
 
 	//spawn camera
 	self.cam = spawn();
@@ -731,7 +704,8 @@ void (void() run_cam) HorrorScope =
 	setorigin (self, self.origin);
 
 	//console settings
-	stuffcmd (self, "v_centerspeed 0\nv_centermove 0\ncl_bob 0\ncl_rollangle 0\nunalias fov\n");
+	stuffcmd (self, "v_centerspeed 0\nv_centermove 0\ncl_bob 0\ncl_rollangle 0\n");		// kill camera wobble when player presses movement keys
+	stuffcmd (self, "unalias fov\n"); 							// decouple "fov" from "bf" to allow for setting fov value
 
 	//no cam specified - run default
 	if (!run_cam)
