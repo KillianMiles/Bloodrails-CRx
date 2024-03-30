@@ -39,12 +39,12 @@ float OPTIONS_PAUSABLE = 1;
 //
 float () options_get_mode =
 {
-    // if (elohim_playmode & ELOHIM_PRACTICE_MODE && !(elohim_playmode & CLANRING_CTF_MODE))
+    // if (elohim_playmode & RACE_MODE && !(elohim_playmode & CLANRING_CTF_MODE))
     //     return ADMIN_CTF_PRACTICE_MODE;
     if (elohim_playmode & DM_PUBLIC_MODE)
         return ADMIN_DM_PUBLIC_MODE;
-    if (elohim_playmode & ELOHIM_PRACTICE_MODE)
-        return ADMIN_PRACTICE_MODE;
+    if (elohim_playmode & RACE_MODE)
+        return ADMIN_RACE_MODE;
     if (elohim_playmode & ELOHIM_MATCH_MODE && !(elohim_playmode & CLANRING_CTF_MODE))
         return ADMIN_MATCH_MODE;
     if (elohim_playmode & ELOHIM_MATCH_MODE)
@@ -122,7 +122,7 @@ void () options_start_setting =
     else
         self.aflag = 0;
     self.aflag = self.aflag | (elohim_playmode &
-        (ELOHIM_NO_ARMOR | ELOHIM_NO_QUAD | ELOHIM_NO_PENT | ELOHIM_NO_RING | ELOHIM_MODE_VOTE));    //Bloodrails - added ELOHIM_NO_ARMOR
+        (ELOHIM_NO_ARMOR | ELOHIM_NO_QUAD | ELOHIM_NO_PENT | ELOHIM_NO_RING | ELOHIM_MODE_VOTE));    //added ELOHIM_NO_ARMOR
 
     self.worldtype = cvar("sys_ticrate");
 
@@ -144,13 +144,13 @@ void () options_change =
         // change mode
         if (self.pos1_z == ADMIN_NORMAL_MODE)
         {
-            self.pos1_z = ADMIN_PRACTICE_MODE;
-            if (elohim_playmode & ELOHIM_PRACTICE_MODE)
+            self.pos1_z = ADMIN_RACE_MODE;
+            if (elohim_playmode & RACE_MODE)
                 self.pos1_x = cvar("timelimit");
             else
                 self.pos1_x = 0;
         }
-        else if (self.pos1_z == ADMIN_PRACTICE_MODE)
+        else if (self.pos1_z == ADMIN_RACE_MODE)
         {
             self.pos1_z = ADMIN_MATCH_MODE;
             self.pos1_x = elohim_timelimit;
@@ -159,7 +159,7 @@ void () options_change =
         else
         {
             self.pos1_z = ADMIN_NORMAL_MODE;
-            if (!(elohim_playmode & (ELOHIM_PRACTICE_MODE | ELOHIM_MATCH_MODE)))
+            if (!(elohim_playmode & (RACE_MODE | ELOHIM_MATCH_MODE)))
                 self.pos1_x = cvar("timelimit");
             else
                 self.pos1_x = 30;
@@ -277,7 +277,7 @@ void () options_change =
             self.aflag = self.aflag + ELOHIM_MODE_VOTE;
     }
     
-        else if (self.t_length == 24)                       //Bloodrails added
+        else if (self.t_length == 24)
     {
         // change ARMOR
         if (self.aflag & ELOHIM_NO_ARMOR)

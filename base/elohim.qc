@@ -1,4 +1,4 @@
-//
+﻿//
 // Elohim.qc
 //
 // This is the main file for CRMod++.  CRMod++ was derived from the
@@ -158,7 +158,7 @@ void () elohim_init_world =
   
 	if (cvar("pr_checkextension"))
 	{
-		if (checkextension("QUAKE_EX"))  //additional FTE server check
+		if (checkextension("FTE_MULTIPROGS"))  //additional FTE server check
 		{
 			fte_server = 0;
 		}
@@ -172,9 +172,9 @@ void () elohim_init_world =
   
 
 
-  elohim_version = "BR 12-31-23 .X1"; 
-  elohim_version_info = "Bloodrails CRx";
-  bloodrails_version_number = "12-31-23";   // CRMOD - string to be used throughout
+  elohim_version = "BR 3-28-24 .X1"; 
+  elohim_version_info = "Bloodrailz CRx";
+  bloodrailz_version_number = "12-31-23";   // CRMOD - string to be used throughout
           //         code to show version number.
 
   // Initialize user map names, MOTD, and hotspots, etc..
@@ -186,10 +186,91 @@ void () elohim_init_world =
 	world.style = ELOHIM_ADMINISTRATOR;
 
   // Precache sound used when players connect
-  precache_sound("legacy/wizard_wsight.wav");
+  precache_sound("bloodrailz/legacy/wizard_wsight.wav");
 
   // Get/set console variables
+  
+  
+  
   elohim_playmode = cvar("samelevel");
+  
+
+		local float RACE_YES=0;
+		if (mapname == "race24") RACE_YES=1;
+		else if (mapname == "race23") RACE_YES=1;
+		else if (mapname == "race22") RACE_YES=1;
+		else if (mapname == "race21") RACE_YES=1;
+		else if (mapname == "race20") RACE_YES=1;
+		else if (mapname == "race19") RACE_YES=1;
+		else if (mapname == "race18") RACE_YES=1;
+		else if (mapname == "race17") RACE_YES=1;
+		else if (mapname == "race16") RACE_YES=1;
+		else if (mapname == "race15") RACE_YES=1;
+		else if (mapname == "race14") RACE_YES=1;
+		else if (mapname == "race13") RACE_YES=1;
+		else if (mapname == "race12") RACE_YES=1;
+		else if (mapname == "race11") RACE_YES=1;
+		else if (mapname == "race10") RACE_YES=1;
+		else if (mapname == "race9") RACE_YES=1;
+		else if (mapname == "race8") RACE_YES=1;
+		else if (mapname == "race7") RACE_YES=1;
+		else if (mapname == "race6") RACE_YES=1;
+		else if (mapname == "race5") RACE_YES=1;
+		else if (mapname == "race4") RACE_YES=1;
+		else if (mapname == "race3") RACE_YES=1;
+		else if (mapname == "race2") RACE_YES=1;
+		else if (mapname == "race1") RACE_YES=1;
+		else if (mapname == "race") RACE_YES=1;
+		else if (mapname == "slide12") RACE_YES=1;
+		else if (mapname == "slide11") RACE_YES=1;
+		else if (mapname == "slide10") RACE_YES=1;
+		else if (mapname == "slide9") RACE_YES=1;
+		else if (mapname == "slide8") RACE_YES=1;
+		else if (mapname == "slide7") RACE_YES=1;
+		else if (mapname == "slide6") RACE_YES=1;
+		else if (mapname == "slide5") RACE_YES=1;
+		else if (mapname == "slide4") RACE_YES=1;
+		else if (mapname == "slide3") RACE_YES=1;
+		else if (mapname == "slide2") RACE_YES=1;
+		else if (mapname == "slide1") RACE_YES=1;
+		else if (mapname == "slide") RACE_YES=1;
+		else if (mapname == "subslide") RACE_YES=1;
+		else if (mapname == "treerace") RACE_YES=1;
+		else if (mapname == "slidefox") RACE_YES=1;
+		else if (mapname == "treerace") RACE_YES=1;	
+		else if (mapname == "race_orange_b1") RACE_YES=1;
+		else if (mapname == "race_orange_b2") RACE_YES=1;
+		else if (mapname == "race_orange_b3") RACE_YES=1;
+		else if (mapname == "race_valley_b2") RACE_YES=1;
+		else if (mapname == "race_valley_b3") RACE_YES=1;
+		else if (mapname == "race_valley_b4") RACE_YES=1;
+		else if (mapname == "petra") RACE_YES=1;
+		
+		if(RACE_YES==1 && !(elohim_playmode & RACE_MODE))
+		{
+			elohim_playmode = elohim_playmode - (elohim_playmode & (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE | ELOHIM_NO_ARMOR));
+            
+			elohim_playmode = elohim_playmode | RACE_MODE;
+			elohim_playmode = elohim_playmode | ELOHIM_NO_ARMOR;
+			utils_set_cvar("timelimit", 0);
+			cvar_set("hostname", ADMIN_RACE_MODE_STRING);
+			
+			spawn_race_entities();
+		}
+		else if(RACE_YES==0 && (elohim_playmode & RACE_MODE))
+		{
+			elohim_playmode = elohim_playmode - (elohim_playmode & (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE | ELOHIM_NO_ARMOR));
+
+			 elohim_maxsize = 16;
+       			 elohim_teamsize1 = 0;
+        			elohim_teamsize2 = 0;
+       			 elohim_playmode = elohim_playmode | CLANRING_CTF_MODE;   
+        		if (!(elohim_playmode & CLANRING_RUNES)) elohim_playmode = elohim_playmode | CLANRING_RUNES;
+
+     			   utils_set_cvar("timelimit", elohim_timelimit);
+        		cvar_set("hostname", ADMIN_CTF_PUBLIC_MODE_STRING);
+		}
+  
   if (mode_is_public_ctf()) 
   {
     teamplay = 4;  
@@ -292,13 +373,13 @@ void () elohim_init_world =
   {
     elohim_timelimit = cvar("timelimit");
     if (elohim_timelimit == 0)
-      elohim_timelimit = 15;
+      elohim_timelimit = 10;
     if (elohim_timelimit < 2)
       elohim_timelimit = 2;
     match_show_timelimit();
   }
   else
-    elohim_timelimit = 15;
+    elohim_timelimit = 10;
 
   // show mode
   mode = options_get_mode();
@@ -315,6 +396,11 @@ void () elohim_init_world =
   // interfere with the password
   if (elohim_playmode & ELOHIM_DEDICATED_SERVER)
     utils_make_scheduled_event(elohim_load_entities, 0.2);
+    
+
+	
+    
+    
 };
 
 //
@@ -358,7 +444,7 @@ void (float value) elohim_set_teamplay =
     if (value != -1)
 		teamplay = value;
     temp = ftos(teamplay);
-    localcmd5("teamplay \"", temp, "?CRX", bloodrails_version_number, "M\"\n");
+    localcmd5("teamplay \"", temp, "?CRX", bloodrailz_version_number, "M\"\n");
 };
 
 //
@@ -405,7 +491,7 @@ void (float value) elohim_set_fraglimit =
       else 
 		    localcmd("Match\"\n");
     }
-    else if (elohim_playmode & ELOHIM_PRACTICE_MODE)
+    else if (elohim_playmode & RACE_MODE)
     {
       if (elohim_playmode & CLANRING_CTF_MODE)
         localcmd("CTFPractice\"\n");
@@ -433,7 +519,7 @@ void () stuff_aliases =
   stuffcmd(self, "seta scr_usekfont 0;\n");
 
   //sprint(self, "Sending aliases...\n");
-  sprint(self, "_Aliases sent!\n");
+  //sprint(self, "_Aliases sent!\n");
 
   // Set aliases
 
@@ -559,7 +645,7 @@ void () elohim_set_aliases =
 //
 void () elohim_pre_set_aliases = 
 {
-	sprint(self.owner, "_Sending aliases...\n");
+	//sprint(self.owner, "_Sending aliases...\n");
 	
 	//sprint(self.owner, "use -zone 512 if quake crashes\n");
 
@@ -579,7 +665,7 @@ void () elohim_init_think =
   temp = self;
   self = self.owner;
   if (!(elohim_playmode & ELOHIM_MATCH_MODE) ||	!(elohim_state & ELOHIM_MATCH_STARTED))
-		sound(self, CHAN_AUTO, "legacy/wizard_wsight.wav", 1, ATTN_NONE);
+		sound(self, CHAN_AUTO, "bloodrailz/legacy/wizard_wsight.wav", 1, ATTN_NONE);
 	if (utils_illegal_name(self.netname))
 		stuffcmd(self, "name player\n");
 	
@@ -606,19 +692,13 @@ void () elohim_show_mode =
       else 
         sprint(self.owner, "match mode - help-match for help\n");
     }
-    else if (elohim_playmode & ELOHIM_PRACTICE_MODE)
+    else if (elohim_playmode & RACE_MODE)
     {
       if (elohim_playmode & CLANRING_CTF_MODE)
         sprint(self.owner, "ctf practice mode\n");
       else
-        sprint(self.owner, "practice mode\n");
+        sprint(self.owner, "Race mode\n\n------------------\n");
     }
-    else if (elohim_playmode & AIR_ARENA_MODE)
-      sprint(self.owner, "airshot mode\n");
-    else if (elohim_playmode & CLAN_ARENA_MODE)
-      sprint(self.owner, "clan arena mode\n");
-    else if (elohim_playmode & ROCKET_ARENA_MODE)
-      sprint(self.owner, "rocket arena mode\n");
     else if (elohim_playmode & DM_PUBLIC_MODE)
       sprint(self.owner, "public tdm mode\n");
     else
@@ -853,7 +933,7 @@ void () elohim_put_client_in_server =
       spawn_tdeath (self.origin, self);
       makevectors(self.angles);
       spawn_tfog (self.origin + v_forward*20);
-      self.oflags = self.oflags - self.oflags & (OBSERVER_WALK | OBSERVER_FLY | OBSERVER_CHASE | OBSERVER_DEMO | OBSERVER_CAMERA | OBSERVER_AUTO | OBSERVER_ACTIONCAM);                   //Bloodrails - debug spawn issue ctf
+      self.oflags = self.oflags - self.oflags & (OBSERVER_WALK | OBSERVER_FLY | OBSERVER_CHASE | OBSERVER_DEMO | OBSERVER_CAMERA | OBSERVER_AUTO | OBSERVER_ACTIONCAM);
     }
     else
     {
@@ -941,8 +1021,8 @@ void () elohim_help_misc =
     sprint(self, " setATX   - enable/disable ATX mode\n"); 
     sprint(self, " setrunes  - enable/disable runes\n");
     
-    sprint(self, " setarmor   - enable/disable armor\n");           //Bloodrails
-    sprint(self, " setrail   - enable/disable railgun\n");           //Bloodrails
+    sprint(self, " setarmor   - enable/disable armor\n");          
+    sprint(self, " setrail   - enable/disable railgun\n");       
     sprint(self, " sethook   - enable/disable hook\n");
     
     sprint(self, " shuffle   - shuffle teams\n");
@@ -1038,7 +1118,7 @@ void () elohim_commands =
   {
     sprint(self, " help-admin | force\n");
     sprint(self, " setcharge | kick!\n");          // CRMOD - changed spooge to (dis)charge
-    sprint(self, " abortmatch | ghostlist\n");
+    sprint(self, " abort | ghostlist\n");
     sprint(self, " modevote | spot\n");
     sprint(self, " nextspawn | makespawn\n");
     sprint(self, " nextcam | makecam\n");
@@ -1187,7 +1267,7 @@ void () elohim_impulse =
 		self.finaldest_x = time;
 	else if (self.impulse < 100)
 	{
-    if ((self.impulse == 40 && (elohim_playmode & CLANRING_RUNES))    ||    (self.impulse == 40 && (elohim_playmode & ELOHIM_PRACTICE_MODE))  )
+    if ((self.impulse == 40 && (elohim_playmode & CLANRING_RUNES))    ||    (self.impulse == 40 && (elohim_playmode & RACE_MODE))  )
     {
        if (!(self.player_flag & PF_ITEM_RUNE_MASK))
        {
@@ -1201,20 +1281,24 @@ void () elohim_impulse =
       if (self.player_flag & PF_ITEM_RUNE_MASK)
         rune_drop();
         
-      if(elohim_playmode & ELOHIM_PRACTICE_MODE)
+      if(elohim_playmode & RACE_MODE)
       {
-	self.shield_time = 0;
-	self.shield_recharge_time = 1;
-	
-	self.my_previous_time = 0;
-	self.racing_on = 0;
-	racing_on_global = 0;
-	countdown = 0;
-	countdown_ct = 0;
-	ClientKill();
+		self.shield_time = 0;
+		self.shield_recharge_time = 1;
+		
+		if(self.race_completed == 0) 
+		{
+			self.racing_on = 0;
+			sprint(self, "   \b.\b\n");
+			sprint(self, "   \b[RUN RESET]\b\n");
+			sprint(self, "------------------\n");
+		}
+		racing_on_global = 0;
+		spawn_race_entities();
+		ClientKill();
 	}
     }
-		else if ((self.impulse >= 40) && (self.impulse <= 59))
+		else if ((self.impulse > 40) && (self.impulse <= 59))
 			debug_impulse();
     else if (self.impulse == 70)
       elohim_init_set_hud();
@@ -1486,14 +1570,13 @@ void () show_rules_prematch =
     timervar = elohim_match_timer.count;
   }
 
-  if (timervar > 10)
-    s0 = "\n\n";
+  if (timervar > 15)	s0 = "\n\n";   //021824
   else
 	  s0 = strings_countdown(timervar);
 
 	if (timervar > 3)
 	{
-    s1 = strings_mode_countdown();
+		s1 = strings_mode_countdown();
 
 		temp = elohim_timelimit;	
 		s2 = strings_timelimit_countdown(temp);
@@ -1509,28 +1592,22 @@ void () show_rules_prematch =
 			s4 = "               \n";
 
 		if (elohim_playmode & ELOHIM_NO_THROWABLES)
-    {
-  		if (elohim_playmode & ELOHIM_GG_MOD)
-        s5 = "                                        \n";
-      else
-        s5 = "                                        \n";
-    }
+		{
+			if (elohim_playmode & ELOHIM_GG_MOD)	s5 = "                                        \n";
+			else					s5 = "                                        \n";
+		}
  
 
-    if (elohim_playmode & CLANRING_RUNES)
-    {
-      if (elohim_playmode & ELOHIM_NO_HOOK)
-        s6 = "\bhook        \boff\n\brunes        \bon\n";
-      else
-        s6 = "\bhook         \bon\n\brunes        \bon\n"; 
-    }
-    else
-    {
-      if (elohim_playmode & ELOHIM_NO_HOOK)
-        s6 = "\bhook        \boff\n\brunes       \boff\n";
-      else
-        s6 = "\bhook         \bon\n\brunes       \boff\n"; 
-    }
+		if (elohim_playmode & CLANRING_RUNES)
+		{
+			if (elohim_playmode & ELOHIM_NO_HOOK)	s6 = "\bhook        \boff\n\brunes        \bon\n";
+			else					s6 = "\bhook         \bon\n\brunes        \bon\n"; 
+		}
+		else
+		{
+			if (elohim_playmode & ELOHIM_NO_HOOK)	s6 = "\bhook        \boff\n\brunes       \boff\n";
+			else					s6 = "\bhook         \bon\n\brunes       \boff\n"; 
+		}
 
 		centerprint7(self, s0, s1, s2, s3, s4, s5, s6);
 	}

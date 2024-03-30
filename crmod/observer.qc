@@ -158,7 +158,7 @@ void () observer_check_demo_end =
 {
     if (self.oflags & OBSERVER_DEMO)
     {
-        setmodel (self, "progs/null.mdl");
+        setmodel (self, "progs/bloodrailz/null.mdl");
         self.model = string_null;
         msg_entity = self;
         WriteByte(MSG_ONE, SVC_SETVIEWPORT);
@@ -197,17 +197,17 @@ void () observer_fly_start =
     self.oflags = self.oflags | OBSERVER_FLY;
     stuffcmd(self, "viewsize 130\n");
     self.movetype = MOVETYPE_FLY;
-    self.view_ofs = '0 0 22';
+    //self.view_ofs = '0 0 22';
     self.flags = self.flags | FL_ONGROUND;
 	self.waterlevel = 0;
 	//sprint(self, "disabling 'smooth' mode\n");
     stuffcmd(self, "cl_nolerp 0\n");
-    stuffcmd(self, "cl_predict 1\n");
+  //  stuffcmd(self, "cl_predict 1\n");
     stuffcmd(self, "v_centerspeed 500\n");
     sprint(self, "fly mode - help-fly for help\n");
     self.alpha = 0.001;  //9-17-23  observer transparent
     
-    if(self.style & ELOHIM_OBSERVER) self.style = self.style | ELOHIM_OBSERVER;
+    if(!(self.style & ELOHIM_OBSERVER)) self.style = self.style | ELOHIM_OBSERVER;
 };
 
 //
@@ -386,11 +386,6 @@ void () observer_start =
     //local float go_auto;
     
       //if (!(self.player_flag & PF_HUD)) self.player_flag = self.player_flag | PF_HUD;
-      
-	if (self.cam)
-	{
-			Exit_HorrorScope();
-	}			
     
     self.crmod_chase_score = ELOHIM_NEGINF;  // CRMOD make sure they don't have some high rating that can't be beat by the other players
 
@@ -409,7 +404,7 @@ void () observer_start =
         self.height = 0;
     }
 
-    self.style = self.style | ELOHIM_OBSERVER;
+    if(!(self.style & ELOHIM_OBSERVER)) self.style = self.style | ELOHIM_OBSERVER;
 
     rune_drop();
     UnHookPlayer ();
@@ -532,7 +527,7 @@ void () observer_end =
     
     stuffcmd(self, "viewsize 110\n");
     
-    self.style = self.style - (self.style & ELOHIM_OBSERVER);
+    if(self.style & ELOHIM_OBSERVER) self.style = self.style - ELOHIM_OBSERVER;
     if (self.player_flag & PF_HUD) self.player_flag = self.player_flag - PF_HUD;
 
 
@@ -547,7 +542,7 @@ void () observer_end =
     if (self.style & ELOHIM_HEADS_UP)
 	    stuffcmd(self, "viewsize 100\n");
     if (!(elohim_playmode & ELOHIM_MATCH_MODE) && !(mode_is_public()) && !(mode_is_arena()))
-        centerprint(self, "Observer mode off");
+        //centerprint(self, "Observer mode off");
 
 	// This is to prevent a condition where one player is another player's
 	// movetarget, which can confuse the auto module.
@@ -1279,12 +1274,15 @@ void () observer_impulse =
     if (self.style & ELOHIM_OBSERVER)
     {
         if (self.impulse == 141)
-            observer_walk_start();
+        {
+		observer_walk_start();
+	}
         else if (self.impulse == 142)
         {
-		if(self.cam) 
+		if(self.oflags & OBSERVER_ACTIONCAM) 
 		{
-			Exit_HorrorScope();
+			self.oflags = self.oflags - OBSERVER_ACTIONCAM;
+
 		}
 		observer_fly_start();
 	}
@@ -1292,14 +1290,7 @@ void () observer_impulse =
         else if (self.impulse == 100)
         {	}
         else if (self.impulse == 143)
-        {
-            if(self.cam) 
-		{
-			Exit_HorrorScope();
-		}
-            
             observer_chase_start();
-	}
         else if (self.impulse == 148)
             observer_heads_up();
         else if (self.impulse == 149)
@@ -1318,8 +1309,6 @@ void () observer_impulse =
 		// CRMOD no longer used	utils_toggle_oflag(OBSERVER_AUTO, "Automatic Chase/Camera Mode");
 		else if (self.impulse == 153)
 			observer_camera_start();
-		else if (self.impulse == 154)
-			auto_camera_start();
 		else if (self.impulse == 155)
 			auto_chase_start();
     }
@@ -1486,12 +1475,19 @@ void () observer_update_display =
 	player = self.movetarget;
 	if ((player != world) && (player.classname == "elohim_camera"))
 		player = player.movetarget;
+		
+	if (elohim_playmode & RACE_MODE && time < 2)
+    {
+        stuffcmd(self, "impulse 120\n");
+        //return;
+    }
 
     if ((mode_is_public()) && !(self.style & ELOHIM_MOTD) && !(self.player_flag & PF_HUD))
     {
         centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPress \bF1\b to join");
         return;
     }
+	
 
 
     if (!player)

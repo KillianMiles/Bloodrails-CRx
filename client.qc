@@ -119,7 +119,7 @@ void() SetClanArenaParms =
 //
 void() SetNewParms =
 {
-    if (elohim_playmode & ELOHIM_PRACTICE_MODE)
+    if (elohim_playmode & RACE_MODE)
         SetPracticeParms();
 	else if (mode_is_arena())
 		SetClanArenaParms();
@@ -149,8 +149,8 @@ void() SetNewParms =
 //
 void() SetNewParms2 =
 {
-    if (elohim_playmode & ELOHIM_PRACTICE_MODE)
-        {                               //Bloodrails - Practice armor (Full armor)
+    if (elohim_playmode & RACE_MODE)
+        {                               //Practice armor (Full armor)
         SetPracticeParms();
        // self.items = self.items | IT_ARMOR3;
        // self.armorvalue = 200;
@@ -503,10 +503,12 @@ void() respawn =
 
 	self.axe_powered = 0;
 	self.mag_recharge_time = time - 3.3;
+	self.shield_time = time - 10;
+	self.shield_recharge_time  = time - 10;
 	
 				
 	self.spawn_protect_time = time;      //ammo_rockets = spawn_protect_time
-	if (!(elohim_playmode & ELOHIM_PRACTICE_MODE) && !(elohim_playmode & ELOHIM_NO_SPAWN_PROTECT))
+	if (!(elohim_playmode & RACE_MODE) && !(elohim_playmode & ELOHIM_NO_SPAWN_PROTECT))
 	{
 		if(!(self.items & IT_ARMOR1) && !(self.items & IT_ARMOR2) && !(self.items & IT_ARMOR3)) self.items = self.items | IT_ARMOR1;   //SPAWN PROTECT
 		self.armorvalue  	= 125;
@@ -539,21 +541,20 @@ void() ClientKill =
         return;
 
     // check for maximum number of suicides
-    if ((elohim_client_suicide() == ELOHIM_TOO_MANY_SUICIDES)  && !(elohim_playmode & ELOHIM_PRACTICE_MODE))
+    if ((elohim_client_suicide() == ELOHIM_TOO_MANY_SUICIDES)  && !(elohim_playmode & RACE_MODE))
         return;
     // END_MOD
 	
 	
 	
 	
-	if(!(elohim_playmode & ELOHIM_PRACTICE_MODE))
+	if(!(elohim_playmode & RACE_MODE))
 	{
 		bprint (self.netname);
 		bprint (" suicides\n");
 	}
 	
 	set_suicide_frame ();
-	self.modelindex = modelindex_player;
 
 	if (elohim_playmode & CLANRING_CTF_MODE)
 	{
@@ -636,7 +637,7 @@ entity() SelectTeamSpawnPoint =
 	local   float curTeam;
 
 	//if possible, first spawn should be near base
-	if ((elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & ELOHIM_PRACTICE_MODE)) 
+	if ((elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & RACE_MODE)) 
 		&& !(self.player_flag & PF_FIRST_SPAWN) && (self.style & ELOHIM_READY))
 	{
 		if (self.player_flag & PF_MIDGAME_JOIN)
@@ -883,8 +884,7 @@ void() PutDummyInServer =
 	setorigin(dummy, spot.origin + '0 0 -3');	//R00k: change our origin and relink our edict.
 	dummy.oldorigin = dummy.origin;			//R00k: update oldorigin so we dont respawn where we died.
 
-	setmodel(dummy, "progs/player.mdl");
-	modelindex_player = dummy.modelindex;
+	setmodel(dummy, "progs/bloodrailz/player.mdl");
 
 	setsize (dummy, VEC_HULL_MIN, VEC_HULL_MAX);
 	
@@ -906,7 +906,7 @@ void() PutDummyInServer =
 void() PutClientInServer =
 {
 	local	entity spot, teamSpot;
-        self.modelindex = 0;     //shambler bug h_player debug
+        self.modelindex = 0;    
 	
 		spot = SelectSpawnPoint ();
 
@@ -967,7 +967,7 @@ void() PutClientInServer =
 				self.height = self.team - 1;
 				 
 				
-				self.skin = 1;  // Bloodrails skin fullbright red ^^^switch
+				self.skin = 1;  //skin fullbright red ^^^switch
 			}
 			else 
 			{
@@ -976,7 +976,7 @@ void() PutClientInServer =
 				self.height = self.team - 1;
 				
 				
-				self.skin = 2;  // Bloodrails skin fullbright blue  ^^^switch
+				self.skin = 2;  //skin fullbright blue  ^^^switch
 			}
 		}
 	}
@@ -1003,14 +1003,9 @@ void() PutClientInServer =
 	self.jump_flag 	= 0; // clear jump velocity to prevent falling damage
 
 // oh, this is a hack!
-	if (modelindex_eyes == 0) //R00k: hasn't been done yet
-	{
-		setmodel (self, "progs/h_player.mdl");
-		modelindex_head = self.modelindex;
-	}
 
-	setmodel(self, "progs/player.mdl");
-	modelindex_player = self.modelindex;
+
+	setmodel(self, "progs/bloodrailz/player.mdl");
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
@@ -1020,7 +1015,7 @@ void() PutClientInServer =
 
 	                        
 
-	if (elohim_playmode & ELOHIM_WRAITH && self.wraith ==1)       //Bloodrails - start player with Axe and Railgun (with 999 ammo)
+	if (elohim_playmode & ELOHIM_WRAITH && self.wraith ==1)       //start player with Axe and Railgun (with 999 ammo)
 	{
 	self.items = 0;
 	self.items = self.items | IT_AXE | IT_HOOK | IT_INVISIBILITY | IT_SUIT;
@@ -1030,20 +1025,17 @@ void() PutClientInServer =
         {
 	self.items = 4098; 
 	self.impulse = 3;
-	if(!(elohim_playmode & ELOHIM_NOAMMO)) self.ammo_slugs = 6;
-	else if(elohim_playmode & ELOHIM_NOAMMO) self.ammo_slugs = 999;
+	if(!(elohim_playmode & ELOHIM_NOAMMO) && !(elohim_playmode & PROJECTILES)) self.ammo_slugs = 7;
+	else if(elohim_playmode & PROJECTILES) self.ammo_slugs = 9;
+	
+	if(elohim_playmode & ELOHIM_NOAMMO) self.ammo_slugs = 999;
 		   
         }     
          
 
-	if (elohim_playmode & ELOHIM_ARMOR_100)       //Bloodrails - start player with 100 armor
-	{
-	self.items = self.items | IT_ARMOR3;
-	self.armorvalue  	= 100;
-	self.armortype   	= 80.001;
-	}
+
 	
-	if (elohim_playmode & ELOHIM_PRACTICE_MODE)       //Bloodrails - start player with 200 red armor if Practice (Full armor)  this replaces set200
+	if (elohim_playmode & RACE_MODE)       //start player with 200 red armor if Practice (Full armor)  this replaces set200
 	{
 	self.items = self.items | IT_ARMOR3;
 	self.armorvalue  	= 200;
@@ -1051,9 +1043,15 @@ void() PutClientInServer =
 	}
 	
 	
+	self.alpha = 1; //JANUARY player model gib bug
 	
 	stuffcmd(self, "cl_forwardspeed 200\n");     //make sure the maxspeed gets reset 9-17-23
 	stuffcmd(self, "cl_sidespeed 350\n");
+	stuffcmd(self, "gl_polyblend 1\n");
+	stuffcmd(self, "gl_cshiftpercent_damage 25\n");
+	
+	stuffcmd(self, "cl_bob 0.0032\n");
+	stuffcmd(self, "cl_bobcycle 2.5\n");
 
 
     // Add elohim specific stuff
@@ -1259,7 +1257,7 @@ void() PlayerDeathThink =
 
 	else delay_VAR = 2.3;
 	
-	if((elohim_playmode & ELOHIM_CLASSIC) || (!(elohim_playmode & DM_PUBLIC_MODE) && !(elohim_playmode & CLANRING_CTF_MODE) && !(elohim_playmode & ELOHIM_PRACTICE_MODE))) delay_VAR = 0.10;   //respawn delay
+	if((elohim_playmode & ELOHIM_CLASSIC) || (!(elohim_playmode & DM_PUBLIC_MODE) && !(elohim_playmode & CLANRING_CTF_MODE) && !(elohim_playmode & RACE_MODE))) delay_VAR = 0.10;   //respawn delay
 	
 	
 	
@@ -1315,7 +1313,7 @@ void() WaterMove =
 	{
 		if (self.flags & FL_INWATER)
 		{
-			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);	// play leave water sound
+			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_BODY, "bloodrailz/misc/outwater.wav", 1, ATTN_NORM);	// play leave water sound
 			self.flags = self.flags - FL_INWATER;
 		}
 		return;
@@ -1344,9 +1342,9 @@ void() WaterMove =
 		// player enter water sound
 		if (!(self.style & ELOHIM_OBSERVER))
 		{
-			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_BODY, "player/inh2o.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "bloodrailz/player/inlava.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_BODY, "bloodrailz/player/inh2o.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_BODY, "bloodrailz/player/slimbrn2.wav", 1, ATTN_NORM);
 		}
 
 
@@ -1482,14 +1480,6 @@ void() PlayerPostThink =
 {
 	local string qdp = "", ggp = "", wsp = "";
 	local float temp;
-	
-	
-		// HorrorScope
-	hr_frame();
-
-	if (self.cam)
-		return;
-	
 
 	if (self.impulse == 37)
 		client_responsetime_show();
@@ -1611,7 +1601,25 @@ void() PlayerPostThink =
 // do weapon stuff
 	W_WeaponFrame ();
 
-
+	if(time - self.ski_time2 < 1.20 && self.skiing_on !=0) //dont swing axe if skiing
+	{
+		if(!self.hook_out && (self.impulse !=41))
+		{
+			if(self.ski_sound_counter <16) self.frame = 111;
+			else if(self.ski_sound_counter <=32) self.frame = 112;
+			else self.frame = 112;
+		}
+		
+	}
+	else if(time - self.axe_time <0.1 && time-self.ski_time2 < 0.5)
+	{
+		if(self.ski_sound_counter <16) self.frame = 111;
+		else if(self.ski_sound_counter <=32) self.frame = 112;
+		else self.frame = 112;	
+	}
+	else if(time - self.axe_time <0.1 || self.flags & FL_ONGROUND || self.hook_out) self.ski_time2 -=1;
+	
+	//if(self.grind_sound_counter1 != 18) self.frame = 110;   //head grind
     // END_MOD
 	
 	
@@ -1655,7 +1663,7 @@ void() ClientDisconnect =
 	// if the level end trigger has been activated, just return
 	// since they aren't *really* leaving
 
-	if (!(elohim_playmode & ELOHIM_PRACTICE_MODE))
+	if (!(elohim_playmode & RACE_MODE))
 	{
 		if(self.items & (IT_KEY1 | IT_KEY2))
 			ctf_player_drop_flag(self, 0);
@@ -1680,9 +1688,9 @@ void() ClientDisconnect =
 
     // ELOHIM_MOD - play gib sound if client was kicked for suiciding
     if (self.cnt < 0)
-        sound(self, CHAN_BODY, "player/gib.wav", 1, ATTN_NONE);
+        sound(self, CHAN_BODY, "bloodrailz/player/gib.wav", 1, ATTN_NONE);
     else
-        sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
+        sound (self, CHAN_BODY, "bloodrailz/player/tornoff2.wav", 1, ATTN_NONE);
     // END_MOD
 
 	set_suicide_frame ();

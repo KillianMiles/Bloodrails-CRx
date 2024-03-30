@@ -96,6 +96,11 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint(" forgot about the power");
 					bprint ("\n");
 				}
+				else if (damage == 35)
+				{
+					bprint(" mis-handled his plasma ball");
+					bprint ("\n");
+				}
 				else if (damage == 400.5 || damage == 40)
 				{
 					bprint(" discovers blast radius");
@@ -179,7 +184,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			else
 			{
 				// killed enemy
-				if (elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & ELOHIM_PRACTICE_MODE))
+				if (elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & RACE_MODE))
 				{
 					flag_radius = 0;
 					flag_carrier_radius = 0;
@@ -365,7 +370,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					attacker.death_aura_frag =0;
 			}
 		
-			else if(attacker.plasma_frag >0 )
+			else if(attacker.plasma_frag >0)
 			{
 					if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
 					{
@@ -412,8 +417,25 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					
 					bprint ("\n");		
 			}
-	
-	
+			else if(damage ==35)
+			{
+				attacker.plasma_frag = attacker.plasma_frag +1;
+				if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
+					{
+						bprint (targ.netname);
+						bprint (" was torn apart ");
+						bprint (attacker.netname);
+						bprint ("'s plasma blast");
+						
+					}
+					else
+					{
+						bprint (targ.netname);
+						bprint (" was plasma-blasted by ");
+						bprint (attacker.netname);
+					}
+					bprint ("\n");
+			}
                 
 			else if (attacker.weapon == IT_AXE && attacker.thor_slam == 1) 
 			{
@@ -441,7 +463,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				else if (rnum <= 1 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
 				{
 					bprint (attacker.netname);
-					bprint(" smites ");      //Bloodrails
+					bprint(" smites ");
 					bprint (targ.netname);
 				}
 					
@@ -588,12 +610,12 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint(" \b[MER-MAN!]\b");
 						attacker.tier1 +=1;
 				}
-				if(attacker.turn_speed > 120 || attacker.turn_speed <-120) 
+				if(attacker.turn_speed > 110 || attacker.turn_speed <-110) 
 				{
 					bprint(" \b[REX KWON DO]\b");
 						attacker.tier1 +=1;
 				}
-				if(attacker.items & IT_INVISIBILITY && attacker.axes_in_a_row > 3) 
+				if(attacker.axes_in_a_row > 3) 
 				{
 					bprint(" \b[GET TO THE CHOPPA!]\b");
 						attacker.tier2 +=1;
@@ -622,7 +644,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				targ.ammo_nails = 2;     //ammo_nails = killedwep
 				//deathstring = " was hooked by ";
 				//deathstring2 = "\n";
-				self.total_deaths = self.total_deaths +1;   //Bloodrails -- count deaths by hook
+				self.total_deaths = self.total_deaths +1;   //count deaths by hook
 				attacker.total_kills = attacker.total_kills +1;
 					
 				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
@@ -688,18 +710,18 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				self.total_deaths = self.total_deaths +1;
 			
 					
-				//localsound(attacker, "misc/ding1.wav");  // rail ding sound
+				//localsound(attacker, "bloodrailz/misc/ding1.wav");  // rail ding sound
 				if(random() < 0.5) 
 				{
-					//localsound(attacker, "misc/ding1.wav");  // rail ding sound
-					ex_localsound(attacker, "misc/ding1.wav");  // rail ding sound
-					//sound (attacker, CHAN_AUTO, "misc/ding1.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
+					//localsound(attacker, "bloodrailz/misc/ding1.wav");  // rail ding sound
+					ex_localsound(attacker, "bloodrailz/misc/ding1.wav");  // rail ding sound
+					//sound (attacker, CHAN_AUTO, "bloodrailz/misc/ding1.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
 				}
 				else if (random() <= 1.0) 
 				{
-					//localsound(attacker, "misc/ding2.wav");  // rail ding sound
-					ex_localsound(attacker, "misc/ding2.wav");  // rail ding sound     
-					//sound (attacker, CHAN_AUTO, "misc/ding2.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
+					//localsound(attacker, "bloodrailz/misc/ding2.wav");  // rail ding sound
+					ex_localsound(attacker, "bloodrailz/misc/ding2.wav");  // rail ding sound     
+					//sound (attacker, CHAN_AUTO, "bloodrailz/misc/ding2.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
 				}
 					
 				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
@@ -711,18 +733,28 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint (" is a kingslayer\n");
 						
 				}
-				
-				if (rnum < 0.5)
+				if(attacker.rail_was_curved == 0)
 				{
-					bprint (targ.netname);
-					bprint(" was railed by ");         
-					bprint (attacker.netname);
+					if (rnum < 0.5)
+					{
+						bprint (targ.netname);
+						bprint(" was railed by ");         
+						bprint (attacker.netname);
+					}
+					else
+					{
+						bprint (targ.netname);
+						bprint(" was atomized by ");    
+						bprint (attacker.netname);
+					}
 				}
-				else
+				else if(attacker.rail_was_curved == 1)
 				{
-					bprint (targ.netname);
-					bprint(" was atomized by ");    
-					bprint (attacker.netname);
+					{
+						bprint (targ.netname);
+						bprint(" was curve-railed by ");         
+						bprint (attacker.netname);
+					}
 				}
 				
 				if(attacker.railjump_yes ==1) attacker.railjump_yes = 1.5;
@@ -910,11 +942,10 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 
 			// hell if I know; he's just dead!!!
 			bprint (" died\n");
-			if(elohim_playmode & ELOHIM_PRACTICE_MODE)
+			if(elohim_playmode & RACE_MODE)
 			{
-				targ.my_previous_time = 0;
-				targ.racing_on = 0;
-				racing_on_global = 0;
+				//targ.my_previous_time = 0;
+				//racing_on_global = 0;
 				countdown = 0;
 				countdown_ct = 0;
 			}

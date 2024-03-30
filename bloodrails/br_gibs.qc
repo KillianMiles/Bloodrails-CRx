@@ -64,13 +64,15 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 
 
 
-vector(float dm) VelocityForDamage =
+vector(float dm, float inair) VelocityForDamage =
 {
 	local vector v;
 
 	v_x = 100 * crandom();
 	v_y = 100 * crandom();
 	v_z = 200 + 100 * random();
+	
+	if(inair ==1) v_z = v_z/4;  //FEBRUARY
 
 	if (dm > -50)
 	{
@@ -84,6 +86,7 @@ vector(float dm) VelocityForDamage =
 	}
 	else
 		v = v * 4;
+		
 
 	//apply directional damage multiplier
 	local vector dir = self.origin - self.dmg_origin;
@@ -102,7 +105,7 @@ void() update_gib =
 }
 
 
-void(string gibname, float dm) ThrowGib =
+void(string gibname, float dm, float inair) ThrowGib =
 {
 	local	entity new;
 	
@@ -118,7 +121,7 @@ void(string gibname, float dm) ThrowGib =
 	
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');
-	new.velocity = VelocityForDamage (dm);
+	new.velocity = VelocityForDamage (dm, inair);
 	new.movetype = MOVETYPE_BOUNCE;
 	new.solid = SOLID_NOT;
 	new.avelocity_x = random()*600;
@@ -158,7 +161,7 @@ void() vial_touch =
 		if(other.ammo_slugs<6) other.ammo_slugs = other.ammo_slugs +1;
 		else if(other.ammo_slugs<= 0) other.ammo_slugs = 1;
 		
-		if(other.ammo_slugs > 6) other.ammo_slugs =6;
+		if(other.ammo_slugs > 7) other.ammo_slugs =7;
 		
 		other.rail_HUD = 2;
 		
@@ -186,7 +189,7 @@ void() vial_touch =
 
 
 
-	sound (other, CHAN_AUTO, "items/cells.wav", 1, ATTN_NORM);
+	sound (other, CHAN_AUTO, "bloodrailz/items/cells.wav", 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	remove(self);
 };
@@ -260,7 +263,7 @@ void () update_vial =
 }
 
 
-void(float dm) ThrowVial =
+void(float dm, float inair) ThrowVial =
 {
 	local	entity new1;
 
@@ -272,9 +275,9 @@ void(float dm) ThrowVial =
 	else if (random()< 0.75) setorigin(new1, self.origin + '0 0 7');
 	else if (random()<= 1) setorigin(new1, self.origin + '0 0 8');
 	
-	setmodel (new1, "progs/vial.mdl");
+	setmodel (new1, "progs/bloodrailz/vial.mdl");
 	setsize (new1, '-10 -10 -2', '10 10 16');
-	new1.velocity = VelocityForDamage (dm);
+	new1.velocity = VelocityForDamage (dm, inair);
 	new1.movetype = MOVETYPE_TOSS;
 	new1.solid = SOLID_TRIGGER;
 	new1.owner = self;
@@ -318,23 +321,6 @@ void(float dm) ThrowVial =
 };
 
 
-void(string gibname, float dm) ThrowHead =
-{
-	setmodel (self, gibname);
-	self.frame = 0;
-	self.nextthink = -1;
-	self.movetype = MOVETYPE_BOUNCE;
-	self.takedamage = DAMAGE_NO;
-	self.solid = SOLID_NOT;
-	self.view_ofs = '0 0 8';
-	setsize (self, '-16 -16 0', '16 16 56');
-	self.velocity = VelocityForDamage (dm);
-
-	self.origin_z = self.origin_z - 24;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	self.avelocity = crandom() * '0 600 0';
-};
-
 
 
 
@@ -346,61 +332,66 @@ void(string gibname, float dm) ThrowHead =
 
 void() GibPlayerChangeTeams =
 {
-        ThrowGib ("progs/gib1.mdl", self.health);
-        ThrowGib ("progs/gib2.mdl", self.health);
-            ThrowGib ("progs/gib3.mdl", self.health);
-            ThrowGib ("progs/h_player.mdl", self.health);
+        local float inair;
+   	if(self.airborn_pos > 55) inair = 1; //FEBRUARY
+        ThrowGib ("progs/gib1.mdl", self.health, inair);
+        ThrowGib ("progs/gib2.mdl", self.health, inair);
+            ThrowGib ("progs/gib3.mdl", self.health, inair);
+            ThrowGib ("progs/bloodrailz/h_player.mdl", self.health, inair);
 
 	self.deadflag = DEAD_DYING;
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (damage_attacker.classname == "teledeath2")
 	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 		
 	if (random() < 0.5)
-		sound (self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/gib.wav", 1, ATTN_NONE);
 	else
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/udeath.wav", 1, ATTN_NONE);
 };
 
 
 
 void() GibPlayer =
 {
-   	ThrowHead ("progs/h_player.mdl", self.health);
-        ThrowGib ("progs/gib1.mdl", self.health);
-        ThrowGib ("progs/gib2.mdl", self.health);
-            ThrowGib ("progs/gib3.mdl", self.health);
-            ThrowGib ("progs/h_player.mdl", self.health);
+   	local float inair;
+   	if(self.airborn_pos > 55) inair = 1; //FEBRUARY
+   	
+   	ThrowGib ("progs/bloodrailz/h_player.mdl", self.health, inair);
+        ThrowGib ("progs/gib1.mdl", self.health, inair);
+        ThrowGib ("progs/gib2.mdl", self.health, inair);
+            ThrowGib ("progs/gib3.mdl", self.health, inair);
+            ThrowGib ("progs/bloodrailz/h_player.mdl", self.health, inair);
            
-            if(random()< 0.59) ThrowVial (-20);
-            if(random()< 0.59) ThrowVial (-30);
-            if(random()< 0.59) ThrowVial (-40);
+            if(random()< 0.59) ThrowVial (-20, inair);
+            if(random()< 0.59) ThrowVial (-30, inair);
+            if(random()< 0.59) ThrowVial (-40, inair);
             
 	self.deadflag = DEAD_DYING;
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (damage_attacker.classname == "teledeath2")
 	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 		
 	if (random() < 0.5)
-		sound (self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/gib.wav", 1, ATTN_NONE);
 	else
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/udeath.wav", 1, ATTN_NONE);
 };

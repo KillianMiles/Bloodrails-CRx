@@ -6,7 +6,6 @@ __accumulate void() worldspawn =
 {
     localcmd("bind F1 impulse 100\n");
     localcmd("exec mapcycle.cfg\n");
-    //localcmd("exec bloodrails.cfg\n");
     localcmd("sv_maxvelocity 25000\n");
     localcmd("timelimit 10\n");
     localcmd("sv_defaultmap ctf_dissocia_c2\n");   //default map
@@ -14,14 +13,16 @@ __accumulate void() worldspawn =
     
 	localcmd("fov_adapt 1\n");
 	localcmd("viewsize 110\n");
-	localcmd("fov 100\n");
-	//localcmd("alias fov bf\n"); 
-	
-	localcmd("cl_gun_fovscale 0\n");
-	localcmd("alias cl_gun_fovscale bf\n");
 
-	localcmd("cl_bob 0\n");
-	localcmd("alias cl_bob bf\n");
+	
+	localcmd("cl_gun_fovscale 0.84\n");
+	localcmd("gl_polyblend 1\n");
+	localcmd("gl_cshiftpercent_damage 21\n");
+	
+	//localcmd("alias cl_gun_fovscale bf\n");
+
+	//localcmd("cl_bob 0\n");
+	//localcmd("alias cl_bob bf\n");
 	
 	localcmd("cl_rollangle 0\n");
 	localcmd("alias cl_rollangle bf\n");

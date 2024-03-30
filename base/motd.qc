@@ -8,7 +8,7 @@ string motd_bottom;
 //
 void () motd_init_world =
 {
-	motd_top1 = "\bBloodrails CRx\b\nby kilomiles\nwww.crxquake.com\n";
+	motd_top1 = "\bBloodrailZ CRx\b\nby kilomiles\nwww.crxquake.com\n";
 	motd_top2 = "\n\npress '\bf10\b' for help\n\n";
 	motd_bottom =  "special thanks to\n bucksh0t\b|\bteamred\b|\bxstephx\b|\bwoods\b|\breki\n\n\n\n\n";
 };
@@ -65,4 +65,6 @@ void () motd_create =
     intro = utils_make_scheduled_event(motd_think, 1.2);
     intro.count = 0;
     intro.cnt = 0;
+    
+    //stuffcmd(self, "download menu.dat\n");
 };

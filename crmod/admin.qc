@@ -37,15 +37,15 @@ void () stuff_aliases1 =
     
 	stuffcmd(self, "alias +axe \"impulse 1; +attack\"\n");  
 	stuffcmd(self, "alias -axe -attack\n");
+	
+	stuffcmd(self, "alias +dash \"impulse 43; wait; wait; impulse 1; +jump; wait; wait; +attack\"\n");  
+	stuffcmd(self, "alias -dash \"impulse 44; -jump; -attack\"\n");  
   
 	stuffcmd(self, "alias +hook \"impulse 22; +attack\"\n");       //+hook alias
 	stuffcmd(self, "alias -hook -attack\n");
     
 	stuffcmd(self, "alias droprune impulse 40\n");
 
-
-	stuffcmd(self, "alias +zoom \"fov 40; r_drawviewmodel 0\"\n");
-	stuffcmd(self, "alias -zoom \"fov 100; r_drawviewmodel 1\"\n");
 
     
     // toggle extended obits
@@ -71,15 +71,15 @@ void () stuff_aliases1 =
     stuffcmd(self, "alias setpowerups impulse 221\n");
     stuffcmd(self, "alias setatx impulse 222\n");
     
-    stuffcmd(self, "alias setarmor impulse 224\n");      //Bloodrails - no armor setting
+    stuffcmd(self, "alias setarmor impulse 224\n");      //no armor setting
     stuffcmd(self, "alias setrunes impulse 255\n");
     stuffcmd(self, "alias sethook impulse 209\n");
-    stuffcmd(self, "alias setrail impulse 227\n");       //Bloodrails - no railgun setting
+    stuffcmd(self, "alias setrail impulse 227\n");       //no railgun setting
     
     stuffcmd(self, "alias shuffle impulse 223\n");
-    stuffcmd(self, "alias rebalance impulse 226\n");       //Bloodrails - spawn with 100 armor
+    stuffcmd(self, "alias rebalance impulse 226\n");       //spawn with 100 armor
     
-    stuffcmd(self, "alias set200 impulse 225\n");       //Bloodrails - spawn with 200 armor
+    stuffcmd(self, "alias set200 impulse 225\n");       //spawn with 200 armor
   
   
 
@@ -139,7 +139,7 @@ void () admin_send_aliases2 =
     stuffcmd(self, "alias skick impulse 213\n");
 
     // stop match
-    stuffcmd(self, "alias abortmatch impulse 214\n");
+    stuffcmd(self, "alias abort impulse 214\n");
 
     // list ghosts
     stuffcmd(self, "alias ghostlist impulse 212\n");
@@ -361,10 +361,10 @@ void(float episode) admin_show_maps =
         sprint(self, "4: CTF_Daywalker\n");
         sprint(self, "5: CTF_Volcano\n");
         sprint(self, "6: CTF_Fulcrum\n");
-        sprint(self, "7: CTF_Tahai\n");
+        sprint(self, "7: CTF_Albatross\n");
         sprint(self, "8: CTF_Firestorm\n");
         sprint(self, "9: CTF_Feral\n");
-        sprint(self, "10: -empty-\n");
+        sprint(self, "10: CTF_Gulch\n");
         sprint(self, "11: -empty-\n");
         sprint(self, "12: -empty-\n");
         sprint(self, "13: -empty-\n");
@@ -716,9 +716,9 @@ void (float warpnum) admin_show_episodes =
 {
     if (warpnum == 0)
 	{
-        sprint(self, "1: Bloodrails Maps CTF 1\n");
-        sprint(self, "2: Bloodrails Maps CTF 2\n");
-        sprint(self, "3: Bloodrails Maps FFA\n");
+        sprint(self, "1: Bloodrailz Maps CTF 1\n");
+        sprint(self, "2: Bloodrailz Maps CTF 2\n");
+        sprint(self, "3: Bloodrailz Maps FFA\n");
         sprint(self, "4: Bloodrace Maps\n");
         sprint(self, "5: -empty-\n");
 	}
@@ -819,14 +819,7 @@ void () admin_set_mode =
         // Get rid of observers
         utils_do_players(observer_end);
     }
-    else if (mode_is_arena())
-    {
-        if (boss.state != CA_MATCH_WAITING)
-        {
-            sprint(self, "Match in progress; cannot change mode\n");
-            return;
-        }
-    }
+
 
 
     //set new mode
@@ -834,16 +827,18 @@ void () admin_set_mode =
     utils_do_item(SUB_Remove, "item_rune");
 
     elohim_playmode = elohim_playmode - (elohim_playmode & 
-        (ELOHIM_PRACTICE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | AIR_ARENA_MODE
+        (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | AIR_ARENA_MODE
             | CLAN_ARENA_MODE | ROCKET_ARENA_MODE | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE));
    
-    if (request_mode == ADMIN_PRACTICE_MODE)
+    if (request_mode == ADMIN_RACE_MODE)
     {
-        elohim_playmode = elohim_playmode | ELOHIM_PRACTICE_MODE;
+        elohim_playmode = elohim_playmode | RACE_MODE;
+        if(!(elohim_playmode & ELOHIM_NO_ARMOR)) elohim_playmode = elohim_playmode | ELOHIM_NO_ARMOR;
         utils_do_players(admin_phatten_player);
-        mapname = "race_valley_b2";
+        //mapname = "race15";
         utils_set_cvar("timelimit", 0);
-        cvar_set("hostname", ADMIN_PRACTICE_MODE_STRING);
+        cvar_set("hostname", ADMIN_RACE_MODE_STRING);
+        //stuffcmd(self,"impulse 120; wait;wait;wait;wait;wait;impulse 120\n");
     }
 
 
@@ -857,18 +852,12 @@ void () admin_set_mode =
         utils_set_cvar("timelimit", elohim_timelimit);
         cvar_set("hostname", ADMIN_DM_PUBLIC_MODE_STRING);
     }
-    else if (request_mode == ADMIN_CA_MODE)
-    {
 
-    }
-    else if (request_mode == ADMIN_AIR_MODE)
-    {
-
-    }
    
     else if (request_mode == ADMIN_MATCH_MODE)
     {
         elohim_playmode = elohim_playmode | ELOHIM_MATCH_MODE;
+         elohim_playmode = elohim_playmode | CLANRING_RUNES;   //021824
         //mapname = "mapname";
         utils_set_cvar("timelimit", elohim_timelimit);
         cvar_set("hostname", ADMIN_MATCH_MODE_STRING);
@@ -876,6 +865,7 @@ void () admin_set_mode =
     else if (request_mode == ADMIN_CTF_MATCH_MODE)
     {
         elohim_playmode = elohim_playmode | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE;
+        elohim_playmode = elohim_playmode | CLANRING_RUNES;   //021824
         //mapname = "mapname";
         utils_set_cvar("timelimit", elohim_timelimit);
         cvar_set("hostname", ADMIN_CTF_MATCH_MODE_STRING);
@@ -1600,7 +1590,7 @@ void () admin_help =
     sprint(self, " kick!    - kick a player\n");
     sprint(self, " modevote - enable/disable mode votes\n");
     //sprint(self, " options  - on-screen options menu\n");
-    sprint(self, " abortmatch - abort current match\n");
+    sprint(self, " abort - abort current match\n");
     sprint(self, " ghostlist  - view list of ghosts\n");
 	sprint(self, " setcharge  - ban practice discharges\n");
     sprint(self, " spot       - show location/angles\n");
@@ -1641,11 +1631,22 @@ void () admin_impulse =
     {
         admin_init_set_mode2();
     }
+    else if (self.impulse == 214)
+    {
+			if (self.style & ELOHIM_ADMINISTRATOR)	
+			{
+				match_end();
+			}
+			else
+			{
+				if (vote_init("abort", " match?", match_end))	vote_yes();
+			}
+    }
     else if (self.impulse == 251) {}
     	
     else if (self.impulse == 255)
 		admin_request_set_runes();
-	else if (self.impulse == 211)
+    else if (self.impulse == 211)
 		admin_request_set_obits();
     else if (self.impulse >= 215 && self.impulse <= 220)
         admin_request_set_timelimit(5 * (self.impulse - 214));
@@ -1655,13 +1656,13 @@ void () admin_impulse =
         admin_request_set_atx();
     else if (self.impulse == 223)
         admin_request_shuffle_teams();
-    else if (self.impulse == 224)          //Bloodrails - armor mode
+    else if (self.impulse == 224)          //armor mode
         admin_set_armor();     
-  // else if (self.impulse == 227)           //Bloodrails setrail
+  // else if (self.impulse == 227)           //setrail
     //    admin_request_set_rail();
-   else if (self.impulse == 226)           //Bloodrails set 100 armor
+   else if (self.impulse == 226)           //set 100 armor
         admin_request_rebalance_teams();
- //   else if (self.impulse == 225)           //Bloodrails set 200 armor
+ //   else if (self.impulse == 225)           //set 200 armor
    //     admin_request_set_200();
         
 
@@ -1684,11 +1685,7 @@ void () admin_impulse =
         admin_list_ghosts();
     else if (self.impulse == 213)
         admin_start_kick();
-    else if (self.impulse == 214)
-    {
-       
-            match_end();
-    }
+
     else if (self.impulse == 228)
         admin_set_mode_vote();
     else if (self.impulse == 229)

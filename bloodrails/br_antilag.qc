@@ -70,9 +70,6 @@ void () client_ping_think =
     local entity client;
 
 
-
-
-
     client = find(world, classname, "player");
     while (client)
     {
@@ -80,20 +77,9 @@ void () client_ping_think =
 		client.responsetime2 = client.responsetime1;
 		
 		
-		
-		if (fte_server)                 //FTE Check
-		{
-			client.responsetime1 = floor(stof(infokey(client, "ping")));
-		}
-		else
-		{
-		
-		
-		if (client.finaldest_y > self.finaldest_x)
-			client.responsetime1 = floor(client.finaldest_y - self.finaldest_x) - 16;
-		else
-			client.responsetime1 = ANTILAG_MAX_RESPONSETIME;
-		}
+			if (client.finaldest_y > self.finaldest_x)	client.responsetime1 = floor(client.finaldest_y - self.finaldest_x) - 16;
+			else	client.responsetime1 = client.responsetime2;
+
 
 		if (client.responsetime2 > 0)
 		{
@@ -162,10 +148,6 @@ void () client_responsetime_show =
 //rotate player positions
 void () SetPositions =
 {
-
-	
-	
-
 	self.lastorigin9 = self.lastorigin8;
 	self.lastorigintime9 = self.lastorigintime8;
 	self.lastorigin8 = self.lastorigin7;

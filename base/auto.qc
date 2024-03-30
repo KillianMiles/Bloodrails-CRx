@@ -19,11 +19,9 @@
 //
 // Prototypes:
 void () observer_chase_start;
-void () observer_camera_start;
 void () observer_set_chase_position;
 vector (vector from, vector to) angles_bestaim;
 void (vector v) angles_fixangle;
-void () observer_next_camera;
 
 
 // CRMOD
@@ -201,17 +199,7 @@ void () auto_find_best =
 	}
 };
 	
-// CRMOD
-//  A U T O  C A M E R A  S T A R T
-//    by Paul Baker
-//
-//  start autocamera from anywhere
-//
-void () auto_camera_start =
-{
-	self.oflags = self.oflags | OBSERVER_GO_AUTO;
-	observer_camera_start();
-};
+
 
 // CRMOD
 //  A U T O  C H A S E  S T A R T

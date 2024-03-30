@@ -118,6 +118,16 @@ string (float n) strings_countdown =
         return "\bcountdown:   \b\1\4\n\n";
     if (n == 15)
         return "\bcountdown:   \b\1\5\n\n";
+    if (n == 16)
+        return "\bcountdown:   \b\1\6\n\n";
+    if (n == 17)
+        return "\bcountdown:   \b\1\7\n\n";
+    if (n == 18)
+        return "\bcountdown:   \b\1\8\n\n";
+    if (n == 19)
+        return "\bcountdown:   \b\1\9\n\n";
+    if (n == 20)
+        return "\bcountdown:   \b\2\0\n\n";
     return "\bcountdown:   \b??\n\n";
 };
 
@@ -126,12 +136,12 @@ string () strings_mode_countdown =
     if (elohim_playmode & ELOHIM_MATCH_MODE)
     {
       if (elohim_playmode & CLANRING_CTF_MODE)
-        return"-\bcrctf match mode\b-\n\n";
+        return"-\bctf match mode\b-\n\n";
       else 
         return"-\btdm match mode\b-\n\n";
     }
     //don't need these now but just in case
-    else if (elohim_playmode & ELOHIM_PRACTICE_MODE)
+    else if (elohim_playmode & RACE_MODE)
     {
       if (elohim_playmode & CLANRING_CTF_MODE)
         return"-\bctf practice mode\b-\n\n";
@@ -865,13 +875,13 @@ string (float mapnum) strings_get_mapname =
         if (mapnum == 31)
             return "ctf_fulcrum_c1";
         if (mapnum == 32)
-            return "ctf_tahai_c1";
+            return "ctf_albatross_b1";
 	if (mapnum == 33)
             return "ctf_firestorm_b1";
 	if (mapnum == 34)
             return "ctf_feral_b2";
         if (mapnum == 35)
-            return "";
+            return "ctf_gulch_b1";
         if (mapnum == 36)
             return "";
         if (mapnum == 37)

@@ -61,14 +61,14 @@ float ELOHIM_SAME_LEVEL = 1;
 float ELOHIM_MATCH_MODE = 2;
 float ELOHIM_CLASSIC = 4;           //Instagib classic
 float ELOHIM_SERVER_INITIALIZED = 8;
-float ELOHIM_ARMOR_100 = 16;           //Spawn with 100 armor
+float PROJECTILES = 16;           //Spawn with 100 armor
 float ELOHIM_WRAITH = 32;
 float ELOHIM_NO_QUAD = 64;
 float ELOHIM_NO_PENT = 128;
 float ELOHIM_NO_SHIELD = 256;
 float ELOHIM_MODE_VOTE = 512;
 float ELOHIM_DEDICATED_SERVER = 1024; 
-float ELOHIM_NO_ARMOR = 2048;			// disable spooging in practice mode //Bloodrails replaced with NO_ARMOR instead
+float ELOHIM_NO_ARMOR = 2048;			// disable spooging in practice mode -- replaced with NO_ARMOR instead
 float ELOHIM_NOAMMO = 4096;			// CRMOD is server using Qsmack?
 float ELOHIM_EXTENDED_OBITS = 8192;
 float CLANRING_CTF_MODE = 16384;
@@ -83,7 +83,7 @@ float DM_PUBLIC_MODE = 4194304;
 
 float ELOHIM_LOW_GIBS = 8388608;           //moved down
 float ELOHIM_NO_GIBS = 16777216;          //moved down
-float ELOHIM_PRACTICE_MODE = 33554432;      //moved down
+float RACE_MODE = 33554432;      //moved down
 float ELOHIM_GG_MOD = 67108864;              //moved down
 float CLAN_ARENA_MODE = 134217728;            //moved down
 float ELOHIM_NO_RING = 268435456;
@@ -99,7 +99,7 @@ float ELOHIM_KICKING = 32;
 
 // admin constants
 float ADMIN_NORMAL_MODE = 0;
-float ADMIN_PRACTICE_MODE = 1;
+float ADMIN_RACE_MODE = 1;
 float ADMIN_CTF_PUBLIC_MODE = 2;
 float ADMIN_CTF_MATCH_MODE = 3;
 float ADMIN_DM_PUBLIC_MODE = 4;
@@ -109,12 +109,12 @@ float ADMIN_RA_MODE = 6;
 float ADMIN_CA_MODE = 7;
 float ADMIN_AIR_MODE = 8;
 
-string ADMIN_NORMAL_MODE_STRING = "Bloodrails CRx (FFA)";                //Bloodrails host names
-string ADMIN_PRACTICE_MODE_STRING = "Bloodrails CRx (Practice)";
-string ADMIN_MATCH_MODE_STRING = "Bloodrails CRx (TDM-match)";
-string ADMIN_DM_PUBLIC_MODE_STRING = "Bloodrails CRx (Pub-TDM)";
-string ADMIN_CTF_MATCH_MODE_STRING = "Bloodrails CRx (CTF-match)";
-string ADMIN_CTF_PUBLIC_MODE_STRING = "Bloodrails CRx (Pub-CTF)";
+string ADMIN_NORMAL_MODE_STRING = "Bloodrailz CRx (FFA)";                //host names
+string ADMIN_RACE_MODE_STRING = "Bloodrailz CRx (Race)";
+string ADMIN_MATCH_MODE_STRING = "Bloodrailz CRx (TDM-match)";
+string ADMIN_DM_PUBLIC_MODE_STRING = "Bloodrailz CRx (Pub-TDM)";
+string ADMIN_CTF_MATCH_MODE_STRING = "Bloodrailz CRx (CTF-match)";
+string ADMIN_CTF_PUBLIC_MODE_STRING = "Bloodrailz CRx (Pub-CTF)";
 string ADMIN_RA_MODE_STRING = "Rocket Arena";
 string ADMIN_CA_MODE_STRING = "Clan Arena";
 string ADMIN_AIR_MODE_STRING = "1v1 Air Shot";
@@ -125,7 +125,7 @@ float elohim_password;      // used to store the administrator password
 float elohim_devparam;      // used for development
 float elohim_playmode;      // current play mode (non volatile flags)
 float elohim_state;         // server state (volatile flags)
-float elohim_timelimit;     // timelimit for matches (default 20 minutes)
+float elohim_timelimit;     // timelimit for matches (default 10 minutes)
 float elohim_overtime;      // length of auto-overtime; 0 if none
 float elohim_nextcheck;     // used for periodic checks
 float elohim_nextcheck2;	// used for frequent periodic checks
@@ -140,7 +140,7 @@ float elohim_num_starts;    // number of match extra start points
 float elohim_num_cameras;   // number of cameras
 string elohim_version;      // used for motd and help-server
 string elohim_version_info; // text info including rev. and compile time
-string bloodrails_version_number; // text info storing version number (ie "4.0")
+string bloodrailz_version_number; // text info storing version number (ie "4.0")
 entity elohim_debug_client; // used for debugging
 float elohim_server_physics;
 float elohim_request_physics;
@@ -210,9 +210,7 @@ entity crmod_best_camera;       // set after each camera's think
 .float warp_map;
 .float hudspace;
 .float joinmsgtime;
-float modelindex_player;
-float modelindex_head;
-float modelindex_eyes;
+
 
 float CRMOD_ANGLE_SMOOTHING = 0.6; // CRMOD use this instead of typing the number a billion times
 

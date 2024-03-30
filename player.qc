@@ -256,7 +256,7 @@ void() PainSound =
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 
@@ -265,9 +265,9 @@ void() PainSound =
 	{
 		//DeathBubbles(1);
 		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "legacy/drown1.wav", 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, "bloodrailz/legacy/drown1.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_VOICE, "legacy/drown2.wav", 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, "bloodrailz/legacy/drown2.wav", 1, ATTN_NORM);
 		return;
 	}
 
@@ -276,8 +276,8 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			if (random() > 0.5) sound (self, CHAN_VOICE, "legacy/lburn1.wav", 0.8, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "legacy/lburn2.wav", 0.8, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
 			return;
 		}
 	}
@@ -286,8 +286,8 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			if (random() > 0.5) sound (self, CHAN_VOICE, "legacy/lburn1.wav", 0.8, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "legacy/lburn2.wav", 0.8, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
 			return;
 		}
 	}
@@ -305,7 +305,7 @@ void() PainSound =
 	if (self.axhitme == 1)
 	{
 		self.axhitme = 0;
-		sound (self, CHAN_VOICE, "player/axhit_flesh.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "bloodrailz/player/axhit_flesh.wav", 1, ATTN_NORM);
 		return;
 	}
 	
@@ -386,7 +386,7 @@ void() DeathSound =
 {
 	if (self.waterlevel == 3)   // water death sounds
 	{
-		sound (self, CHAN_VOICE, "player/h2odeath.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/h2odeath.wav", 1, ATTN_NONE);
 		return;
 	}
 	
@@ -396,7 +396,7 @@ void() ObserverForce =
 {
 	if (!gameover)
 	{
-		sound (world, CHAN_VOICE, "weapons/plasma1.wav", 1, ATTN_NORM);
+		sound (world, CHAN_VOICE, "bloodrailz/weapons/plasma1.wav", 1, ATTN_NORM);
 		bprint(self.netname);
 		bprint(" was forced \bobserver\b because of inactivity.\n");
 		respawn();//required?
@@ -411,7 +411,7 @@ void() PlayerDead =
 	// allow respawn after a certain time
 	self.deadflag = DEAD_DEAD;
 	self.jump_flag = 0;
-	self.modelindex = 0;     //shambler bug h_player debug
+	self.modelindex = 0;
 
 	// ELOHIM_MOD - autorespawn after 5 seconds in match mode
 	if (elohim_playmode & ELOHIM_MATCH_MODE)
@@ -440,7 +440,6 @@ void() PlayerDie =
 	self.invincible_finished = 0;
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
-	self.modelindex = modelindex_player;	// don't use eyes
 
 	// ELOHIM_MOD - need this to get rid of glow
 	self.items = self.items - (self.items & IT_QUAD);
@@ -449,7 +448,7 @@ void() PlayerDie =
 	// END_MOD
 
     // ELOHIM_MOD - no paks or flags in practice mode; '|| coop' removed
-    if (deathmatch && !(elohim_playmode & ELOHIM_PRACTICE_MODE) && !(elohim_playmode & CLAN_ARENA_MODE) && !(elohim_playmode & ROCKET_ARENA_MODE))
+    if (deathmatch && !(elohim_playmode & RACE_MODE))
 	{
 		if(self.items & (IT_KEY1 | IT_KEY2))
 			ctf_player_drop_flag(self, 0);
@@ -507,7 +506,7 @@ void() PlayerDie =
 
 void() set_suicide_frame =
 {	// used by klill command and diconnect command
-	if (self.model != "progs/player.mdl")
+	if (self.model != "progs/bloodrailz/player.mdl")
 		return;	// allready gibbed
 	self.frame = $deatha11;
 	self.solid = SOLID_NOT;

@@ -1,6 +1,5 @@
-void () admin_set_mode_vote;
-void () admin_set_mode;
-float request_mode;
+
+
 
 
 
@@ -313,12 +312,8 @@ void () admin_set_runes =
 void () admin_request_set_runes =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (mode_is_arena())
-    {
-        sprint(self, "Runes are not available in this mode");
-        return;
-    }
-    else if (self.style & ELOHIM_ADMINISTRATOR)
+
+    if (self.style & ELOHIM_ADMINISTRATOR)
         admin_set_runes();
     else
     {
@@ -343,7 +338,7 @@ void () admin_request_set_runes =
 
 
 
-//  S E T  A R M O R                        //Bloodrails
+//  S E T  A R M O R
 //
 //  Enable/disable ARMOR.
 //
@@ -371,7 +366,7 @@ void () admin_set_armor =
 };
 
 //
-//  R E Q U E S T  S E T  A R M O R                    //Bloodrails
+//  R E Q U E S T  S E T  A R M O R
 //
 //  Request to enable/disable Armor.
 //
@@ -518,7 +513,7 @@ void () admin_request_set_atx =
 
 //SPAWN WITH 100 ARMOR - ONLY THROUGH SETMODE2 MENU
 
-void () admin_enable_100 =                                  //Bloodrails - spaws with 100 armor
+void () admin_enable_100 =                                  //spawns with 100 armor
 {
 	if (!(self.items & IT_ARMOR3))
 	{
@@ -539,38 +534,8 @@ void () admin_disable_100 =
 
 
 
-void () admin_set_100 =
-{
-    
-	if (!(elohim_playmode & ELOHIM_ARMOR_100))
-	{
-		utils_do_players(admin_enable_100);
-		announce("Spawn with 100 Armor enabled");
-		elohim_playmode = elohim_playmode | ELOHIM_ARMOR_100;
-	}
-	else
-	{
-		utils_do_players(admin_disable_100);
-		announce("Spawn with 100 Armor disabled");
-		elohim_playmode = elohim_playmode - ELOHIM_ARMOR_100;
-	}
-	utils_set_cvar("samelevel", elohim_playmode);
-};
 
 
-void () admin_request_set_100 =
-{
-	// Do it right away if we're an administrator, otherwise vote
-	if (self.style & ELOHIM_ADMINISTRATOR) admin_set_100();
-	else
-	{
-		local string newstate;
-    
-		if (elohim_playmode & ELOHIM_ARMOR_100) newstate = "enable";
-		else newstate = "disable";
-		if (vote_init(newstate, " 100 armor spawn", admin_set_100)) vote_yes();
-	}
-};
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -704,7 +669,7 @@ void () admin_request_set_airwalk =
 //      1   -   deathmatch 1
 //      2   -   plasma hook rune
 //      3   -   deathmatch 3 (weaponstay)
-//      4   -   Armored spawn mode
+//      4   -   Projectile mode
 //      5   -   set qe physics
 //      6   -   set nq physics
 //      7   -   set qw physics
@@ -782,15 +747,15 @@ void () admin_request_set_mode2 =
         else if (newmode == 4)
         {
        
-	if (!(elohim_playmode & ELOHIM_ARMOR_100))
+		if (!(elohim_playmode & PROJECTILES))
 		{
-			announce("Spawn with 100 Armor enabled enabled");
-			elohim_playmode = elohim_playmode | ELOHIM_ARMOR_100;
+			announce("Projectile mode enabled");
+			elohim_playmode = elohim_playmode | PROJECTILES;
 		}
 		else
 		{
-			announce("Spawn with 100 Armor enabled disabled");
-			elohim_playmode = elohim_playmode - ELOHIM_ARMOR_100;
+			announce("Projectile mode disabled");
+			elohim_playmode = elohim_playmode - PROJECTILES;
 		}
           
           
@@ -930,7 +895,7 @@ void (float modenum) admin_show_modes =
         sprint(self, "1: pulse shield toggle\n");
         sprint(self, "2: throwable rune effects toggle\n");
         sprint(self, "3: spawn protection toggle\n");
-        sprint(self, "4: armored spawn mode\n");
+        sprint(self, "4: projectile mode\n");
         sprint(self, "5: QE  (FTE)\n");
         sprint(self, "6: NQ  (FTE)\n");
         sprint(self, "7: Limited ammo\n");

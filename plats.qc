@@ -296,10 +296,10 @@ void() func_train =
 
 	if (self.sounds == 0)
 	{
-		self.noise = ("misc/null.wav");
-		precache_sound ("misc/null.wav");
-		self.noise1 = ("misc/null.wav");
-		precache_sound ("misc/null.wav");
+		self.noise = ("bloodrailz/misc/null.wav");
+		precache_sound ("bloodrailz/misc/null.wav");
+		self.noise1 = ("bloodrailz/misc/null.wav");
+		precache_sound ("bloodrailz/misc/null.wav");
 	}
 
 	if (self.sounds == 1)
@@ -344,10 +344,10 @@ void() misc_teleporttrain =
 	self.use = train_use;
 	self.avelocity = '100 200 300';
 
-	self.noise = ("misc/null.wav");
-	precache_sound ("misc/null.wav");
-	self.noise1 = ("misc/null.wav");
-	precache_sound ("misc/null.wav");
+	self.noise = ("bloodrailz/misc/null.wav");
+	precache_sound ("bloodrailz/misc/null.wav");
+	self.noise1 = ("bloodrailz/misc/null.wav");
+	precache_sound ("bloodrailz/misc/null.wav");
 
 	precache_model2 ("progs/teleport.mdl");
 	setmodel (self, "progs/teleport.mdl");

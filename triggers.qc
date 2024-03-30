@@ -116,12 +116,12 @@ void() trigger_multiple =
 	}
 	else if (self.sounds == 2)
 	{
-		self.noise = "misc/talk.wav";
+		self.noise = "bloodrailz/misc/talk.wav";
 	}
 	else if (self.sounds == 3)
 	{
-		precache_sound ("misc/trigger1.wav");
-		self.noise = "misc/trigger1.wav";
+		precache_sound ("bloodrailz/misc/trigger1.wav");
+		self.noise = "bloodrailz/misc/trigger1.wav";
 	}
 	
 	if (!self.wait)
@@ -206,8 +206,8 @@ void() trigger_secret =
 	}
 	else if (self.sounds == 2)
 	{
-		precache_sound ("misc/talk.wav");
-		self.noise = "misc/talk.wav";
+		precache_sound ("bloodrailz/misc/talk.wav");
+		self.noise = "bloodrailz/misc/talk.wav";
 	}
 
 	trigger_multiple ();
@@ -282,15 +282,15 @@ void() play_teleport =
 
 	v = random() * 5;
 	if (v < 1)
-		tmpstr = "misc/r_tele1.wav";
+		tmpstr = "bloodrailz/misc/r_tele1.wav";
 	else if (v < 2)
-		tmpstr = "misc/r_tele2.wav";
+		tmpstr = "bloodrailz/misc/r_tele2.wav";
 	else if (v < 3)
-		tmpstr = "misc/r_tele3.wav";
+		tmpstr = "bloodrailz/misc/r_tele3.wav";
 	else if (v < 4)
-		tmpstr = "misc/r_tele4.wav";
+		tmpstr = "bloodrailz/misc/r_tele4.wav";
 	else
-		tmpstr = "misc/r_tele5.wav";
+		tmpstr = "bloodrailz/misc/r_tele5.wav";
 
 	sound (self, CHAN_VOICE, tmpstr, 1, ATTN_NORM);
 	remove (self);
@@ -357,8 +357,10 @@ local entity	death;
 
 void() teleport_touch =
 {
-local entity	t;
-local vector	org;
+	if(elohim_playmode & RACE_MODE) return;
+	
+	local entity	t;
+	local vector	org;
 
 	if (self.targetname)
 	{
@@ -368,13 +370,7 @@ local vector	org;
 		}
 	}
 
-	// // Validate team
-	// if (!(elohim_playmode & ELOHIM_PRACTICE_MODE))
-	// {
-	// 	if(self.team != TEAM_ALL && other.team != self.team)
-	// 		return;	
-	// }
-
+	
 	if (self.spawnflags & PLAYER_ONLY)
 	{
 		if (other.classname != "player")
@@ -475,6 +471,8 @@ If the trigger_teleport has a targetname, it will only teleport entities when it
 */
 void() trigger_teleport =
 {
+    
+    
     local vector o;
 
 	InitTrigger ();
@@ -532,7 +530,7 @@ void() trigger_onlyregistered_touch =
 		if (self.message != "")
 		{
 			centerprint (other, self.message);
-			sound (other, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
+			sound (other, CHAN_BODY, "bloodrailz/misc/talk.wav", 1, ATTN_NORM);
 		}
 	}
 };
@@ -542,7 +540,7 @@ Only fires if playing the registered version, otherwise prints the message
 */
 void() trigger_onlyregistered =
 {
-	precache_sound ("misc/talk.wav");
+	precache_sound ("bloodrailz/misc/talk.wav");
 	InitTrigger ();
 	self.touch = trigger_onlyregistered_touch;
 };
@@ -587,172 +585,25 @@ void() trigger_hurt =
 
 //============================================================================
 
+entity (entity e) racing_find_start =
+{
+    local entity targ;
+
+    targ = find(e, classname, "race_route_start");
+    while (targ != e)
+    {
+        targ = find(targ, classname, "race_route_start");
+    }
+    return targ;
+};
+
+
 float PUSH_ONCE = 1;
 
 void() trigger_push_touch =
 {
 
-		if(elohim_playmode & ELOHIM_PRACTICE_MODE && other.classname == "player")    // RAce mode triggers
-		{
-		
-			if(self.speed == 1 && countdown == 0)    //start trigger
-			{
-				if(other.racing_on == 0)
-				{
-					chrono_time = time;
-					other.racing_on = 1;
-					racing_on_global = 1;
-					sprint(other, "START\n");
-					other.race_completed = 0;
-				}
-			
-			}
-			
-		
-			
-			if(self.speed == 3)   //finish trigger
-			{
-				if (other.racing_on == 1 && other.race_completed == 0)
-				{
-					other.race_completed = 1;
-			
-					countdown = 0;
-					other.racing_on = 0;
-					other.my_previous_time = time - chrono_time;
-		
-					if( (other.my_previous_time < place_one_time || place_one_time ==0)) 
-					{
-						place_one_time = other.my_previous_time;
-						sprint(other, "You have set a new record \n");
-						sprint(other, utils_get_time(other.my_previous_time));
-						sprint(other, "\n");
-						return;
-						
-					}
-						
-					else if( other.my_previous_time < place_two_time || place_two_time ==0) place_two_time = other.my_previous_time;
-					else if( other.my_previous_time < place_three_time || place_three_time ==0) place_three_time = other.my_previous_time;
-		
-				
-					sprint(other, "Your time is ");
-					sprint(other, utils_get_time(other.my_previous_time));
-					sprint(other, "\n");
-	
-				}
-			
-			}
-			
-			if(self.speed == 5 && other.racing_on == 0)
-			{
-				if(countdown == 0) 
-				{
-					countdown = 1;
-					bprint("Countdown initiated...\n");
-				
-				}
-				
-				
-				
-			
-			}
-			
 
-		}
-
-		if(self.speed == 5.1)   				 // trigger for ONLY AXE
-		{
-			if(!(other.items & IT_AXE)) other.items = other.items | IT_AXE;
-			if(other.items & IT_RAILGUN) other.items = other.items - IT_RAILGUN;
-			if(other.items & IT_HOOK) other.items = other.items - IT_HOOK;
-		}
-		
-		if(self.speed == 5.2)  					 //trigger for ONLY RAILGUN
-		{
-			if(!(other.items & IT_RAILGUN)) other.items = other.items | IT_RAILGUN;
-			if(other.items & IT_AXE) other.items = other.items - IT_AXE;
-			if(other.items & IT_HOOK) other.items = other.items - IT_HOOK;
-		}
-		
-		if(self.speed == 5.3)   				//trigger for ONLY HOOK
-		{
-			if(!(other.items & IT_HOOK)) other.items = other.items | IT_HOOK;
-			if(other.items & IT_RAILGUN) other.items = other.items - IT_RAILGUN;
-			if(other.items & IT_AXE) other.items = other.items - IT_AXE;
-		}
-			
-			if(self.speed == 5.11)    			// trigger to ADD AXE
-			{
-				if(!(other.items & IT_AXE)) other.items = other.items | IT_AXE;
-			}
-			
-			if(self.speed == 5.13)    			// trigger to REMOVE AXE
-			{
-				if(other.items & IT_AXE) other.items = other.items - IT_AXE;
-			}
-			
-			if(self.speed == 5.21)   			 // trigger to ADD RAILGUN
-			{
-				if(!(other.items & IT_RAILGUN)) other.items = other.items | IT_RAILGUN;
-			}
-			
-			if(self.speed == 5.23)   			 // trigger to REMOVE RAILGUN
-			{
-				if(other.items & IT_RAILGUN) other.items = other.items - IT_RAILGUN;
-			}
-			
-			if(self.speed == 5.31)    			// trigger to ADD HOOK
-			{
-				if(!(other.items & IT_HOOK)) other.items = other.items | IT_HOOK;
-			}
-		
-		
-		if(self.speed == 5.4)   //trigger to disable SHIELD and CURVED RAILS
-		{
-			if (!(elohim_playmode & ELOHIM_CLASSIC)) elohim_playmode = elohim_playmode | ELOHIM_CLASSIC;
-		}
-		
-		if(self.speed == 5.41)   //trigger to enable SHIELD
-		{
-			if (elohim_playmode & ELOHIM_NO_SHIELD) elohim_playmode =elohim_playmode - ELOHIM_NO_SHIELD;
-		}
-		
-		
-		//////////////////////
-		
-		
-		
-		if(self.speed == 5.700)   				 // trigger for 700ups speed
-		{
-			if(vlen(other.velocity) > 700) bprint("Great job, you reached 700ups speed");
-		}
-		
-		if(self.speed == 5.800)   				  // trigger for 800ups speed
-		{
-			if(vlen(other.velocity) > 800) bprint("Great job, you reached 800ups speed");
-		}
-		
-		if(self.speed == 5.900)   				  // trigger for 900ups speed
-		{
-			if(vlen(other.velocity) > 900) bprint("Great job, you reached 900ups speed");
-		}
-		
-		if(self.speed == 5.999)   				  // trigger for 1000ups speed
-		{
-			if(vlen(other.velocity) > 1000) bprint("Great job, you reached 1000ups speed");
-		}
-		
-		
-		
-		
-		if(self.speed == 7.1)   				  // hook swing success trigger
-		{
-			if(other.tarzan_time ==1) bprint("Great job, you are hook-swinging");
-		}
-		
-		if(self.speed == 7.2)   				  // Wallrun success trigger
-		{
-			if (other.punchang <= -18 || other.punchang >= 18) bprint("You are wall-running!");
-		}
 		
 
 
@@ -780,15 +631,15 @@ local float rand;
 				
 				 rand = random()*2;
     
-    if (rand <= 1) sound (self, CHAN_AUTO, "ambience/windfly3.wav",1,ATTN_NORM);
+    if (rand <= 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly3.wav",1,ATTN_NORM);
     else
-    if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "ambience/windfly2.wav",1,ATTN_NORM);
+    if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly2.wav",1,ATTN_NORM);
    
 				
 				
 				
 				
-     sound (other, CHAN_AUTO, "ambience/windfly.wav", 0.8, ATTN_NORM);
+     sound (other, CHAN_AUTO, "bloodrailz/ambience/windfly.wav", 0.8, ATTN_NORM);
 				
 			}
 		}
@@ -807,9 +658,9 @@ void() trigger_push =
 	
 	
 	InitTrigger ();
-	precache_sound ("ambience/windfly.wav");
-	precache_sound ("ambience/windfly2.wav");
-	precache_sound ("ambience/windfly3.wav");
+	precache_sound ("bloodrailz/ambience/windfly.wav");
+	precache_sound ("bloodrailz/ambience/windfly2.wav");
+	precache_sound ("bloodrailz/ambience/windfly3.wav");
 	self.touch = trigger_push_touch;
 	
 	

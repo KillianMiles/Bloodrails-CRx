@@ -5,16 +5,16 @@
 
 void() respawn;
 
-const string SOUND_PICKUP_RUNE = "items/runegrab.wav";      //custom made for BR
-const string SOUND_RUNE_RESIST = "items/br_protect3.wav"; //librequake
-const string SOUND_RUNE_STREN = "items/br_damage3.wav";    //librequake
-const string SOUND_RUNE_HASTE = "misc/basekey.wav";   //Bloodrails - changed haste rune noise ftom boss1/sight1.wav to misc/basekey.wav 
-const string SOUND_RUNE_REGEN = "items/br_r_item1.wav"; //librequake
+const string SOUND_PICKUP_RUNE = "bloodrailz/items/runegrab.wav";      //custom made for BR
+const string SOUND_RUNE_RESIST = "bloodrailz/items/br_protect3.wav"; //librequake
+const string SOUND_RUNE_STREN = "bloodrailz/items/br_damage3.wav";    //librequake
+const string SOUND_RUNE_HASTE = "bloodrailz/misc/basekey.wav";   //changed haste rune noise ftom boss1/sight1.wav to misc/basekey.wav 
+const string SOUND_RUNE_REGEN = "bloodrailz/items/br_r_item1.wav"; //librequake
 
-const string MODEL_RUNE_RESIST = "progs/br_rune1a.mdl";
-const string MODEL_RUNE_STREN = "progs/br_rune2a.mdl";
-const string MODEL_RUNE_HASTE = "progs/br_rune3a.mdl";
-const string MODEL_RUNE_REGEN = "progs/br_rune4a.mdl";
+const string MODEL_RUNE_RESIST = "progs/bloodrailz/br_rune1a.mdl";
+const string MODEL_RUNE_STREN = "progs/bloodrailz/br_rune2a.mdl";
+const string MODEL_RUNE_HASTE = "progs/bloodrailz/br_rune3a.mdl";
+const string MODEL_RUNE_REGEN = "progs/bloodrailz/br_rune4a.mdl";
 
 void () runes_precache =
 {
@@ -114,7 +114,7 @@ void() rune_touch =
 	{
 		other.rune_bang =10;
 		other.items2 = (other.items2 | IT2_SIGIL1);
-		sprint(other,"Plasma hook rune - Hook shoots plasma, armor regenerates slowly\n");   //Bloodrails rune descriptions
+		sprint(other,"Plasma hook rune - Hook shoots plasma, armor regenerates slowly\n");   //rune descriptions
 		
 		 if (other.armorvalue < 200)
                     {
@@ -130,7 +130,7 @@ void() rune_touch =
 		{
 			other.rune_bang =20;
 			other.items2 = (other.items2 | IT2_SIGIL2);			
-			sprint(other,"[Power] - Railgun deals splash damage - Shoot at the floor\n"); //Bloodrails rune descriptions
+			sprint(other,"[Power] - Railgun deals splash damage - Shoot at the floor\n"); //rune descriptions
 		}
 		else
 		{
@@ -142,7 +142,7 @@ void() rune_touch =
 				other.ammo_slugs +=1;
 				if(other.ammo_slugs >7) other.ammo_slugs =7;   //9-24=23
 				
-				sprint(other,"[Haste] - Increases rate of fire\n"); //Bloodrails rune descriptions
+				sprint(other,"[Haste] - Increases rate of fire\n"); //rune descriptions
             }
 			else
 			{
@@ -150,7 +150,7 @@ void() rune_touch =
 				{
 					other.rune_bang =40;
 					other.items2 = (other.items2 | IT2_SIGIL4);	
-					sprint(other,"[Death Aura] - Deals damage to anything in your proximity\n ");  //Bloodrails rune descriptions
+					sprint(other,"[Death Aura] - Deals damage to anything in your proximity\n ");  //rune descriptions
 				}
 			}
 		}
@@ -274,7 +274,7 @@ void() update_smoke =
 	
 	if(vlen(self.origin - smoke_origin) > 250)
 	{
-				if(vlen(self.origin - smoke_origin) > 300) setmodel(self, "progs/ef_smoke1.mdl");
+				if(vlen(self.origin - smoke_origin) > 300) setmodel(self, "progs/bloodrailz/ef_smoke1.mdl");
 				
 				local entity head = findradius(self.origin, 48);
 				while (head)
@@ -349,14 +349,14 @@ void(vector origin1, float radius, float steam) make_smoke =
 	if(trace_fraction <0.8) 
 	{
 		//bprint("dont spawn in wall\n");
-		smoke_offset = smoke_offset + normalize(dir);
-		smoke_offset_counter +=1;
-		if(smoke_offset_counter == 2)
+		self.smoke_offset = self.smoke_offset + normalize(dir);
+		self.smoke_offset_counter +=1;
+		if(self.smoke_offset_counter == 2)
 		{
 			local vector new_origin = smoke_origin + normalize(dir)*80;
 			traceline(smoke_origin+ '0 0 20', new_origin + '0 0 20', TRUE, self);
 			if(trace_fraction ==1) smoke_origin = smoke_origin + normalize(dir)*33;
-			smoke_offset_counter = 0;
+			self.smoke_offset_counter = 0;
 			//bprint("move origin\n");
 		}
 		return;
@@ -374,7 +374,7 @@ void(vector origin1, float radius, float steam) make_smoke =
 		
 		if(vlen(dir2) > smoke_ceiling) smoke_ceiling = vlen(dir2);
 		
-		if(smoke_height_is_adjusted ==0)
+		if(self.smoke_height_is_adjusted ==0)
 		{
 			//bprint("adjust height\n");
 			//smoke_ceiling = vlen(dir2);
@@ -382,28 +382,28 @@ void(vector origin1, float radius, float steam) make_smoke =
 			if(smoke_ceiling < 110)
 			{
 				smoke_radius = 215;
-				smoke_rate = 4;
+				self.smoke_rate = 4;
 			}
 			else if(smoke_ceiling < 150)
 			{
 				smoke_radius = 210;
-				smoke_rate = 3;
+				self.smoke_rate = 3;
 			}
 			else if(smoke_ceiling < 190)
 			{
 				smoke_radius = 195;
-				smoke_rate = 2;
+				self.smoke_rate = 2;
 			}
 			
 			
-			smoke_height_is_adjusted =1;
+			self.smoke_height_is_adjusted =1;
 		}
 	}
 	
 
 	local entity smoke;
 	smoke = spawn();
-	setmodel (smoke, "progs/ef_smoke2.mdl");
+	setmodel (smoke, "progs/bloodrailz/ef_smoke2.mdl");
 	setorigin(smoke, origin1 + randomizer + '0 0 -10');
 	smoke.frame = frand;
 	smoke.movetype = MOVETYPE_FLY;
@@ -471,11 +471,11 @@ void() update_aura1=
 	
 	if(self.weapon == 3)       //GRAVITY WELL
 	{
-		if(time - gravity_time > 30) 
+		if(time - gravity_time > 21) 
 		{
 			self.think = SUB_Remove;
 			make_power(self.origin + '0 0 2', 0.7, 6);
-			sound (self, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+			sound (self, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 		}
 		
 		self.skin =10;  //6 red
@@ -510,7 +510,7 @@ void() update_aura1=
 		{
 			self.think = SUB_Remove;
 			make_power(self.origin + '0 0 2', 0.7, 6);
-			sound (self, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+			sound (self, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 		}
 		
 		self.skin =11;
@@ -556,14 +556,14 @@ void() bangs =
 		if (self.weapon ==1)         				 // FIRE CLOUD
 		{
 			smoke_owner = self.owner;
-			setmodel (self, "progs/ef_aura1.mdl");
+			setmodel (self, "progs/bloodrailz/ef_aura1.mdl");
 			self.skin = 26; //23;
 			self.frame = 6;
 			self.alpha =0.55;
 			
 			if((pointcontents(self.origin + '0 0 20') == CONTENT_WATER || pointcontents(self.origin + '0 0 20') == CONTENT_SLIME))
 			{
-				setmodel (self, "progs/ef_smoke2.mdl");
+				setmodel (self, "progs/bloodrailz/ef_smoke2.mdl");
 				self.skin = 18; //23;
 				self.alpha =0.4;
 			}
@@ -573,13 +573,12 @@ void() bangs =
 			if(first_smoke ==0)
 			{
 				smoke_radius = 190;
-				smoke_rate = 1;
+				self.owner.smoke_rate = 1;
 				smoke_origin = self.origin;
-				smoke_height_is_adjusted = 0;
-				smoke_radius_is_adjusted = 0;
+				self.owner.smoke_height_is_adjusted = 0;
 				smoke_origin = self.origin;
-				smoke_offset = '0 0 0';
-				smoke_offset_counter = 0;
+				self.owner.smoke_offset = '0 0 0';
+				self.owner.smoke_offset_counter = 0;
 				smoke_ceiling = 10000;
 				first_smoke = 1;
 				
@@ -601,21 +600,21 @@ void() bangs =
 			if(time - smoke_time < 40 && !(self.is_over_sky ==1 && self.flags & FL_ONGROUND))  //DECEM
 			{
 			
-				smoke_counter +=1;
-				if(smoke_counter%4 || random() < 0.1)
+				self.smoke_counter +=1;
+				if(self.smoke_counter%4 || random() < 0.1)
 				{
 					make_smoke(smoke_origin, smoke_radius, 0);
 					//bprint(ftos(smoke_ceiling));
-					if(smoke_rate ==2) 
+					if(self.owner.smoke_rate ==2) 
 					{
 						if(random() < 0.28)make_smoke(smoke_origin, smoke_radius, 0);
 					}
-					else if(smoke_rate ==3) 
+					else if(self.owner.smoke_rate ==3) 
 					{
 						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
 						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
 					}
-					else if(smoke_rate ==4) 
+					else if(self.owner.smoke_rate ==4) 
 					{
 						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
 						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
@@ -683,7 +682,7 @@ void() bangs =
 			
 			
 			
-				make_impact('0 0 18');
+				make_impact('0 0 18', 1);
 				self.thor_time = self.thor_time +1;
 				if(self.thor_slam >1) self.thor_time = 1;
 				
@@ -849,7 +848,7 @@ void() bangs =
 				{
 					self.rune_displayed =1;
 					aura1 = spawn();
-					setmodel (aura1, "progs/ef_aura1.mdl");
+					setmodel (aura1, "progs/bloodrailz/ef_aura1.mdl");
 					//setorigin(aura1, self.origin + '0 0 8');
 					//setorigin(aura1, self.origin);
 					//setorigin(aura1, self.origin + randomizer);
@@ -870,12 +869,12 @@ void() bangs =
 				}
 			
 			
-			setmodel (self, "progs/ef_aura1.mdl");
+			setmodel (self, "progs/bloodrailz/ef_aura1.mdl");
 			self.skin = 3;
 			self.frame = 1;
 			
 			
-			if(time - gravity_time < 30)
+			if(time - gravity_time < 21)
 			{
 				if(self.flags & FL_ONGROUND) self.flags = self.flags - FL_ONGROUND;
 				local vector dynamic_origin = self.origin;
@@ -910,8 +909,8 @@ void() bangs =
 		
 				if((gravity_counter ==10 || random() < 0.05) && (time - gravity_time < 28.5))
 				{
-					if(random() < 0.5) sound(self, CHAN_AUTO, "weapons/gravity4.wav", 0.7, ATTN_NORM);
-					else if(random() <=1) sound(self, CHAN_AUTO, "weapons/gravity5.wav", 0.7, ATTN_NORM);
+					if(random() < 0.5) sound(self, CHAN_AUTO, "bloodrailz/weapons/gravity4.wav", 0.7, ATTN_NORM);
+					else if(random() <=1) sound(self, CHAN_AUTO, "bloodrailz/weapons/gravity5.wav", 0.7, ATTN_NORM);
 				}
 
 				
@@ -920,12 +919,12 @@ void() bangs =
 				//self.movetype = MOVETYPE_FLYMISSILE;
 				self.solid = SOLID_NOT;
 
-				if(time - gravity_time <= 29.4)
+				if(time - gravity_time <= 20.4)
 				{
 					if (!(self.effects & EF_BLUE)) self.effects   = self.effects | EF_BLUE;
 				}
 				
-				if(time - gravity_time > 29.4)
+				if(time - gravity_time > 20.4)
 				{
 					if (self.effects & EF_BLUE) self.effects   = self.effects - EF_BLUE;
 				}
@@ -957,7 +956,7 @@ void() bangs =
 								else if(vlen(dir5) < 100) head.velocity = head.velocity + 25*(normalize(dir5));
 								else if(vlen(dir5) < 200) head.velocity = head.velocity + 50*(normalize(dir5));
 								else if(vlen(dir5) < 300) head.velocity = head.velocity + 100*(normalize(dir5));
-								else if(vlen(dir5) < 400) head.velocity = head.velocity + 200*(normalize(dir5));
+								else if(vlen(dir5) < 400) head.velocity = head.velocity + 180*(normalize(dir5));
 								else if(vlen(dir5) < 420) head.velocity = head.velocity + 100*(normalize(dir5));
 							
 								if(vlen(dir5) < 250 && vlen(head.velocity)> 1200) head.velocity = head.velocity*0.95;
@@ -1026,7 +1025,7 @@ void() bangs =
 				{
 					self.rune_displayed =1;
 					aura1 = spawn();
-					setmodel (aura1, "progs/ef_aura1.mdl");
+					setmodel (aura1, "progs/bloodrailz/ef_aura1.mdl");
 					setorigin(aura1, self.origin + '0 0 8');
 					aura1.movetype = MOVETYPE_NOCLIP;
 					aura1.solid = SOLID_NOT;
@@ -1051,16 +1050,16 @@ void() bangs =
 				{
 					make_smoke(quasar_origin1 + '0 0 -1', 80, 1);
 					//bprint(ftos(smoke_ceiling));
-					if(smoke_rate ==2) 
+					if(self.owner.smoke_rate ==2) 
 					{
 						if(random() < 0.3)make_smoke(quasar_origin1 +  + '0 0 -1', 80, 1);
 					}
-					else if(smoke_rate ==3) 
+					else if(self.owner.smoke_rate ==3) 
 					{
 						if(random() < 0.20)make_smoke(quasar_origin1 + '0 0 -1', 80, 1);
 						if(random() < 0.20)make_smoke(quasar_origin1 + '0 0 -1', 80, 1);
 					}
-					else if(smoke_rate ==4) 
+					else if(self.owner.smoke_rate ==4) 
 					{
 						if(random() < 0.19)make_smoke(quasar_origin1, 80, 1);
 						if(random() < 0.19)make_smoke(quasar_origin1, 80, 1);
@@ -1070,7 +1069,7 @@ void() bangs =
 			}
 			
 			
-			setmodel (self, "progs/ef_aura1.mdl");
+			setmodel (self, "progs/bloodrailz/ef_aura1.mdl");
 			self.skin = 6;
 			self.frame = 3;
 			//self.velocity = '0 0 0';
@@ -1091,8 +1090,8 @@ void() bangs =
 				if((quasar_buzz_counter ==10 || random() < 0.12) && time - quasar_time < 28.3)
 				{
 		
-					if(random() < 0.5) sound(self, CHAN_AUTO, "weapons/quasar1.wav", 0.55, ATTN_NORM);
-					else sound(self, CHAN_AUTO, "weapons/quasar2.wav", 0.55, ATTN_NORM);
+					if(random() < 0.5) sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar1.wav", 0.55, ATTN_NORM);
+					else sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar2.wav", 0.55, ATTN_NORM);
 					quasar_buzz_counter =0;
 				}
 				quasar_buzz_counter +=1;
@@ -1162,12 +1161,12 @@ void() bangs =
 								
 								if(quasar_push_sound ==0) 
 								{
-									sound(self, CHAN_AUTO, "weapons/quasar_push.wav", 1, ATTN_NORM);
+									sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar_push.wav", 1, ATTN_NORM);
 									quasar_push_sound = time;
 								}
 								else if(quasar_push_sound !=0 && time - quasar_push_sound > 0.8) 
 								{
-									sound(self, CHAN_AUTO, "weapons/quasar_push.wav", 1, ATTN_NORM);
+									sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar_push.wav", 1, ATTN_NORM);
 									quasar_push_sound =time;
 								}
 							
@@ -1279,7 +1278,7 @@ void() rune_bang_think =
 		self.velocity = self.velocity + '0 0 300';
 		setorigin(self, self.origin + '0 0 20');
 		make_power(self.origin + '0 0 2', 0.7, 6);
-		sound (self, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 		
 		first_smoke = 0;
 		smoke_time = time;	
@@ -1310,7 +1309,7 @@ void() rune_bang_think =
 		self.velocity = self.velocity + '0 0 300';
 		setorigin(self, self.origin + '0 0 20');
 		make_power(self.origin + '0 0 2', 0.7, 6);
-		sound (self, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 		
 		self.movetype = MOVETYPE_FLY;
 		self.avelocity = '-50 -50 -500';
@@ -1332,7 +1331,7 @@ void() rune_bang_think =
 		self.velocity = self.velocity + '0 0 300';
 		setorigin(self, self.origin + '0 0 20');
 		make_power(self.origin + '0 0 2', 0.7, 6);
-		sound (self, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 		
 		self.movetype = MOVETYPE_FLY;
 		self.avelocity = '-50 -50 -500';
@@ -1481,7 +1480,7 @@ void() rune_drop =
 	}
 	
     rune_clear_player_flags();
-    sound (self, CHAN_AUTO, "items/runedrop.wav", 1, ATTN_NORM);
+    sound (self, CHAN_AUTO, "bloodrailz/items/runedrop.wav", 1, ATTN_NORM);
     self.runetime = time + 0.8;
 };
 

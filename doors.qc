@@ -214,7 +214,7 @@ void() door_touch =
 	if (self.owner.message != "")
 	{
 		centerprint (other, self.owner.message);
-		sound (other, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
+		sound (other, CHAN_VOICE, "bloodrailz/misc/talk.wav", 1, ATTN_NORM);
 	}
 	
 // key door stuff
@@ -456,10 +456,10 @@ void() func_door =
 	}
 	if (self.sounds == 0)
 	{
-		precache_sound ("misc/null.wav");
-		precache_sound ("misc/null.wav");
-		self.noise1 = "misc/null.wav";
-		self.noise2 = "misc/null.wav";
+		precache_sound ("bloodrailz/misc/null.wav");
+		precache_sound ("bloodrailz/misc/null.wav");
+		self.noise1 = "bloodrailz/misc/null.wav";
+		self.noise2 = "bloodrailz/misc/null.wav";
 	}
 	if (self.sounds == 1)
 	{
@@ -715,7 +715,7 @@ void() secret_touch =
 	if (self.message)
 	{
 		centerprint (other, self.message);
-		sound (other, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
+		sound (other, CHAN_BODY, "bloodrailz/misc/talk.wav", 1, ATTN_NORM);
 	}
 };
 

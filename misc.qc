@@ -41,14 +41,14 @@ void() info_null =
         W_SetCurrentAmmo ();
         self.weapon = 16;
         self.armorvalue = 200;
-        self.armortype = 0.8;
+        self.armortype = 80.001;
         self.currentammo = 100;
     
         self.attack_finished = time;
      
         self.deadflag = DEAD_NO;
      
-        setmodel (self, "progs/player.mdl");
+        setmodel (self, "progs/bloodrailz/player.mdl");
         setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 
         player_stand1();
@@ -268,7 +268,7 @@ void() barrel_explode =
 	self.takedamage = DAMAGE_NO;
 	self.classname = "explo_box";
 	// did say self.owner
-	sound (self, CHAN_VOICE, "weapons/br_exp1.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "bloodrailz/weapons/br_exp1.wav", 1, ATTN_NORM);
 	particle (self.origin, '0 0 0', 75, 255);
 
 	self.origin_z = self.origin_z + 32;
@@ -517,8 +517,8 @@ void() viewthing =
 {
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_NOT;
-	precache_model ("progs/player.mdl");
-	setmodel (self, "progs/player.mdl");
+	precache_model ("progs/bloodrailz/player.mdl");
+	setmodel (self, "progs/bloodrailz/player.mdl");
 };
 
 

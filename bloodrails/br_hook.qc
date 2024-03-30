@@ -5,8 +5,115 @@ void () trigger_push_touch;
 
 
 
+
+void() Plasma_Charge_Logic=
+{
+	//plasma pop TIMING LOGIC
+		
+		if (!(self.items2 & IT2_SIGIL1)) 
+		{
+			//bprint("no rune\n");
+			if(!self.button0) self.hook_time2 =0;
+			
+			return; //DECEM no plasma withou rune
+		}
+		
+		if (time - self.hook_time2 > 0.9 && time - self.hook_time2 <= 2.5 && self.button0 && self.hook_time2 != 0 && self.plasma_powered == 0)
+		{
+			self.plasma_powered =1;
+			//bprint("charged!\n");
+			//sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 0.8, ATTN_NORM);
+			
+		}
+		else if(time - self.hook_time2 > 2.4 && self.hook_time2 != 0 && self.plasma_powered == 1)
+		{
+			self.plasma_powered =0;
+			if(self.hook_is_anchored == 0) sound (self, CHAN_AUTO, "bloodrailz/weapons/slowdn.wav", 0.7, ATTN_NORM);
+		}
+		
+		if(self.hook_is_anchored == 0)
+		{
+			if(time - self.hook_time2 > 1.3 && time - self.hook_time2 < 1.3 + my_ticrate) sound (self, CHAN_WEAPON, "bloodrailz/weapons/lockon.wav", 0.7, ATTN_NORM);
+			else if(time - self.hook_time2 > 1.7 && time - self.hook_time2 < 1.7 + my_ticrate) sound (self, CHAN_WEAPON, "bloodrailz/weapons/lockon.wav", 0.59, ATTN_NORM);
+		}
+		
+		if(self.weapon != IT_HOOK) self.plasma_powered =0;
+		
+			//else if (time - self.shield_recharge_time <= 13 && self.shield_recharge_time != 0)	
+			//{
+			//	if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 0.62 && self.axe_power_time != 0 && self.axe_powered == 0) sprint(self, "shield depleted\n");
+			//	if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "bloodrailz/misc/menu3.wav", 0.9, ATTN_NORM);
+			//}
+}
+
+
+
+
 void() update_plasma =
 {	
+	if(self.owner.plasma_powered ==1 && self.hook_is_anchored == 0)
+	{
+		if(time - self.owner.hook_time2 > 0.9 && time - self.owner.hook_time2 < 0.9 + 9*my_ticrate) 
+		{
+			//if(vlen(self.owner.origin-self.origin) > 1000)
+			//{
+				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 1, ATTN_NORM);
+				//bprint("1000\n");
+			//}
+			if (self.owner.height == elohim_team1) self.skin = 1;   //red
+			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+			else self.skin = 4;   //blue
+		}
+		else if(time - self.owner.hook_time2 > 1.3 && time - self.owner.hook_time2 < 1.3 + 9*my_ticrate) 
+		{
+			if(vlen(self.owner.origin-self.origin) > 800)
+			{
+				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 0.8, ATTN_NORM);
+			}
+			if (self.owner.height == elohim_team1) self.skin = 1;   //red
+			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+			else self.skin = 4;   //blue
+		}
+		else if(time - self.owner.hook_time2 > 1.7 && time - self.owner.hook_time2 < 1.7 + 9*my_ticrate) 
+		{
+			if(vlen(self.owner.origin-self.origin) > 800)
+			{
+				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 0.7, ATTN_NORM);
+			}
+			if (self.owner.height == elohim_team1) self.skin = 1;   //red
+			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+			else self.skin = 4;   //blue
+		}
+		else 
+		{
+			if (self.owner.height == elohim_team1) self.skin = 6;   //red
+			else if (self.owner.height == elohim_team2) self.skin = 5;   //blue
+			else self.skin = 5;   //blue
+		}
+	}
+	
+	if(self.owner.plasma_powered ==1 && !self.owner.button0) 
+	{
+		areaTHROW(self, self.origin, self, 400, 150, self);
+		areaTHROW(self, self.origin, self, 200, 200, self);
+		//areaDMG(self, self.origin, self.owner, 180, 485, self);    
+		
+		areaDMG(self, self.origin, self.owner, 125, 35, self);   
+		areaDMG(self, self.origin, self.owner, 165, 35, self);   
+		areaDMG(self, self.origin, self.owner, 205, 35, self);    
+				
+	
+		make_impact('0 0 18', 0);
+		if(vlen(self.owner.origin-self.origin) > 700) sound (self.owner, CHAN_WEAPON, "bloodrailz/weapons/br_exp1.wav", 0.4, ATTN_NORM);
+		
+		self.owner.plasma_powered =0;
+		self.hook_time2 =0;
+		
+		self.alpha =0.009;
+		self.think = SUB_Remove;
+	
+	}
+	
 	
 	//bprint(ftos(vlen(self.velocity)));
 	if(vlen(self.velocity) > 251 && (self.velocity_x != 0 && self.velocity_y != 0)) self.punchangle = self.velocity;     //punchangle = old_velocity
@@ -110,7 +217,7 @@ void() update_plasma =
 						
 						
 							make_aura();
-							sound(self, CHAN_AUTO, "items/zap.wav", 1, ATTN_NORM);
+							sound(self, CHAN_AUTO, "bloodrailz/items/zap.wav", 1, ATTN_NORM);
 						
 							if(time - self.plasma_time < 0.5) self.plasma_time = self.plasma_time - 1.3;
 							else if(time - self.plasma_time < 0.7) self.plasma_time = self.plasma_time - 1.1;
@@ -146,7 +253,7 @@ void() update_plasma =
 					{	
 						T_DamageOrg (head, self, self.owner, 485, self.origin);     //changed damage value for armor damage logic
 						make_aura();
-						sound(self, CHAN_AUTO, "items/zap.wav", 1, ATTN_NORM);
+						sound(self, CHAN_AUTO, "bloodrailz/items/zap.wav", 1, ATTN_NORM);
 						
 						if(time - self.plasma_time < 0.5) self.plasma_time = self.plasma_time - 1.3;
 						else if(time - self.plasma_time < 0.7) self.plasma_time = self.plasma_time - 1.1;
@@ -200,8 +307,8 @@ void() update_plasma =
 						head.bounce_time = time;
 						self.bounce_time = time;
 						
-					sound (self, CHAN_AUTO, "weapons/plasma_bounce.wav", 0.7, ATTN_NORM);	
-					sound (self, CHAN_AUTO, "weapons/plasma1.wav", 0.7, ATTN_NORM);
+					sound (self, CHAN_AUTO, "bloodrailz/weapons/plasma_bounce.wav", 0.7, ATTN_NORM);	
+					sound (self, CHAN_AUTO, "bloodrailz/weapons/plasma1.wav", 0.7, ATTN_NORM);
 					
 					
 					}
@@ -224,7 +331,7 @@ void() update_plasma =
 					{	
 						T_DamageOrg (head, self, self.owner, 485, self.origin);    //changed damage value for armor damage logic
 						make_aura();
-						sound(self, CHAN_AUTO, "items/zap.wav", 1, ATTN_NORM);						
+						sound(self, CHAN_AUTO, "bloodrailz/items/zap.wav", 1, ATTN_NORM);						
 						if(time - self.plasma_time < 0.5) self.plasma_time = self.plasma_time - 1.3;
 						else if(time - self.plasma_time < 0.7) self.plasma_time = self.plasma_time - 1.1;
 						else if(time - self.plasma_time < 0.9) self.plasma_time = self.plasma_time - 0.9;
@@ -263,7 +370,7 @@ void(float speed1, float f_offset) make_plasma =
 		if (self.flags &FL_ONGROUND && v_ang_x > 75 && v_ang_x < 165) return;  
 		
 		
-		sound(self, CHAN_AUTO, "weapons/plasma1.wav", 1, ATTN_NORM);
+		sound(self, CHAN_AUTO, "bloodrailz/weapons/plasma1.wav", 1, ATTN_NORM);
 		
        		plasma = spawn ();
        		plasma.plasma_time = time;
@@ -291,14 +398,14 @@ void(float speed1, float f_offset) make_plasma =
         	plasma.avelocity = '0 0 -500';
 		plasma.nextthink 	= time + 0.05;   
 		plasma.think 		= update_plasma;
-        	setmodel (plasma, "progs/ef_aura1.mdl");
+        	setmodel (plasma, "progs/bloodrailz/ef_aura1.mdl");
         	plasma.frame = 2;
         	plasma.alpha = 0.001;
         	
         	plasma.movement = v_forward;      //movement = plasma_forward
         	
 		setsize (plasma, '-10 -10 -10', '10 10 10');  //13->8   
-		sound (self, CHAN_WEAPON, "weapons/plasma1.wav", 1, ATTN_NORM);
+		sound (self, CHAN_WEAPON, "bloodrailz/weapons/plasma1.wav", 1, ATTN_NORM);
 }
 
 
@@ -398,7 +505,7 @@ void() make_hookx =
 		self.hookx =1;
 		local entity hookx;
 		hookx = spawn();
-		setmodel (hookx, "progs/hookx.mdl");
+		setmodel (hookx, "progs/bloodrailz/hookx.mdl");
 		hookx.movetype = MOVETYPE_NOCLIP;
 		hookx.solid = SOLID_NOT;
 		hookx.classname = "hookx";
@@ -457,13 +564,13 @@ void () LinkPos =
 	
 	if (vlen(self.origin - hook.origin) <125) 
 	{
-		setmodel (self, "progs/null.mdl");
+		setmodel (self, "progs/bloodrailz/null.mdl");
 		self.alpha = 0.005;
 	}
 	
 	else 
 	{
-		setmodel (self, "progs/br_chain.mdl");
+		setmodel (self, "progs/bloodrailz/br_chain.mdl");
 		self.alpha = 0.65;
 	}
 	
@@ -686,7 +793,11 @@ void () HookVanish =
 		self.hook_lookaway = 0;
 		self.hook_is_anchored = 0;
 		
+		
 		self.hookhead = 0;		
+		
+		stuffcmd(self, "cl_bob 0.0032\n");
+		stuffcmd(self, "cl_bobcycle 2.5\n");
 };
 
 
@@ -807,7 +918,7 @@ void () HookPull =
 				{
 					sound (self, CHAN_WEAPON, SOUND_HOOK_LAND, 1, ATTN_NORM);
 
-					T_DamageOrg (self.enemy, self, self.owner, 18, self.owner.origin);       //Bloodrails - hook drag damage  40 -> 12
+					T_DamageOrg (self.enemy, self, self.owner, 18, self.owner.origin);       //hook drag damage  40 -> 12
 
 					if (self.enemy.classname == "player")
 					{
@@ -859,8 +970,48 @@ void () HookPull =
 		
 		if(!(self.owner.flags & FL_ONGROUND))  self.owner.hook_swing_ground = 0;
 		
+		
 		if ((self.owner.button2 && self.owner.airborn_pos > 45) || self.owner.tarzan_time == 1)
 		{
+			
+			if(self.owner.turn_speed > 10)
+			{
+				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
+				stuffcmd(self.owner, "cl_screenangle -6\n");
+			}
+			else if(self.owner.turn_speed > 5)
+			{
+				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
+				stuffcmd(self.owner, "cl_screenangle -3\n");
+			}
+			//////////////////////////////////////////////////////////////
+			else if(self.owner.turn_speed < -10)
+			{
+				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
+				stuffcmd(self.owner, "cl_screenangle 6\n");
+			}
+			else if(self.owner.turn_speed < -5)
+			{
+				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
+				stuffcmd(self.owner, "cl_screenangle 3.0\n");
+			}
+			else
+			{
+				stuffcmd(self.owner, "cl_screenangle_speed 2.25\n");
+				stuffcmd(self.owner, "cl_screenangle 0\n");
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			if (self.owner.airborn_pos > 185 || self.owner.is_over_sky ==1) //added the over sky part
 			{	
 				self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);  //10-11, changed 27 to 22
@@ -1085,7 +1236,7 @@ void() T_ChainTouch =
 
 	if (other.takedamage) 
 	{
-		if ( self.owner.armorvalue < other.armorvalue )    //Bloodrails - hook steals armor
+		if ( self.owner.armorvalue < other.armorvalue )    //hook steals armor
 		{
 			//sprint(self.owner, "X");
 			self.owner.items = self.owner.items | IT_ARMOR3;
@@ -1094,7 +1245,7 @@ void() T_ChainTouch =
 			other.armorvalue = 0;
 		}
 	
-		T_DamageOrg (other, self, self.owner, 10, self.owner.origin );    //Bloodrails - hook impact damage
+		T_DamageOrg (other, self, self.owner, 10, self.owner.origin );    //hook impact damage
 		
 
 		// don't damage teammates
@@ -1119,13 +1270,13 @@ void() T_ChainTouch =
 			return;
 		}
 		
-		sound (self, CHAN_AUTO, "weapons/br_clink.wav",1,ATTN_NORM);
-		sound (self.owner, CHAN_AUTO, "weapons/br_clink.wav",0.5,ATTN_NORM);
+		sound (self, CHAN_AUTO, "bloodrailz/weapons/br_clink.wav",1,ATTN_NORM);
+		sound (self.owner, CHAN_AUTO, "bloodrailz/weapons/br_clink.wav",0.5,ATTN_NORM);
 		
 		self.owner.hook_is_anchored = 1;
 		if (((self.owner.player_flag & PF_ITEM_RUNE_MASK) && (self.owner.player_flag & PF_ITEM_RUNE1_FLAG) ))
 		{
-			setmodel (self, "progs/ef_aura1.mdl");
+			setmodel (self, "progs/bloodrailz/ef_aura1.mdl");
 			self.frame = 2;
 			
 			if (self.owner.height == elohim_team1) 
@@ -1256,9 +1407,11 @@ void() W_FireChain =
         
 		//T_Damage (self, world, world, 10000);    //for debug
 		//remove(self);  //for debug
+		
+		stuffcmd(self, "cl_bob 0.00025\n");
         
 		if(self.hanim == 0 && (self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG))    self.hanim = 1;
-
+		if (self.player_flag & PF_ITEM_RUNE1_FLAG) self.hook_time2 = time; 
 		
 		makevectors (self.v_angle);
 		traceline(self.origin + (v_forward*16) + '0 0 16', self.origin + (v_forward*400) + '0 0 16', 2, hook);
@@ -1270,6 +1423,9 @@ void() W_FireChain =
 	
 		sound (self, CHAN_WEAPON, SOUND_HOOK_ATTACK, 1, ATTN_NORM);
 	
+		
+		  // moved up above rune1/plasma switch to work with plasma bangs
+		
 		if (((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG) && self.airborn_pos < 400))
 		{
 			if(trace_fraction < 0.005) return;
@@ -1355,9 +1511,15 @@ void() W_FireChain =
 	setsize (hook, '0 0 0', '0 0 0');     
 	setorigin (hook, self.origin + (v_forward*16) + '0 0 16');
 	
+			//local vector hook_src = self.origin + (v_forward*16) + '0 0 16';   //MARCH
+			//traceline(hook_src, hook_src + (v_forward*8000), 1, hook);
+			//self.adjusted_hook_impact = trace_endpos;
+			
+			  antilag_rewind_all(self.responsetime, world);			//MARCH
 			local vector hook_src = self.origin + (v_forward*16) + '0 0 16';
 			traceline(hook_src, hook_src + (v_forward*8000), 1, hook);
 			self.adjusted_hook_impact = trace_endpos;
+			antilag_restore_all();  
 			
 			local vector trace_end_central = trace_endpos;
 			local float sky_dist = vlen(trace_endpos-hook_src);
@@ -1625,7 +1787,7 @@ void() W_FireChain =
 		if(currentLinkNum == 0)
 		
 		
-		setmodel (link, "progs/br_chain.mdl"); 
+		setmodel (link, "progs/bloodrailz/br_chain.mdl"); 
 		
 		//temporarily set 'self' so we can call our 'think' method 
 		self = link;

@@ -37,7 +37,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float throw_hi
 						else if(head.skin == 5) head.skin = 6;  
 						
 						head.owner = attacker;
-						sound (attacker, CHAN_AUTO, "weapons/plasma2.wav",1,ATTN_NORM);
+						sound (attacker, CHAN_AUTO, "bloodrailz/weapons/plasma2.wav",1,ATTN_NORM);
 						
 						if (self.height == elohim_team1) head.skin = 6;   //red
 						else if (self.height == elohim_team2) head.skin = 5;   //blue
@@ -67,9 +67,9 @@ void() Axe_Splash =
 	
 	if(time - self.axe_splash_time < 0.20 && self.done_damage == 0)
 	{
-		areaKDR2(self, self.origin + v_forward*30, self, 44, 403, self);    //NOVEM uncommented the 
-		if(self.turn_speed >48) areaKDR2(self, self.origin + v_forward*10 + v_right*(-30), self, 30, 403, self);      //damage into direction of turn  //10/8/23 commented this out to see if it fixes double kill issue //NOVEM uncommented bc the issue was elsewhere
-		else if(self.turn_speed <-48) areaKDR2(self, self.origin + v_forward*10 + v_right*(30), self, 30, 403, self); 
+		areaKDR2(self, self.origin + v_forward*30, self, 57, 403, self);    //JANUARY 44 ->55
+		if(self.turn_speed >48) areaKDR2(self, self.origin + v_forward*10 + v_right*(-30), self, 33, 403, self);      //damage into direction of turn  //10/8/23 commented this out to see if it fixes double kill issue //NOVEM uncommented bc the issue was elsewhere
+		else if(self.turn_speed <-48) areaKDR2(self, self.origin + v_forward*10 + v_right*(30), self, 33, 403, self); 
 		
 		//sprint(self, ftos(self.turn_speed));
 		//sprint(self, "\n");
@@ -89,24 +89,24 @@ void() Axe_Charge_Logic=
 		{
 			
 			
-			if(time - self.shield_recharge_time > 13 || self.shield_recharge_time == 0)
+			if(time - self.shield_recharge_time > 18 || self.shield_recharge_time == 0)
 			{
 				self.axe_powered = 1;
 				
 				self.old_vel = vlen(self.velocity);    //store velocity at shield powerup for glide
 				
-				sound (self, CHAN_WEAPON, "weapons/axe_charge.wav", 1, ATTN_NORM);
+				sound (self, CHAN_WEAPON, "bloodrailz/weapons/axe_charge.wav", 1, ATTN_NORM);
 				//sprint(self, "shield powered-up\n");
 			
-				self.weaponmodel = "progs/v_br_axe_redzz.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "progs/v_br_axe_bluzz.mdl";
+				self.weaponmodel = "progs/bloodrailz/v_br_axe_redzz.mdl";
+				if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_axe_bluzz.mdl";
 				self.weaponframe = 0;
 			}
 			
 			else if (time - self.shield_recharge_time <= 13 && self.shield_recharge_time != 0)	
 			{
 				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 0.62 && self.axe_power_time != 0 && self.axe_powered == 0) sprint(self, "shield depleted\n");
-				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "misc/menu3.wav", 0.9, ATTN_NORM);
+				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "bloodrailz/misc/menu3.wav", 0.9, ATTN_NORM);
 			}
 		}
 	
@@ -138,7 +138,8 @@ void() W_Fire_BR_Axe =
         
         self.speedlines_are_on = 0; 
                                
-	
+	if(self.skiing_on !=1 && self.skiing_on !=2)	//MARCH
+	{
 		if (boostspeed < 500) 
 		{
 			if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge3;      //AXE DASH  
@@ -154,24 +155,25 @@ void() W_Fire_BR_Axe =
 			if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge1;      //AXE DASH  
 			else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge1*0.75); 
 		} 
-	
+	}
 		
 	
-        //antilag_rewind_all(self.responsetime, world);   //NOVEM removed antilag from axe
+antilag_rewind_all(self.responsetime, world);   //MARCH
 
 	
 	local vector source = self.origin + '0 0 16';
 	local vector splash_center = source + v_forward*30;
 	local float damage2=403;
 
-
-	if(boostspeed > 1100) sound (self, CHAN_AUTO, "items/br_damage3.wav",0.3,ATTN_NORM);  //sound quad noise when moving over a certain speed
-				
-
-	areaKDR(self, source, self, 55, 403, self);    //Bloodrails - Splash damage only applying to players with KDR>2.4  // reduced from 80 to 55   9-24-23
+	areaKDR(self, source, self, 55, 403, self);    //Splash damage only applying to players with KDR>2.4  // reduced from 80 to 55   9-24-23
 	PlasmaPusher(self, splash_center, self, 60, 403, self); // 55->60 trying to make plasma deflection a bit easier
 
-	//antilag_restore_all();  // AXE ANTILAG restore Anti-lag   //NOVEM removed antilag from axe
+antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
+
+	if(!(elohim_playmode & RACE_MODE)) 
+	{
+		if(boostspeed > 1275) sound (self, CHAN_AUTO, "bloodrailz/items/br_damage3.wav",0.3,ATTN_NORM);  //sound quad noise when moving over a certain speed
+	}
    
    
 	traceline (source, source + v_forward*64, FALSE, self);
@@ -181,12 +183,12 @@ void() W_Fire_BR_Axe =
 
 	if (trace_ent.takedamage)
 	{
-		trace_ent.axhitme = 1; //Bloodrails - no spawnblood, no traceline axe damage because that deals double damage against armor   5/23/22
+		trace_ent.axhitme = 1; //no spawnblood, no traceline axe damage because that deals double damage against armor   5/23/22
 	}
 	else
 	{    // hit wall
 		if(time - self.axe_time < 0.42) return;    //make sure, the axe clinks only once per hit
-		sound (self, CHAN_AUTO, "weapons/br_clink.wav",1,ATTN_NORM);
+		sound (self, CHAN_AUTO, "bloodrailz/weapons/br_clink.wav",1,ATTN_NORM);
 		
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
@@ -225,7 +227,7 @@ void(entity targ) make_spawnprotect =
 {
 	local entity spawnprotect;
 	spawnprotect = spawn();
-	setmodel (spawnprotect, "progs/ef_shields.mdl");
+	setmodel (spawnprotect, "progs/bloodrailz/ef_shields.mdl");
 	
 	setorigin(spawnprotect, targ.origin + '0 0 5');
 	
@@ -316,7 +318,7 @@ void() update_shield_EXTERNAL =
 							dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 							dir5 = normalize(dir5);
 							head.velocity = head.velocity + 240*dir5 + v_up*75;
-							if(self.weapon == 29 || random() < 0.05) sound(self, CHAN_AUTO, "weapons/quasar_push.wav", 1, ATTN_NORM);	
+							if(self.weapon == 29 || random() < 0.05) sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar_push.wav", 1, ATTN_NORM);	
 							self.weapon +=1;
 							if(self.weapon ==30) self.weapon =0;
 				}
@@ -345,7 +347,7 @@ void() make_shield =
     
 		local entity shield2;
 		shield2 = spawn();
-		setmodel (shield2, "progs/ef_shields.mdl");
+		setmodel (shield2, "progs/bloodrailz/ef_shields.mdl");
 		shield2.skin = 0;
 		if (self.height == elohim_team2) shield2.skin = 2;
     
@@ -426,7 +428,7 @@ void() make_speedlines =
 		
 
 		
-		setmodel (speedlines, "progs/ef_speed.mdl");
+		setmodel (speedlines, "progs/bloodrailz/ef_speed.mdl");
 		
 		setorigin(speedlines, '0 y z');
 		speedlines.movetype = MOVETYPE_NOCLIP;
@@ -451,3 +453,90 @@ void() make_speedlines =
 }
 
 
+void() auto_dash =
+{
+		makevectors(self.v_angle);
+		
+		if(!self.dash_button && self.impulse ==43) 
+		{
+			self.dash_button =1;
+			self.dash_time = time;
+		}
+		if((self.dash_button && self.impulse ==44) || self.hook_out) 
+		{
+			self.dash_button =0;
+		}
+		
+		
+		if(self.dash_button)
+		{
+			if(time - self.dash_time > 0.19)
+			{
+				self.button0 = 0;
+				stuffcmd(self,"-attack\n");
+				
+				if(time - self.dash_time > 0.27)	
+				{
+					self.dash_time = time;
+					stuffcmd(self,"+attack\n");
+					self.button0 = 1;
+				}
+			}
+			
+			
+			
+			if(self.movement_y != 700 && self.movement_y != -700)
+			{
+				local vector velz;
+				velz=self.velocity;
+				velz_z=0;
+				local vector forz;
+				forz=v_forward;
+				forz_z=0;
+				
+				if(normalize(velz)*normalize(forz) < 0.75)
+				{
+					local float oldz = self.velocity_z;
+					self.velocity = vlen(self.velocity)*normalize(self.velocity + v_forward*54);
+					self.velocity_z =oldz;
+					//bprint("dot product\n");
+				}
+				
+				
+				
+				/*
+				if(self.turn_speed >50 || self.turn_speed <-50)
+				{
+					self.velocity = vlen(self.velocity)* normalize(self.velocity + v_forward*100);
+					bprint("adjust 50\n");
+				}
+				else if(self.turn_speed >40 || self.turn_speed <-40)
+				{
+					self.velocity = vlen(self.velocity)*normalize(self.velocity + v_forward*90);
+					bprint("adjust 40\n");
+				}
+				else if(self.turn_speed >25 || self.turn_speed <-25)
+				{
+					self.velocity = vlen(self.velocity)*normalize(self.velocity + v_forward*80);
+					bprint("adjust 25\n");
+				}
+				else if(self.turn_speed >15 || self.turn_speed <-15)
+				{
+					self.velocity = vlen(self.velocity)*normalize(self.velocity + v_forward*75);
+					bprint("adjust 15\n");
+				}
+				else if(self.turn_speed >2 || self.turn_speed <-3)
+				{
+					self.velocity = vlen(self.velocity)*normalize(self.velocity + v_forward*70);
+					bprint("adjust 2\n");
+				}
+				*/
+			}	
+
+		}
+		else
+		{
+			
+			return;
+		}
+}

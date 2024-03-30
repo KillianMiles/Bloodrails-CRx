@@ -718,8 +718,8 @@ void () console_server_flags =
 		cprint("ELOHIM_SAME_LEVEL\n");
 	if (elohim_playmode & ELOHIM_MATCH_MODE)
 		cprint("ELOHIM_MATCH_MODE\n");
-	if (elohim_playmode & ELOHIM_PRACTICE_MODE)
-		cprint("ELOHIM_PRACTICE_MODE\n");
+	if (elohim_playmode & RACE_MODE)
+		cprint("RACE_MODE\n");
 	if (elohim_playmode & AIR_ARENA_MODE)
 		cprint("AIR_ARENA_MODE\n");
         if (elohim_playmode & ELOHIM_SERVER_INITIALIZED)
@@ -947,7 +947,7 @@ void (float command) console_command =
     else if (command >= 12 && command <= 14)
         admin_init_set_mode();
 	else if (command == 15)
-		admin_set_armor();   //Bloodrails - set spooge to armor
+		admin_set_armor();
 	else if (command >= 16 && command <= 18)
 		admin_request_set_gibs(command - 16);
 	else if (command == 19)

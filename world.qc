@@ -81,9 +81,9 @@ void() main =
 	precache_file ("gfx/p_multi.lmp");
 
 // sounds loaded by C code
-	precache_sound ("misc/menu1.wav");
-	precache_sound ("misc/menu2.wav");
-	precache_sound ("misc/menu3.wav");
+	precache_sound ("bloodrailz/misc/menu1.wav");
+	precache_sound ("bloodrailz/misc/menu2.wav");
+	precache_sound ("bloodrailz/misc/menu3.wav");
 	precache_sound ("ambience/water1.wav");
 	precache_sound ("ambience/wind2.wav");
 
@@ -140,26 +140,17 @@ void() worldspawn =
 // custom map title
 	//self.message = GetMapName(self.message);
 	
-// the area based ambient sounds MUST be the first precache_sounds
 
-
-// sounds used from C physics code
-	//precache_sound ("legacy/demon_dland2.wav");		// landing thud
-	precache_sound ("misc/h2ohit1.wav");		// landing splash
-	
-
-// setup precaches allways needed
-	
 	
 
 
-	precache_sound ("misc/talk.wav");		// talk
-	precache_sound ("player/teledth1.wav");		// telefrag
-	precache_sound ("misc/r_tele1.wav");		// teleport sounds
-	precache_sound ("misc/r_tele2.wav");
-	precache_sound ("misc/r_tele3.wav");
-	precache_sound ("misc/r_tele4.wav");
-	precache_sound ("misc/r_tele5.wav");
+	precache_sound ("bloodrailz/misc/talk.wav");		// talk
+	precache_sound ("bloodrailz/player/teledth1.wav");		// telefrag
+	precache_sound ("bloodrailz/misc/r_tele1.wav");		// teleport sounds
+	precache_sound ("bloodrailz/misc/r_tele2.wav");
+	precache_sound ("bloodrailz/misc/r_tele3.wav");
+	precache_sound ("bloodrailz/misc/r_tele4.wav");
+	precache_sound ("bloodrailz/misc/r_tele5.wav");
 
 
 // player gib sounds
@@ -181,14 +172,14 @@ void() worldspawn =
 
 	precache_sound ("doors/drclos4.wav");
 
-	precache_model ("progs/player.mdl");
-	precache_model ("progs/h_player.mdl");
+	precache_model ("progs/bloodrailz/player.mdl");
+	precache_model ("progs/bloodrailz/h_player.mdl");
 	precache_model ("progs/gib1.mdl");
 	precache_model ("progs/gib2.mdl");
 	precache_model ("progs/gib3.mdl");
 
-	precache_model ("progs/s_bubble.spr");	// LibreQuake //drowning bubbles
-	precache_model ("progs/s_explod.spr");	// LibreQuake //sprite explosion
+	precache_model ("progs/bloodrailz/s_bubble.spr");	// LibreQuake //drowning bubbles
+	precache_model ("progs/bloodrailz/s_explod.spr");	// LibreQuake //sprite explosion
 	
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
@@ -198,22 +189,26 @@ void() worldspawn =
 	lightstyle(0, "m");
 	
 	// 1 FLICKER (first variety)
-	lightstyle(1, "mmnmmommommnonmmonqnmmo");
+	//lightstyle(1, "mmnmmommommnonmmonqnmmo");
+	lightstyle(1, "m");
 	
 	// 2 SLOW STRONG PULSE
-	lightstyle(2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
+	//lightstyle(2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
+	lightstyle(2, "m");
 	
 	// 3 CANDLE (first variety)
 	lightstyle(3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
 	
 	// 4 FAST STROBE
-	lightstyle(4, "mamamamamama");
+	//lightstyle(4, "mamamamamama");
+	lightstyle(4, "m");
 	
 	// 5 GENTLE PULSE 1
 	lightstyle(5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
 	
 	// 6 FLICKER (second variety)
-	lightstyle(6, "nmonqnmomnmomomno");
+	//lightstyle(6, "nmonqnmomnmomomno");
+	lightstyle(6, "m");
 	
 	// 7 CANDLE (second variety)
 	lightstyle(7, "mmmaaaabcdefgmmmmaaaammmaamm");
@@ -222,7 +217,8 @@ void() worldspawn =
 	lightstyle(8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
 	
 	// 9 SLOW STROBE (fourth variety)
-	lightstyle(9, "aaaaaaaazzzzzzzz");
+	//lightstyle(9, "aaaaaaaazzzzzzzz");
+	lightstyle(9, "m");
 	
 	// 10 FLUORESCENT FLICKER
 	lightstyle(10, "mmamammmmammamamaaamammma");

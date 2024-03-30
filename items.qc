@@ -32,7 +32,7 @@ void() SUB_regen =
 {
 	self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
-	sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);	// Christian Ice play respawn sound
+	sound (self, CHAN_VOICE, "bloodrailz/items/itembk2.wav", 1, ATTN_NORM);	// Christian Ice play respawn sound
 	setorigin (self, self.origin);
 };
 
@@ -94,7 +94,7 @@ StartItem  --  Sets the clipping size and plants the object on the floor
 */
 void() StartItem =
 {
-    if (elohim_playmode & ELOHIM_PRACTICE_MODE || mode_is_arena())
+    if (elohim_playmode & RACE_MODE || mode_is_arena())
     {
         if (self.touch == weapon_touch || self.touch == ammo_touch)
         {
@@ -156,7 +156,7 @@ void() armor_touch =
 	
 	self.think = SUB_regen;
 
-	sound(other, CHAN_ITEM, "items/br_armor1.wav", 0.8, ATTN_NORM);
+	sound(other, CHAN_ITEM, "bloodrailz/items/br_armor1.wav", 0.8, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	
 	activator = other;
@@ -171,8 +171,8 @@ void() item_armor1 =
 	if(Maps_ShouldRemoveDefaultEntity(self) || (mode_is_arena())) return remove(self);
 
 	self.touch = armor_touch;
-	precache_model ("progs/br_armor.mdl");
-	setmodel (self, "progs/br_armor.mdl");
+	precache_model ("progs/bloodrailz/br_armor.mdl");
+	setmodel (self, "progs/bloodrailz/br_armor.mdl");
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -185,8 +185,8 @@ void() item_armor2 =
 	if(Maps_ShouldRemoveDefaultEntity(self) || (mode_is_arena())) return remove(self);
 
 	self.touch = armor_touch;
-	precache_model ("progs/br_armor.mdl");
-	setmodel (self, "progs/br_armor.mdl");
+	precache_model ("progs/bloodrailz/br_armor.mdl");
+	setmodel (self, "progs/bloodrailz/br_armor.mdl");
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -200,8 +200,8 @@ void() item_armorInv =
 		return remove(self);
 
 	self.touch = armor_touch;
-	precache_model ("progs/br_armor.mdl");
-	setmodel (self, "progs/br_armor.mdl");
+	precache_model ("progs/bloodrailz/br_armor.mdl");
+	setmodel (self, "progs/bloodrailz/br_armor.mdl");
 	self.skin = 2;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -254,15 +254,44 @@ void() powerup_touch =
 	
 	if (self.classname == "item_artifact_invulnerability")
 	{
-		other.invincible_time = 1;
-		other.invincible_finished = time + 42;     // pent available // pent time
-		other.items = other.items - IT_INVULNERABILITY;  //dont pent the screen upon pickup
+			if(elohim_playmode & RACE_MODE && other.classname == "player")
+			{
+				if(racing_on_global == 0)
+				{
+					racing_start();
+					//other.invincible_time = 1;
+					other.invincible_finished = time + 500000;
+					
+					if (self.classname == "item_artifact_invulnerability") self.think = SUB_Remove;
+					return;
+					
+				}
+				return;
+				
+			}
+			else
+			{
+		
+				other.invincible_time = 1;
+				other.invincible_finished = time + 42;     // pent available // pent time
+				other.items = other.items - IT_INVULNERABILITY;  //dont pent the screen upon pickup
+			}
 	}
 	
 	if (self.classname == "item_artifact_invisibility")
 	{
-		other.invisible_time = 1;
-		other.invisible_finished = time + 30;
+			if(elohim_playmode & RACE_MODE && other.classname == "player")
+			{
+					racing_finish();
+					other.invincible_finished = time + 500000;
+					
+					if (self.classname == "item_artifact_invulnerability") self.think = SUB_Remove;
+					return;
+
+			}
+			
+			other.invisible_time = 1;
+			other.invisible_finished = time + 30;
 	}
 
 	if (self.classname == "item_artifact_super_damage")
@@ -282,11 +311,21 @@ void() item_artifact_invulnerability =
 	if(Maps_ShouldRemoveDefaultEntity(self) || (mode_is_arena())) return remove(self);
 
 	self.touch = powerup_touch;
-	self.noise = "items/br_protect.wav";
-	setmodel (self, "progs/br_pent.mdl");
-	self.netname = "Shield Amplifier";
+	if (!(elohim_playmode & RACE_MODE)) 
+	{
+		self.noise = "bloodrailz/items/br_protect.wav";
+		setmodel (self, "progs/bloodrailz/br_pent.mdl");
+		self.netname = "Shield Amplifier";
+		setsize (self, '-16 -16 -24', '16 16 32');
+	}
+	else
+	{
+		self.noise = "bloodrailz/items/br_protect.wav";
+		setmodel (self, "progs/bloodrailz/br_pent.mdl");
+		self.netname = "Shield Amplifier";
+		setsize (self, '-32 -32 -24', '32 32 75');
+	}
 	self.items = IT_INVULNERABILITY;
-	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 };
 
@@ -297,10 +336,20 @@ void() item_artifact_invisibility =
 	if(Maps_ShouldRemoveDefaultEntity(self) || elohim_playmode & ELOHIM_WRAITH) return remove(self);
 
 	self.touch = powerup_touch;
-	self.noise = "items/br_inv1.wav";
-	setmodel (self, "progs/br_ring1.mdl");
-	self.netname = "Cloaking matrix";
+	if (!(elohim_playmode & RACE_MODE)) 
+	{
+		self.noise = "bloodrailz/items/br_inv1.wav";
+		setmodel (self, "progs/bloodrailz/br_ring1.mdl");
+		self.netname = "Cloaking matrix";
+		setsize (self, '-16 -16 -24', '16 16 32');
+	}
+	else 
+	{
+		self.noise = "bloodrailz/misc/ding2.wav";
+		setmodel (self, "progs/bloodrailz/br_pent2.mdl");
+		self.netname = "Cloaking matrix";
+		setsize (self, '-59 -59 -24', '59 59 80');
+	}
 	self.items = IT_INVISIBILITY;
-	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 };

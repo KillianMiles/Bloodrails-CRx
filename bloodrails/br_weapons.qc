@@ -42,7 +42,7 @@ MULTI-DAMAGE  --  Collects multiple small damages into a single damage
 entity	multi_ent;
 float	multi_damage;
 
-void() ClearMultiDamage =                  //Bloodrails - no multidamage
+void() ClearMultiDamage =                  //no multidamage
 {
 	multi_ent = world;
 	multi_damage = 0;
@@ -130,7 +130,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	ClearMultiDamage (); 
 	 	
 		
-	while (shotcount > 0)                 //Bloodrails - Run through the pellets for spawnblood effect
+	while (shotcount > 0)                 //Run through the pellets for spawnblood effect
 	{
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
@@ -138,14 +138,14 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 		
 		if (trace_fraction != 1.0)
 		{
-			TraceAttack (1001, direction);           //Bloodrails - 	
+			TraceAttack (1001, direction);	
 		}
 
 		shotcount = shotcount - 1;
 	}
 	
 	
-	while (shotcount_dmg > 0)              //Bloodrails - Run through the pellets until a hit is found
+	while (shotcount_dmg > 0)              //Run through the pellets until a hit is found
 	{
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
@@ -177,7 +177,7 @@ void() BecomeExplosion =
 	self.movetype = MOVETYPE_NONE;
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
-	setmodel (self, "progs/s_explod.spr");
+	setmodel (self, "progs/bloodrailz/s_explod.spr");
 	self.solid = SOLID_NOT;
 	s_explode1 ();
 };
@@ -194,8 +194,8 @@ void() W_SetCurrentAmmo =
 	
 	if (self.weapon == IT_AXE)
 	{
-		self.weaponmodel = "progs/v_br_axe_red1.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "progs/v_br_axe_blu1.mdl";
+		self.weaponmodel = "progs/bloodrailz/v_br_axe_red1.mdl";
+		if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_axe_blu1.mdl";
 		self.weaponframe = 0;
 	}
 
@@ -207,8 +207,8 @@ void() W_SetCurrentAmmo =
 
 	else if (self.weapon == IT_RAILGUN)
 	{
-		self.weaponmodel = "progs/v_br_rail_red1.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "progs/v_br_rail_blu1.mdl";
+		self.weaponmodel = "progs/bloodrailz/v_br_rail_red1.mdl";
+		if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_blu1.mdl";
 		//self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
@@ -231,17 +231,17 @@ void() W_Attack =
 {
 	local	float	r, haste_mult;
 	haste_mult = 1;
-	local   float   randrail;    //Bloodrails
+	local   float   randrail;
 
 
 	if (time < self.attack_finished) return;
 
 	if (self.player_flag & PF_ITEM_RUNE_MASK)
 	{
-		if (self.items2 & IT2_SIGIL3) haste_mult = .5; //Bloodrails lower haste multiple
+		if (self.items2 & IT2_SIGIL3) haste_mult = .5; //lower haste multiple
 	}
 	
-	if (self.weapon == IT_AXE)      //Bloodrails
+	if (self.weapon == IT_AXE)
 	{
 		Axe_Charge_Logic();
 		if (self.axe_button_released == 1 && !(self.items2 & IT2_SIGIL3)) return;  //DECEM
@@ -263,78 +263,79 @@ void() W_Attack =
 		self.axe_splash_time = time;
 		self.done_damage = 0;
 	
-		if(time - self.axe_time > 1.2)      //Bloodrails - Axe dash cool down timer
+		if(time - self.axe_time > 1.2)      //Axe dash cool down timer
 		{
 			self.dash_counter = 0;
 			self.dash_timer = time;
 		}
-		sound (self, CHAN_WEAPON, "legacy/weapons_ax1.wav", 1, ATTN_NORM);
+		sound (self, CHAN_WEAPON, "bloodrailz/legacy/weapons_ax1.wav", 1, ATTN_NORM);
 		
 		local float boostspeed2 = vlen(self.velocity);
 		local float AxLunge1 = 30;
 		local float AxLunge2 = 60;
 		local float AxLunge3 = 90;
 	
-		if (boostspeed2 < 500) 
+	
+		if(self.skiing_on !=1 && self.skiing_on !=2)	//MARCH
 		{
-			if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge3;      //AXE DASH  
-			else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge3*0.75); 
-		}                            
-		else if (boostspeed2 > 500 && boostspeed2 < 700) 
-		{
-			if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge2;      //AXE DASH  
-			else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge2*0.75); 
-		}
-		else if (boostspeed2 >= 700 || boostspeed2 < 1000) 
-		{
-			if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge1;      //AXE DASH  
-			else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge1*0.75); 
+			if (boostspeed2 < 500) 
+			{
+				if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge3;      //AXE DASH  
+				else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge3*0.75); 
+			}                            
+			else if (boostspeed2 > 500 && boostspeed2 < 700) 
+			{
+				if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge2;      //AXE DASH  
+				else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge2*0.75); 
+			}
+			else if (boostspeed2 >= 700 || boostspeed2 < 1000) 
+			{
+				if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge1;      //AXE DASH  
+				else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge1*0.75); 
+			}
 		}
 
         
 		W_Fire_BR_Axe();
-      
+
 		if(self.turn_speed > 15 || (self.turn_speed > 0 && self.movement_y ==-700 && vlen(self.velocity)> 200)) 
 		{
 			player_axed1 ();
-			//sprint(self, ftos(self.turn_speed));	
-			//sprint(self, "  ");
 		}
 		else if(self.turn_speed < -15 || (self.turn_speed < 0 && self.movement_y ==700 && vlen(self.velocity)> 200)) 
 		{
 			player_axec1 ();
-			//sprint(self, ftos(self.turn_speed));	
-			//sprint(self, "  ");
+
 		}
-	
-	
 		else
 		{
 			r = random();
 			if (r < 0.7) player_axe1 ();
 			else player_axed1 ();	
 		}
-	
+
 		self.dash_counter = self.dash_counter + 1;
 	
 	
-		if (self.dash_counter < 8)         //Bloodrails - Axe dash cool down timer
+		if (self.dash_counter < 8)         //Axe dash cool down timer
 		{	 
-			//sprint(self,"dash3\n ");	
-			if (boostspeed2 < 500) 
-			{
-				if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge3;      //AXE DASH  
-				else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge3*0.8); 
-			}                            
-			else if (boostspeed2 > 500 && boostspeed2 < 700) 
-			{
-				if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge2;      //AXE DASH  
-				else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge2*0.8); 
-			}
-			else if (boostspeed2 >= 700 || boostspeed2 < 1100) 
-			{
-				if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge1;      //AXE DASH  
-				else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge1*0.8); 
+			if(self.skiing_on !=1 && self.skiing_on !=2)	//MARCH
+			{	
+				if (boostspeed2 < 500) 
+				{
+					if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge3;      //AXE DASH  
+					else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge3*0.8); 
+				}                            
+				else if (boostspeed2 > 500 && boostspeed2 < 700) 
+				{
+					if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge2;      //AXE DASH  
+					else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge2*0.8); 
+				}
+				else if (boostspeed2 >= 700 || boostspeed2 < 1100) 
+				{
+					if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*AxLunge1;      //AXE DASH  
+					else if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-AxLunge1*0.8); 
+				}
 			}
 		}
 	
@@ -362,7 +363,7 @@ void() W_Attack =
 	}
 	
 	
-	else if (self.weapon == IT_RAILGUN)    //Bloodrails
+	else if (self.weapon == IT_RAILGUN)
 	{
 		Rail_Charge_Logic();
 		if (self.rail_button_released == 1) return;
@@ -383,22 +384,25 @@ void() W_Attack =
 		
 		if(self.ammo_slugs <=0)                // RAIL SLUGS RAIL AMMO
 		{
-			sound (self, CHAN_AUTO, "weapons/empty.wav", 0.87, ATTN_NORM);
+			sound (self, CHAN_AUTO, "bloodrailz/weapons/empty.wav", 0.87, ATTN_NORM);
 		}
 		
 		
 		if(self.ammo_slugs >0)	
 		{
 			randrail = random()*3;
-			if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "weapons/rail1.wav",1,ATTN_NORM);
+			if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
 			else
-			if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "weapons/rail1.wav",1,ATTN_NORM);
+			if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
 			else
-			if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "weapons/rail22.wav",1,ATTN_NORM);
+			if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail22.wav",1,ATTN_NORM);
 		}
-		//else sound (self, CHAN_AUTO, "weapons/empty1.wav",1,ATTN_NORM);
+		//else sound (self, CHAN_AUTO, "bloodrailz/weapons/empty1.wav",1,ATTN_NORM);
 		
-	        W_FireRailgun ();
+	        
+	        if (elohim_playmode & PROJECTILES) W_FireProjectile();
+	        else W_FireRailgun ();
+	        
 		player_shot1 ();	
 	}
 };
@@ -490,6 +494,7 @@ void() W_ChangeWeapon =
 				sprint(self, "\binput overlay:\b ON\n");
 			}
 	}
+	
 	else if (self.impulse == 8)
 	{
 			if (self.player_flag & PF_CLEANTRAIL) 
@@ -507,7 +512,7 @@ void() W_ChangeWeapon =
 
 	else if (self.impulse == 22 && self.items & IT_HOOK)
 	{
-		am = 0;   //Bloodrails
+		am = 0;
 		fl = IT_HOOK;
 	}
 

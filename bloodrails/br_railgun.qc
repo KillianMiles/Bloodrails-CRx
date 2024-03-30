@@ -47,7 +47,7 @@ void() make_railpop =
 
 	
 	impact = spawn();
-	setmodel (impact, "progs/ef_rail_pop1.mdl");
+	setmodel (impact, "progs/bloodrailz/ef_rail_pop1.mdl");
 	
 	
 	if (self.height == elohim_team1) impact.skin = 1;   //red
@@ -113,7 +113,7 @@ void(vector org, entity attacker, float radius, entity ignore) Rail_push =      
 						else if(head.skin == 5) head.skin = 6;  
 						
 						head.owner = attacker;
-						sound (attacker, CHAN_AUTO, "weapons/plasma2.wav",1,ATTN_NORM);
+						sound (attacker, CHAN_AUTO, "bloodrailz/weapons/plasma2.wav",1,ATTN_NORM);
 						
 						if (self.height == elohim_team1) head.skin = 6;   //red
 						else if (self.height == elohim_team2) head.skin = 5;   //blue
@@ -179,6 +179,23 @@ void() rail_fade = {
 		
 	self.think = rail_fade;
 	self.nextthink = time + 0.1;
+	
+	
+	
+			local entity head = findradius(self.origin, 121);
+			while (head)
+			{
+					if (head.classname == "smoke")
+					{				
+			
+						local vector dir4 = self.origin - self.owner.origin;     
+						local float accel = 220*random() + 133;         
+						head.velocity = head.velocity + accel*(normalize(dir4));
+					}
+										
+					head = head.chain;
+			}
+	
 
 	if (self.cnt == 6)
 		self.alpha = self.alpha - 0.19;
@@ -305,7 +322,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "railtrail";
-		setmodel (prj, "progs/rail1.mdl");
+		setmodel (prj, "progs/bloodrailz/rail1.mdl");
 				
 		setsize (prj, 0, 0);	
 		
@@ -401,34 +418,34 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 		  prj.angles = vectoangles(shootDir);
 		prj.touch = SUB_Null;
 		prj.classname = "railtrail";
-		setmodel (prj, "progs/rail1.mdl");
+		setmodel (prj, "progs/bloodrailz/rail1.mdl");
 		
 		
 		if(spacing_long < 70)
 			{
-				if(random() < 0.3 && segments > 2 && segments < old_seg) setmodel (prj, "progs/rail3.mdl");
+				if(random() < 0.3 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
 			}
 			
 		if(spacing_long >= 70 && spacing_long < 85)
 			{
-				if(random() < 0.4 && segments > 2 && segments < old_seg) setmodel (prj, "progs/rail3.mdl");
+				if(random() < 0.4 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
 			}
 			
 		if(spacing_long >= 85 && spacing_long < 100)
 			{
-				if(random() < 0.5 && segments > 2 && segments < old_seg) setmodel (prj, "progs/rail3.mdl");
+				if(random() < 0.5 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
 			}
 		
 		if(spacing_long >= 100 && spacing_long < 125)
 			{
-				if(random() < 0.9 && segments > 2 && segments < old_seg) setmodel (prj, "progs/rail3.mdl");
-				if(random() >= 0.9 && segments > 2 && segments < old_seg) setmodel (prj, "progs/rail2.mdl");
+				if(random() < 0.9 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
+				if(random() >= 0.9 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail2.mdl");
 			}
 			
 		if(spacing_long >= 125)
 			{
-				if(random() < 0.6 && segments > 2 && segments < old_seg) setmodel (prj, "progs/rail2.mdl");
-				if(random() >= 0.6 && segments > 2 && segments < old_seg) setmodel (prj, "progs/rail3.mdl");
+				if(random() < 0.6 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail2.mdl");
+				if(random() >= 0.6 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
 			}
 				
 		setsize (prj, 0, 0);	
@@ -506,7 +523,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "railtrail";
-		setmodel (prj, "progs/rail1.mdl");
+		setmodel (prj, "progs/bloodrailz/rail1.mdl");
 				
 		setsize (prj, 0, 0);	
 		
@@ -664,8 +681,8 @@ void( vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 		prj.touch = SUB_Null;
 		prj.classname = "railtrail";
 		
-		setmodel (prj, "progs/rail1.mdl");
-		if(short_seg == 1) setmodel (prj, "progs/rail0.mdl");
+		setmodel (prj, "progs/bloodrailz/rail1.mdl");
+		if(short_seg == 1) setmodel (prj, "progs/bloodrailz/rail0.mdl");
 				
 		setsize (prj, 0, 0);	
 		
@@ -796,8 +813,8 @@ void() FlickCurves=
 		self.rail_powered = 0;
 		self.shot_time = time; //start regular railgun recharge timer
 		
-		self.weaponmodel = "progs/v_br_rail_red1.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "progs/v_br_rail_blu1.mdl";
+		self.weaponmodel = "progs/bloodrailz/v_br_rail_red1.mdl";
+		if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_blu1.mdl";
 		
 		//END // THIS HAPPENS IF NO TARGET IS FOUND
 		if(self.lastButton0)
@@ -946,11 +963,11 @@ void() FlickCurves=
 				
 					local float randrail = random()*3;
     
-					if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "weapons/rail1.wav",1,ATTN_NORM);
+					if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
 					else
-					if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "weapons/rail1.wav",1,ATTN_NORM);
+					if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
 					else
-					if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "weapons/rail22.wav",1,ATTN_NORM);
+					if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail22.wav",1,ATTN_NORM);
 				}
 			}
 		}//end button up
@@ -972,132 +989,146 @@ void() FlickCurves=
 
 
 
-void() W_FireRailgun =                 //Bloodrails
+void() W_FireRailgun =
 {
+	/*
+	bprint(ftos(self.origin_x));
+	bprint("\n");
+	bprint(ftos(self.origin_y));
+	bprint("\n");
+	bprint(ftos(self.origin_z));
+	bprint("\n");
+	*/
+	
+	
+	
+	
+	
 	rail_jump();
 	if(self.ammo_slugs == 0) return;
 	
 	self.ammo_slugs = self.ammo_slugs -1;
 	self.rail_shots +=1;
 
-	local vector dir; 
+	local vector dir, src; 
+    
+	local float hitscan_missed =0;
+	local float rail_armor_hit = 0;
+	local float hitscanrail =0;
+	
+	local float antilag_hit_for_curve =0;
+	local vector adjusted_ent;
+	local vector adjusted_endpos;
+	
+	makevectors(self.v_angle);             
+	
 
-	local float n;
-	local vector src;
-	local vector R33;
-	local vector R25;
+	local float n = random()*3;
+	if (n <= 1) 	sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.8,ATTN_NORM);
+	else if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.8,ATTN_NORM);
+	else if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.8,ATTN_NORM);
     
-	R25 = '0.025 0.025 0';
-	R33 = '0.033 0.033 0';
     
-	self.rail_armor_hit = 0;
-	self.misfire =0;
-    
-	src = self.origin + v_forward*8 + '0 0 16';
-    
-	makevectors(self.v_angle);               //ADDED TO FIX RAILGUN FIRE ISSUE
 
-    
-    
-	n = random()*3;
-    
-	if (n <= 1) sound (self, CHAN_WEAPON, "weapons/br_ric1.wav",0.8,ATTN_NORM);
-	else
-	if (n <=2) sound (self, CHAN_WEAPON, "weapons/br_ric2.wav",0.8,ATTN_NORM);
-	else
-	if (n <=3) sound (self, CHAN_WEAPON, "weapons/br_ric3.wav",0.8,ATTN_NORM);
-    
-    
 
 	//////////////////////////////////////////////////////////////
-	antilag_rewind_all(self.responsetime, self);
+		antilag_rewind_all(self.responsetime, world); //FEBRUARY
    
 		dir = aim (self, 10000);
+		src = self.origin + v_forward*8 + '0 0 16';
    
 		traceline (src, src + v_forward*9000, FALSE, self);
  
 		if (trace_ent.takedamage)
 		{
-    	
-			self.hitscanrail = 1;  //RAIL 711
+			//src = self.origin + v_forward*8 + '0 0 16';
+			hitscanrail = 1;  //RAIL 711
     	
 			if (trace_ent.armorvalue >= 100) 
 			{
 				local entity armored_ent;
 				armored_ent = trace_ent;
-				self.rail_armor_hit = 1;
+				rail_armor_hit = 1;
 				local vector railend = trace_endpos;	
 			}
-	
-			if(self.KDR > 2.4 && self.frags == top_score_global && self.weapon == IT_RAILGUN && total_players_global > 2 && random() <= 0.05 && trace_ent.ammo_cells == 0)            //NOVEM reduced probability from 10 to 5% //score leader with high KDR runs a chance of Railgun misfires (KDR misfire code)     //ammo_cells = spawn_protected
-			{	
-				local vector blast;
-				dir = aim (self, 10000);
-				dir = normalize(dir);
 			
-				blast = trace_ent.origin - dir*18;
-				WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-				WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-				WriteCoord (MSG_BROADCAST, blast_x);
-				WriteCoord (MSG_BROADCAST, blast_y);
-				WriteCoord (MSG_BROADCAST, blast_z);
-				sound (trace_ent, CHAN_AUTO, "weapons/br_exp1.wav", 0.7, ATTN_NORM);
-				stuffcmd (trace_ent, "bf\n");
-				trace_ent.velocity = trace_ent.velocity + dir*550;
-				self.misfire = 1;	
-			}
+			local vector antilaged_trace_ent = trace_ent.origin;  //store antilagged position of target
+			adjusted_endpos = trace_endpos;
 
-			if (self.misfire != 1) T_DamageOrg (trace_ent, self, self, 9000, self.origin);     
-		}
-	
-	antilag_restore_all();  // antilag - anti lag
-	//////////////////////////////////////////////////////////
+			antilag_restore_all();  // antilag - anti lag
+		//////////////////////////////////////////////////////////////////
 
+			adjusted_ent = trace_ent.origin-antilaged_trace_ent;
+			//adjusted_ent = antilaged_trace_ent + normalize(adjusted_ent)*vlen(trace_ent.origin-antilaged_trace_ent);
+			adjusted_ent = adjusted_endpos + normalize(adjusted_ent)*vlen(trace_ent.origin-antilaged_trace_ent);
+			
 
-	if (!trace_ent.takedamage)
-	{
-		self.hitscan_missed = 1;   
-		
-		if (self.player_flag & PF_ITEM_RUNE_MASK)                                    
-		{
-			if (self.player_flag & PF_ITEM_RUNE2_FLAG)
+			//bprint(ftos(vlen(trace_ent.origin-antilaged_trace_ent)));
+			//bprint(" adjust distance\n");
+			
+			if(vlen(trace_ent.origin-antilaged_trace_ent) > 18) // 33->20
 			{
-				if(random() > 0.5) 	sound(self, CHAN_AUTO, "items/br_damage3.wav", 0.5, ATTN_NORM);
-				make_power(trace_endpos, 0.7, 6);
-				
-				local entity head;
-				head = findradius(trace_endpos, 85);
-
-				while (head)
-				{
-					if (head == self) T_DamageOrg (self, self, self, 20, trace_endpos);   //NOVEM 			power rune splash deals 20hp damage to bearer if within radius
-			
-					if (head != self && head.classname == "player")
-					{
-						if (head.takedamage)
-						{				
-							if (CanDamage (head, self))
-							{	
-								T_DamageOrg (head, self, self, 8994, trace_endpos);
-								self.done_damage = 1;
-							}			
-						}
-					}
-		
-
-				head = head.chain;
-				}
-				
+				antilag_hit_for_curve =1;
+				//bprint(">30\n");
+			}
+			else
+			{ 
+				antilag_hit_for_curve =0;
+				//bprint("<=30\n");
 			}
 			
+			T_DamageOrg (trace_ent, self, self, 9000, self.origin); 
 		}
+
+		else if (!trace_ent.takedamage)
+		{
+			antilag_restore_all();  // 
+			
+			hitscan_missed =1;
+		
+			if (self.player_flag & PF_ITEM_RUNE_MASK)                                    
+			{
+				if (self.player_flag & PF_ITEM_RUNE2_FLAG)
+				{
+					if(random() > 0.5) 	sound(self, CHAN_AUTO, "bloodrailz/items/br_damage3.wav", 0.5, ATTN_NORM);
+					make_power(trace_endpos, 0.7, 6);
+				
+					local entity head;
+					head = findradius(trace_endpos, 90);   //JANUARY 85 -> 90
+
+					while (head)
+					{
+						if (head == self) T_DamageOrg (self, self, self, 20, trace_endpos);   //NOVEM 			power rune splash deals 20hp damage to bearer if within radius
+			
+						if (head != self && head.classname == "player")
+						{
+							if (head.takedamage)
+							{				
+								if (CanDamage (head, self))
+								{	
+									T_DamageOrg (head, self, self, 8994, trace_endpos);
+									self.done_damage = 1;
+								}			
+							}
+						}
+		
+
+					head = head.chain;
+					}
+				
+				}
+			
+			}
 	
-	}
+		}
 
     
 
-    
-	 
+	if(hitscan_missed == 1)
+	{
+		local vector R33 = '0.033 0.033 0';
+		local vector R25 = '0.025 0.025 0';
+	        
 	        if(vlen(trace_endpos - src) > 1500) 
 		{
 			R25 = '0.019 0.019 0';
@@ -1115,20 +1146,16 @@ void() W_FireRailgun =                 //Bloodrails
 		}
    
 	
-	
-   
-	if(self.hitscan_missed == 1)
-	{
 		
 		if (total_players_global <= 2)  	//NOVEM
 		{
-			if(self.KDR < 0.33 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
-			else if(self.KDR < 0.72 && self.total_deaths > 3) FireBullets (20, dir, R25);    //FIRE BULLETS
+			if(self.KDR < 0.4 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
+			else if(self.KDR < 0.75 && self.total_deaths > 3) FireBullets (20, dir, R25);    //FIRE BULLETS
 		}
     
 		if (total_players_global > 2)
 		{
-			if(self.KDR < 0.30 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
+			if(self.KDR < 0.4 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
 			else if(self.KDR < 0.75 && self.total_deaths > 3) FireBullets (20, dir, R25);    //FIRE BULLETS
 		}
     
@@ -1136,61 +1163,265 @@ void() W_FireRailgun =                 //Bloodrails
 
   
     
-	if( self.misfire == 1) 
-	{
-		makevectors(self.v_angle);
-		local vector start_ = self.origin + '0 0 16'+ v_forward*5;
-		if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start_, blast, self.v_angle, self);
-		else clean_rail_make(start_, blast, self.v_angle, self);
-	
-		return;
-	}
 
-	if (self.rail_armor_hit == 1)
+
+	if (rail_armor_hit == 1)
 	{
-	
 		makevectors(self.v_angle);
 		local vector start = self.origin + '0 0 16'+ v_forward*5;
 		local vector mdir = aim(self, 10000);
 		local vector end = railend;
 	
-		if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, self.v_angle, self);
-		else clean_rail_make(start, end, self.v_angle, self);
-	
+		if(antilag_hit_for_curve == 0)
+		{
+			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, self.v_angle, self);
+			else clean_rail_make(start, end, self.v_angle, self);
+		}
+		else if(antilag_hit_for_curve == 1)
+		{
+			local float ref_length = vlen(adjusted_ent - self.origin);
+			local vector ref_controlPt = self.origin + v_forward*0.5*ref_length;
+			DrawCurvedRail( self.origin + '0 0 16', ref_controlPt, ref_controlPt , adjusted_ent);
+			//bprint("adjusted\n");
+		}
 		
 		
 		start = end;
-		
 		makevectors(armored_ent.angles);
 		
-	
 		mdir = aim(armored_ent, 10000);
 		mdir = mdir+v_up*75*(0.2+(random()*0.5)) + v_right*125*(random()-0.5);
 		end = start + (mdir * 750);
 		
-		if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, armored_ent.angles, armored_ent);
-		else clean_rail_make(start, end, armored_ent.angles, armored_ent);
-		//sprint(self, "reflected shot");
-		
+		if(antilag_hit_for_curve == 0)
+		{
+			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, armored_ent.angles, armored_ent);
+			else clean_rail_make(start, end, armored_ent.angles, armored_ent);
+		}
+		if(antilag_hit_for_curve == 1)
+		{
+			start = adjusted_ent;
+			mdir = mdir+v_up*75*(0.2+(random()*0.5)) + v_right*125*(random()-0.5);
+			end = start + (mdir * 750);
+			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, armored_ent.angles, armored_ent);
+			else clean_rail_make(start, end, armored_ent.angles, armored_ent);
+		}
 	}
-
-	else if (self.rail_armor_hit == 0)
+	else if (rail_armor_hit == 0)
 	{
-
 		makevectors(self.v_angle);
 		start = self.origin + '0 0 16'+ v_forward*5;
 		mdir = aim(self, 10000);
 		end = start + (mdir * 8192);
 
-		if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, self.v_angle, self);
-		else clean_rail_make(start, end, self.v_angle, self);
-	
+		if(antilag_hit_for_curve == 0)
+		{
+			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, self.v_angle, self);
+			else clean_rail_make(start, end, self.v_angle, self);
+			//bprint("un-adjusted\n");
+		}
+		else if(antilag_hit_for_curve == 1)
+		{
+			local float length = vlen(adjusted_ent - self.origin);
+			local vector controlPt = self.origin + v_forward*0.5*length;
+			DrawCurvedRail( self.origin + '0 0 16', controlPt, controlPt , adjusted_ent);
+			//bprint("adjusted\n");
+		}
 		//sprint(self, "regular shot");
 	}
 
 
 
 }
+
+
+void() T_MissileTouch =
+{
+	local float	damg;
+
+	if (other == self.owner)
+		return;		// don't explode on owner
+
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		remove(self);
+		return;
+	}
+
+	damg = 100;  
+	
+	self.dmg = FALSE;  // ELOHIM_MOD - used to flag 0 damage rockets
+
+		local	entity	head;
+		head = findradius(self.origin, 130);
+		while (head)
+		{
+			if (head.classname == "smoke")
+					{				
+			
+						local vector dir4 = head.origin - self.origin;     
+						local float accel = 440*random() + 440;         
+						head.velocity = head.velocity + accel*(normalize(dir4));
+					}
+			
+			head = head.chain;
+		}
+
+
+	if (other.health)
+	{
+  
+		if (other == self.owner) damg = damg * 0.5;  // mostly immune
+
+		T_DamageOrg (other, self, self.owner, damg, self.origin);
+	}
+
+	// don't do radius damage to the other, because all the damage
+	// was done in the impact
+	T_RadiusDamage (self, self.owner, 100, other, self.origin);
+
+	
+
+
+
+//	sound (self, CHAN_WEAPON, "bloodrailz/weapons/r_exp3.wav", 1, ATTN_NORM);
+	self.origin = self.origin - 8*normalize(self.velocity);
+
+	if(other.classname == "player")
+	{
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+		WriteCoord (MSG_BROADCAST, self.origin_x);
+		WriteCoord (MSG_BROADCAST, self.origin_y);
+		WriteCoord (MSG_BROADCAST, self.origin_z);
+
+		BecomeExplosion ();
+	}
+	else
+	{
+		if(vlen(self.origin - self.owner.origin) > 75) make_power(self.origin, 0.7, 6);
+		remove(self);
+		
+	}
+};
+
+
+
+void() update_projectile =
+{
+		local	entity	head;
+		local float hit_yes = 0;
+		head = findradius(self.origin, 90);
+		while (head)
+		{
+			if ((head.classname == "player" || head.classname == "dummy") && (head != self.owner) && head.airborn_pos > 80) //&& (!teamplay || (head.team != self.owner.team)))
+			{
+				T_DamageOrg (head, self, self.owner, 100, self.origin);
+				make_power(self.origin, 0.7, 7);
+				hit_yes =1;
+			}
+			
+			if (head.classname == "smoke")
+					{				
+			
+						local vector dir4 = self.origin - self.owner.origin;     
+						local float accel = 220*random() + 133;         
+						head.velocity = head.velocity + accel*(normalize(dir4));
+					}
+			
+			head = head.chain;
+		}
+		
+		if(hit_yes ==1)
+		{
+			remove(self);
+			return;
+		}
+		
+		//bprint(ftos(vlen(self.antilag_aim)));
+		//bprint("antilag before\n");
+
+		if(vlen(self.owner.antilag_aim) >= 5) setorigin (self, self.origin + normalize(self.owner.antilag_aim)*5);
+		
+		if(vlen(self.owner.antilag_aim) >= 5) self.owner.antilag_aim = normalize(self.owner.antilag_aim) * (vlen(self.owner.antilag_aim)-5);
+		if(vlen(self.owner.antilag_aim) < 5) self.owner.antilag_aim = normalize(self.owner.antilag_aim) * 1;
+		
+		
+		//bprint(ftos(vlen(self.owner.antilag_aim)));
+		//bprint("antilag after\n");
+		
+		
+		self.nextthink = time + my_ticrate*1;
+}
+
+void() W_FireProjectile =
+{
+
+	rail_jump();
+	if(self.ammo_slugs == 0) return;
+	
+	self.ammo_slugs = self.ammo_slugs -1;
+	self.rail_shots +=1;
+
+
+	local	entity missile;
+	
+	
+	
+	local float n = random()*3;
+    
+	if (n <= 1) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.8,ATTN_NORM);
+	else
+	if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.8,ATTN_NORM);
+	else
+	if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.8,ATTN_NORM);
+
+	//self.punchangle_x = -2;
+	makevectors(self.v_angle);   
+	
+	
+
+
+	missile = spawn ();
+	missile.owner = self;
+	missile.movetype = MOVETYPE_FLYMISSILE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "missile";
+		
+// set missile speed	
+
+	makevectors (self.v_angle);
+	missile.velocity = aim(self, 2750);
+	missile.velocity = missile.velocity * 2750;
+	missile.angles = vectoangles(missile.velocity);
+	
+	missile.touch = T_MissileTouch;
+	
+	local vector src_cur = self.origin + v_forward*8 + '0 0 16';
+
+	antilag_rewind_all(self.responsetime, world);
+		local vector src_adj = self.origin + v_forward*8 + '0 0 16';	
+	antilag_restore_all(); 
+	self.antilag_aim = src_adj - src_cur;
+	
+	//bprint(ftos(vlen(self.antilag_aim)));
+	//	bprint(" spawn antilag_aim\n");
+	
+	
+	// set missile duration
+	missile.nextthink = time + my_ticrate*1;
+	missile.think = update_projectile;
+
+	setmodel (missile, "progs/bloodrailz/null_trail.mdl");
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, self.origin + v_forward*8 + '0 0 16');
+	
+	
+	
+	
+	
+	
+};
 
 
 
@@ -1287,7 +1518,7 @@ void() rail_jump =
 			self.anglestored = 0;
 			self.angles_not_zero = 0;
 			
-			setmodel (self, "progs/player.mdl");
+			setmodel (self, "progs/bloodrailz/player.mdl");
 			setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 
 			stuffcmd(self, "cl_forwardspeed 0\n");
@@ -1400,7 +1631,7 @@ void() Rail_Charge_Logic=
 		
 		
 		
-		local float RECHARGE = 11;   //cooldown time
+		local float RECHARGE = 21;   //cooldown time
 		local float CHARGE_DUR = 1;
 		local float POWER_TIME = 1.1;
 		
@@ -1433,18 +1664,18 @@ void() Rail_Charge_Logic=
 				self.rail_powered = 1;
 				self.rail_power_time = time;
 				
-				sound (self, CHAN_WEAPON, "weapons/axe_charge.wav", 1, ATTN_NORM);
-				//sound (self, CHAN_AUTO, "weapons/charge_up.wav", 1, ATTN_NORM);
+				sound (self, CHAN_WEAPON, "bloodrailz/weapons/axe_charge.wav", 1, ATTN_NORM);
+				//sound (self, CHAN_AUTO, "bloodrailz/weapons/charge_up.wav", 1, ATTN_NORM);
 				//sprint(self, "mag-field energized\n");
 			
-				self.weaponmodel = "progs/v_br_rail_redzz.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "progs/v_br_rail_bluzz.mdl";
+				self.weaponmodel = "progs/bloodrailz/v_br_rail_redzz.mdl";
+				if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_bluzz.mdl";
 				self.weaponframe = 0;
 			}
 			
 			else if (time - self.mag_recharge_time <= RECHARGE && self.mag_recharge_time != 0)	
 			{
-				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+1) && self.rail_power_time != 0 && self.rail_powered == 0) sound (self, CHAN_WEAPON, "misc/menu3.wav", 0.9, ATTN_NORM);
+				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+1) && self.rail_power_time != 0 && self.rail_powered == 0) sound (self, CHAN_WEAPON, "bloodrailz/misc/menu3.wav", 0.9, ATTN_NORM);
 				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+0.024) && self.rail_power_time != 0 && self.rail_powered == 0) sprint(self, "mag-field depleted\n");
 			
 			}
@@ -1457,11 +1688,11 @@ void() Rail_Charge_Logic=
 			self.mag_recharge_time = time;
 				
 				
-				sound (self, CHAN_AUTO, "weapons/slowdn.wav", 0.7, ATTN_NORM);
+				sound (self, CHAN_AUTO, "bloodrailz/weapons/slowdn.wav", 0.7, ATTN_NORM);
 				sprint(self, "mag-field depleted\n");
 			
-				self.weaponmodel = "progs/v_br_rail_red1.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "progs/v_br_rail_blu1.mdl";
+				self.weaponmodel = "progs/bloodrailz/v_br_rail_red1.mdl";
+				if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_blu1.mdl";
 				self.weaponframe = 0;
 		}
 	

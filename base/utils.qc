@@ -747,7 +747,7 @@ float (string cname) utils_illegal_name =
 float () mode_is_public_ctf =
 {
   if ((elohim_playmode & CLANRING_CTF_MODE) && 
-    (!(elohim_playmode & ELOHIM_PRACTICE_MODE) && !(elohim_playmode & ELOHIM_MATCH_MODE)))
+    (!(elohim_playmode & RACE_MODE) && !(elohim_playmode & ELOHIM_MATCH_MODE)))
     return TRUE;
   else 
     return FALSE;
@@ -772,7 +772,7 @@ float () mode_is_ffa =
 {
     if ((elohim_playmode & DM_PUBLIC_MODE) || (elohim_playmode & CLANRING_CTF_MODE))
         return FALSE;
-    if (elohim_playmode & ELOHIM_PRACTICE_MODE)
+    if (elohim_playmode & RACE_MODE)
         return FALSE;
     if (elohim_playmode & ELOHIM_MATCH_MODE)
         return FALSE;

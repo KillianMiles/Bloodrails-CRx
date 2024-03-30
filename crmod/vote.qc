@@ -133,7 +133,7 @@ float () vote_majority =
         player = find(player, classname, "player");
     }
 
-    if (players < 2)       //bloodrails
+    if (players < 2)
         return TRUE;
 
     player = find(world, classname, "player");
@@ -166,7 +166,7 @@ float () vote_majority =
 void () vote_repeat =
 {
     bprint4("Request to ", elohim_request.wad, elohim_request.map, "\n");
-    bprint("Type 'yes' or 'impulse 115' in console to pass\n");
+    bprint("Type 'yes' in console to pass\n");
     elohim_request.nextthink = time + 7;
     elohim_request.count = elohim_request.count + 1;
     if (elohim_request.count == 3)

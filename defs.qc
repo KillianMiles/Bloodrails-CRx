@@ -734,6 +734,7 @@ void() SUB_Remove;
 //      combat.qc
 //
 
+void(entity inflictor, entity attacker, float damage, entity ignore, vector damage_origin) T_RadiusDamage;
 void(entity targ, entity inflictor, entity attacker, float damage ) T_Damage;
 void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_origin) T_DamageOrg;
 
@@ -748,13 +749,12 @@ float(entity targ, entity inflictor) CanDamage;
 .float total_kills;
 .float shot_time;
 .float axe_time;
-.float hook_time;
 
 .float speed_sound;
 
 
-.float dash_timer;    //Bloodrails - axe-dash timer
-.float dash_counter;    //Bloodrails - axe-dash timer
+.float dash_timer;   
+.float dash_counter;    
 
 
 .float alpha;
@@ -777,9 +777,6 @@ float total_score_global;
 
 
 
-.float rail_armor_hit;
-.float hitscanrail;      //RAIL 711
-.float hitscan_missed;
 
 
 float fte_server;
@@ -821,6 +818,5 @@ float(string) stof = #81;
 .float sparks_out;
 
 
-.float misfire;
 
 .vector movement;

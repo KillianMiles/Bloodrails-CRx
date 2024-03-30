@@ -54,8 +54,8 @@ void () debug_flags =
 		sprint(self, "ELOHIM_SAME_LEVEL\n");
 	if (elohim_playmode & ELOHIM_MATCH_MODE)
 		sprint(self, "ELOHIM_MATCH_MODE\n");
-	if (elohim_playmode & ELOHIM_PRACTICE_MODE)
-		sprint(self, "ELOHIM_PRACTICE_MODE\n");
+	if (elohim_playmode & RACE_MODE)
+		sprint(self, "RACE_MODE\n");
 	if (elohim_playmode & AIR_ARENA_MODE)
 		sprint(self, "AIR_ARENA_MODE\n");
 	if (elohim_playmode & ELOHIM_SERVER_INITIALIZED)
@@ -345,13 +345,13 @@ void () debug_impulse =
 	//	debug_flags();
 	//else if (self.impulse == 4$2)
 	//	debug_vars();
-	else if (self.impulse == 43)
-		utils_make_scheduled_event(debug_cvar_think, 0.5);
-	else if (self.impulse == 44)
-	{
-		sprint(self, "Enter client number:\n");
-		self.use = debug_get_movetarget;
-	}
+	//else if (self.impulse == 43)
+	//	utils_make_scheduled_event(debug_cvar_think, 0.5);
+	//else if (self.impulse == 44)
+	//{
+	//	sprint(self, "Enter client number:\n");
+	//	self.use = debug_get_movetarget;
+	//}
 	else if (self.impulse == 45)
 		debug_client_flags();
 	else if (self.impulse == 46)

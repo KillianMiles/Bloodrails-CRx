@@ -96,7 +96,7 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			prj.classname = "railtrail";
 			
 			prj.skin = railcolor;
-			setmodel (prj, "progs/rail5.mdl");  //  uncomment when engaging
+			setmodel (prj, "progs/bloodrailz/rail5.mdl");  //  uncomment when engaging
 		
 			setorigin (prj, drawsrc + vec * spacing_long * (segments-1));
 			prj.velocity = '0 0 0';	
@@ -165,18 +165,18 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			prj.skin = railcolor;
 			
 			
-			if(rail_model == 1) setmodel (prj, "progs/rail1_1.mdl");
-			else if (rail_model == 2) setmodel (prj, "progs/rail2_1.mdl");
-			else if (rail_model == 3) setmodel (prj, "progs/rail3_1.mdl");
+			if(rail_model == 1) setmodel (prj, "progs/bloodrailz/rail1_1.mdl");
+			else if (rail_model == 2) setmodel (prj, "progs/bloodrailz/rail2_1.mdl");
+			else if (rail_model == 3) setmodel (prj, "progs/bloodrailz/rail3_1.mdl");
 				
 			
-			//if (rail_model == 3 && partial_segments < 250 && segments == old_segments) setmodel (prj, "progs/rail2_1.mdl");
-			//if (rail_model == 2 && partial_segments < 120 && segments == old_segments) setmodel (prj, "progs/rail1_1.mdl");
-			//if (rail_model == 1 && partial_segments < 15 && segments == old_segments) setmodel (prj, "progs/rail0.mdl");
+			//if (rail_model == 3 && partial_segments < 250 && segments == old_segments) setmodel (prj, "progs/bloodrailz/rail2_1.mdl");
+			//if (rail_model == 2 && partial_segments < 120 && segments == old_segments) setmodel (prj, "progs/bloodrailz/rail1_1.mdl");
+			//if (rail_model == 1 && partial_segments < 15 && segments == old_segments) setmodel (prj, "progs/bloodrailz/rail0.mdl");
 			
-			if (rail_model == 3 && segments == old_segments) setmodel (prj, "progs/rail2_1.mdl");
-			if (rail_model == 2 && segments == old_segments) setmodel (prj, "progs/rail1_1.mdl");
-			if (rail_model == 1 && partial_segments < 15 && segments == old_segments) setmodel (prj, "progs/rail0.mdl");
+			if (rail_model == 3 && segments == old_segments) setmodel (prj, "progs/bloodrailz/rail2_1.mdl");
+			if (rail_model == 2 && segments == old_segments) setmodel (prj, "progs/bloodrailz/rail1_1.mdl");
+			if (rail_model == 1 && partial_segments < 15 && segments == old_segments) setmodel (prj, "progs/bloodrailz/rail0.mdl");
 				
 			setsize (prj, 0, 0);	
 
@@ -219,7 +219,7 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			prj.angles = vectoangles(shootDir);
 			prj.touch = SUB_Null;
 			prj.classname = "railtrail";
-			setmodel (prj, "progs/rail1.mdl");
+			setmodel (prj, "progs/bloodrailz/rail1.mdl");
 				
 			setsize (prj, 0, 0);	
 		
@@ -374,13 +374,13 @@ void( vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedRail=
 			prj.classname = "railtrail";
 		
 			       // uncomment when engaging
-			setmodel (prj, "progs/rail_c.mdl");
+			setmodel (prj, "progs/bloodrailz/rail_c.mdl");
 			
-			if(seg == 0) setmodel (prj, "progs/rail_a.mdl");
-			else if(seg == 1) setmodel (prj, "progs/rail_b.mdl");
-			else if(seg == 2) setmodel (prj, "progs/rail_b.mdl");
-			else if(seg == 3) setmodel (prj, "progs/rail_b1.mdl");
-			else if(seg == 4) setmodel (prj, "progs/rail_e.mdl");
+			if(seg == 0) setmodel (prj, "progs/bloodrailz/rail_a.mdl");
+			else if(seg == 1) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
+			else if(seg == 2) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
+			else if(seg == 3) setmodel (prj, "progs/bloodrailz/rail_b1.mdl");
+			else if(seg == 4) setmodel (prj, "progs/bloodrailz/rail_e.mdl");
 			
 			
 				
@@ -421,12 +421,12 @@ void( vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedRail=
 		
 			
 			/*             uncomment when engaging
-			if(vlen(dir) < 20) setmodel (prj, "progs/rail_a.mdl");
-			else if (vlen(dir) < 33) setmodel (prj, "progs/rail_b.mdl");
-			else if (vlen(dir) < 45) setmodel (prj, "progs/rail_b1.mdl");
-			else if (vlen(dir) < 60) setmodel (prj, "progs/rail_c.mdl");
-			else if (vlen(dir) < 120) setmodel (prj, "progs/rail_d.mdl");
-			else if (vlen(dir) < 240) setmodel (prj, "progs/rail_e.mdl");
+			if(vlen(dir) < 20) setmodel (prj, "progs/bloodrailz/rail_a.mdl");
+			else if (vlen(dir) < 33) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
+			else if (vlen(dir) < 45) setmodel (prj, "progs/bloodrailz/rail_b1.mdl");
+			else if (vlen(dir) < 60) setmodel (prj, "progs/bloodrailz/rail_c.mdl");
+			else if (vlen(dir) < 120) setmodel (prj, "progs/bloodrailz/rail_d.mdl");
+			else if (vlen(dir) < 240) setmodel (prj, "progs/bloodrailz/rail_e.mdl");
 			*/
 			
 			if(t == 0)
@@ -437,11 +437,11 @@ void( vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedRail=
 				//sprint(self, ftos(seg));
 				//sprint(self, "\n");
 				/*        uncomment when engaging
-				if(vlen(dir) < 30) setmodel (prj, "progs/rail0_1_30.mdl");
-				else if(vlen(dir) < 45) setmodel (prj, "progs/rail0_1.mdl");
-				else if(vlen(dir) < 60) setmodel (prj, "progs/rail1_1.mdl");
-				else if(vlen(dir) < 90) setmodel (prj, "progs/rail1_1_90.mdl");
-				else setmodel (prj, "progs/rail1_1_90.mdl");
+				if(vlen(dir) < 30) setmodel (prj, "progs/bloodrailz/rail0_1_30.mdl");
+				else if(vlen(dir) < 45) setmodel (prj, "progs/bloodrailz/rail0_1.mdl");
+				else if(vlen(dir) < 60) setmodel (prj, "progs/bloodrailz/rail1_1.mdl");
+				else if(vlen(dir) < 90) setmodel (prj, "progs/bloodrailz/rail1_1_90.mdl");
+				else setmodel (prj, "progs/bloodrailz/rail1_1_90.mdl");
 				//prj.skin = 1;
 				*/
 			

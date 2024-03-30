@@ -38,25 +38,90 @@ float(entity targ, entity inflictor) CanDamage =
 };
 
 
+void(entity inflictor, entity attacker, float damage, entity ignore, vector damage_origin) T_RadiusDamage =
+{
+	local	float 	points;
+	local	entity	head;
+	local	vector	org;
+       
+	
+
+	head = findradius(inflictor.origin, damage+40);
+	
+
+	
+	while (head)
+	{
+		if (head != ignore)
+		{
+			if (head.takedamage)
+			{
+                // ELOHIM_MOD - this has been optimized
+				org = head.origin + (head.mins + head.maxs)*0.5;
+				points = 0.5*vlen (inflictor.origin - org);
+                if (points < damage)
+                {
+                    points = damage - points;
+                    if (head == attacker)
+                        points = points * 0.8;
+					if (CanDamage (head, inflictor))
+                        T_DamageOrg (head, inflictor, attacker, points, damage_origin);
+				}
+                // END_MOD
+			}
+		}
+		head = head.chain;
+	}
+};
 
 
 void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_origin) T_DamageOrg =
 {
+	//bprint(ftos(self.armorvalue)); //FEBRUARY
+	//bprint(" armor_value\n");
+	
 	local	vector	dir;
 	local	entity	oldself;
 	local	float	save, take; //  rox_damage;
 	local 	string 	temp;
-
+	
+	//bprint(ftos(damage));
+	//bprint("\n");
 
 	if (!targ.takedamage) return;
 		
-	if (elohim_playmode & ELOHIM_PRACTICE_MODE) return;  //dont deal damage if in racing mode
+	if (elohim_playmode & RACE_MODE) return;  //dont deal damage if in racing mode
 	
-	// HorrorScope deathmatch camera - store players last enemy entity
-	if (attacker.flags & FL_CLIENT)
-		if (targ.flags & FL_CLIENT)
-			if (damage < targ.health)
-				attacker.last_enemy = targ;
+	if (elohim_playmode & PROJECTILES && inflictor.classname == "missile")
+	{
+
+		if(attacker == targ && inflictor.classname == "missile") damage = damage/5;
+	
+		// save damage based on the target's armor level
+		save = ceil(targ.armortype*damage);
+
+		if (save >= targ.armorvalue)
+		{
+			save = targ.armorvalue;
+			targ.armortype = 0;	// lost all armor
+			targ.items = targ.items - (targ.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3));
+		}
+	
+		targ.armorvalue = targ.armorvalue - save;
+		take = ceil(damage-save);
+	}
+	
+	
+
+
+	// figure momentum add
+	if ( (inflictor.classname == "missile") && (targ.movetype == MOVETYPE_WALK) )
+	{
+		dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
+		dir = normalize(dir);
+		targ.velocity = targ.velocity + dir*damage*8;
+	}
+	
 	
 	
 	// ELOHIM_MOD - stats
@@ -102,7 +167,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 
 
 
-	else if (elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & ELOHIM_PRACTICE_MODE))
+	else if (elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & RACE_MODE))
 	{
 		if ((attacker.classname == "player") && (targ.flag_carrier) && (attacker.team != targ.team))
 		{
@@ -111,7 +176,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	}
 
 	// ELOHIM_MOD - print info for practice mode; check for pre-match
-	if (elohim_playmode & ELOHIM_PRACTICE_MODE || (elohim_playmode & CLAN_ARENA_MODE && !(elohim_playmode & AIR_ARENA_MODE)))
+	if (elohim_playmode & RACE_MODE || (elohim_playmode & CLAN_ARENA_MODE && !(elohim_playmode & AIR_ARENA_MODE)))
 	{
 		if (targ.classname == "player" && attacker.classname == "player" && targ != attacker)
 		{
@@ -132,10 +197,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				attacker.dmg_tally = attacker.dmg_tally % 300;
 			}
 		}
-		else if ((targ.classname == "p_fish") || (targ.classname == "p_head") || (targ.classname == "p_tbaby"))
-		{
-			take = damage;
-		}
+		
 		else	return;
 	}
    
@@ -149,7 +211,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	
 	if ((elohim_playmode & AIR_ARENA_MODE) && (attacker.super_damage_finished > time))
 	{
-		sound (targ, CHAN_ITEM, "items/br_protect3.wav", 1, ATTN_NORM);
+		sound (targ, CHAN_ITEM, "bloodrailz/items/br_protect3.wav", 1, ATTN_NORM);
 	}
 	else
 	{
@@ -157,7 +219,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		{
 			if (self.invincible_sound < time)
 			{
-				sound (targ, CHAN_ITEM, "items/br_protect3.wav", 1, ATTN_NORM);
+				sound (targ, CHAN_ITEM, "bloodrailz/items/br_protect3.wav", 1, ATTN_NORM);
 				self.invincible_sound = time + 2;
 			}
 			return;
@@ -173,9 +235,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		if((elohim_playmode & ELOHIM_WRAITH) && targ.wraith ==1 && attacker.weapon == IT_RAILGUN && targ.airborn_pos < 40)    //WRAITH MODE - if wraith - cant be damaged by rail
 				{
 					make_spawnprotect(targ);	 //shield visual
-					sound (targ, CHAN_VOICE, "weapons/armorhit.wav", 1, ATTN_NORM);    //SHIELD SOUND
+					sound (targ, CHAN_VOICE, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);    //SHIELD SOUND
 					stuffcmd(targ,"bf\n"); 
-					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //Bloodrails - rail momentum add
+					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //rail momentum add
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*800;
 					return;
@@ -189,9 +251,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		{
 				if(attacker.weapon == IT_AXE)
 				{
-					sound (targ, CHAN_VOICE, "weapons/armorhit.wav", 1, ATTN_NORM);
+					sound (targ, CHAN_VOICE, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);
 					stuffcmd(targ,"bf\n"); 
-					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //Bloodrails - axe and Hook TEAM  momentum adds
+					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //axe and Hook TEAM  momentum adds
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*300;
 					attacker.velocity = attacker.velocity + dir*(-400);
@@ -199,18 +261,18 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				
 				if(attacker.weapon == IT_HOOK)
 				{
-					sound (targ, CHAN_VOICE, "weapons/armorhit.wav", 1, ATTN_NORM);
+					sound (targ, CHAN_VOICE, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);
 					//stuffcmd(targ,"bf\n"); 
-					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //Bloodrails - axe and Hook TEAM  momentum adds
+					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //axe and Hook TEAM  momentum adds
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*400;
 				}
 				
 				if(attacker.weapon == IT_RAILGUN)
 				{
-					sound (targ, CHAN_VOICE, "weapons/armorhit.wav", 1, ATTN_NORM);    //SHIELD SOUND
+					sound (targ, CHAN_VOICE, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);    //SHIELD SOUND
 					stuffcmd(targ,"bf\n"); 
-					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //Bloodrails - rail momentum add
+					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //rail momentum add
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*400;
 					//targ.blocked_rail +=1;
@@ -224,11 +286,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		
 		
 		
-		if(attacker.misfire == 1)            //score leader with high KDR runs a chance of Railgun misfires (KDR misfire code)
-		{
-			attacker.misfire = 0;
-			return;
-		}
+
 		
 		
 		
@@ -239,8 +297,8 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			{
 				if(attacker.weapon == IT_AXE || attacker.weapon == IT_HOOK)
 				{
-					sound (targ, CHAN_VOICE, "player/axhit_flesh.wav", 0.59, ATTN_NORM);
-					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //Bloodrails - axe and Hook TEAM  momentum adds
+					sound (targ, CHAN_VOICE, "bloodrailz/player/axhit_flesh.wav", 0.59, ATTN_NORM);
+					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //axe and Hook TEAM  momentum adds
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*300;
 				}
@@ -248,10 +306,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				if(attacker.weapon == IT_RAILGUN && damage == 9000)
 				{
 					
-					//localsound(attacker, "misc/sameteam.wav");  // on your team sound
-					ex_localsound(attacker, "misc/sameteam.wav");  // on your team sound
-					//sound (attacker, CHAN_AUTO, "misc/sameteam.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
-					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //Bloodrails - rail momentum add
+					//localsound(attacker, "bloodrailz/misc/sameteam.wav");  // on your team sound
+					ex_localsound(attacker, "bloodrailz/misc/sameteam.wav");  // on your team sound
+					//sound (attacker, CHAN_AUTO, "bloodrailz/misc/sameteam.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
+					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //rail momentum add
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*300;
 				}
@@ -272,22 +330,25 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		dir = normalize(dir);
 		targ.velocity = targ.velocity + dir*250; 
 		
-		if (attacker.weapon == IT_HOOK || attacker.weapon == IT_AXE) sound (self, CHAN_AUTO, "player/axhit_flesh.wav", 0.59, ATTN_NORM); 
-		else if (attacker.weapon == IT_RAILGUN) sound (self, CHAN_AUTO, "weapons/br_exp1.wav", 1, ATTN_NORM);
+		if (attacker.weapon == IT_HOOK || attacker.weapon == IT_AXE) sound (self, CHAN_AUTO, "bloodrailz/player/axhit_flesh.wav", 0.59, ATTN_NORM); 
+		else if (attacker.weapon == IT_RAILGUN) sound (self, CHAN_AUTO, "bloodrailz/weapons/br_exp1.wav", 1, ATTN_NORM);
 
 		return;   
 	}
           
          
-	if (attacker.weapon == IT_AXE) 	sound (self, CHAN_AUTO, "player/axhit_flesh.wav", 0.59, ATTN_NORM);	  //sound axehit_flesh when hitting with axe
+	if (attacker.weapon == IT_AXE) 	sound (self, CHAN_AUTO, "bloodrailz/player/axhit_flesh.wav", 0.59, ATTN_NORM);	  //sound axehit_flesh when hitting with axe
 	
 	if (damage == 403 && vlen(attacker.origin - targ.origin) > 85) return;  //NOVEM backstop for long axe bug
 
 	
 	
-	if (damage == 9000)              //Bloodrails - HITSCAN RAILGUN
+	if (damage == 9000)              //HITSCAN RAILGUN
 	{
-		if (targ.armorvalue >= 100)      //Bloodrails - every 100 units of armor deflect one (hitscan) rail hit
+		//bprint(ftos(targ.armorvalue)); //FEBRUARY
+		//bprint(" armor_value\n");
+		
+		if (targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit
 		{
 			targ.armorvalue = targ.armorvalue - 100;
          
@@ -303,19 +364,19 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				//sprint(attacker, "ground throw");
 			}
 	 
-			sound (targ, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit
+			sound (targ, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit
 			stuffcmd(targ,"bf\n"); 
-			sound (attacker, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit 
+			sound (attacker, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit 
 			//targ.blocked_rail +=1;
 					
 			if(targ.ammo_cells == 1)      //ammo_cells = spawn_protected
 			{
 				make_spawnprotect(targ); //spawn protect shield visual
-				sound (targ, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+				sound (targ, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 			}
 					
 					
-			if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && attacker.rail_was_curved != 1) ||  (attacker.super_damage_finished > time))    //power rune doesnt ignore armor if curved shot
+			if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && (attacker.rail_was_curved != 1 && damage != 1000)) ||  (attacker.super_damage_finished > time))    // FEBRUARY power rune doesnt ignore armor if curved shot
 			{
 				targ.health = -99;
 				Killed (targ, attacker, dmg_origin, 9000);           
@@ -335,9 +396,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	}
 	
 	
-	if (damage > 999 && damage < 8995 && (attacker.weapon == IT_RAILGUN))              //Bloodrails - HANDICAP RAILGUN (FireBullets)
+	if (damage > 999 && damage < 8995 && (attacker.weapon == IT_RAILGUN))              //HANDICAP RAILGUN (FireBullets)
 	{
-			if (targ.armorvalue >= 100)      //Bloodrails - every 100 units of armor deflect one (hitscan) rail hit
+			if (targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit
 			{
 				targ.armorvalue = targ.armorvalue - 100;
          
@@ -352,15 +413,15 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 					//sprint(attacker, "ground throw");
 				}
 	 
-				sound (targ, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit
+				sound (targ, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit
 				stuffcmd(targ,"bf\n"); 
-				sound (attacker, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit 
+				sound (attacker, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit 
 				//targ.blocked_rail +=1;
 					
 				if(targ.ammo_cells == 1)      //ammo_cells = spawn_protected
 				{
 					make_spawnprotect(targ); //spawn protect shield visual
-					sound (targ, CHAN_AUTO, "weapons/shield_pulse.wav", 1, ATTN_NORM);
+					sound (targ, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 				}
 					
 				if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG)  ||  (attacker.super_damage_finished > time)) && damage != 8994)
@@ -378,7 +439,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	}
 	
 	
-	if (damage == 51 && targ.armorvalue >= 100)      //Bloodrails - every 100 units of armor deflect one (hitscan) rail hit    //DEATH AURA ARMOR DAMAGE
+	if (damage == 51 && targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit    //DEATH AURA ARMOR DAMAGE
 	{
 			targ.armorvalue = targ.armorvalue - 100;
          
@@ -393,20 +454,20 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				//sprint(attacker, "ground throw");
 			}
 	 
-			sound (targ, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit
+			sound (targ, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit
 			stuffcmd(targ,"bf\n"); 
-			sound (attacker, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit )  
+			sound (attacker, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit )  
 			return;
 	}
 	
 	
-	if (targ.armorvalue >= 100 && damage !=8.7 && damage !=4.7)      //Bloodrails - sound armorhit if armor hit with axe
+	if (targ.armorvalue >= 100 && damage !=8.7 && damage !=4.7 && targ !=attacker)      //FEBRUARY sound armorhit if armor hit with axe
         {
-		sound (targ, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit
+		sound (targ, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit
 		stuffcmd(targ,"bf\n"); 
         }
         
-        if (targ.armorvalue >=11 && (damage ==8.7 || damage ==4.7))      //Bloodrails - sound armorhit if armor hit with axe
+        if (targ.armorvalue >=11 && (damage ==8.7 || damage ==4.7))   
         {
 		targ.armorvalue -= 11;
 		if(targ.armorvalue <0) targ.armorvalue=0;
@@ -415,7 +476,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	
 	
 	
-	if (damage == 485 && targ.armorvalue >= 100)      //Bloodrails - every 100 units of armor deflect one (hitscan) rail hit    //PLASMA ARMOR DAMAGE    //NOVEM changed plasma from 85 to 485 damage
+	if (damage == 485 && targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit    //PLASMA ARMOR DAMAGE    //NOVEM changed plasma from 85 to 485 damage
 	{
 			targ.armorvalue = targ.armorvalue - 100;
 			dir = targ.origin - attacker.origin;   //throw
@@ -430,9 +491,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				//sprint(attacker, "ground throw");
 			}
 	 
-			sound (targ, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit
+			sound (targ, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit
 			stuffcmd(targ,"bf\n"); 
-			sound (attacker, CHAN_AUTO, "weapons/armorhit.wav", 1, ATTN_NORM);   //Bloodrails - play sound when armored target is hit )  
+			sound (attacker, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit )  
 			return;
 	}
 	
@@ -448,8 +509,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	
 	
 	//Do damage
-
-	targ.health = targ.health - damage;
+	
+	if (inflictor.classname == "missile")  targ.health = targ.health - take;
+	else targ.health = targ.health - damage;
 			
 	if (targ.health <= 0)
 	{
@@ -460,7 +522,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		}
 		
 		// ELOHIM_MOD - print info for practice mode
-		if (elohim_playmode & ELOHIM_PRACTICE_MODE || (elohim_playmode & CLAN_ARENA_MODE && !(elohim_playmode & AIR_ARENA_MODE)))
+		if (elohim_playmode & RACE_MODE || (elohim_playmode & CLAN_ARENA_MODE && !(elohim_playmode & AIR_ARENA_MODE)))
 		{
 			if (targ.classname == "player" && attacker.classname == "player" && targ != attacker)
 			{
@@ -470,13 +532,14 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			}
 		}
 		targ.health = -99;
-		Killed (targ, attacker, dmg_origin, damage);        //Bloodrails - register frag
+		Killed (targ, attacker, dmg_origin, damage);        //register frag
 		return;
 	}
 
-
+	
 	// react to the damage
 	oldself = self;
+	
 	self = targ;
 
 
@@ -486,6 +549,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	}
 
 	self = oldself;
+	
 };
 
 

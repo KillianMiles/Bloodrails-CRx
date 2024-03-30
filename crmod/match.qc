@@ -530,9 +530,9 @@ void () match_timer_think1 =
 
         bprint("All items have respawned\n");
     }
-    else if (self.count == 10)
+    else if (self.count == 15)
     {
-        sound (world, CHAN_AUTO, "items/br_protect2.wav", 1, ATTN_NONE);
+        sound (world, CHAN_AUTO, "bloodrailz/items/br_protect2.wav", 1, ATTN_NONE);
     }
     else if (self.count <= 3)
     {
@@ -660,7 +660,7 @@ void () match_start_timer =
         elohim_match_timer.classname = "elohim_match_timer";
         elohim_match_timer.think = match_timer_think1;
         elohim_match_timer.nextthink = time + 2;
-        elohim_match_timer.count = 14;
+        elohim_match_timer.count = 16;
 
         elohim_teamfrags1 = 0;
         elohim_teamfrags2 = 0;
@@ -875,7 +875,8 @@ void () match_ready =
 
         self.style = self.style | ELOHIM_READY;
 
-        if (elohim_playmode & ELOHIM_MATCH_MODE && elohim_teamsize1 > 0 && elohim_teamsize2 > 0)
+        if (elohim_playmode & ELOHIM_MATCH_MODE && (elohim_teamsize1 > 0 && elohim_teamsize2 > 0 && elohim_teamsize1 == elohim_teamsize2)) 
+        //if (elohim_playmode & ELOHIM_MATCH_MODE && (elohim_teamsize1 > 0 || elohim_teamsize2 > 0))   //match debug  021824
         {
             // check to see if we need to start the timer
             if (!(elohim_state & ELOHIM_TIMER_STARTED) && match_all_ready())
