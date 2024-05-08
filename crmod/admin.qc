@@ -239,6 +239,7 @@ void () admin_start_code =
 //
 void () admin_change_level =
 {
+   /*
     if (request_mapname == "start0")
     {
         serverflags = 0;
@@ -250,6 +251,9 @@ void () admin_change_level =
         changelevel("start");
     }
     else
+    */
+	rune_clear_player_flags();
+
         changelevel (request_mapname);
 };
 
@@ -1589,7 +1593,6 @@ void () admin_help =
     sprint(self, "Admin only commands:\n");
     sprint(self, " kick!    - kick a player\n");
     sprint(self, " modevote - enable/disable mode votes\n");
-    //sprint(self, " options  - on-screen options menu\n");
     sprint(self, " abort - abort current match\n");
     sprint(self, " ghostlist  - view list of ghosts\n");
 	sprint(self, " setcharge  - ban practice discharges\n");
@@ -1658,12 +1661,8 @@ void () admin_impulse =
         admin_request_shuffle_teams();
     else if (self.impulse == 224)          //armor mode
         admin_set_armor();     
-  // else if (self.impulse == 227)           //setrail
-    //    admin_request_set_rail();
    else if (self.impulse == 226)           //set 100 armor
         admin_request_rebalance_teams();
- //   else if (self.impulse == 225)           //set 200 armor
-   //     admin_request_set_200();
         
 
     else if (self.impulse >= 230 && self.impulse <= 245)

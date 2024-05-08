@@ -10,22 +10,34 @@ void () motd_init_world =
 {
 	motd_top1 = "\bBloodrailZ CRx\b\nby kilomiles\nwww.crxquake.com\n";
 	motd_top2 = "\n\npress '\bf10\b' for help\n\n";
-	motd_bottom =  "special thanks to\n bucksh0t\b|\bteamred\b|\bxstephx\b|\bwoods\b|\breki\n\n\n\n\n";
+	motd_bottom =  "special thanks to\n\n bucksh0t\b|\bteamred\b|\bxstephx\b\n\bDERZIE\b|\b woods \b|\breki\n\n\n\n\n";
 };
 
 void () motd_think =
 {
+	if(mapname == "tut1" || mapname == "tut2") return;
+	
 	if ((self.count == 0) && (self.owner.style & ELOHIM_MOTD))
 	{
 			remove(self);
 			return;
 	}
-	if (!(self.owner.style & ELOHIM_MOTD))					self.owner.style = self.owner.style | ELOHIM_MOTD;
+	
+	//if (self.owner.suppress_hud ==1)
+	//{
+	//		remove(self);
+	//		return;
+	//}
+	
+	if (!(self.owner.style & ELOHIM_MOTD))			self.owner.style = self.owner.style | ELOHIM_MOTD;
 
 	if (self.count < 119)
 	{
 			//nobody wants to read stuff, especially in match browser
-			centerprint4(self.owner, motd_top1, motd_top2, "\n", motd_bottom);
+			if(!(mapname =="tut1" || mapname =="tut2" || mapname =="tut3" || mapname =="tut4" || mapname =="tut5" || mapname =="tut6" || mapname =="tut7" || mapname =="tut8"))   //dont print MOTD if tutorial map
+			{
+				centerprint4(self.owner, motd_top1, motd_top2, "\n", motd_bottom);
+			}
 
 			self.nextthink = time + 0.1;
 			self.count = self.count + 1;

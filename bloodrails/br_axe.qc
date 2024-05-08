@@ -65,7 +65,7 @@ void() Axe_Splash =
 	makevectors(self.v_angle);
 	
 	
-	if(time - self.axe_splash_time < 0.20 && self.done_damage == 0)
+	if(time - self.axe_splash_time < 0.30 && self.done_damage == 0)   //MAY 0.20 -> 0.3
 	{
 		areaKDR2(self, self.origin + v_forward*30, self, 57, 403, self);    //JANUARY 44 ->55
 		if(self.turn_speed >48) areaKDR2(self, self.origin + v_forward*10 + v_right*(-30), self, 33, 403, self);      //damage into direction of turn  //10/8/23 commented this out to see if it fixes double kill issue //NOVEM uncommented bc the issue was elsewhere
@@ -73,7 +73,10 @@ void() Axe_Splash =
 		
 		//sprint(self, ftos(self.turn_speed));
 		//sprint(self, "\n");
+		//if(self.weaponframe ==0) bprint("weaponframe\n");
 	}
+	//else if(time - self.axe_splash_time >= 0.4 && time - self.axe_splash_time < 0.42) bprint("done!\n");  
+	
 
 
 
@@ -84,12 +87,15 @@ void() Axe_Charge_Logic=
 	//SHIELD TIMING LOGIC
 		if (elohim_playmode & ELOHIM_NO_SHIELD) return;
 		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL3)) return; //DECEM no shield with haste
+		
+		local float RECHARGE = 18;
+		if(mapname == "tut1") RECHARGE = 2;
 
 		if (time - self.axe_power_time > 0.59 && self.axe_power_time != 0 && self.axe_powered == 0)
 		{
 			
 			
-			if(time - self.shield_recharge_time > 18 || self.shield_recharge_time == 0)
+			if(time - self.shield_recharge_time > RECHARGE || self.shield_recharge_time == 0)
 			{
 				self.axe_powered = 1;
 				

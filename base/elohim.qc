@@ -127,9 +127,6 @@ void() ClientDisconnect;
 void (vector org) spawn_tfog;
 void () rune_drop;
 
-//void () arena_main_loop;
-//void () rocket_arena_main_loop;
-//void () arena_select_team;
 float () mode_is_arena;
 entity () SelectFishSpawnPoint;
 
@@ -172,14 +169,13 @@ void () elohim_init_world =
   
 
 
-  elohim_version = "BR 3-28-24 .X1"; 
+  elohim_version = "BR 5-7-24 .X1"; 
   elohim_version_info = "Bloodrailz CRx";
-  bloodrailz_version_number = "12-31-23";   // CRMOD - string to be used throughout
-          //         code to show version number.
+  bloodrailz_version_number = "5-7-24";
 
-  // Initialize user map names, MOTD, and hotspots, etc..
-  userdefs_init_world();
-  motd_init_world();
+	// Initialize user map names, MOTD, and hotspots, etc..
+	userdefs_init_world();
+	motd_init_world();
 	score_init_world();
   
   // Hack to allow console to emulate an administrator
@@ -246,17 +242,30 @@ void () elohim_init_world =
 		else if (mapname == "race_valley_b4") RACE_YES=1;
 		else if (mapname == "petra") RACE_YES=1;
 		
+		else if (mapname == "tut1") RACE_YES=1;
+		else if (mapname == "tut2") RACE_YES=1;
+		else if (mapname == "tut3") RACE_YES=1;
+		else if (mapname == "tut4") RACE_YES=1;
+		else if (mapname == "tut5") RACE_YES=1;
+		else if (mapname == "tut6") RACE_YES=1;
+		else if (mapname == "tut7") RACE_YES=1;
+		else if (mapname == "tut8") RACE_YES=1;
+		else if (mapname == "tut9") RACE_YES=1;
+		
 		if(RACE_YES==1 && !(elohim_playmode & RACE_MODE))
 		{
-			elohim_playmode = elohim_playmode - (elohim_playmode & (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE | ELOHIM_NO_ARMOR));
+			elohim_playmode = elohim_playmode - (elohim_playmode & (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE | ELOHIM_NO_ARMOR | ELOHIM_NOAMMO));
             
 			elohim_playmode = elohim_playmode | RACE_MODE;
 			elohim_playmode = elohim_playmode | ELOHIM_NO_ARMOR;
-			utils_set_cvar("timelimit", 0);
+			elohim_playmode = elohim_playmode | ELOHIM_NOAMMO;
+			if(mapname =="tut1" || mapname =="tut2") elohim_playmode = elohim_playmode | CLANRING_RUNES;
+			if(mapname =="tut1" || mapname =="tut2") localcmd("scr_matchclock 0\n");
 			cvar_set("hostname", ADMIN_RACE_MODE_STRING);
 			
 			spawn_race_entities();
 		}
+		
 		else if(RACE_YES==0 && (elohim_playmode & RACE_MODE))
 		{
 			elohim_playmode = elohim_playmode - (elohim_playmode & (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE | ELOHIM_NO_ARMOR));
@@ -266,7 +275,10 @@ void () elohim_init_world =
         			elohim_teamsize2 = 0;
        			 elohim_playmode = elohim_playmode | CLANRING_CTF_MODE;   
         		if (!(elohim_playmode & CLANRING_RUNES)) elohim_playmode = elohim_playmode | CLANRING_RUNES;
-
+        		if (elohim_playmode & ELOHIM_NOAMMO) elohim_playmode = elohim_playmode - ELOHIM_NOAMMO;
+        		
+        		localcmd("scr_matchclock 1\n");
+        		
      			   utils_set_cvar("timelimit", elohim_timelimit);
         		cvar_set("hostname", ADMIN_CTF_PUBLIC_MODE_STRING);
 		}
@@ -515,11 +527,7 @@ void (float value) elohim_set_fraglimit =
 
 void () stuff_aliases =
 {
-  //sprint3(self, "Sending ", elohim_version, " bindings\n");
   stuffcmd(self, "seta scr_usekfont 0;\n");
-
-  //sprint(self, "Sending aliases...\n");
-  //sprint(self, "_Aliases sent!\n");
 
   // Set aliases
 
@@ -684,29 +692,24 @@ void () elohim_init_think =
 //
 void () elohim_show_mode =
 {
+    if(self.owner.classname == "dummy") return;
+     
     sprint2(self.owner, elohim_version, "\n");
     if (elohim_playmode & ELOHIM_MATCH_MODE)
     {
-      if (elohim_playmode & CLANRING_CTF_MODE)
-        sprint(self.owner, "ctf match mode - help-match for help\n");
-      else 
-        sprint(self.owner, "match mode - help-match for help\n");
+		if (elohim_playmode & CLANRING_CTF_MODE)	sprint(self.owner, "ctf match mode - help-match for help\n");
+		else 	sprint(self.owner, "match mode - help-match for help\n");
     }
     else if (elohim_playmode & RACE_MODE)
     {
-      if (elohim_playmode & CLANRING_CTF_MODE)
-        sprint(self.owner, "ctf practice mode\n");
-      else
-        sprint(self.owner, "Race mode\n\n------------------\n");
+		if (elohim_playmode & CLANRING_CTF_MODE)	sprint(self.owner, "ctf practice mode\n");
+		else	sprint(self.owner, "Race mode\n\n------------------\n");
     }
-    else if (elohim_playmode & DM_PUBLIC_MODE)
-      sprint(self.owner, "public tdm mode\n");
+    else if (elohim_playmode & DM_PUBLIC_MODE)	sprint(self.owner, "public tdm mode\n");
     else
     {
-      if (elohim_playmode & CLANRING_CTF_MODE)
-        sprint(self.owner, "public ctf mode\n");
-      else
-		    sprint(self.owner, "FFA mode\n");
+		if (elohim_playmode & CLANRING_CTF_MODE)	sprint(self.owner, "public ctf mode\n");
+		else						sprint(self.owner, "FFA mode\n");
     }
     remove(self);
 };
@@ -1063,7 +1066,6 @@ void () ctf_help =
   sprint(self, "Haste (Blue) - fire weapons faster\n");
   sprint(self, "Death Aura (ORANGE) - Axe deals extra splash damage\n\n");
   sprint(self, "Beyond the normal frags for killing enemies, you receive bonus frags as follows:\n");
-  //sprint(self, "1 - kill an enemy near your flag or your team's flag carrier\n");
   sprint(self, "1 - returning the flag\n");
   sprint(self, "1 - your team captures the flag\n");
   sprint(self, "3 - capturing the flag\n\n");
@@ -1208,7 +1210,6 @@ void () elohim_vinfo =
 {
     sprint2(self, elohim_version_info, "\n");
     sprint(self, "Adapted from the Elohim/Clan Ring Team Deathmatch Server\n");
-    sprint(self, "Modified to include Capture the Flag, Clan Arena and Rocket Arena\n");
 };
 
 //
@@ -1247,13 +1248,6 @@ void () elohim_impulse =
 	if (self.style & CRMOD_DETECTING_QSMACK)
 		qsmack_detecting();
 	
-	/*
-	if (self.impulse == 7)
-	{
-			if (self.button_press_display_is_off == 1) self.button_press_display_is_off =0;
-			else if (self.button_press_display_is_off == 0) self.button_press_display_is_off =1;
-	}
-	*/
 	
 		
 	if (self.impulse == 37)                   //Antilag
@@ -1267,7 +1261,7 @@ void () elohim_impulse =
 		self.finaldest_x = time;
 	else if (self.impulse < 100)
 	{
-    if ((self.impulse == 40 && (elohim_playmode & CLANRING_RUNES))    ||    (self.impulse == 40 && (elohim_playmode & RACE_MODE))  )
+    if (self.impulse == 40 && (elohim_playmode & CLANRING_RUNES))
     {
        if (!(self.player_flag & PF_ITEM_RUNE_MASK))
        {
@@ -1278,25 +1272,10 @@ void () elohim_impulse =
 	}
       
       
-      if (self.player_flag & PF_ITEM_RUNE_MASK)
+	if (self.player_flag & PF_ITEM_RUNE_MASK)
         rune_drop();
         
-      if(elohim_playmode & RACE_MODE)
-      {
-		self.shield_time = 0;
-		self.shield_recharge_time = 1;
-		
-		if(self.race_completed == 0) 
-		{
-			self.racing_on = 0;
-			sprint(self, "   \b.\b\n");
-			sprint(self, "   \b[RUN RESET]\b\n");
-			sprint(self, "------------------\n");
-		}
-		racing_on_global = 0;
-		spawn_race_entities();
-		ClientKill();
-	}
+     
     }
 		else if ((self.impulse > 40) && (self.impulse <= 59))
 			debug_impulse();
@@ -1316,8 +1295,6 @@ void () elohim_impulse =
 		admin_impulse();
 		
   else if (self.impulse == 149 && self.style & ELOHIM_OBSERVER)     //BR_CAM
-		{}
-  else if (self.impulse == 101 && self.style & ELOHIM_OBSERVER) 
 		{}
   else if (self.impulse == 102 && self.style & ELOHIM_OBSERVER) 
 		{}

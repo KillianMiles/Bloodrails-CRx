@@ -973,6 +973,8 @@ void () HookPull =
 		
 		if ((self.owner.button2 && self.owner.airborn_pos > 45) || self.owner.tarzan_time == 1)
 		{
+			if(self.owner.tarzan_time == 0) self.owner.vel_before_wallrun = vlen(self.owner.velocity);
+			
 			
 			if(self.owner.turn_speed > 10)
 			{
@@ -1005,23 +1007,51 @@ void () HookPull =
 			
 			
 			
-			
-			
-			
-			
-			
-			
+
 			
 			if (self.owner.airborn_pos > 185 || self.owner.is_over_sky ==1) //added the over sky part
 			{	
-				self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);  //10-11, changed 27 to 22
-				if (vlen(self.owner.velocity) > 1200 && vlen(self.origin - self.owner.origin) >= 550) self.owner.velocity = normalize(self.owner.velocity)*1200;
-				else if (vlen(self.owner.velocity) > 1000 && vlen(self.origin - self.owner.origin) < 550) self.owner.velocity = normalize(self.owner.velocity)*1000;
+				
+				if(self.owner.vel_before_wallrun < 1000)
+				{
+					//if (vlen(self.owner.velocity) <= 900) self.owner.velocity = self.owner.velocity + v_forward*18 + (normalize(vel)*16);  //10-11, changed 27 to 22
+					//else if (vlen(self.owner.velocity) > 900) self.owner.velocity = self.owner.velocity + v_forward*12 + (normalize(vel)*10);
+					
+					self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
+					if (vlen(self.owner.velocity) >= 1000) self.owner.velocity = normalize(self.owner.velocity)*1000;
+				}
+				
+				else if(self.owner.vel_before_wallrun < 1200)
+				{
+					//if (vlen(self.owner.velocity) <= 1100) self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
+					//else if (vlen(self.owner.velocity) > 1100) self.owner.velocity = self.owner.velocity + v_forward*12 + (normalize(vel)*10);
+					
+					self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
+					if (vlen(self.owner.velocity) >= 1200) self.owner.velocity = normalize(self.owner.velocity)*(1200+ random()* 30);
+				}
+				else
+				{
+					//if (vlen(self.owner.velocity) <= 1400) self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
+					//else if (vlen(self.owner.velocity) > 1400) self.owner.velocity = self.owner.velocity + v_forward*12 + (normalize(vel)*10);
+					
+					self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
+					
+					if (vlen(self.owner.velocity) >= 1545) self.owner.velocity = normalize(self.owner.velocity)*(1545+ random()*50);
+					else if (vlen(self.owner.velocity) >= self.owner.vel_before_wallrun) self.owner.velocity = normalize(self.owner.velocity)*self.owner.vel_before_wallrun;	
+				}
 			}
 			if (self.owner.airborn_pos <= 185 && self.owner.is_over_sky ==0)
 			{
 				self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22) + v_up*(-7);  //NOVEM -9 -> -7
-				if (vlen(self.owner.velocity) > 850) self.owner.velocity = normalize(self.owner.velocity)*950;   //NOVEM 850 -> 950
+				
+				if(self.owner.vel_before_wallrun < 950)
+				{
+					if (vlen(self.owner.velocity) > 950) self.owner.velocity = normalize(self.owner.velocity)*950;   //NOVEM 850 -> 950
+				}
+				else 
+				{
+					if (vlen(self.owner.velocity) > self.owner.vel_before_wallrun) self.owner.velocity = normalize(self.owner.velocity)*self.owner.vel_before_wallrun;   //NOVEM 850 -> 950
+				}
 			}
 			
 			

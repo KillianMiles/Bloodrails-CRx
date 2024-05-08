@@ -25,17 +25,35 @@ void() update_rhud =
 
 	self.alpha = 0.7;
     
-	if(time - self.owner.mag_recharge_time  < 2.1) self.skin = 0;
-	else if(time - self.owner.mag_recharge_time  < 4.2) self.skin = 1;
-	else if(time - self.owner.mag_recharge_time  < 6.3) self.skin = 2;
-	else if(time - self.owner.mag_recharge_time  < 8.4) self.skin = 3;
-	else if(time - self.owner.mag_recharge_time  < 10.5) self.skin = 4;
-	else if(time - self.owner.mag_recharge_time  < 12.6) self.skin = 5;
-	else if(time - self.owner.mag_recharge_time  < 14.7) self.skin = 6;
-	else if(time - self.owner.mag_recharge_time  < 16.8) self.skin = 7;
-	else if(time - self.owner.mag_recharge_time  < 18.9) self.skin = 8;
-	else if(time - self.owner.mag_recharge_time  < 21) self.skin = 9;
-	else if(time - self.owner.mag_recharge_time  >= 21) self.skin = 10;
+	if(mapname == "tut1")
+	{
+		if(time - self.owner.mag_recharge_time  < 0.2) self.skin = 0;
+		else if(time - self.owner.mag_recharge_time  < 0.4) self.skin = 1;
+		else if(time - self.owner.mag_recharge_time  < 0.6) self.skin = 2;
+		else if(time - self.owner.mag_recharge_time  < 0.8) self.skin = 3;
+		else if(time - self.owner.mag_recharge_time  < 1.0) self.skin = 4;
+		else if(time - self.owner.mag_recharge_time  < 1.2) self.skin = 5;
+		else if(time - self.owner.mag_recharge_time  < 1.4) self.skin = 6;
+		else if(time - self.owner.mag_recharge_time  < 1.6) self.skin = 7;
+		else if(time - self.owner.mag_recharge_time  < 1.8) self.skin = 8;
+		else if(time - self.owner.mag_recharge_time  < 2) self.skin = 9;
+		else if(time - self.owner.mag_recharge_time  >= 2) self.skin = 10;
+		
+	}
+	else
+	{
+		if(time - self.owner.mag_recharge_time  < 2.1) self.skin = 0;
+		else if(time - self.owner.mag_recharge_time  < 4.2) self.skin = 1;
+		else if(time - self.owner.mag_recharge_time  < 6.3) self.skin = 2;
+		else if(time - self.owner.mag_recharge_time  < 8.4) self.skin = 3;
+		else if(time - self.owner.mag_recharge_time  < 10.5) self.skin = 4;
+		else if(time - self.owner.mag_recharge_time  < 12.6) self.skin = 5;
+		else if(time - self.owner.mag_recharge_time  < 14.7) self.skin = 6;
+		else if(time - self.owner.mag_recharge_time  < 16.8) self.skin = 7;
+		else if(time - self.owner.mag_recharge_time  < 18.9) self.skin = 8;
+		else if(time - self.owner.mag_recharge_time  < 21) self.skin = 9;
+		else if(time - self.owner.mag_recharge_time  >= 21) self.skin = 10;
+	}
 	
 	if(self.owner.mag_recharge_time == 0) self.skin = 10;
 	
@@ -53,6 +71,7 @@ void() update_rhud =
 		self.skin = 0; //DECEM no sidewinder with Power
 		self.alpha = 0.2;
 	}
+	
 	
 	//self.nextthink = time + 0.08;
 	self.nextthink = time + my_ticrate*25;  //DECEM
@@ -78,7 +97,7 @@ void() update_bolt_sym =
 
 void() Rail_HUD =  
 {
-	if ((elohim_playmode & RACE_MODE)) return;
+	if ((elohim_playmode & RACE_MODE) && mapname != "tut1") return;
 	if(self.rail_HUD == 0)
 	{
 		self.rail_HUD = 1;
@@ -139,17 +158,34 @@ void() update_shud =
 	self.alpha = 0.65;
 	
 	
-	if(time - self.owner.shield_time  < 1.8) self.skin = 0;
-	else if(time - self.owner.shield_time  < 3.6) self.skin = 1;
-	else if(time - self.owner.shield_time  < 5.4) self.skin = 2;
-	else if(time - self.owner.shield_time  < 7.2) self.skin = 3;
-	else if(time - self.owner.shield_time  < 9) self.skin = 4;
-	else if(time - self.owner.shield_time  < 10.8) self.skin = 5;
-	else if(time - self.owner.shield_time  < 12.6) self.skin = 6;
-	else if(time - self.owner.shield_time  < 14.4) self.skin = 7;
-	else if(time - self.owner.shield_time  < 16.2) self.skin = 8;
-	else if(time - self.owner.shield_time  < 18) self.skin = 9;
-	else if(time - self.owner.shield_time  >= 18) self.skin = 10;
+	if(mapname == "tut1")
+	{
+		if(time - self.owner.shield_time  < 0.2) self.skin = 0;
+		else if(time - self.owner.shield_time  < 0.4) self.skin = 1;
+		else if(time - self.owner.shield_time  < 0.6) self.skin = 2;
+		else if(time - self.owner.shield_time  < 0.8) self.skin = 3;
+		else if(time - self.owner.shield_time  < 1.0) self.skin = 4;
+		else if(time - self.owner.shield_time  < 1.2) self.skin = 5;
+		else if(time - self.owner.shield_time  < 1.4) self.skin = 6;
+		else if(time - self.owner.shield_time  < 1.6) self.skin = 7;
+		else if(time - self.owner.shield_time  < 1.8) self.skin = 8;
+		else if(time - self.owner.shield_time  < 2) self.skin = 9;
+		else if(time - self.owner.shield_time  >= 2) self.skin = 10;
+	}
+	else
+	{
+		if(time - self.owner.shield_time  < 1.8) self.skin = 0;
+		else if(time - self.owner.shield_time  < 3.6) self.skin = 1;
+		else if(time - self.owner.shield_time  < 5.4) self.skin = 2;
+		else if(time - self.owner.shield_time  < 7.2) self.skin = 3;
+		else if(time - self.owner.shield_time  < 9) self.skin = 4;
+		else if(time - self.owner.shield_time  < 10.8) self.skin = 5;
+		else if(time - self.owner.shield_time  < 12.6) self.skin = 6;
+		else if(time - self.owner.shield_time  < 14.4) self.skin = 7;
+		else if(time - self.owner.shield_time  < 16.2) self.skin = 8;
+		else if(time - self.owner.shield_time  < 18) self.skin = 9;
+		else if(time - self.owner.shield_time  >= 18) self.skin = 10;
+	}
 	
 	if(self.owner.shield_time == 0) self.skin = 10;
 	
@@ -175,7 +211,7 @@ void() update_shud =
 
 void() Shield_HUD =  
 {
-	if ((elohim_playmode & RACE_MODE)) return;
+	if ((elohim_playmode & RACE_MODE) && mapname !="tut1") return;
 	if(self.shield_HUD == 0)
 	{
 		self.shield_HUD = 1;
@@ -343,7 +379,86 @@ void() You_Have_Flag =
 
 
 
+void() update_tut_icon =
+{
 
+	makevectors(self.owner.owner.v_angle);
+    
+	self.viewmodelforclient = self.owner;
+	
+	
+	if(self.weapon ==1) setorigin(self, '0 -78 95'); //bottom left
+	else if(self.weapon ==2) setorigin(self, '0 -119 73'); //bottom center
+	//setorigin(self, '0 -190 78'); // 77 -> 82
+	
+	self.alpha = 0.9;
+	
+
+	if (mapname != "tut1" || intermission_running)
+	{
+		self.think = SUB_Remove;
+		if(self.weapon ==1) self.owner.tut_displayed1 = 0;
+		else if(self.weapon ==1) self.owner.tut_displayed1 = 0;
+	}
+		
+	if(self.weapon ==1 && self.owner.origin_z < 2400) 
+	{
+		self.think = SUB_Remove;
+		self.owner.tut_displayed1 = 0;
+	}
+		
+	else if(self.weapon ==2 && mapname != "tut1")
+	{
+		self.think = SUB_Remove;
+		self.owner.tut_displayed2 = 0;
+	}
+	
+
+	
+	//if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
+
+	self.nextthink = time + my_ticrate*30;  //DECEM
+}
+
+
+
+void(float what_type) make_tut_icon =
+{
+	if (((what_type ==1 &self.tut_displayed1 == 0) || (what_type ==1 &self.tut_displayed1 == 0)) && mapname == "tut1")
+	{
+		if(what_type ==1) self.tut_displayed1 = 1;
+		else if(what_type ==2) self.tut_displayed2 = 1;
+		
+		local entity tut;
+		tut = spawn();
+		
+		setmodel (tut, "progs/bloodrailz/tut_icons.mdl");
+		
+		//if 	((self.player_flag & PF_ITEM_tut_MASK) && (self.player_flag & PF_ITEM_tut1_FLAG)) tut.skin =1;
+		//else if ((self.player_flag & PF_ITEM_tut_MASK) && (self.player_flag & PF_ITEM_tut2_FLAG)) tut.skin =2;
+		//else if ((self.player_flag & PF_ITEM_tut_MASK) && (self.player_flag & PF_ITEM_tut3_FLAG)) tut.skin =3;
+		//else if ((self.player_flag & PF_ITEM_tut_MASK) && (self.player_flag & PF_ITEM_tut4_FLAG)) tut.skin =4;
+		
+		if(what_type == 1) tut.skin =1;
+		else if(what_type == 2) tut.skin =2;
+	
+
+		//setorigin(tut, '0 0 0');
+		tut.movetype = MOVETYPE_NOCLIP;
+		tut.solid = SOLID_NOT;
+		tut.classname = "tut";
+
+		setsize (tut, 0,0);
+		
+		if(what_type ==1) tut.weapon =1;
+		else if(what_type ==2) tut.weapon =2;
+		
+		tut.owner = self;
+		tut.nextthink = time + 0.1;
+		tut.think = update_tut_icon;
+		
+	}
+}
 
 
 
@@ -356,7 +471,8 @@ void() update_You_Have_Rune =
 	makevectors(self.owner.owner.v_angle);
     
 	self.viewmodelforclient = self.owner;
-	setorigin(self, '0 475 -330');
+	//setorigin(self, '0 -80 61'); //bottom left
+	setorigin(self, '0 -183.8 78'); // 77 -> 82
 	
 	self.alpha = 0.9;
 	
@@ -390,10 +506,12 @@ void() You_Have_Rune =
 		local entity haverune;
 		haverune = spawn();
 		
-		if 	((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG)) setmodel (haverune, "progs/bloodrailz/br_rune1b_1.mdl");
-		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE2_FLAG)) setmodel (haverune, "progs/bloodrailz/br_rune2b_1.mdl");
-		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE3_FLAG)) setmodel (haverune, "progs/bloodrailz/br_rune3b_1.mdl");
-		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE4_FLAG)) setmodel (haverune, "progs/bloodrailz/br_rune4b_1.mdl");
+		setmodel (haverune, "progs/bloodrailz/rune_icons.mdl");
+		
+		if 	((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG)) haverune.skin =1;
+		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE2_FLAG)) haverune.skin =2;
+		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE3_FLAG)) haverune.skin =3;
+		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE4_FLAG)) haverune.skin =4;
 	
 
 		//setorigin(haverune, '0 0 0');
@@ -674,6 +792,8 @@ void() make_jumbo_red =
 
 void() update_press_move =
 {
+	self.owner.suppress_hud =0;
+	
 	if (!(self.owner.player_flag & PF_OVERLAY))
 	{
 		self.think = SUB_Remove;
@@ -791,7 +911,7 @@ void() make_press_move =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "press_arrows";
-		setmodel (prj, "progs/bloodrailz/press_move2_1.mdl");		
+		setmodel (prj, "progs/bloodrailz/press_move.mdl");		
 		setsize (prj, 0, 0);	
 		setorigin (prj, '0 0 0');
 		prj.velocity = '0 0 0';	
@@ -971,7 +1091,7 @@ void() update_rail_ammo =
 	}
 	else if (self.weapon ==9)
 	{
-		setorigin(self, '0 51.5 53.4');
+		setorigin(self, '0 53.8 53.4'); // 51.5 -> 54
 		makevectors(self.owner.owner.v_angle);
 		self.viewmodelforclient = self.owner;
 		
@@ -1057,9 +1177,11 @@ void() make_rail_ammo =
 
 // Update player HUD with match timer, current score, flag status and rune status
 void hud_update() =
-{
+{  
+    
     if (self.hudspace > 7)
         return;
+        
 
     local float cur_sec;
     local float cur_min;
@@ -1072,19 +1194,7 @@ void hud_update() =
 
        
 	
-
-    if (mode_is_arena())
-    {
-        if (elohim_playmode & AIR_ARENA_MODE && boss.state == CA_MATCH_PLAYING)
-        {
-            cur_min = floor(boss.count / 60);
-            cur_sec = boss.count - (cur_min * 60);
-        }
-
-        cur_sec = 0;
-        cur_min = 0;
-    }
-    else if (elohim_state & ELOHIM_TIMER_STARTED)
+    if (elohim_state & ELOHIM_TIMER_STARTED)
     {
         cur_sec = elohim_match_timer.count;
         cur_min = elohim_match_timer.lip;
@@ -1102,7 +1212,6 @@ void hud_update() =
 
     // Team scores if a match is in progress
     local string winning_team = "", flag_status = "", rune_status = "", str_time = "", red_score = "", blue_score = "", str_minute = "", str_second = "";
-    local float winning_advantage;
     
 
     str_minute = get_minute_string(cur_min);
@@ -1139,151 +1248,55 @@ void hud_update() =
         default:
             spacing_top = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
     }
-    local string score_spacing = "";
-    //local string score_spacing = "\x11                                        \n";
-	//local string spacing_left = "                                        \n";
-    // 1234567890 + 40 spaces   => 1234567890123456789012345678901234567890
-    // [  Time  ]
-    // [Team xxx]
-    // R  B-RUNE-
 
- if (!(elohim_playmode & RACE_MODE) && ((elohim_state & ELOHIM_TIMER_STARTED) || (mode_is_public() == TRUE)))
-    {
-        //timer
-        str_time = get_time_string(cur_min, cur_sec);
 
-        //winning team and advantage
-        if (elohim_teamfrags1 > elohim_teamfrags2)
-        {
-            winning_advantage = elohim_teamfrags1 - elohim_teamfrags2;
-            if (winning_advantage > 99)
-                winning_team = "\x10Red  ";
-            else if (winning_advantage > 9)
-                winning_team = "\x10Red   ";
-            else
-                winning_team = "\x10Red    ";                    
-        }
-        else if (elohim_teamfrags1 < elohim_teamfrags2)
-        {
-            winning_advantage = elohim_teamfrags2 - elohim_teamfrags1;
-            if (winning_advantage > 99)
-                winning_team = "\x10Blue ";
-            else if (winning_advantage > 9)
-                winning_team = "\x10Blue  ";
-            else
-                winning_team = "\x10Blue   ";    
-        }
-        else
-        {
-            if (elohim_teamfrags2 == 0)
-                winning_team = "\x10        ";
-            else
-                winning_team = "\x10  Tied  ";
-            winning_advantage = 0;
-        }
 
-        //flag status
-        if (RED_FLAG_TAKEN && !BLUE_FLAG_TAKEN)
-        {
-            if (cvar("scr_usekfont") == 0) 
-            {
-                flag_status = "\s                                       \n";
-            } 
-            else
-            {
-                flag_status = "                                       \n";
-            }
-        }
-        else if (!RED_FLAG_TAKEN && BLUE_FLAG_TAKEN)
-        {
-            if (cvar("scr_usekfont") == 0) 
-            {
-                flag_status = "  \s                                     \n";
-            } 
-            else 
-            {
-                flag_status = "                                       \n";
-            }
-        }
-        else if (RED_FLAG_TAKEN && BLUE_FLAG_TAKEN)
-        {
-            if (cvar("scr_usekfont") == 0) 
-            {
-                flag_status = "\s                                       \n";
-            } 
-            else 
-            {
-                flag_status = "                                       \n";
-            }
-        }
-        else
-        {
-            flag_status = "                                       \n";
-        }
 
-        score_spacing = "\x11";
-    }
-    else
-    {
-        str_time = get_time_string(cur_min, cur_sec);
-        winning_team = "\x10        ";
-        score_spacing = "\x11";
-        flag_status = "    ";
-    }
+	rune_status = "                                              \n";
 
-    //rune status
-    if (self.player_flag & PF_ITEM_RUNE_MASK)
-    {
-        if (self.player_flag & PF_ITEM_RUNE1_FLAG)
-        {
-            rune_status = " Plasma hook                          \n\b Fire cloud\b                          \n";
-        }
-        else if (self.player_flag & PF_ITEM_RUNE2_FLAG)
-        {
-            rune_status = " Power                          \n\b Explosion\b                          \n";
-        }
-        else if (self.player_flag & PF_ITEM_RUNE3_FLAG)
-        {
-            rune_status = " Haste                          \n\b Gravity\b                          \n";
-        }
-        else if (self.player_flag & PF_ITEM_RUNE4_FLAG)
-        {
-            rune_status = " Death Aura                          \n\b Repulsor\b                          \n";
-        }
-        else
-        {
-            //just in case
-            rune_status = "                                              \n"; //
-        }
-    }
-    else
-    {
-        rune_status = "                                              \n";
-    }
 		
 			local string bracket_spacer;
-			if(current_speed >= 1000) bracket_spacer = "\x11                                \n";
-			else if(current_speed >= 100) bracket_spacer = " \x11                                \n";
-			else if(current_speed >= 10) bracket_spacer = "  \x11                              \n";
-			else if(current_speed < 10) bracket_spacer = "   \x11                              \n";
+			if(current_speed >= 1000) bracket_spacer = "                          \n";
+			else if(current_speed >= 100) bracket_spacer = "                           \n";
+			else if(current_speed >= 10) bracket_spacer = "                            \n";
+			else if(current_speed < 10) bracket_spacer = "                             \n";
+
 			
 	
-	if (elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_public() == TRUE))
+	if ((elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_public() == TRUE)))
 	{
-		if(self.print_killa == 0 && !(self.player_flag & PF_HUD)) centerprint5(self, spacing_top, "  \x10 \svel:", ftos(current_speed), bracket_spacer, rune_status);   //debug?   hud   //9-24-23
+		//if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud) centerprint5(self, spacing_top, "  \n \svel:", ftos(current_speed), bracket_spacer, rune_status);   //debug?   hud   //9-24-23
+		if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud)
+		{
+			if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
+			else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
+			self.have_rune_center =0;
+		}
+		
 	}
 	
-	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD))
+	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && !(mapname !="tut1" || mapname !="tut2" || mapname !="tut3" || mapname !="tut4" || mapname !="tut5" || mapname !="tut6" || mapname !="tut7")  && self.classname == "player")
 	{
 		if(self.racing_on == 1) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n\x10", utils_get_time(time - chrono_time), "\x11                              \n\x10\svel:", ftos(current_speed), bracket_spacer);   //debug?   hud 
 		else if(self.racing_on == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n\x10", utils_get_time(self.my_previous_time), "\x11                              \n\x10\svel:",    ftos(current_speed), bracket_spacer);   //debug?   hud 
 	}
+	
+	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && (mapname =="tut1") && self.classname == "player")
+	{
+		if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n\bF1\b: tutorial restart\n\bF2\b: Combat practice");   //debug?   hud 
+		else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n\bF1\b: tutorial restart\n\bF2\b: Combat practice");   //debug?   hud 
+		self.have_rune_center =0;
+	}
 
 	else
 	{
-		if(self.print_killa == 0 && !(self.player_flag & PF_HUD)) centerprint5(self, spacing_top, rune_status, "VEL:", ftos(current_speed), "                                                      ");
+		if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud) centerprint5(self, spacing_top, rune_status, "\bvel:\b", ftos(current_speed), "                                                      ");
 	}
 		
+	
+	
+	
+	
 	if (self.print_killa == 1 && self.ammo_rockets == 0 && !(elohim_playmode & RACE_MODE))  //ammo_rockets = killedbyworld
 	{
 			if (self.dmg_inflictor)  //dmg_inflictor = killedby
@@ -1311,4 +1324,211 @@ void hud_update() =
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void() update_icon =
+{	
+	makevectors(self.owner.owner.v_angle);
+	self.viewmodelforclient = self.owner;
+	
+	if(self.icon_display == self.owner.icon_display) self.owner.icon_height = self.origin_z;
+	
+
+	if(self.weapon == 1) //regular frag
+	{
+		if (self.owner.height == elohim_team1) self.skin = 8;   //red
+		else if (self.owner.height == elohim_team2) self.skin = 7;   //blue
+		else self.skin = 7;   //blue
+	}
+	else if(self.weapon == 2) //killed point leader
+	{
+		if (self.owner.height == elohim_team1) self.skin = 6;   //red
+		else if (self.owner.height == elohim_team2) self.skin = 5;   //blue
+		else self.skin = 5; 
+	}
+	else if(self.weapon == 3)	//killed flag carrier
+	{
+		if (self.owner.height == elohim_team1) self.skin = 10;   //red
+		else if (self.owner.height == elohim_team2) self.skin = 9;   //blue
+		else self.skin = 9;
+	}
+	else if(self.weapon == 4)   //killed flag carrier/point leader
+	{
+		if (self.owner.height == elohim_team1) self.skin = 12;   //red 
+		else if (self.owner.height == elohim_team2) self.skin = 11;   //blue
+		else  self.skin = 11;
+	}
+	else if(self.weapon == 5)	//flag return
+	{
+		if (self.owner.height == elohim_team1) self.skin = 4;   //red
+		else if (self.owner.height == elohim_team2) self.skin = 3;   //blue
+		else self.skin = 3; 
+	}
+	else if(self.weapon == 6) //Flag Cap
+	{
+		if (self.owner.height == elohim_team1) self.skin = 2;   //red
+		else if (self.owner.height == elohim_team2) self.skin = 1;   //blue
+		else self.skin = 1;
+	}
+	else if(self.weapon == 7) //TK and self
+	{
+		if (self.owner.height == elohim_team1) self.skin = 18;   //red
+		else if (self.owner.height == elohim_team2) self.skin = 17;   //blue
+		else self.skin = 17;
+	}
+	
+	
+	///////////////////////
+	if(self.health >0)
+	{
+		if(self.health == 9 || self.health == 485 || self.health == 35) self.skin = 13;  //FIRE
+		else if(self.health == 40 || self.health == 400.5) self.skin = 14; 	//POWER explo
+		else if(self.health == 5.5 || self.health == 19 || self.health == 51) self.skin = 15; //QUASAR
+		else if(self.health == 2 || self.health == 30) self.skin = 16; //GRAV WELL	
+		else if(self.health == 400) self.skin = 19; //THOR
+		else if(self.health == 20.2 || self.health == 40.4 || self.health == 10 || self.health == 18) self.skin = 20; //HOOK
+		else if(self.health == 1000) self.skin = 21; //SIDEWINDER
+		else if(self.health == 403) self.skin = 22; //AXE
+		else if(self.health == 9000 || self.health == 8994 || self.health == 1001) self.skin = 23; //RAILGUN
+	}
+	
+	
+	
+	if(self.alpha < 0.95 && time - self.cnt < 0.7) 
+	{
+		self.alpha +=0.03;
+		if(self.alpha >= 0.95) self.alpha = 0.95;
+	}
+	else if(time - self.cnt > 1.1) 
+	{
+		self.alpha -=0.02;
+		if(self.alpha < 0.05 && self.classname == "icon") 
+		{
+			self.think = SUB_Remove;
+			self.owner.icon_num -=1;
+			if(self.owner.icon_num <=0) self.owner.icon_num =0;
+		}
+	}
+	
+
+	
+	self.nextthink = time+my_ticrate*2;  //DECEM
+
+}
+
+
+
+void(entity scorer, float msg, float dmg) make_icon =
+{
+
+		scorer.icon_display +=1;
+		scorer.icon_num +=1;
+		
+		local entity icon;
+		local entity icon2;
+		
+			icon = spawn ();
+		
+			icon.owner = scorer;
+			icon.movetype = MOVETYPE_NOCLIP;
+			icon.solid = SOLID_NOT;
+		
+			icon.touch = SUB_Null;
+			icon.classname = "icon";
+			setmodel (icon, "progs/bloodrailz/score_icons.mdl");		
+			setsize (icon, 0, 0);	
+			
+			icon.icon_display = scorer.icon_display;
+			icon.icon_num = scorer.icon_num;
+			
+				local vector a = '0 -171 110';
+				a_z = scorer.icon_height - 5;
+				
+				if(a_z < 110 && time - scorer.icon_time >2) a_z = 110;
+			
+				if(scorer.icon_height >=116 || scorer.icon_height < 20)	
+				{
+					setorigin(icon, '0 -171 110');
+					scorer.icon_height = 110;
+				}
+				else	
+				{
+					setorigin(icon, a);
+					scorer.icon_height = a_z;
+				}
+			
+			
+				if(scorer.icon_time != time) scorer.icon_time = time;
+				else setorigin(icon, a);
+
+			
+
+		
+
+			icon.velocity = '0 0 9.5';	
+			icon.frame = 0;	
+			icon.alpha = 0.001;
+			
+			icon.cnt = time;
+			
+				
+			icon.weapon = msg;
+			icon.think = update_icon;
+			icon.nextthink = time;
+			
+
+			if(dmg > 0)
+			{
+				icon2 = spawn ();
+		
+				icon2.owner = scorer;
+				icon2.movetype = MOVETYPE_NOCLIP;
+				icon2.solid = SOLID_NOT;
+		
+				icon2.touch = SUB_Null;
+				icon2.classname = "icon";
+				setmodel (icon2, "progs/bloodrailz/score_icons.mdl");		
+				setsize (icon2, 0, 0);	
+			
+				icon2.icon_display = scorer.icon_display;
+				icon2.icon_num = scorer.icon_num;
+				
+				a_z = scorer.icon_height;
+				if(a_z < 110 && time - scorer.icon_time >2) a_z = 110;
+				
+				
+				setorigin(icon2, a);
+
+					if(scorer.icon_time != time) scorer.icon_time = time;
+					else setorigin(icon2, a);
+
+
+				icon2.velocity = '0 0 9.5';	
+				icon2.frame = 0;	
+				icon2.alpha = 0.001;
+				icon2.cnt = time;
+					
+				icon2.weapon = msg;
+				icon2.health = dmg;
+				
+				icon2.think = update_icon;
+				icon2.nextthink = time;
+			}
+			
+			if(scorer.icon_time != time) scorer.icon_time = time;
+				
+}
 

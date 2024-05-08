@@ -150,7 +150,7 @@ void() WallRun =
 	local vector start, end, velo; 
 	local float trace_frac_plus, trace_frac_minus, trace_frac_plus_long, trace_frac_minus_long;
 
-	local float minspeed = 450;
+	local float minspeed = 410;
 	
 	if (!(self.button2))	self.grind_completed = 0;
 
@@ -532,9 +532,7 @@ void() Skiing =
 {
 		local float slide_duration =12.1;  // flat adjustment
 		local float already_jumped =0;
-		
-		//if(self.impulse ==42) bprint("42 - ");
-		//else bprint("none - ");
+
 		
 		if(!self.ski_button && self.impulse ==41) 
 		{
@@ -546,38 +544,31 @@ void() Skiing =
 			self.ski_button =0;
 		}
 		
-		if(self.skiing_on !=0 && self.turn_speed > 4)
-		{
-			stuffcmd(self, "cl_screenangle_speed 2.5\n");
-				stuffcmd(self, "cl_screenangle -5.25\n");
-		}
-		else if(self.skiing_on !=0 && self.turn_speed > 0.3)
-		{
-			stuffcmd(self, "cl_screenangle_speed 2.5\n");
-				stuffcmd(self, "cl_screenangle -2.5\n");
-		}
-		//////////////////////////////////////////////////////////////
-		else if(self.skiing_on !=0 && self.turn_speed < -4)
-		{
-			stuffcmd(self, "cl_screenangle_speed 2.5\n");
-				stuffcmd(self, "cl_screenangle 5.25\n");
-		}
-		else if(self.skiing_on !=0 && self.turn_speed < -0.3)
-		{
-			stuffcmd(self, "cl_screenangle_speed 2.5\n");
-				stuffcmd(self, "cl_screenangle 2.5\n");
-		}
-		
-		if(self.skiing_on !=0 && self.turn_speed >=-0.3 && self.turn_speed <= 0.3 && self.ski_button ==1)
-		{
-			//stuffcmd(self, "cl_screenangle_speed 2.5\n");
-				stuffcmd(self, "cl_screenangle 0\n");
-		}
+					if(self.skiing_on !=0 && self.turn_speed > 8)
+					{
+						stuffcmd(self, "cl_screenangle_speed 2.5\n");
+						stuffcmd(self, "cl_screenangle -5.25\n");
+					}
+					else if(self.skiing_on !=0 && self.turn_speed < -8)
+					{
+						stuffcmd(self, "cl_screenangle_speed 2.5\n");
+						stuffcmd(self, "cl_screenangle 5.25\n");
+					}
+					
+					if(self.skiing_on !=0 && self.turn_speed >=-8 && self.turn_speed <= 8 && self.ski_button ==1)
+					{
+						stuffcmd(self, "cl_screenangle 0\n");
+					}
+					else if(vlen(self.velocity) < 425) stuffcmd(self, "cl_screenangle 0\n");
+					//else stuffcmd(self, "cl_screenangle 0\n");   //Backstop
 			
 		
-		if(self.ski_button && self.flags & FL_ONGROUND && self.skiing_on ==0 && vlen(self.velocity) < 425) self.ski_button =0;
+		//if(v_forward_z < 0 && self.movement_x ==400) bprint(ftos(self.velocity_z)); 
 		
-		if(self.ski_button && (self.flags & FL_ONGROUND) && self.movement_x == 400) 
+		
+		if(self.ski_button && self.flags & FL_ONGROUND && self.skiing_on ==0 && vlen(self.velocity) < 425 && self.velocity_z > -110) self.ski_button =0;
+		
+		if(self.ski_button && (self.flags & FL_ONGROUND) ) //&& self.movement_x == 400) 
 		{
 			if(vlen(self.velocity) < 340) self.velocity = self.velocity;
 			else
@@ -591,10 +582,10 @@ void() Skiing =
 		
 		if(self.waterlevel > 1 && v_forward_z < -0.45 && self.velocity_z < -300) self.shark_time = time;
 		
-		if(self.waterlevel > 2 && time-self.shark_time < 3)			//NOVEM Sharking Dolphin
+		if(self.waterlevel > 2 && time-self.shark_time < 3)			//APRIL Sharking Dolphin
 		{
-			self.velocity = self.velocity + v_forward*75;
-			if(vlen(self.velocity) > 850) self.velocity = normalize(self.velocity)*850;
+			self.velocity = self.velocity + v_forward*80;
+			if(vlen(self.velocity) > 875) self.velocity = normalize(self.velocity)*875;
 			return;
 		}
 		else if((self.waterlevel>0 && self.waterlevel<2) && (time-self.shark_time > 0.8 && time-self.shark_time < 3))
@@ -628,38 +619,27 @@ void() Skiing =
 				self.velocity_z = self.velocity_z + 255;
 				//bprint("up 1\n");
 			}
-			else if(self.velocity_z < -250) 
-			{
-				self.velocity_z = self.velocity_z + 350;
-					//bprint("down 250\n");
-			}
-			else if(self.velocity_z < -100) 
-			{
-				//bprint(ftos(self.velocity_z));
-				//bprint("down 100\n");
-				self.velocity_z = self.velocity_z + 310;
-			}
 			else 
 			{
 				self.velocity_z = self.velocity_z + 310;
-					//bprint("\x146level\n");
 			}
 	
 			self.skiing_on =0;
 			already_jumped=1;
 		}
 		
+		if (self.flags & FL_ONGROUND) self.boost_time = 0;
 		
-		if(self.impulse ==42 && self.airborn_pos >= 4 && self.skiing_on ==0 && already_jumped ==0 && !(self.style & ELOHIM_OBSERVER))
+		if(self.impulse ==42 && self.airborn_pos >= 3 && self.skiing_on ==0 && already_jumped ==0 && !(self.style & ELOHIM_OBSERVER))
 		{
-			if(time - self.boost_time > 0.75 || self.boost_time ==0 && self.angles_not_zero == 0)
+			if(self.boost_time == 0 && self.angles_not_zero == 0)
 			{
 				if (!(self.flags & FL_ONGROUND) && self.airborn_pos > 25)
 				{
 					if(time - self.ski_button_time < 0.4)
 					{
-						self.boost_time = time;
-						if(self.velocity_z > -475) sound (self, CHAN_BODY, "bloodrailz/player/air_boost.wav", 0.7, ATTN_NORM);
+						self.boost_time = 1;
+						if(self.velocity_z > -850) sound (self, CHAN_BODY, "bloodrailz/player/air_boost.wav", 0.7, ATTN_NORM);
 				
 						if(self.velocity_z > 1000) self.velocity = self.velocity + '0 0 175';   //boost up
 						else if(self.velocity_z > 800) self.velocity = self.velocity + '0 0 225'; 
@@ -667,6 +647,8 @@ void() Skiing =
 						else if(self.velocity_z > 0) self.velocity = self.velocity + '0 0 325'; 
 						else if(self.velocity_z > -250) self.velocity = self.velocity + '0 0 425';   
 						else if(self.velocity_z > -475) self.velocity = self.velocity + '0 0 550';
+						else if(self.velocity_z > -750) self.velocity = self.velocity + '0 0 700';
+						else if(self.velocity_z > -850) self.velocity = self.velocity + '0 0 750';
 					}
 				}
 			}
@@ -677,57 +659,52 @@ void() Skiing =
 		
 		
 		makevectors(self.v_angle);
-		local vector horizon_forward = v_forward;
-		horizon_forward_z = 0;
-		
-		horizon_forward =normalize(horizon_forward);
-		
-		
-			traceline(self.origin + horizon_forward*10 + '0 0 -8', self.origin + horizon_forward*590 + '0 0 -8', TRUE, self);  
-			if(trace_fraction ==1) 
-			{
-				local float need_vel_adjusted =1;
-			}
+
 		
 		
 
 		
 	
 		
-		
+				traceline(self.origin, self.origin + normalize(self.velocity)*180, TRUE, self);	//APRIL
+				local float fraction = trace_fraction;	
+
+
 
 		
-	tracebox(self.origin + '0 0 -40', '-18 -18 -40', '18 18 0', self.origin + '0 0 -41', 1, self);
+	tracebox(self.origin + '0 0 -45', '-18 -18 -45', '18 18 0', self.origin + '0 0 -47', 1, self);
 	
 	
-	if(self.impulse ==41 && vlen(self.velocity) > 440 && self.view_ofs_z ==22 && self.skiing_on ==0 && self.angles_not_zero == 0)   //initiate crouch slide
-	{
-			
+	if(self.ski_button ==1 && vlen(self.velocity) > 375 && self.view_ofs_z ==22 && self.skiing_on ==0 && self.angles_not_zero == 0)   //initiate crouch slide -- //impulse 41 -> ski_button MAY
+	{		
 		self.vel_before_wallrun = vlen(self.velocity);
 		self.z_height = self.origin_z;
 		self.ski_time=time;
-		
-		if(need_vel_adjusted ==0) self.skiing_on =1;
-		else if((need_vel_adjusted ==1 && self.velocity_z < 325)) self.skiing_on =2;
-		
+		self.skiing_on =1;
 		self.ski_sound_counter =27;
+		//bprint("initiate slide\n");
 	}
 	
 	
 	
 	
 	
-	if((self.skiing_on ==1 || self.skiing_on ==2) && (trace_startsolid == TRUE))
+	if(self.skiing_on ==1 && (trace_startsolid == TRUE))
 	{
 		local float old_water_level = self.origin_z;
+		
+		
+		if(self.flags & FL_ONGROUND ) self.flags = self.flags - FL_ONGROUND;
 		
 		setorigin(self, self.origin + '0 0 0.8');
 		self.view_ofs_z -=1;
 		if(self.view_ofs_z <= 7) self.view_ofs_z = 7;
 		
 		
-		if(self.movement_x ==-400) self.velocity = self.velocity + normalize(self.velocity)*2.5;
-		if(self.movement_x ==-400) self.velocity = self.velocity + normalize(self.velocity)*-4.5;
+		if(self.movement_x ==400) self.velocity = self.velocity + v_forward*1;
+		if(self.movement_x ==-400) self.velocity = self.velocity + v_forward*(-1);
+		
+		//self.velocity = self.velocity + normalize(self.velocity)*1;
 		
 		if (self.vel_before_wallrun <= 800 && vlen(self.velocity) > 800) self.velocity = self.velocity + normalize(self.velocity)*-2.0;
 		else if (self.vel_before_wallrun <= 850 && vlen(self.velocity) > 850) self.velocity = self.velocity + normalize(self.velocity)*-2.0;
@@ -736,117 +713,90 @@ void() Skiing =
 		
 		
 		
-		if(vlen(self.velocity) > 1050) self.velocity = self.velocity + v_forward*-2.5;
-		if(vlen(self.velocity) > 1200) self.velocity = self.velocity + v_forward*-1.5;
-		if(vlen(self.velocity) > 1250) self.velocity = self.velocity + v_forward*-1.00;
-		if(vlen(self.velocity) > 1300) self.velocity = self.velocity + v_forward*-1.00;
+		if(vlen(self.velocity) > 1050) self.velocity = self.velocity + normalize(self.velocity)*-2.5;
+		if(vlen(self.velocity) > 1200) self.velocity = self.velocity + normalize(self.velocity)*-1.5;
+		if(vlen(self.velocity) > 1250) self.velocity = self.velocity + normalize(self.velocity)*-1.00;
+		if(vlen(self.velocity) > 1300) self.velocity = self.velocity + normalize(self.velocity)*-1.00;
 		
-		if(self.movement_x ==400) 
-		{
-			
-			local float accel_factor = ((1+self.z_height - self.origin_z)/1);
-			accel_factor = accel_factor*1;
+		//if(self.movement_x ==400 || self.movement_x ==-400) //
+		//{
+			local float accel_factor = (1+self.z_height - self.origin_z);
 			if(accel_factor > 4) accel_factor =4.0;
-			
-			local float decel_factor = (self.z_height - self.origin_z-1);
-			decel_factor = decel_factor *0.11;
-			if(decel_factor < -1.0) decel_factor =-1.0;
-			
-			
 			
 			if(self.z_height > self.origin_z+1) 
 			{
-				//bprint(ftos(accel_factor));
-				//bprint("accel \n");
-				self.z_height = self.origin_z;
-			
-				self.velocity = self.velocity + normalize(self.velocity)*accel_factor;
+				self.velocity = self.velocity + normalize(self.velocity)*accel_factor;				//bprint(ftos(accel_factor));
 			}
 			else if(self.z_height +1 < self.origin_z) 
 			{
-				if(vlen(self.velocity) > 650)
-				{
-					//bprint(ftos(decel_factor));
-					//bprint(" decel\n");
-					self.z_height = self.origin_z;
-					
-					self.velocity = self.velocity + normalize(self.velocity)*decel_factor;
-			
-					/*
-					if(vlen(self.velocity) > 725)
-					{
-						self.velocity = self.velocity + normalize(self.velocity)*decel_factor;
-					}
-					else if(vlen(self.velocity) > 500)
-					{
-						self.velocity = self.velocity + normalize(self.velocity)*decel_factor*0.90;
-					}
-					*/
-
-				}
+				self.velocity = self.velocity + normalize(self.velocity)*1.8;					//bprint(ftos(decel_factor));
 			}
 			else 
 			{
-				//bprint(" no slope\n");
-				if(vlen(self.velocity) > 900)
-				{
-					//bprint("no slope 9\n");
-					self.velocity = self.velocity + normalize(self.velocity)*(-1.0);
-				}
-				if(vlen(self.velocity) > 750)
-				{
-					//bprint("no slope 7\n");
-					self.velocity = self.velocity + normalize(self.velocity)*(-1.0);
-				}
-				else if(vlen(self.velocity) > 500)
-				{
-					//bprint("no slope 4\n");
-					self.velocity = self.velocity + normalize(self.velocity)*(-1.25);
-				}
-		
+				self.z_height = self.origin_z; 				//bprint(" no slope\n");
+				if(vlen(self.velocity) > 900) self.velocity = self.velocity + normalize(self.velocity)*(-5.0);
+				else if(vlen(self.velocity) > 750) self.velocity = self.velocity + normalize(self.velocity)*(-3.25);
+				else if(vlen(self.velocity) > 500) self.velocity = self.velocity + normalize(self.velocity)*(-2);
+				else if(vlen(self.velocity) >= 400) self.velocity = self.velocity + normalize(self.velocity)*(-2);
 			}
+		//}
+		
+		
+		
+		if(self.movement_x ==400) self.velocity = vlen(self.velocity) * normalize(self.velocity + v_forward*27);  //APRIL
+		if(self.movement_x ==-400) self.velocity = vlen(self.velocity) * normalize(self.velocity + v_forward*-27);  //APRIL
+		
+		
+		if(pointcontents(self.origin + '0 0 41') == CONTENT_SOLID || pointcontents(self.origin + '0 0 42') == CONTENT_SOLID || pointcontents(self.origin + '0 0 43') == CONTENT_SOLID || pointcontents(self.origin + '0 0 44') == CONTENT_SOLID) 
+		{
+			self.velocity = self.velocity + '0 0 -55';
+			//bprint("high limit\n");
 		}
 		
-		
-		self.velocity = vlen(self.velocity) * normalize(self.velocity + v_forward*27);  //MARCH
-		
-		//bprint(ftos(need_vel_adjusted));
-		//bprint(" need vel adjusted\n");
-		if((need_vel_adjusted ==1) || self.skiing_on ==2) 
+		if(vlen(self.velocity) < 450 && self.velocity_z > -40)   //SKIING OFF
 		{
-			
-			if(time-self.ski_time > 1.5)
-			{
-				self.velocity =self.velocity*.9992;  // flat adjustment
-				//bprint("x.9990\n");
-				if(time-self.ski_time > 1.25) self.skiing_on =2;
-			}
+			self.skiing_on =0;
+			//bprint("skiing off\n");
 		}
 		
 		
 		flag_homing_slide(500, 55);
 		
-		if(time-self.ski_time < 0.25 && self.velocity_z > 25 && vlen(self.velocity) < 852) self.skiing_on =2;
 		
-		if(vlen(self.velocity) < 520) 
-		{
-			self.skiing_on =0;
-		}
+					if (fraction < 1)  //APRIL
+					{
+						if(self.z_height > self.origin_z+1.5) 
+						{
+							self.velocity = self.velocity + '0 0 125';
+							//bprint("downhill obstacle\n");
+						}
+						else 
+						{
+							if(self.velocity_z < 500 && (pointcontents(self.origin + '0 0 48') !=CONTENT_SOLID || pointcontents(self.origin + '0 0 47') !=CONTENT_SOLID || pointcontents(self.origin + '0 0 46') !=CONTENT_SOLID)) 
+							{
+								if(self.airborn_pos < 200)
+								{
+									self.velocity = self.velocity + '0 0 45';
+								}
+							}
+							
+						}
+			
+					}
 		
+					self.z_height = self.origin_z;
 		
-		if ( self.flags & FL_ONGROUND ) self.flags = self.flags - FL_ONGROUND;
-		
-		
+
 		
 		local vector vel_xy = self.velocity;
 		vel_xy_z = 0;
 		
-		//if(trace_startsolid == TRUE && vlen(self.velocity) > 400 && self.skiing_on !=0)
+
 		if(vlen(self.velocity) > 400 && self.skiing_on !=0)
 		{
 			if(self.impulse !=41 && self.impulse !=42 && self.airborn_pos < 50) self.ski_time2 = time;
 		}
-		if(trace_startsolid == TRUE && (self.velocity_z < -470 || vlen(vel_xy) > 540))
+		if(trace_startsolid == TRUE && (self.velocity_z < -470 || vlen(vel_xy) > 470))
 		{
 		
 			
@@ -858,14 +808,12 @@ void() Skiing =
 					if (random() < 0.34) 		sound (self, CHAN_AUTO, "bloodrailz/misc/grind1.wav", 0.40, ATTN_NORM);
 					else if (random() < 0.67) 	sound (self, CHAN_AUTO, "bloodrailz/misc/grind2.wav", 0.40, ATTN_NORM);
 					else 				sound (self, CHAN_AUTO, "bloodrailz/misc/grind3.wav", 0.40, ATTN_NORM);
-					//bprint(" HI vol\n");
 				}
 				else if(vlen(self.velocity) > 470)
 				{
 					if (random() < 0.34) 		sound (self, CHAN_AUTO, "bloodrailz/misc/grind1.wav", 0.31, ATTN_NORM);
 					else if (random() < 0.67) 	sound (self, CHAN_AUTO, "bloodrailz/misc/grind2.wav", 0.31, ATTN_NORM);
 					else 				sound (self, CHAN_AUTO, "bloodrailz/misc/grind3.wav", 0.31, ATTN_NORM);
-					//bprint(" LOW vol\n");
 				}
 		
 
@@ -875,18 +823,18 @@ void() Skiing =
 			else if (self.ski_sound_counter < 32) self.ski_sound_counter +=1;
 		}
 		
-			
-		
-		
-		
+	///////////////////////////////  side bump
+		traceline (self.origin, self.origin + v_right*(-59), TRUE, self);
+
+		if(trace_fraction < 1) setorigin(self, self.origin + v_right*0.99);
+		else
+		{
+			traceline (self.origin, self.origin + v_right*(59), TRUE, self);
+			if(trace_fraction < 1) setorigin(self, self.origin + v_right*(-0.99));
+		}
+				
 	}
 	
-	
-	
-	
-	
-	//bprint(ftos(self.velocity_z));
-	//bprint(" vel_z\n");
 }
 
 
@@ -918,56 +866,42 @@ void() Water_bounce =   	//10/8/23
 
 	
 	
-	if((pointcontents(self.origin + '0 0 -47') == CONTENT_WATER || pointcontents(self.origin + '0 0 -47') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -47') == CONTENT_LAVA) && (self.bounce_on ==1 || self.bounce_on ==2) && time-self.ski_time < slide_duration)
+	if((pointcontents(self.origin + '0 0 -47') == CONTENT_WATER || pointcontents(self.origin + '0 0 -47') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -47') == CONTENT_LAVA) && self.bounce_on !=0 && time-self.ski_time < slide_duration)
 	{
-		//self.view_ofs_z -=1;
-		//if(self.view_ofs_z <= 2) self.view_ofs_z = 2;
-		if(pointcontents(self.origin + '0 0 -24') == CONTENT_WATER || pointcontents(self.origin + '0 0 -24') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -24') == CONTENT_LAVA) self.bounce_on =2;
+
+		if(pointcontents(self.origin + '0 0 -24') == CONTENT_WATER || pointcontents(self.origin + '0 0 -24') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -24') == CONTENT_LAVA) 
+		{
+			if(self.bounce_on ==1) self.bounce_on =2;
+		}
 		
-		if(vlen(horiz_vel) > 280 && self.bounce_on ==2)
+		if(self.bounce_on ==2 || self.bounce_on ==3 || self.bounce_on ==4)
 		{
 			if(pointcontents(self.origin + '0 0 -40') == CONTENT_WATER || pointcontents(self.origin + '0 0 -40') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -40') == CONTENT_LAVA) 
 			{
-				self.velocity = self.velocity + '0 0 70'; //self.origin_z = old_water_level;
-				if (pointcontents(self.origin + '0 0 -40') == CONTENT_LAVA && self.velocity_z < -550) 
-				{
-					self.velocity_z = self.velocity_z*(-0.5);
-					//bprint("UP!\n");
-				}
+				if(self.velocity_z < -550) self.velocity_z = self.velocity_z*(-0.7);
 				
-				if(self.velocity_z < -700) self.velocity = self.velocity + '0 0 250';
-				else if(self.velocity_z < -550) self.velocity = self.velocity + '0 0 200';
-				else if(self.velocity_z < -400) self.velocity = self.velocity + '0 0 125';
+				self.velocity = self.velocity + '0 0 70'; 
 			
 				if(self.velocity_z > 100 && self.movement_x ==400) self.velocity = self.velocity + v_forward*8;   //NOVEM 3 -> 8
 				else if(self.velocity_z > 100 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-8;   //NOVEM 3 -> 8
-				self.ski_time -=0.05;
-			}
-			else if(pointcontents(self.origin + '0 0 -30') == CONTENT_WATER || pointcontents(self.origin + '0 0 -30') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -30') == CONTENT_LAVA) 
-			{
-				self.velocity = self.velocity + '0 0 50'; //self.origin_z = old_water_level;
-				if (pointcontents(self.origin + '0 0 -30') == CONTENT_LAVA && self.velocity_z < -550) self.velocity_z = self.velocity_z*(-0.5);
-				if (pointcontents(self.origin + '0 0 -30') == CONTENT_WATER && self.velocity_z < -550) self.velocity_z = self.velocity_z*(-0.5);  //NOVEM added
 				
-				if(self.velocity_z < -700) self.velocity = self.velocity + '0 0 250';
-				else if(self.velocity_z < -550) self.velocity = self.velocity + '0 0 200';
-				else if(self.velocity_z < -400) self.velocity = self.velocity + '0 0 125';
-			
-				if(self.velocity_z > 100 && self.movement_x ==400) self.velocity = self.velocity + v_forward*8;		//NOVEM 3 -> 8
-				else if(self.velocity_z > 100 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-8;		//NOVEM 3 -> 8
 				self.ski_time -=0.05;
+				
+				
+				if(self.bounce_on ==1 || self.bounce_on ==2) self.bounce_on =3;	
 			}
+
 			
 			if(vlen(horiz_vel) < 325)
 			{
-				if(self.velocity_z > 100 && self.movement_x ==400) self.velocity = self.velocity + v_forward*18; //NOVEM 12 -> 18
-				else if(self.velocity_z > 100 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-18;
+				if(self.velocity_z > 100 && self.movement_x ==400) self.velocity = self.velocity + v_forward*12; //NOVEM 12 -> 18
+				else if(self.velocity_z > 100 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-12;
 				//bprint("horizontal1\n");
 			}
 			else if(vlen(horiz_vel) < 525)
 			{
-				if(self.velocity_z > 100 && self.movement_x ==400) self.velocity = self.velocity + v_forward*27; 	//NOVEM 18 -> 27
-				else if(self.velocity_z > 100 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-27;
+				if(self.velocity_z > 100 && self.movement_x ==400) self.velocity = self.velocity + v_forward*24; 	//NOVEM 18 -> 27
+				else if(self.velocity_z > 100 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-24;
 				//bprint("horizontal2\n");
 			}
 			else if(vlen(horiz_vel) < 700)
@@ -980,35 +914,22 @@ void() Water_bounce =   	//10/8/23
 			if(self.watertype == CONTENT_LAVA && self.velocity_z > 50 && self.movement_x ==400) self.velocity = self.velocity + v_forward*30;
 			else if(self.watertype == CONTENT_LAVA && self.velocity_z > 50 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-30;
 			
-			//if (self.watertype == CONTENT_LAVA && self.velocity_z < -200) 
-			//{
-			//	self.velocity_z = self.velocity_z + 100;
-			//	bprint("UP!\n");
-			//}
 	
 		}
-
-		if((pointcontents(self.origin + '0 0 -45') == CONTENT_WATER || pointcontents(self.origin + '0 0 -45') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -45') == CONTENT_LAVA) && self.bounce_on ==2)
-		{
-			if (self.velocity_z > 2 && self.ski_sound_counter ==1)
-			{
-			
-				if(vlen(self.velocity) > 500) sound (self, CHAN_AUTO, "bloodrailz/misc/water_bounce1.wav", 0.59, ATTN_NORM);
-				if(vlen(self.velocity) > 400) sound (self, CHAN_AUTO, "bloodrailz/misc/water_bubble1.wav", 0.9, ATTN_NORM);
-				
-				self.ski_sound_counter = 0;	
-			
-			}
-			//else if (self.ski_sound_counter < 32) self.ski_sound_counter +=1;
 		
+		if(self.bounce_on ==3)
+		{
+			if(vlen(self.velocity) > 500) sound (self, CHAN_AUTO, "bloodrailz/misc/water_bounce1.wav", 0.59, ATTN_NORM);
+				if(vlen(self.velocity) > 400) sound (self, CHAN_AUTO, "bloodrailz/misc/water_bubble1.wav", 0.9, ATTN_NORM);
+				self.bounce_on = 4;
 		}
+				
+		
 	}
 	
 	if(!self.button2 || self.waterlevel ==3)
 	{
 		self.bounce_on =0;
-		//self.view_ofs_z += 1;
-		//if(self.view_ofs_z >= 22) self.view_ofs_z = 22;
 	}
 
 }

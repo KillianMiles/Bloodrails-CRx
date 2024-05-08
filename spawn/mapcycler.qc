@@ -7,30 +7,39 @@ __accumulate void() worldspawn =
     localcmd("bind F1 impulse 100\n");
     localcmd("exec mapcycle.cfg\n");
     localcmd("sv_maxvelocity 25000\n");
-    localcmd("timelimit 10\n");
+    
+	if(mapname =="tut1" || mapname =="tut2") 
+	{
+		localcmd("timelimit 0\n");
+		localcmd("fraglimit 0\n");
+	}
+	else 
+	{
+	localcmd("timelimit 10\n");
+	localcmd("scr_matchclock 1\n");
+	
+	if (elohim_playmode & CLANRING_CTF_MODE) localcmd("fraglimit 120\n");
+	else localcmd("fraglimit 40\n");
+	
+	}
+    
     localcmd("sv_defaultmap ctf_dissocia_c2\n");   //default map
     localcmd("sys_ticrate 0.0166667\n");
     
 	localcmd("fov_adapt 1\n");
 	localcmd("viewsize 110\n");
+	
 
 	
 	localcmd("cl_gun_fovscale 0.84\n");
 	localcmd("gl_polyblend 1\n");
 	localcmd("gl_cshiftpercent_damage 21\n");
 	
-	//localcmd("alias cl_gun_fovscale bf\n");
-
-	//localcmd("cl_bob 0\n");
-	//localcmd("alias cl_bob bf\n");
 	
 	localcmd("cl_rollangle 0\n");
 	localcmd("alias cl_rollangle bf\n");
 	
 	localcmd("cl_screenangle 0\n");
-	
-	//localcmd("cl_screenangle_speed 2.5\n");
-	//localcmd("alias cl_screenangle_speed bf\n");
 	
 	localcmd("scr_conscale 3.2\n");
 	localcmd("alias scr_conscale bf\n");
@@ -44,7 +53,6 @@ __accumulate void() worldspawn =
 	
 
 	
-   // localcmd("fraglimit 40\n");
 }
 #pragma warning enable F321
 

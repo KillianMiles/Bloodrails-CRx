@@ -151,13 +151,9 @@ void() SetNewParms2 =
 {
     if (elohim_playmode & RACE_MODE)
         {                               //Practice armor (Full armor)
-        SetPracticeParms();
-       // self.items = self.items | IT_ARMOR3;
-       // self.armorvalue = 200;
+		SetPracticeParms();
         }
-        
-	else if (mode_is_arena())
-		SetClanArenaParms();
+
 	else
 	{
 		if ((elohim_playmode & ELOHIM_MATCH_MODE)&&(!(elohim_state & ELOHIM_TIMER_STARTED)))
@@ -496,8 +492,9 @@ void() set_suicide_frame;
 // called by ClientKill and DeadThink
 void() respawn =
 {
-
-    SetNewParms2 ();
+	if(self.classname == "dummy") return;
+	
+	SetNewParms2 ();
 
 	PutClientInServer ();
 
@@ -514,9 +511,6 @@ void() respawn =
 		self.armorvalue  	= 125;
 		self.armortype   	= 40.001;
 	}
-	//sprint(self, "\n SPAWN ");
-	//sprint(self, ftos(self.armortype));
-	
 
 };
 
@@ -729,97 +723,91 @@ entity() SelectTeamSpawnPoint =
 
 /*
 ============
-SelectSpawnPoint
 
 Returns the entity to spawn at
 ============
 */
-entity() SelectSpawnPoint =
+entity(float whatkind) SelectSpawnPoint =
 {
 	local	entity spot;
 	local	float  pcount;
 
-	// ELOHIM_MOD - don't want this
-	/*	
-// testinfo_player_start is only found in regioned levels
-	spot = find (world, classname, "testplayerstart");
-	if (spot)
-		return spot;
-	*/
-	// END_MOD
-		
-// choose a info_player_deathmatch point
-    // ELOHIM_MOD - coop not supported
-    /*
-	if (coop)
-	{
-		lastspawn = find(lastspawn, classname, "info_player_coop");
-		if (lastspawn == world)
-			lastspawn = find (lastspawn, classname, "info_player_start");
-		if (lastspawn != world)
-			return lastspawn;
-	}
-	else
-    */
-    // END_MOD
+	//if(mapname == "tut1" && self.origin_z > 2600)
+
 
 	//TODO: need to refactor this some more
     if (deathmatch)
 	{
-		//
-		// ELOHIM_MOD
-		//
-		// replaced this whole section with code to find a random
-		// spawn point. 
-		//
-		pcount = random() * (elohim_num_spawns - 0.001);
-		pcount = floor(pcount);
-
-		spot = find(world, classname, "info_player_deathmatch");
-		while (pcount > 0)
+		
+		if(mapname == "tut1" && self.health < 0)
 		{
-			spot = find(spot, classname, "info_player_deathmatch");
-			if (spot != world)
-				if(spot.team == TEAM_ALL)
-					pcount = pcount - 1;
+			spot = find (world, classname, "info_player_start");
+			if (!spot)
+				error ("PutClientInServer: no info_player_start on level");
+	
+			return spot;		
+		}	
+		else if(mapname == "tut1" && whatkind ==1)
+		{
+			spot = find (world, classname, "info_player_start");
+			if (!spot)
+				error ("PutClientInServer: no info_player_start on level");
+	
+			return spot;
 		}
-		lastspawn = spot;
-		while (1)
+		else
 		{
-			if (spot != world)
+			pcount = random() * (elohim_num_spawns - 0.001);
+			pcount = floor(pcount);
+
+			spot = find(world, classname, "info_player_deathmatch");
+			while (pcount > 0)
 			{
-				if (spot == self.trigger_field)
-					pcount = 1;
-				else
-				{
-					pcount = CheckSpawnPoint(spot.origin);
-				}
-				if (pcount == 0)
-					return spot;
-				pcount = 0;
+				spot = find(spot, classname, "info_player_deathmatch");
+				if (spot != world)
+					if(spot.team == TEAM_ALL)
+						pcount = pcount - 1;
 			}
-			spot = find(spot, classname, "info_player_deathmatch");
-			if (spot == lastspawn)
+			lastspawn = spot;
+			while (1)
 			{
-				// Can't find a spot!
-				// Check self.trigger_field one last time
-				pcount = CheckSpawnPoint(self.trigger_field.origin);
-				if (pcount == 0)
+				if (spot != world)
 				{
-					return self.trigger_field;
+					if (spot == self.trigger_field)
+						pcount = 1;
+					else
+					{
+						pcount = CheckSpawnPoint(spot.origin);
+					}
+					if (pcount == 0)
+						return spot;
+					pcount = 0;
 				}
-				return lastspawn;
+				spot = find(spot, classname, "info_player_deathmatch");
+				if (spot == lastspawn)
+				{
+					// Can't find a spot!
+					// Check self.trigger_field one last time
+					pcount = CheckSpawnPoint(self.trigger_field.origin);
+					if (pcount == 0)
+					{
+						return self.trigger_field;
+					}
+					return lastspawn;
+				}
 			}
 		}
         // END_MOD
 	}
 
+	
 	if (serverflags)
 	{	// return with a rune to start
 		spot = find (world, classname, "info_player_start2");
 		if (spot)
 			return spot;
 	}
+	
 	
 	spot = find (world, classname, "info_player_start");
 	if (!spot)
@@ -834,20 +822,19 @@ entity() SelectSpawnPoint =
 
 
 
-
-/*
-===========
-PutClientInServer
-
-called each time a player is spawned
-============
-*/
 void() DecodeLevelParms;
 void() PlayerDie;
 
 
 
-
+void() update_dummy =
+{
+	if (self.flags & FL_ONGROUND) self.flags = self.flags - (self.flags & FL_ONGROUND);
+	
+	//if(self.origin_z < 2586) self.origin_z = 2586;
+	//setorigin(self, self.origin);
+	self.nextthink = time;
+}
 
 void() PutDummyInServer =
 
@@ -856,7 +843,8 @@ void() PutDummyInServer =
 	//if(dum == 1) return;
 	//dum =1;	
 	local	entity dummy, spot;
-	spot = SelectSpawnPoint ();
+	//dummy.classname = "dummy";
+	spot = SelectSpawnPoint (1);
 	dummy = spawn();
 	dummy.trigger_field = spot;  // ELOHIM_MOD
 
@@ -864,11 +852,12 @@ void() PutDummyInServer =
 	dummy.health = 100;
 	dummy.takedamage = DAMAGE_AIM;
     	dummy.solid = SOLID_SLIDEBOX;
-	dummy.movetype = MOVETYPE_WALK;
+	dummy.movetype = MOVETYPE_TOSS;
 	dummy.show_hostile = 0;
 	dummy.max_health = 100;
 	dummy.effects = 0;
 	dummy.velocity = '0 0 0';
+	dummy.frags = -1;
 
 	
 
@@ -882,6 +871,7 @@ void() PutDummyInServer =
 	dummy.punchangle		= '0 0 0';
 
 	setorigin(dummy, spot.origin + '0 0 -3');	//R00k: change our origin and relink our edict.
+	setorigin(dummy, spot.origin + '0 0 80');	//R00k: change our origin and relink our edict.
 	dummy.oldorigin = dummy.origin;			//R00k: update oldorigin so we dont respawn where we died.
 
 	setmodel(dummy, "progs/bloodrailz/player.mdl");
@@ -890,13 +880,16 @@ void() PutDummyInServer =
 	
 	dummy.view_ofs = '0 0 22';
 
-	dummy.state = time;                      
+	//dummy.state = time;                      
 
 
 	 player_stand1();
     spawn_tdeath (dummy.origin, self);
     makevectors(dummy.angles);
     spawn_tfog (dummy.origin + v_forward*20);
+    
+	dummy.nextthink = time;
+	dummy.think = update_dummy;
 
 };
 
@@ -905,10 +898,12 @@ void() PutDummyInServer =
 
 void() PutClientInServer =
 {
+	if(self.classname == "dummy") return;
+	
 	local	entity spot, teamSpot;
         self.modelindex = 0;    
 	
-		spot = SelectSpawnPoint ();
+		spot = SelectSpawnPoint (0);
 
 	
 
@@ -937,6 +932,11 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 	self.runetime = time;
 	self.velocity = '0 0 0';
+	
+	//if(self.player_flag & PF_ITEM_RUNE1_FLAG) self.player_flag -= PF_ITEM_RUNE1_FLAG;
+	//else if(self.player_flag & PF_ITEM_RUNE2_FLAG) self.player_flag -= PF_ITEM_RUNE2_FLAG;
+	//else if(self.player_flag & PF_ITEM_RUNE3_FLAG) self.player_flag -= PF_ITEM_RUNE3_FLAG;
+	//else if(self.player_flag & PF_ITEM_RUNE4_FLAG) self.player_flag -= PF_ITEM_RUNE4_FLAG;
 
 	DecodeLevelParms ();
 
@@ -1546,6 +1546,7 @@ void() PlayerPostThink =
 	}
 	else if (!(self.style & ELOHIM_MOTD))
 	{
+		
 		if (time >= self.delay)
 		{
 			self.delay = time + 0.1;
@@ -1560,10 +1561,10 @@ void() PlayerPostThink =
 				else if (self.height == COLOR_BLUE)
 					centerprint(self, "You are on the BLUE team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
 			}
-			else
-				hud_update();
+			else	hud_update();
 		}
 	}
+	
 
     if (self.impulse)
     {

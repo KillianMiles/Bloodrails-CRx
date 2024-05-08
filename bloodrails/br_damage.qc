@@ -87,10 +87,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	
 	//bprint(ftos(damage));
 	//bprint("\n");
-
+	if(damage ==9) attacker = smoke_owner;
+	
 	if (!targ.takedamage) return;
 		
-	if (elohim_playmode & RACE_MODE) return;  //dont deal damage if in racing mode
+	if (elohim_playmode & RACE_MODE && !(mapname !="tut1" || mapname !="tut2" || mapname !="tut3" || mapname !="tut4" || mapname !="tut5" || mapname !="tut6" || mapname !="tut7")) return;  //dont deal damage if in racing mode
 	
 	if (elohim_playmode & PROJECTILES && inflictor.classname == "missile")
 	{
@@ -427,13 +428,13 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG)  ||  (attacker.super_damage_finished > time)) && damage != 8994)
 				{
 					targ.health = -99;
-					Killed (targ, attacker, dmg_origin, 0);           
+					Killed (targ, attacker, dmg_origin, damage);           
 				}
 				return;
 			}
 		
 		targ.health = -99;        //    Handicap kills DO gib
-		Killed (targ, attacker, dmg_origin, 0);
+		Killed (targ, attacker, dmg_origin, damage);
 		
 		return;
 	}

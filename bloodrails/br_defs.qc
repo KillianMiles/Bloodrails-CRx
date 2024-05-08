@@ -1,12 +1,31 @@
 //Prototypes
 
+
+
+__wrap void(entity client, string s) sprint =
+{
+  if (self.classname != "player")
+    return;
+  prior(client, s);
+};
+
+/*
+__wrap void(entity client, string s, optional string s1, optional string s2, optional string s3, optional string s4, optional string s5, optional string s6, optional string s7) centerprint =
+{
+  if (self.classname != "player")
+    return;
+  prior(client, s);
+};
+*/
+
+
+void(float what_type) make_tut_icon;
+void(entity scorer, float msg, float dmg) make_icon;
 void(string cmd) SV_ParseClientCommand;
 void(entity e, string s) clientcommand = #440;
 float(string s) tokenize = #441;
 float(string s) tokenize_console = #514;
 string(float n) argv = #442;
-
-entity (entity e) racing_find_start;
 
 void () admin_set_mode_vote;
 void () admin_set_mode;
@@ -185,6 +204,9 @@ void() bloodrails_precache =
 	precache_sound ("bloodrailz/weapons/plasma2.wav");		// plasma noise Q3
 	precache_sound ("bloodrailz/weapons/plasma_bounce.wav");		// edited from inv2 and suit.wav from christian ice pak
 	precache_sound ("bloodrailz/weapons/empty.wav");            //br custom
+	precache_sound ("bloodrailz/weapons/chain_whip.wav");
+	
+	
 	
 
 	precache_sound("bloodrailz/weapons/armorhit.wav");  	 //play sound when armored opponent is hit with rail
@@ -319,17 +341,17 @@ void() bloodrails_precache =
 	precache_model ("progs/bloodrailz/flag_status.mdl");
 	precache_model ("progs/bloodrailz/hud_digits_red.mdl");
 	precache_model ("progs/bloodrailz/hud_digits_blue.mdl");
-	precache_model ("progs/bloodrailz/press_move2_1.mdl");
+	precache_model ("progs/bloodrailz/press_move.mdl");
+	precache_model ("progs/bloodrailz/score_icons.mdl");
+	precache_model ("progs/bloodrailz/rune_icons.mdl");
+	precache_model ("progs/bloodrailz/tut_icons.mdl");
 	
 	precache_model ("progs/bloodrailz/rail0.mdl"); //short segment, half the length of rail1. - used in curved rail trails
 	precache_model ("progs/bloodrailz/rail1.mdl");
 	precache_model ("progs/bloodrailz/rail2.mdl");
 	precache_model ("progs/bloodrailz/rail3.mdl");
 	
-	//precache_model ("progs/bloodrailz/rail0_1.mdl");
-	//precache_model ("progs/bloodrailz/rail0_1_30.mdl");
 	precache_model ("progs/bloodrailz/rail1_1.mdl");
-	//precache_model ("progs/bloodrailz/rail1_1_90.mdl");
 	precache_model ("progs/bloodrailz/rail2_1.mdl");
 	precache_model ("progs/bloodrailz/rail3_1.mdl");
 	
@@ -346,10 +368,10 @@ void() bloodrails_precache =
 	precache_model ("progs/bloodrailz/br_rune2a.mdl");
 	precache_model ("progs/bloodrailz/br_rune3a.mdl");
 	precache_model ("progs/bloodrailz/br_rune4a.mdl");
-	precache_model ("progs/bloodrailz/br_rune1b_1.mdl");
-	precache_model ("progs/bloodrailz/br_rune2b_1.mdl");
-	precache_model ("progs/bloodrailz/br_rune3b_1.mdl");
-	precache_model ("progs/bloodrailz/br_rune4b_1.mdl");
+	//precache_model ("progs/bloodrailz/br_rune1b_1.mdl");
+	//precache_model ("progs/bloodrailz/br_rune2b_1.mdl");
+	//precache_model ("progs/bloodrailz/br_rune3b_1.mdl");
+	//precache_model ("progs/bloodrailz/br_rune4b_1.mdl");
 	
 	precache_model ("progs/bloodrailz/ef_smoke1.mdl");
 	precache_model ("progs/bloodrailz/ef_smoke2.mdl");
@@ -361,7 +383,6 @@ void() bloodrails_precache =
 	precache_model ("progs/bloodrailz/ef_shields.mdl");
 	precache_model ("progs/bloodrailz/ef_speed.mdl");
 	precache_model ("progs/bloodrailz/ef_rail_pop1.mdl");
-	//precache_model ("progs/bloodrailz/ef_speed2.mdl");
 	
 	precache_model ("progs/bloodrailz/hud_r.mdl");
 	precache_model ("progs/bloodrailz/hud_s.mdl");
@@ -382,6 +403,20 @@ void() bloodrails_precache =
 
 //Bloodrailz globals
 
+.float tut_displayed1;
+.float tut_displayed2;
+.float have_rune_center;
+
+float tut_gib_time;
+float dummy_spawned;
+
+.float icon_time;
+.float icon_display;
+.float icon_num;
+.float icon_height;
+
+
+.float suppress_hud;
 .float decline_time;
 .float boost_time;
 .float turn_speed;

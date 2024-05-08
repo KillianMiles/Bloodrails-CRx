@@ -394,6 +394,8 @@ void() DeathSound =
 
 void() ObserverForce =
 {
+	if(self.classname == "dummy") return;
+	
 	if (!gameover)
 	{
 		sound (world, CHAN_VOICE, "bloodrailz/weapons/plasma1.wav", 1, ATTN_NORM);

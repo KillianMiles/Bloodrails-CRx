@@ -80,6 +80,14 @@ void () spawn_race_entities =
 		Maps_SpawnPent ('-3436 -2686 3832');
 		Maps_SpawnRing ('1250 3481 -711');
 	}
+	else if (mapname == "tut1")
+	{
+		//Maps_SpawnPent ('-45 -8 -70');
+		//Maps_SpawnRing ('2561 -8 -420');
+		//Maps_SpawnRing ('-2792 846 -290');
+		//Maps_SpawnRing ('-2729 -1740 -1520');
+	}
+
 
 };
 

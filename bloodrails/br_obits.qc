@@ -34,8 +34,10 @@ void(entity targ, entity attacker, float damage) ClientObituary =
         
 	
 	
-	if (targ.classname == "player")
+	if (targ.classname == "player" || targ.classname == "dummy")
 	{
+		if(targ.classname == "dummy") targ.netname = "Dummy";
+		
 		if (targ.flag_carrier)
 		{
 			//flag carrier dead, so reset hurt times
@@ -141,7 +143,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 						bprint(" \b[FREAK GASOLINE FIGHT ACCIDENT]\b ");  //10/5/23
 						attacker.tier2 +=1;
 					}
-					if(attacker.smoke_frags == 3 && smoke_owner != attacker && (quasar_owner == attacker || gravity_owner == attacker)) 
+					if(attacker.smoke_frags == 3 && (quasar_owner == attacker || gravity_owner == attacker)) 
 					{
 						bprint(" \b[ORANGE MOCHA FRAPPUCCINO]\b ");   //10/8/23
 							attacker.tier3 +=1;
@@ -196,6 +198,9 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 						attacker.last_fragged_carrier = time;
 						//bprint2(attacker.netname, " killed the flag carrier!\n");
 						client_frag(attacker, 1);
+						
+						//if(targ.frags == top_score_global) make_icon(attacker, 4, damage);
+						//else make_icon(attacker, 3, damage);
 					}
 
 					if ((((targ.last_hurt_carrier + 2) > time) && !(attacker.flag_carrier)))
@@ -326,7 +331,26 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint (targ.netname);
 					bprint (" was sliced by ");
 					bprint (attacker.netname);
-					bprint("'s hook chain\n");
+					bprint("'s hook chain");
+					
+					
+					if(attacker.skiing_on ==1 || attacker.skiing_on ==2)
+					{
+						bprint(" \b[AB ORDO CACAO]\b");	  //10/5/23
+						attacker.tier1 +=1;
+					}
+					else if (attacker.angles_not_zero ==1) 
+					{
+						bprint(" \b[MOLLY MILLIONS]\b");   //10/5/23
+						attacker.tier2 +=1;
+					}
+					else
+					{
+						bprint(" \b[RAZOR WIRE]\b");
+						attacker.tier1 +=1;
+					}
+					
+					bprint("\n");
 					return;
 				}
                
@@ -584,22 +608,22 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 						attacker.tier3 +=1;
 				}
 					
-				if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) <=500 && attacker.movement_x ==400) 
+				if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) <=550 && attacker.movement_x ==400) 
 				{
 					bprint(" \b[ZAMBONI]\b");  //10/5/23
 						attacker.tier1 +=1;
 				}
-				else if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) >500 && attacker.movement_x ==400) 
+				else if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) >550 && attacker.movement_x ==400) 
 				{
 					bprint(" \b[MIDNIGHT TRAIN]\b");
 						attacker.tier1 +=1;
 				}
-				else if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) <=500 && attacker.movement_x ==-400) 
+				else if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) <=550 && attacker.movement_x ==-400) 
 				{
 					bprint(" \b[MUGATU]\b");
 						attacker.tier2 +=1;
 				}
-				else if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) >500 && attacker.movement_x ==-400) 
+				else if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && vlen(attacker.velocity) >550 && attacker.movement_x ==-400) 
 				{
 					bprint(" \b[TOKYO DRIFT]\b");
 						attacker.tier2 +=1;
@@ -687,6 +711,17 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint(" \b[MOBY DICK]\b");
 						attacker.tier1 +=1;
 				}
+		
+				if(attacker.skiing_on ==1 || attacker.skiing_on ==2)
+				{
+					bprint(" \b[SCORPION]\b");	  //10/5/23
+					attacker.tier1 +=1;
+				}
+				if (attacker.angles_not_zero ==1) 
+				{
+					bprint(" \b[DRUNKEN MASTER]\b");   //10/5/23
+						attacker.tier2 +=1;
+				}
 					
 				bprint("\n");			
 			}
@@ -728,6 +763,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				{
 					//attacker.frags += 1;
 					client_frag(attacker, 1);
+					//make_icon(attacker, 2, damage);
 						
 					bprint (attacker.netname);
 					bprint (" is a kingslayer\n");
@@ -815,10 +851,20 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					attacker.tier1 +=1;
 				}
 				
-				if(attacker.turn_speed > 120 || attacker.turn_speed <-120) 
+				if(attacker.turn_speed > 95 || attacker.turn_speed <-95) 
 				{
 					bprint(" \b[BLUE STEEL]\b");	  //10/5/23
 					attacker.tier1 +=1;
+				}
+				if(attacker.skiing_on ==1 || attacker.skiing_on ==2)
+				{
+					bprint(" \b[ACTION!!]\b");	  //10/5/23
+					attacker.tier1 +=1;
+				}
+				if (attacker.angles_not_zero ==1) 
+				{
+					bprint(" \b[OFF THE WALL]\b");   //10/5/23
+						attacker.tier2 +=1;
 				}
 				//if((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && targ.armorvalue >= 100 && attacker.airborn_pos > ) bprint(" \b[ANTI-ARMOR ROUND]\b");
 				//else if((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && targ.armorvalue >= 100 && attacker.rail_was_curved == 0) bprint(" \b[ANTI-ARMOR ROUND]\b");
@@ -944,8 +990,6 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			bprint (" died\n");
 			if(elohim_playmode & RACE_MODE)
 			{
-				//targ.my_previous_time = 0;
-				//racing_on_global = 0;
 				countdown = 0;
 				countdown_ct = 0;
 			}

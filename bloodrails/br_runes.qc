@@ -61,14 +61,30 @@ void () rune_regen =
 
 entity () rune_select_spawn_point =
 {
-	runespawn = find(runespawn, classname, "info_player_deathmatch");
-	if (runespawn == world)
+	if(elohim_playmode & RACE_MODE && mapname == "tut1")
+	{
+	
+		runespawn = find(runespawn, classname, "info_player_start");
+		if (runespawn == world)
+		{
+			runespawn = find(runespawn, classname, "info_player_start");
+		}
+		if (runespawn == world)
+		{
+			error ("no info_player_deathmatch to spawn rune");
+		}
+	}
+	else
 	{
 		runespawn = find(runespawn, classname, "info_player_deathmatch");
-	}
-	if (runespawn == world)
-	{
-		error ("no info_player_deathmatch to spawn rune");
+		if (runespawn == world)
+		{
+			runespawn = find(runespawn, classname, "info_player_deathmatch");
+		}
+		if (runespawn == world)
+		{
+			error ("no info_player_start to spawn rune");
+		}
 	}
 	return (runespawn);
 };
@@ -76,6 +92,7 @@ entity () rune_select_spawn_point =
 void() rune_touch =
 {
 	
+	//bprint("yes rune ");
 	tracebox(self.origin + '0 0 -4', '-16 -16 -4', '16 16 0', self.origin + '0 0 -5', 1, self);
 	if(trace_startsolid == TRUE  && other.classname != "player" && other.classname != "hook_entity" && other.classname != "plasma" && other.classname != "item_rune")    
 	{
@@ -90,8 +107,12 @@ void() rune_touch =
 	if(time - self.ltime < 1.00) return;	//10/8/23  cant pick up the rune before 1s after drop
 	
 	if (other.classname != "player") return;
+	
+	//if((other.player_flag & PF_ITEM_RUNE1_FLAG)) bprint("rune1 yes "); //rune1 debug
 
-	if (other.runetime >= time) return;
+	if (other.runetime >= time && !(other.player_flag & PF_ITEM_RUNE1_FLAG)) return;
+	
+	
 
 	if (other.health <= 0) return;
 
@@ -99,18 +120,25 @@ void() rune_touch =
 
 	if ((other == self.owner) && (self.nextthink > time + 119)) return;
 	
-	
-
-	if (other.player_flag & PF_ITEM_RUNE_MASK || rune1_plasma >0)
+	//if(time%1.10<0.7 && (other.player_flag & PF_ITEM_RUNE_MASK)) // ((time * 1000) % (500 * 2) < 500)  500ms on,  500 off
+	if(((time * 1000) % (400 * 2) < 400) && (other.player_flag & PF_ITEM_RUNE_MASK)) // ((time * 1000) % (500 * 2) < 500)  500ms on,  500 off
 	{
-		centerprint(other, "You already have a rune.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		//if(mapname != "tut1") centerprint(other, "already got a rune\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		//if(mapname == "tut1") other.have_rune_center =1;
+		other.have_rune_center =1;
+	}
+
+	if ((other.player_flag & PF_ITEM_RUNE_MASK)) // || rune1_plasma >0) // <- the rune1_plasma clause is apparently there cos without it, it doesnt display the "already have a rune" text for PLASMA HOOK specifically
+	{
+		//centerprint(other, "You already have a rune.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		//centerprint(other, "already got a rune\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		return;
 	}
 
 	other.player_flag |= PF_ITEM_RUNE_MASK;
 	other.player_flag = (other.player_flag | self.player_flag);
 	
-	if (other.player_flag & PF_ITEM_RUNE1_FLAG)//Rune 1 - Ironstride (resistance)
+	if (other.player_flag & PF_ITEM_RUNE1_FLAG)//Rune 1 - Plasma Hook (Fire Cloud)
 	{
 		other.rune_bang =10;
 		other.items2 = (other.items2 | IT2_SIGIL1);
@@ -282,9 +310,9 @@ void() update_smoke =
 					if (head != world)
 					{
 
-						if (head.takedamage)
+						if (head.takedamage || head.classname == "dummy")
 						{				
-							if (CanDamage (head, self))
+							if (CanDamage (head, self) || head.classname == "dummy")
 							{	
 
 								if(self.done_damage ==0)
@@ -638,8 +666,6 @@ void() bangs =
 								
 									if(self.done_damage ==0 || self.done_damage%2 ==0)
 									{
-										//if(vlen(dir5) < 125) T_DamageOrg (head, self, self.owner, 7, self.origin);
-										//else if(vlen(dir5) < 200) T_DamageOrg (head, self, self.owner, 5, self.origin);
 										if(head.shields_up !=1) 
 										{
 											T_DamageOrg (head, self, self.owner, 9, self.origin);
@@ -663,12 +689,13 @@ void() bangs =
 			else
 			{
 				self.alpha = 0.001;
-				if(time - self.ltime >=120) self.think = rune_respawn;
+				if(mapname == "tut1") if(time - self.ltime >=3) self.think = rune_respawn;
+				else if(time - self.ltime >=120) self.think = rune_respawn;
 			}
 			
 			
 		}
-		else if (self.weapon ==2)          // THROWABLE THOR
+		else if (self.weapon ==2)          // THROWABLE THOR 
 		{
 			self.alpha = 0.001;
 			if(self.thor_time< 1) 
@@ -836,7 +863,8 @@ void() bangs =
 			self.solid = SOLID_NOT;
 			
 			setorigin(self, self.origin + '0 0 50');
-			if(time - self.ltime >=30) self.think = rune_respawn;
+			if(mapname == "tut1") if(time - self.ltime >=1.5) self.think = rune_respawn;
+			else if(time - self.ltime >=30) self.think = rune_respawn;
 	
 			
 		}
@@ -941,10 +969,10 @@ void() bangs =
 					{
 						
 						
-						if (head.takedamage || head.classname == "plasma" || head.classname == "smoke")
+						if (head.takedamage || head.classname == "plasma" || head.classname == "smoke" || head.classname == "dummy" || head.classname == "giblets")
 						{				
 							
-							if (CanDamage (head, self) || head.classname == "plasma" || head.classname == "smoke")
+							if (CanDamage (head, self) || head.classname == "plasma" || head.classname == "smoke" || head.classname == "dummy")
 							{	
 								//local vector dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								//dir5 = normalize(dir5);
@@ -958,6 +986,8 @@ void() bangs =
 								else if(vlen(dir5) < 300) head.velocity = head.velocity + 100*(normalize(dir5));
 								else if(vlen(dir5) < 400) head.velocity = head.velocity + 180*(normalize(dir5));
 								else if(vlen(dir5) < 420) head.velocity = head.velocity + 100*(normalize(dir5));
+								
+								if(head.classname == "giblets") head.velocity = head.velocity + 100*(normalize(dir5));
 							
 								if(vlen(dir5) < 250 && vlen(head.velocity)> 1200) head.velocity = head.velocity*0.95;
 								
@@ -1012,7 +1042,8 @@ void() bangs =
 			{
 				self.alpha = 0.001;
 				gravity_origin1 = '0 0 0';
-				if(time - self.ltime >=120) self.think = rune_respawn;
+				if(mapname == "tut1") if(time - self.ltime >=3) self.think = rune_respawn;
+				else if(time - self.ltime >=120) self.think = rune_respawn;
 			}
 			
 			
@@ -1233,7 +1264,8 @@ void() bangs =
 			{
 				self.alpha = 0.001;
 				quasar_origin1 = '0 0 0';
-				if(time - self.ltime >=120) self.think = rune_respawn;
+				if(mapname == "tut1") if(time - self.ltime >=3) self.think = rune_respawn;
+				else if(time - self.ltime >=120) self.think = rune_respawn;
 			}
 	}
 		
@@ -1625,11 +1657,9 @@ void() rune_toss =
 	item.touch = rune_touch;
 	item.nextthink = (time + 120);
 	item.think = rune_respawn;
-    // if (self.player_flag & PF_ITEM_RUNE_MASK)
-	//     self.player_flag -= PF_ITEM_RUNE_MASK;
+    // if (self.player_flag & PF_ITEM_RUNE_MASK) self.player_flag -= PF_ITEM_RUNE_MASK;
 	item.classname = "item_rune";
 
-    //self.runetime = time + 1; //allow pickups 1 sec later
 };
 
 

@@ -319,6 +319,7 @@ void() ctf_flag_return =
             
 			client_frag(other, 1);
 			other.last_returned_flag = time;
+			make_icon(other, 5, 0);
 			
 			/*
 			if (other.player_flag & PF_TEAM_RED)			//DECEM scores
@@ -496,6 +497,10 @@ void() ctf_flag_capture =
 	bprint(" flag!");
     
 	sprint3(other, " \b[\b", utils_get_time(captime), "\b]\b");
+	
+	make_icon(other, 6, 0);
+	
+	
     
     
 	if(other.tarzan_time ==1) 
@@ -840,16 +845,22 @@ void(entity player, float regenflag) ctf_player_drop_flag =
 // FLAG CARRY function, runs from PlayerPostThink
 void() flag_carry =
 {
-	if(self.flag_carrier == FALSE) return;     
+	if(self.flag_carrier == FALSE) 				return;    
+	
+	if(self.classname != "player") 				return;
+	if(self.team != TEAM_RED && self.team != TEAM_BLUE) 	return;
+	if (!(elohim_playmode & CLANRING_CTF_MODE))   		return;
+	
 
 	local entity temp_flag;
     
 	
-	if(self.team == TEAM_RED) 		temp_flag = blue_flag_ent;
-	else if(self.team == TEAM_BLUE) 	temp_flag = red_flag_ent;
 	
-	temp_flag.movetype = MOVETYPE_NOCLIP;
-	temp_flag.solid	= SOLID_NOT;
+		if(self.team == TEAM_RED) 		temp_flag = blue_flag_ent;
+		else if(self.team == TEAM_BLUE) 	temp_flag = red_flag_ent;
+	
+		temp_flag.movetype = MOVETYPE_NOCLIP;
+		temp_flag.solid	= SOLID_NOT;
 	 
    
 	makevectors (self.angles);

@@ -1,11 +1,24 @@
 .vector dmg_origin;
 
+
+
+
 void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 {
+	if(targ.classname == "dummy") 
+	{
+		tut_gib_time =time;
+		dummy_spawned = 0;
+	}
+	
+	
+	
 	local entity oself;
 	
 	oself = self;
 	self = targ;
+	
+	
 	
 	
 	if((elohim_playmode & ELOHIM_WRAITH) && self.wraith == 0 && total_players_global >= 4)
@@ -50,6 +63,8 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 
 	self.enemy = attacker;
 	
+	
+	
 	ClientObituary(self, attacker, damage);
 	
 	self.takedamage = DAMAGE_NO;
@@ -57,6 +72,20 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 	self.th_die ();
 
 
+	self = oself;
+	oself = self;
+	self = attacker;
+	
+	//bprint(ftos(damage));
+	
+	if ((attacker.last_fragged_carrier + 1) > time && targ.frags == top_score_global) make_icon(self,4, damage);  //Flag carrier king
+	else if (attacker == targ) make_icon(self,7, damage);  //TK's
+	else if(targ.frags == top_score_global) 			make_icon(self,2, damage);   //King
+	else if((attacker.last_fragged_carrier + 1) > time)	 make_icon(self,3, damage);   //Flag carrier
+	else make_icon(self,1, damage); 
+
+	
+	
 	self = oself;
 	
 };
@@ -70,10 +99,11 @@ vector(float dm, float inair) VelocityForDamage =
 
 	v_x = 100 * crandom();
 	v_y = 100 * crandom();
-	v_z = 200 + 100 * random();
+	v_z = 200 + 125 * random();
 	
 	if(inair ==1) v_z = v_z/4;  //FEBRUARY
-
+	else v_z = v_z/1.5;
+	
 	if (dm > -50)
 	{
 //		dprint ("level 1\n");
@@ -121,6 +151,7 @@ void(string gibname, float dm, float inair) ThrowGib =
 	
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');
+	new.classname = "giblets";
 	new.velocity = VelocityForDamage (dm, inair);
 	new.movetype = MOVETYPE_BOUNCE;
 	new.solid = SOLID_NOT;

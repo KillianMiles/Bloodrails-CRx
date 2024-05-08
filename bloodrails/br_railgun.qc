@@ -780,7 +780,7 @@ void() FlickCurves=
 					self.flickEnt = trace_ent;
 					self.flickTime = time;
 					
-					if(self.flickEnt.classname == "player")
+					if(self.flickEnt.classname == "player" || self.flickEnt.classname == "dummy")
 					{
 						make_flick_marker();
 					}
@@ -991,15 +991,22 @@ void() FlickCurves=
 
 void() W_FireRailgun =
 {
-	/*
-	bprint(ftos(self.origin_x));
-	bprint("\n");
-	bprint(ftos(self.origin_y));
-	bprint("\n");
-	bprint(ftos(self.origin_z));
-	bprint("\n");
-	*/
 	
+	//bprint(ftos(self.origin_x));
+	//bprint("\n");
+	//bprint(ftos(self.origin_y));
+	//bprint("\n");
+	//bprint(ftos(self.origin_z));
+	//bprint("\n");
+	
+	
+	//make_icon(self, 1, 10);
+	//make_icon(self, 4, 403);
+	//make_icon(self, 4, 9000);
+	//make_icon(self, 4, 30);
+	//make_icon(self, 2, 400);
+	//make_icon(self, 7, 0);
+	//make_icon(self, 5, 1000);
 	
 	
 	
@@ -1100,7 +1107,7 @@ void() W_FireRailgun =
 					{
 						if (head == self) T_DamageOrg (self, self, self, 20, trace_endpos);   //NOVEM 			power rune splash deals 20hp damage to bearer if within radius
 			
-						if (head != self && head.classname == "player")
+						if (head != self && (head.classname == "player" || head.classname == "dummy"))
 						{
 							if (head.takedamage)
 							{				
@@ -1632,6 +1639,10 @@ void() Rail_Charge_Logic=
 		
 		
 		local float RECHARGE = 21;   //cooldown time
+		
+		if(mapname == "tut1") RECHARGE = 2;
+		
+		
 		local float CHARGE_DUR = 1;
 		local float POWER_TIME = 1.1;
 		

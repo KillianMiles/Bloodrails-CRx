@@ -177,7 +177,6 @@ void () observer_walk_start =
     self.movetype = MOVETYPE_WALK;
     self.flags = self.flags - self.flags & FL_ONGROUND;
     self.view_ofs = '0 0 22';
-	//sprint(self, "disabling 'smooth' mode\n");
     stuffcmd(self, "cl_nolerp 0\n");
     stuffcmd(self, "cl_predict 1\n");
     stuffcmd(self, "v_centerspeed 500\n");
@@ -200,9 +199,7 @@ void () observer_fly_start =
     //self.view_ofs = '0 0 22';
     self.flags = self.flags | FL_ONGROUND;
 	self.waterlevel = 0;
-	//sprint(self, "disabling 'smooth' mode\n");
     stuffcmd(self, "cl_nolerp 0\n");
-  //  stuffcmd(self, "cl_predict 1\n");
     stuffcmd(self, "v_centerspeed 500\n");
     sprint(self, "fly mode - help-fly for help\n");
     self.alpha = 0.001;  //9-17-23  observer transparent
@@ -368,8 +365,6 @@ void () observer_demo_start =
     observer_set_demo_position();
     stuffcmd(self, "v_centerspeed 0\n");
     sprint(self, "eyecam mode - help-chase for help\n");
-  //  if (!(self.style & ELOHIM_HEADS_UP))
-      //  sprint(self, "type 'headsup' for fullscreen display\n");
 	sprint(self, "type 'smooth' to eliminate choppines\n");
 
 	self.nextthink = -1;
@@ -522,8 +517,6 @@ void () observer_start =
 //
 void () observer_end =
 {
-    //local string tmp = "";
-   // Exit_HorrorScope();
     
     stuffcmd(self, "viewsize 110\n");
     
@@ -535,14 +528,12 @@ void () observer_end =
         self.dmg_tally = 0;
 
     observer_check_demo_end();
-	//sprint(self, "disabling 'smooth' mode\n");
     stuffcmd(self, "cl_nolerp 0\n");
     stuffcmd(self, "cl_predict 1\n");
     stuffcmd(self, "v_centerspeed 500\n");
     if (self.style & ELOHIM_HEADS_UP)
 	    stuffcmd(self, "viewsize 100\n");
     if (!(elohim_playmode & ELOHIM_MATCH_MODE) && !(mode_is_public()) && !(mode_is_arena()))
-        //centerprint(self, "Observer mode off");
 
 	// This is to prevent a condition where one player is another player's
 	// movetarget, which can confuse the auto module.
@@ -1476,7 +1467,7 @@ void () observer_update_display =
 	if ((player != world) && (player.classname == "elohim_camera"))
 		player = player.movetarget;
 		
-	if (elohim_playmode & RACE_MODE && time < 2)
+	if (elohim_playmode & RACE_MODE && time < 2 && self.classname == "player")
     {
         stuffcmd(self, "impulse 120\n");
         //return;

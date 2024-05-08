@@ -611,6 +611,9 @@ void(entity client, string s)stuffcmd = #21;
 entity(vector org, float rad) findradius = #22;
 void(string s) bprint                           = #23;
 void(entity client, string s) sprint = #24;
+
+
+
 void(string s) dprint                           = #25;
 string(float f) ftos                            = #26;
 string(vector v) vtos                           = #27;

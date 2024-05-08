@@ -31,25 +31,12 @@ void() Called_in_PreThink =
 			crown_out = 1;
 		}
 		
-		/*
-		if ((!(self.flags & FL_ONGROUND) && self.airborn_pos > 100) && !(self.hook_out)) 
-		{
-			stuffcmd(self, "cl_bob 0.0021\n");
-			stuffcmd(self, "cl_bobcycle 0.90\n");
-		}
-		else if(self.hook_out) stuffcmd(self, "cl_bob 0.00021\n");
-		else if(self.flags & FL_ONGROUND) 
-		{
-			stuffcmd(self, "cl_bob 0.0021\n");
-			stuffcmd(self, "cl_bobcycle 0.90\n");
-		}
-		*/
+
 		
 	
-	
-		
-	
-	
+		//self.suppress_hud =0;
+		//bprint(ftos(self.player_flag & PF_ITEM_RUNE_MASK));
+		//bprint(" ");
 	
 		rune_regen();
 		WaterMove ();
@@ -58,15 +45,11 @@ void() Called_in_PreThink =
 		make_hookx();
 		turn_indicator();
 		
-		/*
-		if(timelimit - time < 1)
-		{	
-			client_frag(self, self.tier2*1);
-			client_frag(self, self.tier3*2);	//DECEM add achieve scores achievement
-			self.tier2 =0;
-			self.tier3 =0;
-		}
-		*/
+		if(mapname == "tut1" && self.origin_z > 2500 && self.tut_displayed1 ==0) make_tut_icon(1);
+		
+		//if(mapname == "tut1" && self.tut_displayed2 ==0) make_tut_icon(2);
+		
+
 		if(time - self.grind_time > 1)
 		{
 			stuffcmd(self, "cl_screenangle_speed 2.25\n");
@@ -79,7 +62,39 @@ void() Called_in_PreThink =
 		
 		if(quasar_owner !=self && gravity_owner != self) self.smoke_frags =0; //10/5/23
 		
-		if(self.impulse == 225 && self.style & ELOHIM_ADMINISTRATOR) PutDummyInServer();
+		if(self.impulse == 100 && elohim_playmode & RACE_MODE)
+		{
+			self.shield_time = 0;
+			self.shield_recharge_time = 1;
+		
+			if(self.race_completed == 0) 
+			{
+				self.racing_on = 0;
+				bprint("   \b.\b\n");
+				bprint("   \b[RUN RESET]\b\n");
+				bprint("------------------\n");
+			}
+			racing_on_global = 0;
+			spawn_race_entities();
+			ClientKill();
+		}
+		else if(self.impulse == 101 && elohim_playmode & RACE_MODE && mapname =="tut1")
+		{
+			self.shield_time = 0;
+			self.shield_recharge_time = 1;
+		
+			sound (self, CHAN_VOICE, "bloodrailz/misc/r_tele1.wav", 1, ATTN_NORM);
+			setorigin(self, '0 0 2750');
+		}
+		
+		if(mapname == "tut1" && dummy_spawned == 0)
+		{
+			if(tut_gib_time ==0 || time - tut_gib_time > 1.25)
+			{
+				PutDummyInServer();
+				dummy_spawned = 1;
+			}
+		}
 		
 		
 		if(quasar_origin1 != '0 0 0' && gravity_origin1 != '0 0 0')    //repulsor effect diminished by grav well
@@ -129,7 +144,7 @@ void() Called_in_PreThink =
 			local vector dir = normalize((self.origin + (v_forward*16) + '0 0 16') - self.hookhead.origin);
 			local vector dist;
 			traceline(self.origin + (v_forward*16) + '0 0 16', self.hookhead.origin + dir*50, FALSE, self);    //NOVEM
-			if(trace_ent.takedamage && trace_ent.classname == "player") //trace_ent.classname == "player") 
+			if(trace_ent.takedamage && (trace_ent.classname == "player" || trace_ent.classname == "dummy"))
 			{
 				dist = trace_endpos-trace_ent.origin;
 				if(vlen(dist) < 33)   //want the hit detection to be tighter
@@ -143,7 +158,17 @@ void() Called_in_PreThink =
 						local vector dir3 = normalize(dir1 + dir2);
 		
 						trace_ent.velocity = trace_ent.velocity + dir3*270;
-						T_Damage(trace_ent, self, self, 40.4);
+						T_DamageOrg(trace_ent, self, self, 40.4, self.origin);
+						
+						sound (trace_ent, CHAN_AUTO, "bloodrailz/weapons/chain_whip.wav", 0.59, ATTN_NORM);
+						
+						if(vlen(self.origin-trace_ent.origin) > 600) 
+						{
+							sound (self, CHAN_AUTO, "bloodrailz/weapons/chain_whip.wav", 0.4, ATTN_NORM);
+							bprint("chain 600\n");
+						}
+
+						
 					}
 				}
 			}
@@ -351,6 +376,9 @@ void() Called_in_PostThink =
 	flag_carry();
 	auto_dash();
 	Plasma_Charge_Logic();
+	
+	
+	
 	
 	//if(self.skiing_on !=0) self.ski_time2 = time;
 	//if((self.skiing_on !=0 && !(self.flags & FL_ONGROUND) && time - self.ski_time > 0.5)  || (!(self.flags & FL_ONGROUND) && time - self.ski_time2 < 0.5)) 
@@ -568,7 +596,11 @@ void() Called_in_PostThink =
 	
 	
 	
-	//if (self.style & ELOHIM_OBSERVER) bprint("observer   ");
+	if(self.hook_out ==0 && self.skiing_on ==0 && self.angles_not_zero ==0 && time%3 < 0.05) 
+	{
+		stuffcmd(self, "cl_screenangle 0\n");  //backstop
+		//bprint("backstop ");
+	}
 
 
 	
@@ -593,14 +625,6 @@ void() spawn_protection =                  // spawn protection
 {
 	if(time - self.spawn_protect_time < 3 && !(elohim_playmode & RACE_MODE) && !(elohim_playmode & ELOHIM_NO_SPAWN_PROTECT))     //ammo_rockets = spawn_protect_time
 	{
-		//if (self.runetime > time)
-		//return;
-   
-		//self.runetime = time + 2;
-
-		//any = 0;
-
-		
 
 		if (self.armorvalue > 100 && self.armortype == 40.001)
 		{
@@ -725,7 +749,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
   
 	while (head)
 	{
-		if (head != ignore && head.KDR > 2.4 && head.classname == "player")
+		if (head != ignore && head.KDR > 2.4 && (head.classname == "player" || head.classname == "dummy"))
 		{
 			if (head.takedamage)
 			{				
@@ -755,7 +779,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
 
 		while (head)
 		{
-			if (head != ignore && head.classname == "player")
+			if (head != ignore && (head.classname == "player" || head.classname == "dummy"))
 			{
 				if (head.takedamage)
 				{				
@@ -780,7 +804,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
 	while (head)
 	{
 		
-		if (head != ignore && head.KDR >= 2.0 && head.classname == "player")
+		if (head != ignore && head.KDR >= 2.0 && (head.classname == "player" || head.classname == "dummy"))
 		{
 			if (head.takedamage)
 			{				
@@ -802,7 +826,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
    
 	while (head)
 	{
-		if (head != ignore && head.KDR < 2.0 && head.classname == "player")
+		if (head != ignore && head.KDR < 2.0 && (head.classname == "player" || head.classname == "dummy"))
 		{
 			if (head.takedamage)
 			{				
@@ -855,7 +879,7 @@ void () LandingCheck =
 		areaTHROW(self, self.origin, self, 300, 100, self);
 		areaDMG(self, self.origin, self, 175, 400, self);      //damage zone 165 - > 175     //9-17-23
 		
-		if(!(elohim_playmode & RACE_MODE))
+		if(!(elohim_playmode & RACE_MODE) || (mapname =="tut1" || mapname =="tut2" || mapname =="tut7"))
 		{
 			make_impact('0 0 0', 1);
 			self.thor_time = time;
@@ -1834,7 +1858,7 @@ void() racing_start =
 		chrono_time = time;
 		other.racing_on = 1;
 		racing_on_global = 1;
-		sprint(other, "   \b[START!!]\b\n");
+		bprint("   \b[START!!]\b\n");
 		other.race_completed = 0;
 		if (other.items & IT_INVULNERABILITY) other.items = other.items - IT_INVULNERABILITY;
 
@@ -1855,14 +1879,13 @@ void() racing_finish =
 					if( (other.my_previous_time < place_one_time || place_one_time ==0)) 
 					{
 						place_one_time = other.my_previous_time;
-						sprint(other, "   \b.\b\n");
-						sprint(other, "   \b.\bnew record \n   \b>>\b");
-						sprint(other, utils_get_time(other.my_previous_time));
-						sprint(other, "\b<<\b\n");
-						sprint(other, "   \b.\b\n");
-						sprint(other, "   \b[FINISH!]\b\n");
-						sprint(other, "------------------\n");
-						//other.impulse =40; //respawn
+						bprint("   \b.\b\n");
+						bprint("   \b.\bnew record \n   \b>>\b");
+						bprint(utils_get_time(other.my_previous_time));
+						bprint("\b<<\b\n");
+						bprint("   \b.\b\n");
+						bprint("   \b[FINISH!]\b\n");
+						bprint("------------------\n");
 						self = other;
 						ClientKill();
 						spawn_race_entities();
@@ -1874,14 +1897,13 @@ void() racing_finish =
 					else if( other.my_previous_time < place_three_time || place_three_time ==0) place_three_time = other.my_previous_time;
 		
 				
-					sprint(other, "   \b.\b\n");
-					sprint(other, "   \b.\byour time \n   \b>>\b");
-					sprint(other, utils_get_time(other.my_previous_time));
-					sprint(other, "\b<<\b\n");
-					sprint(other, "   \b.\b\n");
-					sprint(other, "   \b[FINISH!]\b\n");
-					sprint(other, "------------------\n");
-					//other.impulse =40; //respawn
+					bprint("   \b.\b\n");
+					bprint("   \b.\byour time \n   \b>>\b");
+					bprint(utils_get_time(other.my_previous_time));
+					bprint("\b<<\b\n");
+					bprint("   \b.\b\n");
+					bprint("   \b[FINISH!]\b\n");
+					bprint("------------------\n");
 					self = other;
 					ClientKill();
 					spawn_race_entities();
@@ -1892,8 +1914,6 @@ void() racing_finish =
 
 void() racing_countdown =
 {
-	//self.racing_on = racing_on_global;
-	
 	if(countdown == 1)
 	{
 				

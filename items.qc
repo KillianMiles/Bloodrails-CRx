@@ -225,10 +225,6 @@ void() powerup_touch =
 	if (other.classname != "player") return;
 	if (other.health <= 0) return;
 
-	//sprint (other, "You got the ");
-	//sprint (other, self.netname);
-	//sprint (other,"\n");
-
 	if (deathmatch)
 	{
 		self.mdl = self.model;
@@ -259,7 +255,6 @@ void() powerup_touch =
 				if(racing_on_global == 0)
 				{
 					racing_start();
-					//other.invincible_time = 1;
 					other.invincible_finished = time + 500000;
 					
 					if (self.classname == "item_artifact_invulnerability") self.think = SUB_Remove;

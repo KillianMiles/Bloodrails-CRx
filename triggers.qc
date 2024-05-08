@@ -313,7 +313,7 @@ void(vector org) spawn_tfog =
 
 void() tdeath_touch =
 {
-	if (other == self.owner)
+	if (other == self.owner || other.classname == "dummy")
 		return;
 
 // frag anyone who teleports in on top of an invincible player
@@ -338,7 +338,7 @@ void() tdeath_touch =
 
 void(vector org, entity death_owner) spawn_tdeath =
 {
-local entity	death;
+	local entity	death;
 
 	death = spawn();
 	death.classname = "teledeath";
@@ -357,7 +357,7 @@ local entity	death;
 
 void() teleport_touch =
 {
-	if(elohim_playmode & RACE_MODE) return;
+	if(elohim_playmode & RACE_MODE && mapname !="tut1" && mapname !="tut2" && mapname !="tut3" && mapname !="tut4" && mapname !="tut5" && mapname !="tut6" && mapname !="tut7") return;
 	
 	local entity	t;
 	local vector	org;
@@ -585,38 +585,114 @@ void() trigger_hurt =
 
 //============================================================================
 
-entity (entity e) racing_find_start =
-{
-    local entity targ;
 
-    targ = find(e, classname, "race_route_start");
-    while (targ != e)
-    {
-        targ = find(targ, classname, "race_route_start");
-    }
-    return targ;
-};
-
-
-float PUSH_ONCE = 1;
 
 void() trigger_push_touch =
 {
-
-
+	
+	if(other.health > 0 && other.classname == "player")
+	{
 		
+		if(self.speed == 9.70) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\bBloodrailZ movement tutorial\b\n\nStart with Tutorial \"1\"(AXE DASH)\nStop at \"\b!\b\" signs directly in your way\n\nPress \bF1\b at any time to restart map");
+		}
+		
+		else if(self.speed == 9.71) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b2.\b\n\bHook swing tutorial\b\n\nTarget an area above, Press+Hold \b+hook\b\nOnce hook pulls - hold \bJUMP\b to swing\n Steer by looking in dir you want to go\n\nif you hold \b+HOOK\b without holding \bJUMP\b\nHook will pull you in a straight line\n\n\n1. Swing over to the platform across\n2. Then swing up to top of tower");
+		}
+		else if(self.speed == 9.72) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b1.\b\n\bAxe-Dash tutorial\b\n\nHold \b+FORWARD\b and \bJUMP\b\nTap \b+AXE\b rhythmically\nHold \bSTRAFE\b buttons into turns");
+		}
+		else if(self.speed == 9.73) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\bSliding/Skiing tutorial\b\n\nHold \bSLIDE\b while hitting ground at speed\nRelease \bSLIDE\b button while skiing to jump\nPress & Release \bSLIDE\b midair to AIR JUMP");
+		}
+		else if(self.speed == 9.74) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b1.\b\n\bAir Jump tutorial\b\n\n\bAXE DASH\b off the platform\n press + release \bSLIDE\b in midair\n\nGET ACROSS THE GAPS");
+		}
+		else if(self.speed == 9.75) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "NOW GET TO THE HIGHEST POINT ON MAP");
+		}
+		else if(self.speed == 9.76) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b4.\b\n\bAdvanced Rail Boosting \b\n\nWhile \bAxe Dashing\b, press \bJUMP\b\nLet go of \b+FORWARD\b and quickly look back\n Press \b+RAIL\b to rail jump/boost\ntap \b+AXE\b mid air for more speed\n\nReach the other side without using hook");
+		}
+		else if(self.speed == 9.77) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b5.\b\n\bWater movement tutorial\b\n\nHold \bJUMP\b while hitting water to Bounce\nWorks on all liquids\n\nHold \b+FORWARD\b and tap \b+AXE\b after bounce\nTo gain horizontal speed\n\nYou have to re-tap \b+JUMP\b to water bounce again\nTry bouncing between the two ponds");
+		}
+		else if(self.speed == 9.78) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "Once you are done practicing with hook\ndrop down to the yellow \"3\"\nto begin sliding tutorial");
+		}
+		
+		else if(self.speed == 9.79) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\bWall Slide tutorial\b\nworks best on non-vertical walls\nbut will let you run up a vert wall too\n\nHold \bSLIDE\b when moving along wall\n look TOWARD wall to move higher\n\n tap \b+AXE\b if you need to get up to speed");
+		}
+		
+		else if(self.speed == 9.80) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b4.\b\n\bAdvanced Rail Boosting (continued)\b\n\n get higher Rail Jumps off of up-ramps");
+		}
+		else if(self.speed == 9.82) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\bWall Run tutorial\b\n\nHold \bJUMP\b & \bSTRAFE\b toward wall\n look UP/DOWN to move higher or lower\n tap \b+AXE\b if you need to get up to speed");
+		}
+		else if(self.speed == 9.83) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b5.\b\n\bWater movement tutorial (continued)\b\n\nLook downward when hitting water to dive-in\n\nYou'll swim fast in dir you're looking\n\n try diving in, then look up to dive out\n\b+AXE\b when leaving water for extra speed");
+		}
+		else if(self.speed == 9.84) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b1.\b\n\bBasic Rail Jump tutorial\b\n\nPress \b+JUMP\b then look down\nand press \b+RAIL\b\n\nRAIL JUMP UP TO THE PLATFORM");
+		}
+		else if(self.speed == 9.85) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\b4.\b\n\bAdvanced Rail Boosting (continued)\b\n\n axe dash down the beam\n then dash off, turn around and \b+RAIL\b\nthen \b+RAIL\b again while still in mid air\nGET ACROSS THE CHASM");
+		}
+		else if(self.speed == 9.87) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "Once you are done practicing Wall Run..\n\nshoot the button \nto begin Advanced Rail Jumping tutorial");
+		}
+		else if(self.speed == 9.88) 
+		{
+			other.suppress_hud =1;
+			centerprint(other, "\bThis concludes the movement tutorial!\b\nPress F2 for Combat Practice area");
+		}
+		else other.suppress_hud =0;
+	}
+	
+	if(self.speed <= 10) return;
 
 
-if(self.speed <= 10) return;
 
 
 
+	local float rand;
 
-
-local float rand;
-
-	if (other.classname == "grenade")
-		other.velocity = self.speed * self.movedir * 10;
+	if (other.classname == "smoke" || other.classname == "plasma") other.velocity = self.speed * self.movedir * 12;
 	else if (other.health > 0)
 	{	
 		
@@ -631,21 +707,16 @@ local float rand;
 				
 				 rand = random()*2;
     
-    if (rand <= 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly3.wav",1,ATTN_NORM);
-    else
-    if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly2.wav",1,ATTN_NORM);
+				if (rand <= 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly3.wav",1,ATTN_NORM);
+				else if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly2.wav",1,ATTN_NORM);
    
-				
-				
-				
-				
-     sound (other, CHAN_AUTO, "bloodrailz/ambience/windfly.wav", 0.8, ATTN_NORM);
+			
+				sound (other, CHAN_AUTO, "bloodrailz/ambience/windfly.wav", 0.8, ATTN_NORM);
 				
 			}
 		}
 	}
-	if (self.spawnflags & PUSH_ONCE)
-		remove(self);
+
 };
 
 
