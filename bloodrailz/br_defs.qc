@@ -17,8 +17,19 @@ __wrap void(entity client, string s, optional string s1, optional string s2, opt
   prior(client, s);
 };
 */
+void()Splat;
+void()Splat2;
+void()Splat3;
+void()Splat4;
+void()Splat5;
 
+void()update_splat;
+void()update_splat2;
+void()update_splat3;
+void()update_splat4;
+void()update_splat5;
 
+void() swoop;
 void(float what_type) make_tut_icon;
 void(entity scorer, float msg, float dmg) make_icon;
 void(string cmd) SV_ParseClientCommand;
@@ -68,7 +79,7 @@ void() movement_check;            //movement checks
 void() GibPlayerChangeTeams;
 void() spawn_protection;
 void() goomba_stomp;
-void() ceiling_ride;
+//void() ceiling_ride;
 void() Skiing;
 void() Water_bounce;
 
@@ -110,6 +121,8 @@ void() make_shield;          //spawning Pulse shield
 void() update_impact;
 void(vector z_offset, float shockwave) make_impact;
 void() top_score;            // this calculates various player metrics, like counts, top score, kdr, etc.
+void () observer_fly_start;
+void () observer_start;
 
 void() update_aura;
 void() make_aura;
@@ -159,21 +172,9 @@ void() bloodrails_precache =
 	// S O U N D S 
 	precache_sound ("misc/h2ohit1.wav");		// landing splash
 	
-	precache_sound ("bloodrailz/legacy/enforcer_enfstop.wav");		//rail impact sizzle
 	precache_sound ("bloodrailz/legacy/weapons_ax1.wav");		// ax swoosh
-	precache_sound ("bloodrailz/legacy/lburn1.wav");		// lava burn
-	precache_sound ("bloodrailz/legacy/lburn2.wav");		// lava burn
-	precache_sound ("bloodrailz/legacy/drown1.wav");		// drowning pain
-	precache_sound ("bloodrailz/legacy/drown2.wav");		// drowning pain
 	precache_sound ("bloodrailz/player/gib.wav");		// player gib sound
 	
-	
-	precache_sound ("bloodrailz/legacy/pain1.wav");
-	precache_sound ("bloodrailz/legacy/pain2.wav");
-	precache_sound ("bloodrailz/legacy/pain3.wav");
-	precache_sound ("bloodrailz/legacy/pain4.wav");
-	precache_sound ("bloodrailz/legacy/pain5.wav");
-	precache_sound ("bloodrailz/legacy/pain6.wav");
 	
 	precache_sound ("bloodrailz/player/h2ojump.wav");		// Christian Ice // player jumping into water
 	precache_sound ("bloodrailz/player/inh2o.wav");		// Christian Ice //player enter water
@@ -188,6 +189,7 @@ void() bloodrails_precache =
 	precache_sound ("bloodrailz/misc/water1.wav");			// Christian Ice swimming
 	precache_sound ("bloodrailz/misc/water2.wav");			// Christian Ice swimming
 	precache_sound ("bloodrailz/misc/talk.wav");			// Christian Ice swimming
+	precache_sound ("bloodrailz/misc/swoop.wav");			//quake 1 windfly noise
 	
 	
 	
@@ -246,6 +248,7 @@ void() bloodrails_precache =
 	precache_sound ("bloodrailz/misc/ding1.wav");                                // localsound rail hit xon
 	precache_sound ("bloodrailz/misc/ding2.wav");                                // localsound rail hit xon
 	precache_sound ("bloodrailz/misc/sameteam.wav");			// localsound on your team  xon
+	precache_sound ("bloodrailz/misc/headshot.wav");			// localsound on your team  xon
 		//////////////////////////
 	
 	precache_sound ("bloodrailz/player/gib1.wav");		// custom noise
@@ -312,6 +315,7 @@ void() bloodrails_precache =
 	
 	precache_model ("progs/bloodrailz/null.mdl");
 	precache_model ("progs/bloodrailz/null_trail.mdl");
+	precache_model ("progs/bloodrailz/null_trail_gre.mdl");
 	precache_model ("progs/bloodrailz/br_sparks.mdl");
 	
 	precache_model ("progs/bloodrailz/v_br_rail_red1.mdl");
@@ -336,14 +340,16 @@ void() bloodrails_precache =
 	
 	
 	precache_model ("progs/bloodrailz/flag_red.mdl");
+	precache_model ("progs/bloodrailz/flag_red_notrail.mdl");
 	precache_model ("progs/bloodrailz/flag_blu.mdl");
+	precache_model ("progs/bloodrailz/flag_blu_notrail.mdl");
 	precache_model ("progs/bloodrailz/flag_hud.mdl");
-	precache_model ("progs/bloodrailz/flag_status.mdl");
-	precache_model ("progs/bloodrailz/hud_digits_red.mdl");
-	precache_model ("progs/bloodrailz/hud_digits_blue.mdl");
-	precache_model ("progs/bloodrailz/press_move.mdl");
+	precache_model ("progs/bloodrailz/flag_status1.mdl");
+	precache_model ("progs/bloodrailz/hud_digits_red1.mdl");
+	precache_model ("progs/bloodrailz/hud_digits_blue1.mdl");
+	precache_model ("progs/bloodrailz/input_press.mdl");
 	precache_model ("progs/bloodrailz/score_icons.mdl");
-	precache_model ("progs/bloodrailz/rune_icons.mdl");
+	precache_model ("progs/bloodrailz/rune_icons1.mdl");
 	precache_model ("progs/bloodrailz/tut_icons.mdl");
 	
 	precache_model ("progs/bloodrailz/rail0.mdl"); //short segment, half the length of rail1. - used in curved rail trails
@@ -368,10 +374,6 @@ void() bloodrails_precache =
 	precache_model ("progs/bloodrailz/br_rune2a.mdl");
 	precache_model ("progs/bloodrailz/br_rune3a.mdl");
 	precache_model ("progs/bloodrailz/br_rune4a.mdl");
-	//precache_model ("progs/bloodrailz/br_rune1b_1.mdl");
-	//precache_model ("progs/bloodrailz/br_rune2b_1.mdl");
-	//precache_model ("progs/bloodrailz/br_rune3b_1.mdl");
-	//precache_model ("progs/bloodrailz/br_rune4b_1.mdl");
 	
 	precache_model ("progs/bloodrailz/ef_smoke1.mdl");
 	precache_model ("progs/bloodrailz/ef_smoke2.mdl");
@@ -389,7 +391,7 @@ void() bloodrails_precache =
 	precache_model ("progs/bloodrailz/hud_r1.mdl");
 	precache_model ("progs/bloodrailz/hud_s1.mdl");
 	precache_model ("progs/bloodrailz/hud_bolt_sym.mdl");
-	precache_model ("progs/bloodrailz/rail_ammo_1.mdl");
+	precache_model ("progs/bloodrailz/ammo_slugs1.mdl");
 
 	
 	precache_model ("progs/bloodrailz/br_quad.mdl");
@@ -402,6 +404,12 @@ void() bloodrails_precache =
 
 
 //Bloodrailz globals
+
+float match_start_time;
+
+.float swoop_yes;
+.float swoop_time;
+//.float swoop_speed;
 
 .float tut_displayed1;
 .float tut_displayed2;
@@ -612,6 +620,7 @@ float(string) stof = #81;
 .float anglestored;
 .float grind_time;
 .float vel_before_wallrun;
+.float vel_before_swing;
 .float punchang; //dummy roll angle field
 
 .float slope_time;

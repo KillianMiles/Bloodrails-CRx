@@ -180,6 +180,13 @@ void() worldspawn =
 
 	precache_model ("progs/bloodrailz/s_bubble.spr");	// LibreQuake //drowning bubbles
 	precache_model ("progs/bloodrailz/s_explod.spr");	// LibreQuake //sprite explosion
+	precache_model ("progs/bloodrailz/s_blood_512x.spr");   //Kebby's blood animation sprite
+	precache_model ("progs/bloodrailz/s_blood_512x1.spr");   //Kebby's blood animation sprite
+	precache_model ("progs/bloodrailz/s_blood_192x.spr");   //Kebby's blood animation sprite
+	precache_model ("progs/bloodrailz/s_blood_128x.spr");   //Kebby's blood animation sprite
+	precache_model ("progs/bloodrailz/s_blood_96x.spr");   //Kebby's blood animation sprite
+	precache_model ("progs/bloodrailz/s_blood_64x.spr");   //Kebby's blood animation sprite
+	precache_model ("progs/bloodrailz/null.spr");
 	
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.

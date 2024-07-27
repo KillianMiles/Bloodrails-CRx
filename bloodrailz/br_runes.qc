@@ -991,6 +991,12 @@ void() bangs =
 							
 								if(vlen(dir5) < 250 && vlen(head.velocity)> 1200) head.velocity = head.velocity*0.95;
 								
+								if(head.classname == "dummy" && head.origin_z < 2600) 
+								{
+									if (head.flags & FL_ONGROUND) head.flags = head.flags - (head.flags & FL_ONGROUND);
+									head.velocity = head.velocity + '0 0 48';
+								}
+								
 								if(head.classname == "plasma" || head.classname == "smoke") head.owner = self;  //10/5/23
 								
 								if(gravity_counter%3 ==0) 

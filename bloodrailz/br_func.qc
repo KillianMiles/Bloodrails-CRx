@@ -24,6 +24,8 @@ void (entity ent, float flag, float onoff) do_brflag =
 
 void() Called_in_PreThink =
 {
+		//makevectors(self.v_angle);
+		
 		if (self.classname == "player" && self.frags == top_score_global && self.hascrown == 0 && self.frags > 0 && crown_out == 0)   //CROWN
 		{
 			make_crown();
@@ -35,7 +37,7 @@ void() Called_in_PreThink =
 		
 	
 		//self.suppress_hud =0;
-		//bprint(ftos(self.player_flag & PF_ITEM_RUNE_MASK));
+		//bprint(ftos(self.ski_sound_counter));
 		//bprint(" ");
 	
 		rune_regen();
@@ -85,6 +87,34 @@ void() Called_in_PreThink =
 		
 			sound (self, CHAN_VOICE, "bloodrailz/misc/r_tele1.wav", 1, ATTN_NORM);
 			setorigin(self, '0 0 2750');
+		}
+		else if(self.impulse == 102 && elohim_playmode & RACE_MODE && mapname =="tut1")
+		{
+			stuffcmd(self,"r_particledesc particles_not\n");
+			stuffcmd(self,"playdemo 0_tutorial.dem\n");
+		}
+		else if(self.impulse == 103 && mapname == "tut1")
+		{
+			WriteByte(MSG_BROADCAST, SVC_STUFFTEXT);
+			WriteString(MSG_BROADCAST, "map tut1\n");
+		}
+		else if(self.impulse == 149)
+		{
+			if(!(self.oflags & OBSERVER_ACTIONCAM)) 
+			{
+				observer_clear_flags();
+				self.oflags = self.oflags | OBSERVER_ACTIONCAM;
+				//if (self.style & ELOHIM_OBSERVER) self.style = self.style - ELOHIM_OBSERVER;
+				HorrorScope (camera_deathmatch);	
+			}
+			else if(self.oflags & OBSERVER_ACTIONCAM) 
+			{
+				//observer_clear_flags();
+				self.oflags = self.oflags - OBSERVER_ACTIONCAM;	
+				Exit_HorrorScope();
+			}
+			
+			
 		}
 		
 		if(mapname == "tut1" && dummy_spawned == 0)
@@ -165,7 +195,7 @@ void() Called_in_PreThink =
 						if(vlen(self.origin-trace_ent.origin) > 600) 
 						{
 							sound (self, CHAN_AUTO, "bloodrailz/weapons/chain_whip.wav", 0.4, ATTN_NORM);
-							bprint("chain 600\n");
+							//bprint("chain 600\n");
 						}
 
 						
@@ -247,18 +277,6 @@ void() Called_in_PreThink =
 			self.axe_power_time = 0;
 		}
 	
-
-		if(self.axe_powered == 1 && time - self.axe_power_time > 0.50 && time - self.axe_power_time < 1.25 && vlen(self.velocity) > 500 && self.old_vel > vlen(self.velocity) )
-		{
-			self.velocity = normalize(self.velocity)*self.old_vel;
-		}
-	
-		//if(self.shields_up == 1 && time - self.axe_power_time > 0.50 && time - self.axe_power_time < 1.25 && vlen(self.velocity) > 500 && self.old_vel > vlen(self.velocity) )
-		//{
-		//	makevectors(self.v_angle);
-		//	self.velocity = v_forward*self.old_vel;
-		//}
-		
 		
 		
 		if (self.axe_powered == 1 && !self.button0)
@@ -278,10 +296,30 @@ void() Called_in_PreThink =
 		}
 	
 	
-		if (time - self.shield_time >= 0 && time - self.shield_time < 0.75 && self.old_vel > 400 && self.old_vel > vlen(self.velocity) && self.flags & FL_ONGROUND )
+		//bprint(ftos(self.shield_time));
+		
+		if (time - self.shield_time >= 0 && time - self.shield_time < 0.75 && self.old_vel > 800 && self.old_vel > vlen(self.velocity) && vlen(self.velocity) > 300)  //SHIELD BOOST
 		{
-			self.velocity = normalize(self.velocity)*self.old_vel;
+			//bprint("shield boost ");
+			//make_sparks();
+			
+			makevectors(self.v_angle);
+			if(time - self.shield_time < 0.70 && self.flags & FL_ONGROUND) self.flags = self.flags - FL_ONGROUND;
+			
+			if(vlen(self.velocity) > 425)
+			{
+				if(self.movement_x ==400) self.velocity = v_forward*self.old_vel*0.93 + '0 0 4';
+				else if(self.movement_x ==-400) self.velocity = v_forward*-self.old_vel*0.93  + '0 0 4';
+			}
+			else
+			{
+				if(self.movement_x ==400) self.velocity = v_forward*self.old_vel*0.7 + '0 0 4';
+				else if(self.movement_x ==-400) self.velocity = v_forward*-self.old_vel*0.7  + '0 0 4';
+				self.old_vel = vlen(self.velocity);
+				//bprint(ftos(self.old_vel));
+			}
 		}
+
 
 
 		self.ammo_shells = self.frags;    // uncommented these
@@ -349,7 +387,8 @@ void() Called_in_PostThink =
 	check_jump (); //checks for long presses for wallrun and also for faster rail reload time when looking down
 	
 	WallRun();
-	ceiling_ride(); 
+	//ceiling_ride(); 
+	swoop();
 	
 	Skiing();
 	Water_bounce();
@@ -378,10 +417,9 @@ void() Called_in_PostThink =
 	Plasma_Charge_Logic();
 	
 	
+	if(self.armorvalue <= 0) self.armorvalue = 1;  //make armor always show up as "1"
 	
 	
-	//if(self.skiing_on !=0) self.ski_time2 = time;
-	//if((self.skiing_on !=0 && !(self.flags & FL_ONGROUND) && time - self.ski_time > 0.5)  || (!(self.flags & FL_ONGROUND) && time - self.ski_time2 < 0.5)) 
 	if(time - self.ski_time2 < 1.20 && (!self.hook_out && (self.impulse !=41))) 	//dont swing axe if skiing
 	{
 
@@ -1178,7 +1216,7 @@ void() DeathAura =              //Death Aura effect
 		{
 		
 		
-			head = findradius(self.origin, 55);  //DECEM 50 -> 55
+			head = findradius(self.origin + '0 0 5', 59);  //DECEM 55 -> 59 and upped the origin by 5 vertical
 			while (head)
 			{
 				if (head != self)
@@ -1287,22 +1325,59 @@ void() update_crown =
 {
  
     
-	makevectors(self.owner.owner.v_angle);
-	setorigin(self, (self.owner.origin + v_up * 33)  );
+	makevectors(self.owner.v_angle);
+	local vector zz = v_forward;
+	zz_z = 0;
+	zz = normalize(zz);
+	
+	//setorigin(self, (self.owner.origin + '0 0 55' + zz*(-50))  );
+	
+	if(self.owner.teleport_time == time +0.7) setmodel (self, "progs/bloodrailz/null.spr");
+	else if (self.owner.teleport_time > time +0.65)
+	{
+		//bprint("switch up");
+		if(self.owner.height == elohim_team2) setmodel (self, "progs/bloodrailz/null_trail.mdl");
+		else setmodel (self, "progs/bloodrailz/null_trail_gre.mdl");
+	}
+	
+	
+	
+	setorigin(self, (self.owner.origin + v_up*10 + v_forward*(-18) + '0 0 40')  );
+	
+	/*
+	if(pointcontents(self.owner.origin + '0 0 65') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 60') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 55') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 50') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 45') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 40') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 33') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 32') == CONTENT_SOLID)
+	{
+		setorigin(self, (self.owner.origin + v_forward*(-18) + '0 0 28'));   //if ceiling above, lower the trail source
+		//bprint("adjust height ");
+	}
+	*/
+	
+	
+	
+	if(pointcontents(self.owner.origin + '0 0 75' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 21'));
+	if(pointcontents(self.owner.origin + '0 0 70' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 21'));
+	if(pointcontents(self.owner.origin + '0 0 65' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 20'));
+	if(pointcontents(self.owner.origin + '0 0 55' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 20'));
+	if(pointcontents(self.owner.origin + '0 0 50' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 19'));
+	if(pointcontents(self.owner.origin + '0 0 45' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 19'));
+	if(pointcontents(self.owner.origin + '0 0 40' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 18'));
+	if(pointcontents(self.owner.origin + '0 0 35' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 18'));
+	if(pointcontents(self.owner.origin + '0 0 30' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 18'));
+	
     
 	if (self.owner.deadflag != DEAD_NO) 
 	{
 		self.alpha = 0.01;
 	}
 	
-	if (self.owner.frags < top_score_global || elohim_playmode & ELOHIM_CLASSIC) 
+	if (self.owner.frags < top_score_global || elohim_playmode & ELOHIM_CLASSIC || self.owner.hascrown ==0) 
 	{
 		self.owner.hascrown = 0;
 		self.think = SUB_Remove;
 		crown_out = 0;
 	}
 
-	self.nextthink = time + 0.01;
+	self.nextthink = time;
 }
 
 
@@ -1312,8 +1387,14 @@ void() make_crown =
 {
 	local entity crown;
 	crown = spawn();
-	setmodel (crown, "progs/bloodrailz/null_trail.mdl");
-	setorigin(crown, self.origin + '0 0 33');
+	
+	//if(self.height == elohim_team1) setmodel (crown, "progs/bloodrailz/null_trail_gre.mdl");
+	//else setmodel (crown, "progs/bloodrailz/null_trail.mdl");
+	
+	if(self.height == elohim_team2) setmodel (crown, "progs/bloodrailz/null_trail.mdl");
+	else setmodel (crown, "progs/bloodrailz/null_trail_gre.mdl");
+	
+	setorigin(crown, self.origin + '0 0 40');
 	crown.movetype = MOVETYPE_NOCLIP;
 	crown.solid = SOLID_NOT;
 	crown.nextthink = time + 0.5;

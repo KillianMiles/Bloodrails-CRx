@@ -828,7 +828,7 @@ string (float mapnum) strings_get_mapname =
     if (mapnum < 26)
     {
         if (mapnum == 11)
-            return "ctf_takayama_b4";
+            return "ctf_takayama_c1";
         if (mapnum == 12)
             return "ctf_dissocia_c2";
         if (mapnum == 13)
@@ -836,9 +836,9 @@ string (float mapnum) strings_get_mapname =
         if (mapnum == 14)
             return "ctf_hanghigh_c2";
         if (mapnum == 15)
-            return "ctf_longest1_b1";
+            return "ctf_swingest_b1";
         if (mapnum == 16)
-            return "ctf_longest2_c1";
+            return "ctf_longest_b1";
         if (mapnum == 17)
             return "ctf_teardown_b2";
 	if (mapnum == 18)
@@ -846,30 +846,30 @@ string (float mapnum) strings_get_mapname =
 	if (mapnum == 19)
             return "ctf_relic2_b2"; 
         if (mapnum == 20)
-            return "ctf_rebirth_b1";
+            return "ctf_rebirth_b2";
         if (mapnum == 21)
-            return "ctf_edge3_c1";
+            return "ctf_edge3_c2";
         if (mapnum == 22)
-            return "ctf_facing_b5";
+            return "ctf_facing_c1";
         if (mapnum == 23)
-            return "ctf_sandstorm_b2";
+            return "ctf_sandstorm_b3";
         if (mapnum == 24)
-            return "ctf_lasertag1_b1";
+            return "ctf_lasertag_b1";
         if (mapnum == 25)
-            return "ctf_lasertag2_b1";
+            return "ctf_dreamland_b1";
               
         return "";
     }
     if (mapnum < 41)
     {
         if (mapnum == 26)
-            return "ctf_spongebob_b2";
+            return "ctf_bikini_b1";
         if (mapnum == 27)
             return "ctf_doglyfe_b2";
         if (mapnum == 28)
             return "ctf_dogrun_b1";
         if (mapnum == 29)
-            return "ctf_daywalker_c1";
+            return "ctf_daywalker_c2";
         if (mapnum == 30)
             return "ctf_volcano_b2";
         if (mapnum == 31)
@@ -877,11 +877,11 @@ string (float mapnum) strings_get_mapname =
         if (mapnum == 32)
             return "ctf_albatross_b1";
 	if (mapnum == 33)
-            return "ctf_firestorm_b1";
+            return "ctf_firestorm_b2";
 	if (mapnum == 34)
             return "ctf_feral_b2";
         if (mapnum == 35)
-            return "ctf_gulch_b1";
+            return "ctf_gulch_b3";
         if (mapnum == 36)
             return "";
         if (mapnum == 37)
@@ -898,7 +898,7 @@ string (float mapnum) strings_get_mapname =
     if (mapnum < 56)
     {
         if (mapnum == 41)
-            return "storm";
+            return "ctf_bamboo_b1";
         if (mapnum == 42)
             return "ctf_relic2_b2";
         if (mapnum == 43)

@@ -761,6 +761,7 @@ float(entity targ, entity inflictor) CanDamage;
 
 
 .float alpha;
+.float scale;
 .float cnt;
 .float tarzan_time;
 .vector old_hook_vel;

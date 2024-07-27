@@ -511,6 +511,8 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint(" \b[EXTINCTION EVENT]\b ");
 					attacker.tier3 +=1;
 				}
+				if(attacker.thor_frag_count > 0 && attacker.thor_frag_count <= 4 && attacker.shields_up) bprint(" \b[ATOMIC TEABAG]\b ");
+				
 				
 				if (targ.flags & FL_INWATER) 
 				{
@@ -663,7 +665,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				bprint("\n");			
 			}
 				
-			else if (attacker.weapon == IT_HOOK) 
+			else if (attacker.weapon == IT_HOOK && (damage == 20.2 || damage == 40.4 || damage == 10 || damage == 18)) 
 			{
 				targ.ammo_nails = 2;     //ammo_nails = killedwep
 				//deathstring = " was hooked by ";

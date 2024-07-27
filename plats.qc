@@ -156,20 +156,20 @@ void() func_plat =
 		self.sounds = 2;
 // FIX THIS TO LOAD A GENERIC PLAT SOUND
 
-	if (self.sounds == 1)
+		if (self.sounds == 1)
 	{
-		precache_sound ("plats/plat1.wav");
-		precache_sound ("plats/plat2.wav");
-		self.noise = "plats/plat1.wav";
-		self.noise1 = "plats/plat2.wav";
+		precache_sound ("bloodrailz/plats/plat1.wav");
+		precache_sound ("bloodrailz/plats/plat2.wav");
+		self.noise = "bloodrailz/plats/plat1.wav";
+		self.noise1 = "bloodrailz/plats/plat2.wav";
 	}
 
 	if (self.sounds == 2)
 	{
-		precache_sound ("plats/medplat1.wav");
-		precache_sound ("plats/medplat2.wav");
-		self.noise = "plats/medplat1.wav";
-		self.noise1 = "plats/medplat2.wav";
+		precache_sound ("bloodrailz/plats/medplat1.wav");
+		precache_sound ("bloodrailz/plats/medplat2.wav");
+		self.noise = "bloodrailz/plats/medplat1.wav";
+		self.noise1 = "bloodrailz/plats/medplat2.wav";
 	}
 
 

@@ -839,6 +839,8 @@ void() update_dummy =
 void() PutDummyInServer =
 
 {
+	//local float x = random()*200;
+	//local float y = random()*200;
 	//static float dum;
 	//if(dum == 1) return;
 	//dum =1;	
@@ -870,6 +872,8 @@ void() PutDummyInServer =
 	dummy.avelocity 		= '0 0 0';
 	dummy.punchangle		= '0 0 0';
 
+
+	
 	setorigin(dummy, spot.origin + '0 0 -3');	//R00k: change our origin and relink our edict.
 	setorigin(dummy, spot.origin + '0 0 80');	//R00k: change our origin and relink our edict.
 	dummy.oldorigin = dummy.origin;			//R00k: update oldorigin so we dont respawn where we died.
@@ -898,7 +902,11 @@ void() PutDummyInServer =
 
 void() PutClientInServer =
 {
+	
+	
 	if(self.classname == "dummy") return;
+	
+	checkextension("DP_SV_ROTATINGBMODEL");
 	
 	local	entity spot, teamSpot;
         self.modelindex = 0;    
@@ -1037,9 +1045,16 @@ void() PutClientInServer =
 	
 	if (elohim_playmode & RACE_MODE)       //start player with 200 red armor if Practice (Full armor)  this replaces set200
 	{
-	self.items = self.items | IT_ARMOR3;
-	self.armorvalue  	= 200;
-	self.armortype   	= 80.001;
+		self.items = self.items | IT_ARMOR3;
+		self.armorvalue  	= 75;
+		self.armortype   	= 80.001;
+		self.health 		= 75;
+	}
+	else 
+	{
+		self.items = self.items | IT_ARMOR1;
+		self.armorvalue  	= 40;
+		self.armortype   	= 40.001;
 	}
 	
 	
@@ -1049,6 +1064,7 @@ void() PutClientInServer =
 	stuffcmd(self, "cl_sidespeed 350\n");
 	stuffcmd(self, "gl_polyblend 1\n");
 	stuffcmd(self, "gl_cshiftpercent_damage 25\n");
+	stuffcmd(self,"r_particledesc particles\n");  //exec particles config
 	
 	stuffcmd(self, "cl_bob 0.0032\n");
 	stuffcmd(self, "cl_bobcycle 2.5\n");
@@ -1313,7 +1329,7 @@ void() WaterMove =
 	{
 		if (self.flags & FL_INWATER)
 		{
-			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_BODY, "bloodrailz/misc/outwater.wav", 1, ATTN_NORM);	// play leave water sound
+			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_AUTO, "bloodrailz/misc/outwater.wav", 1, ATTN_NORM);	// play leave water sound
 			self.flags = self.flags - FL_INWATER;
 		}
 		return;
@@ -1343,8 +1359,8 @@ void() WaterMove =
 		if (!(self.style & ELOHIM_OBSERVER))
 		{
 			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "bloodrailz/player/inlava.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_BODY, "bloodrailz/player/inh2o.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_BODY, "bloodrailz/player/slimbrn2.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_AUTO, "bloodrailz/player/inh2o.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_AUTO, "bloodrailz/player/slimbrn2.wav", 1, ATTN_NORM);
 		}
 
 
@@ -1480,6 +1496,14 @@ void() PlayerPostThink =
 {
 	local string qdp = "", ggp = "", wsp = "";
 	local float temp;
+	
+	
+	// HorrorScope
+	hr_frame();
+
+	if (self.cam)
+		return;
+	
 
 	if (self.impulse == 37)
 		client_responsetime_show();

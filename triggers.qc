@@ -405,12 +405,19 @@ void() teleport_touch =
 		return;
 	}
 	
+
 	
 	setorigin (other, t.origin);
 	other.angles = t.mangle;
 	
 	if (other.classname == "player")
-	{
+	{	
+		if(other.flag_carrier ==1)
+		{
+			if(other.height == elohim_team1) 		setmodel (blue_flag_ent, "progs/bloodrailz/flag_blu_notrail.mdl"); 
+			else if(other.height == elohim_team2) 		setmodel (red_flag_ent, "progs/bloodrailz/flag_red_notrail.mdl");
+		}
+		
 		other.fixangle = 1;		// turn this way immediately
 		other.teleport_time = time + 0.7;
 		if (other.flags & FL_ONGROUND)
@@ -484,9 +491,9 @@ void() trigger_teleport =
 
 	if (!(self.spawnflags & SILENT))
 	{
-		precache_sound ("ambience/hum1.wav");
-        o = (self.mins + self.maxs) * 0.5;
-        ambientsound (self.origin, "ambience/hum1.wav",0.5 , ATTN_STATIC);
+		//precache_sound ("ambience/hum1.wav");
+		o = (self.mins + self.maxs) * 0.5;
+		//ambientsound (self.origin, "ambience/hum1.wav",0.5 , ATTN_STATIC);
 	}
 
 	if(self.spawnflags & PARTICLE_EFFECT) {
@@ -596,7 +603,7 @@ void() trigger_push_touch =
 		if(self.speed == 9.70) 
 		{
 			other.suppress_hud =1;
-			centerprint(other, "\bBloodrailZ movement tutorial\b\n\nStart with Tutorial \"1\"(AXE DASH)\nStop at \"\b!\b\" signs directly in your way\n\nPress \bF1\b at any time to restart map");
+			centerprint(other, "\bBloodrailZ movement tutorial\b\n\nStart with Tutorial \"1\"(AXE DASH)\nStop at \"\b!\b\" signs directly in your way\n\nPress \bF1\b at any time to restart map\nPress \bF2\b for combat practice       \nPress \bF3\b to play tutorial demo     ");
 		}
 		
 		else if(self.speed == 9.71) 
@@ -612,7 +619,7 @@ void() trigger_push_touch =
 		else if(self.speed == 9.73) 
 		{
 			other.suppress_hud =1;
-			centerprint(other, "\bSliding/Skiing tutorial\b\n\nHold \bSLIDE\b while hitting ground at speed\nRelease \bSLIDE\b button while skiing to jump\nPress & Release \bSLIDE\b midair to AIR JUMP");
+			centerprint(other, "\bSliding/Skiing tutorial\b\n\nHold \bSLIDE\b and \b+FORWARD\b\nwhile hitting ground at speed\nRelease \bSLIDE\b while skiing to jump up\n\nPress & Release \bSLIDE\b midair to AIR JUMP\n\nAXE ground while skiing to boost up\n\n Press and hold \bSLIDE\b midair to glide");
 		}
 		else if(self.speed == 9.74) 
 		{
@@ -637,7 +644,8 @@ void() trigger_push_touch =
 		else if(self.speed == 9.78) 
 		{
 			other.suppress_hud =1;
-			centerprint(other, "Once you are done practicing with hook\ndrop down to the yellow \"3\"\nto begin sliding tutorial");
+			//centerprint(other, "Once you are done practicing with hook\ndrop down to the yellow \"3\"\nto begin sliding tutorial");
+			centerprint(other, "This is all the movement tech you\nneed to start playing \bBLOODRAILZ\b\nyou can press \bF2\b for combat practice\n\nor drop down to the yellow \"3\"\nto begin \bsliding\b and other\n\bAdvanced Movement\b tutorials");
 		}
 		
 		else if(self.speed == 9.79) 

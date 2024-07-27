@@ -172,6 +172,9 @@ void()	s_explode4	=	[3,		s_explode5] {};
 void()	s_explode5	=	[4,		s_explode6] {};
 void()	s_explode6	=	[5,		SUB_Remove] {};
 
+
+
+
 void() BecomeExplosion =
 {
 	self.movetype = MOVETYPE_NONE;
@@ -181,7 +184,6 @@ void() BecomeExplosion =
 	self.solid = SOLID_NOT;
 	s_explode1 ();
 };
-
 
 
 

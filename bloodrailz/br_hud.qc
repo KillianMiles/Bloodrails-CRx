@@ -59,7 +59,7 @@ void() update_rhud =
 	
 	if(intermission_running)
 	{
-		self.alpha =0.05;
+		self.alpha =0.001;
 	}
 	
 	
@@ -245,7 +245,7 @@ void() update_flag_status =
 	makevectors(self.owner.owner.v_angle);
     
 	self.viewmodelforclient = self.owner;
-	setorigin(self, '0 0 0');
+	setorigin(self, '0  77 36');
 	
 	self.alpha = 0.9;
 	self.skin = 0;
@@ -273,7 +273,7 @@ void() update_flag_status =
 
 	if(intermission_running)
 	{
-		setorigin(self, '0 0 0'+ '-45 165 159'); //165
+		setorigin(self, '0 0 0'+ '-45 165 138'); //159 -> 129
 		self.skin = 0;
 	}
 		
@@ -297,9 +297,9 @@ void() Flag_Status =
 		self.ctfhud = 1;
 		local entity flagstatus;
 		flagstatus = spawn(); 
-		setmodel (flagstatus, "progs/bloodrailz/flag_status.mdl");
+		setmodel (flagstatus, "progs/bloodrailz/flag_status1.mdl");
 
-		setorigin(flagstatus, '0 0 0');
+		setorigin(flagstatus, '0 0 10');
 		flagstatus.movetype = MOVETYPE_NOCLIP;
 		flagstatus.solid = SOLID_NOT;
 		flagstatus.classname = "haveflag";
@@ -320,7 +320,7 @@ void() update_You_Have_Flag =
 	makevectors(self.owner.owner.v_angle);
     
 	self.viewmodelforclient = self.owner;
-	setorigin(self, '0 0 0');
+	setorigin(self, '0 93 35');
 	
 	self.alpha = 0.9;
 	
@@ -472,7 +472,7 @@ void() update_You_Have_Rune =
     
 	self.viewmodelforclient = self.owner;
 	//setorigin(self, '0 -80 61'); //bottom left
-	setorigin(self, '0 -183.8 78'); // 77 -> 82
+	setorigin(self, '0 -159.5 78.9'); // 77 -> 82
 	
 	self.alpha = 0.9;
 	
@@ -506,7 +506,7 @@ void() You_Have_Rune =
 		local entity haverune;
 		haverune = spawn();
 		
-		setmodel (haverune, "progs/bloodrailz/rune_icons.mdl");
+		setmodel (haverune, "progs/bloodrailz/rune_icons1.mdl");
 		
 		if 	((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG)) haverune.skin =1;
 		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE2_FLAG)) haverune.skin =2;
@@ -553,9 +553,9 @@ void() update_jumbo_blue =
 	makevectors(self.owner.owner.v_angle);
     
 	self.viewmodelforclient = self.owner;
-	if(self.weapon == 1) setorigin(self, '0 -0.4 5');
-	if(self.weapon == 2) setorigin(self, '0 3.1 5');
-	if(self.weapon == 3) setorigin(self, '0 6.6 5');
+	if(self.weapon == 1) setorigin(self, '0 76.6 41');
+	if(self.weapon == 2) setorigin(self, '0 80.1 41');
+	if(self.weapon == 3) setorigin(self, '0 83.6 41');
 	
 	//elohim_teamfrags2 = 395;
 	
@@ -607,9 +607,9 @@ void() update_jumbo_blue =
 	
 	if(intermission_running)
 	{
-		if(self.weapon == 1) setorigin(self, '0 -0.4 5'+ '-40 165 155'); //161
-		if(self.weapon == 2) setorigin(self, '0 3.1 5' + '-40 165 155');
-		if(self.weapon == 3) setorigin(self, '0 6.6 5' + '-40 165 155');
+		if(self.weapon == 1) setorigin(self, '0 -0.4 5'+ '-40 165 135'); //161
+		if(self.weapon == 2) setorigin(self, '0 3.1 5' + '-40 165 135');
+		if(self.weapon == 3) setorigin(self, '0 6.6 5' + '-40 165 135');
 	}
 	
 	self.alpha = 0.9;
@@ -644,7 +644,7 @@ void() make_jumbo_blue =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "digit_blue";
-		setmodel (prj, "progs/bloodrailz/hud_digits_blue.mdl");		
+		setmodel (prj, "progs/bloodrailz/hud_digits_blue1.mdl");		
 		setsize (prj, 0, 0);	
 		setorigin (prj, '0 0 0');
 		prj.velocity = '0 0 0';	
@@ -672,9 +672,9 @@ void() update_jumbo_red =
 	makevectors(self.owner.owner.v_angle);
     
 	self.viewmodelforclient = self.owner;
-	if(self.weapon == 1) setorigin(self, '0 11.7 5');
-	if(self.weapon == 2) setorigin(self, '0 15.2 5');
-	if(self.weapon == 3) setorigin(self, '0 18.7 5');
+	if(self.weapon == 1) setorigin(self, '0 88.7 41');
+	if(self.weapon == 2) setorigin(self, '0 92.2 41');
+	if(self.weapon == 3) setorigin(self, '0 95.7 41');
 	
 	//elohim_teamfrags1 = 395;
 	
@@ -725,9 +725,9 @@ void() update_jumbo_red =
 	
 	if(intermission_running)
 	{
-		if(self.weapon == 1) setorigin(self, '0 11.7 5' + '-40 165 155'); //161
-		if(self.weapon == 2) setorigin(self, '0 15.2 5' + '-40 165 155');
-		if(self.weapon == 3) setorigin(self, '0 18.7 5' + '-40 165 155');
+		if(self.weapon == 1) setorigin(self, '0 11.7 5' + '-40 165 135'); //161
+		if(self.weapon == 2) setorigin(self, '0 15.2 5' + '-40 165 135');
+		if(self.weapon == 3) setorigin(self, '0 18.7 5' + '-40 165 135');
 		
 		
 	}	
@@ -763,7 +763,7 @@ void() make_jumbo_red =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "digit_red";
-		setmodel (prj, "progs/bloodrailz/hud_digits_red.mdl");		
+		setmodel (prj, "progs/bloodrailz/hud_digits_red1.mdl");		
 		setsize (prj, 0, 0);	
 		setorigin (prj, '0 0 0');
 		prj.velocity = '0 0 0';	
@@ -799,6 +799,11 @@ void() update_press_move =
 		self.think = SUB_Remove;
 	}
 	
+		if(intermission_running)
+	{
+		self.think = SUB_Remove;
+		self.button_press_display =0;
+	}
 	
 	makevectors(self.owner.owner.v_angle);
     
@@ -911,7 +916,7 @@ void() make_press_move =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "press_arrows";
-		setmodel (prj, "progs/bloodrailz/press_move.mdl");		
+		setmodel (prj, "progs/bloodrailz/input_press.mdl");		
 		setsize (prj, 0, 0);	
 		setorigin (prj, '0 0 0');
 		prj.velocity = '0 0 0';	
@@ -1051,12 +1056,17 @@ void() update_rail_ammo =
 		self.think = SUB_Remove;
 	}
 	
+	if(intermission_running)
+	{
+		self.think = SUB_Remove;
+		self.rail_ammo_displayed =0;
+	}
 	
 	
 	
 	if(self.weapon ==2)
 	{
-		setorigin(self, '0 55 45.8');
+		setorigin(self, '0 197 40.8');
 	
 		makevectors(self.owner.owner.v_angle);
     
@@ -1091,7 +1101,7 @@ void() update_rail_ammo =
 	}
 	else if (self.weapon ==9)
 	{
-		setorigin(self, '0 53.8 53.4'); // 51.5 -> 54
+		setorigin(self, '0 195.8 48.4'); // 51.5 -> 54
 		makevectors(self.owner.owner.v_angle);
 		self.viewmodelforclient = self.owner;
 		
@@ -1139,7 +1149,7 @@ void() make_rail_ammo =
 		
 		railammo.touch = SUB_Null;
 		railammo.classname = "railammo";
-		setmodel (railammo, "progs/bloodrailz/rail_ammo_1.mdl");		
+		setmodel (railammo, "progs/bloodrailz/ammo_slugs1.mdl");		
 		setsize (railammo, 0, 0);	
 		setorigin (railammo, '0 0 0');
 		railammo.velocity = '0 0 0';	
@@ -1158,7 +1168,7 @@ void() make_rail_ammo =
 		
 		noammo.touch = SUB_Null;
 		noammo.classname = "railammo";
-		setmodel (noammo, "progs/bloodrailz/rail_ammo_1.mdl");		
+		setmodel (noammo, "progs/bloodrailz/ammo_slugs1.mdl");		
 		setsize (noammo, 0, 0);	
 		setorigin (noammo, '0 0 0');
 		noammo.velocity = '0 0 0';	
@@ -1261,16 +1271,36 @@ void hud_update() =
 			else if(current_speed >= 10) bracket_spacer = "                            \n";
 			else if(current_speed < 10) bracket_spacer = "                             \n";
 
-			
+	
+	if(mapname =="tut1") self.frags =0; //dont increment frags when on Tut map	
 	
 	if ((elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_public() == TRUE)))
 	{
 		//if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud) centerprint5(self, spacing_top, "  \n \svel:", ftos(current_speed), bracket_spacer, rune_status);   //debug?   hud   //9-24-23
-		if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud)
+		if (mode_is_public() == TRUE)
 		{
-			if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
-			else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
-			self.have_rune_center =0;
+			if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud)
+			{
+				if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n       \svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
+				else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n       \svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
+				self.have_rune_center =0;
+			}
+		}
+		
+		if (elohim_playmode & ELOHIM_MATCH_MODE)
+		{
+			if(!(elohim_state & ELOHIM_MATCH_STARTED) && !(elohim_state & ELOHIM_MATCH_PAUSED) && !(elohim_state & ELOHIM_TIMER_STARTED))
+			{
+				centerprint5(self, "NO MATCH IN PROGRESS\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n       \svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
+			
+			}
+			else if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud)
+			{
+				if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n       \svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
+				else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n       \svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
+				self.have_rune_center =0;
+			}
+				
 		}
 		
 	}
@@ -1283,8 +1313,8 @@ void hud_update() =
 	
 	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && (mapname =="tut1") && self.classname == "player")
 	{
-		if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n\bF1\b: tutorial restart\n\bF2\b: Combat practice");   //debug?   hud 
-		else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n\bF1\b: tutorial restart\n\bF2\b: Combat practice");   //debug?   hud 
+		if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n    \bF1\b: tutorial restart\n    \bF2\b: Combat practice\n    \bF3\b: Play demo");   //debug?   hud 
+		else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n    \bF1\b: tutorial restart\n    \bF2\b: Combat practice\n    \bF3\b: Play demo");   //debug?   hud 
 		self.have_rune_center =0;
 	}
 
@@ -1316,7 +1346,7 @@ void hud_update() =
 			}
 	} 
 		
-	if(self.print_killa == 1 && self.ammo_rockets == 1 && !(elohim_playmode & RACE_MODE)) centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nkilled by ", "world");    //ammo_rockets = killedbyworld
+	if(self.print_killa == 1 && self.ammo_rockets == 1 && !(elohim_playmode & RACE_MODE)) centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n    killed by ", "world");    //ammo_rockets = killedbyworld
 		
 	if(time - self.ammo_cells > 2) self.print_killa = 0; //ammo_cells = print_killa_time
 		
@@ -1379,8 +1409,8 @@ void() update_icon =
 	}
 	else if(self.weapon == 6) //Flag Cap
 	{
-		if (self.owner.height == elohim_team1) self.skin = 2;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 1;   //blue
+		if (self.owner.height == elohim_team1) self.skin = 1;   //red
+		else if (self.owner.height == elohim_team2) self.skin = 2;   //blue
 		else self.skin = 1;
 	}
 	else if(self.weapon == 7) //TK and self
@@ -1454,14 +1484,14 @@ void(entity scorer, float msg, float dmg) make_icon =
 			icon.icon_display = scorer.icon_display;
 			icon.icon_num = scorer.icon_num;
 			
-				local vector a = '0 -171 110';
+				local vector a = '0 -148.5 110';
 				a_z = scorer.icon_height - 5;
 				
 				if(a_z < 110 && time - scorer.icon_time >2) a_z = 110;
 			
 				if(scorer.icon_height >=116 || scorer.icon_height < 20)	
 				{
-					setorigin(icon, '0 -171 110');
+					setorigin(icon, '0 -148.5 110');
 					scorer.icon_height = 110;
 				}
 				else	

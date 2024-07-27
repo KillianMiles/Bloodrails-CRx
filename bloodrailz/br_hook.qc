@@ -39,11 +39,6 @@ void() Plasma_Charge_Logic=
 		
 		if(self.weapon != IT_HOOK) self.plasma_powered =0;
 		
-			//else if (time - self.shield_recharge_time <= 13 && self.shield_recharge_time != 0)	
-			//{
-			//	if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 0.62 && self.axe_power_time != 0 && self.axe_powered == 0) sprint(self, "shield depleted\n");
-			//	if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "bloodrailz/misc/menu3.wav", 0.9, ATTN_NORM);
-			//}
 }
 
 
@@ -973,7 +968,7 @@ void () HookPull =
 		
 		if ((self.owner.button2 && self.owner.airborn_pos > 45) || self.owner.tarzan_time == 1)
 		{
-			if(self.owner.tarzan_time == 0) self.owner.vel_before_wallrun = vlen(self.owner.velocity);
+			if(self.owner.tarzan_time == 0) self.owner.vel_before_swing = vlen(self.owner.velocity);
 			
 			
 			if(self.owner.turn_speed > 10)
@@ -1006,51 +1001,37 @@ void () HookPull =
 			
 			
 			
-			
+			//bprint(ftos(self.owner.vel_before_swing));
+			//bprint("   ");
 
 			
-			if (self.owner.airborn_pos > 185 || self.owner.is_over_sky ==1) //added the over sky part
+			if (self.owner.airborn_pos > 220 || self.owner.is_over_sky ==1) //added the over sky part
 			{	
 				
-				if(self.owner.vel_before_wallrun < 1000)
+				if(self.owner.vel_before_swing < 1200)
 				{
-					//if (vlen(self.owner.velocity) <= 900) self.owner.velocity = self.owner.velocity + v_forward*18 + (normalize(vel)*16);  //10-11, changed 27 to 22
-					//else if (vlen(self.owner.velocity) > 900) self.owner.velocity = self.owner.velocity + v_forward*12 + (normalize(vel)*10);
-					
-					self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
-					if (vlen(self.owner.velocity) >= 1000) self.owner.velocity = normalize(self.owner.velocity)*1000;
-				}
-				
-				else if(self.owner.vel_before_wallrun < 1200)
-				{
-					//if (vlen(self.owner.velocity) <= 1100) self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
-					//else if (vlen(self.owner.velocity) > 1100) self.owner.velocity = self.owner.velocity + v_forward*12 + (normalize(vel)*10);
-					
 					self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
 					if (vlen(self.owner.velocity) >= 1200) self.owner.velocity = normalize(self.owner.velocity)*(1200+ random()* 30);
 				}
 				else
 				{
-					//if (vlen(self.owner.velocity) <= 1400) self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
-					//else if (vlen(self.owner.velocity) > 1400) self.owner.velocity = self.owner.velocity + v_forward*12 + (normalize(vel)*10);
-					
 					self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22);
 					
 					if (vlen(self.owner.velocity) >= 1545) self.owner.velocity = normalize(self.owner.velocity)*(1545+ random()*50);
-					else if (vlen(self.owner.velocity) >= self.owner.vel_before_wallrun) self.owner.velocity = normalize(self.owner.velocity)*self.owner.vel_before_wallrun;	
+					else if (vlen(self.owner.velocity) >= self.owner.vel_before_swing) self.owner.velocity = normalize(self.owner.velocity)*self.owner.vel_before_swing;	
 				}
 			}
-			if (self.owner.airborn_pos <= 185 && self.owner.is_over_sky ==0)
+			if (self.owner.airborn_pos <= 220 && self.owner.is_over_sky ==0)
 			{
 				self.owner.velocity = self.owner.velocity + v_forward*24 + (normalize(vel)*22) + v_up*(-7);  //NOVEM -9 -> -7
 				
-				if(self.owner.vel_before_wallrun < 950)
+				if(self.owner.vel_before_swing < 950)
 				{
 					if (vlen(self.owner.velocity) > 950) self.owner.velocity = normalize(self.owner.velocity)*950;   //NOVEM 850 -> 950
 				}
 				else 
 				{
-					if (vlen(self.owner.velocity) > self.owner.vel_before_wallrun) self.owner.velocity = normalize(self.owner.velocity)*self.owner.vel_before_wallrun;   //NOVEM 850 -> 950
+					if (vlen(self.owner.velocity) > self.owner.vel_before_swing) self.owner.velocity = normalize(self.owner.velocity)*self.owner.vel_before_swing;   //NOVEM 850 -> 950
 				}
 			}
 			
@@ -1059,8 +1040,6 @@ void () HookPull =
 			if(self.owner.airborn_pos <= 1000 && self.owner.is_over_sky ==1)  // &&v_forward_z > 0.2 && v_ang_x > 10 && v_ang_x < 120)  
 			{
 				self.owner.velocity = self.owner.velocity + '0 0 5';
-				//sprint(self.owner, ftos(self.owner.is_over_sky));
-				//sprint(self.owner, "\n");
 			}
 		
 			self.dest = self.owner.origin;
@@ -1230,6 +1209,33 @@ void () HookPull =
 
 			if (v <= 100) self.owner.velocity = normalize(vel) * v * 10;  
 			else if ( v > 100) self.owner.velocity = normalize(vel) * hookspeedpull;
+			
+			vel = normalize(vel);
+			if(vel_z < -0.22)
+			{
+				self.owner.velocity = self.owner.velocity + '0 0 -130';
+				//bprint(ftos(vel_z));
+				//bprint(" ");
+			}
+			
+			if(vel_z > -1 && vel_z < -0.45) 
+			{
+				self.owner.velocity = self.owner.velocity + '0 0 -55';
+				//bprint(ftos(vel_z));
+				//bprint(" ");
+			}
+			if(vel_z > -1 && vel_z < -0.55) 
+			{
+				self.owner.velocity = self.owner.velocity + '0 0 -10';
+				//bprint(ftos(vel_z));
+				//bprint(" ");
+			}
+			if(vel_z > -1 && vel_z < -0.70) 
+			{
+				self.owner.velocity = self.owner.velocity + '0 0 -10';
+				//bprint(ftos(vel_z));
+				//bprint(" ");
+			}
 	
 			self.owner.spring_chain_on = 0;
 		}

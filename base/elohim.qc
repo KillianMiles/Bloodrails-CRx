@@ -169,9 +169,9 @@ void () elohim_init_world =
   
 
 
-  elohim_version = "BR 5-7-24 .X1"; 
+  elohim_version = "BR v1.0 (alpha)"; 
   elohim_version_info = "Bloodrailz CRx";
-  bloodrailz_version_number = "5-7-24";
+  bloodrailz_version_number = "v1.0 (alpha)";
 
 	// Initialize user map names, MOTD, and hotspots, etc..
 	userdefs_init_world();
@@ -546,7 +546,6 @@ void () stuff_aliases =
   stuffcmd(self, "alias dbhelp impulse 59\n");	// undocumented debug command
   stuffcmd(self, "alias chase_act1ve say chase_active has been disabled on this server.\n");  // CRMOD cheat fix
   stuffcmd(self, "alias sethud impulse 70\n");
-  stuffcmd(self, "alias help-server impulse 100\n");
   stuffcmd(self, "alias help-observer impulse 101\n");
   stuffcmd(self, "alias help-ctf impulse 102\n");
   stuffcmd(self, "alias help-misc impulse 105\n");
@@ -591,7 +590,6 @@ void () stuff_aliases =
   stuffcmd(self, "alias chase impulse 143\n");
   stuffcmd(self, "alias chasecam impulse 143\n");
   //stuffcmd(self, "alias headsup impulse 148\n");
-  stuffcmd(self, "alias eyecam impulse 149\n");
   stuffcmd(self, "alias help-walk impulse 144\n");
   stuffcmd(self, "alias help-fly impulse 145\n");
   stuffcmd(self, "alias help-chase impulse 146\n");
@@ -1295,10 +1293,6 @@ void () elohim_impulse =
 		admin_impulse();
 		
   else if (self.impulse == 149 && self.style & ELOHIM_OBSERVER)     //BR_CAM
-		{}
-  else if (self.impulse == 102 && self.style & ELOHIM_OBSERVER) 
-		{}
-  else if (self.impulse == 103 && self.style & ELOHIM_OBSERVER) 
 		{}
 		
   else if (self.impulse == 105)

@@ -264,10 +264,8 @@ void() PainSound =
 	if (self.watertype == CONTENT_WATER && self.waterlevel == 3)
 	{
 		//DeathBubbles(1);
-		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "bloodrailz/legacy/drown1.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "bloodrailz/legacy/drown2.wav", 1, ATTN_NORM);
+
+		sound (self, CHAN_VOICE, "bloodrailz/player/h2odeath.wav", 1, ATTN_NORM);
 		return;
 	}
 
@@ -276,8 +274,10 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
+			//if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
+			//else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/slimbrn2.wav", 0.95, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "bloodrailz/player/inlava.wav", 0.95, ATTN_NORM);
 			return;
 		}
 	}
@@ -286,8 +286,10 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
+			//if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
+			//else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/slimbrn2.wav", 0.95, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "bloodrailz/player/inlava.wav", 0.95, ATTN_NORM);
 			return;
 		}
 	}
@@ -329,12 +331,14 @@ void() player_pain =
 {
 	if (self.weaponframe)	return;
 
-	//if (self.invisible_finished > time)	return;		// eyes don't have pain frames
 
 	if (self.weapon == IT_AXE || self.weapon == IT_HOOK)
 		player_axpain1 ();
 	else
 		player_pain1 ();
+		
+		
+	if(self.classname == "dummy" && self.flags & FL_ONGROUND) self.flags = self.flags - (self.flags & FL_ONGROUND);
 };
 
 void() player_diea1;

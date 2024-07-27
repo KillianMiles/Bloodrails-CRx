@@ -93,6 +93,13 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		
 	if (elohim_playmode & RACE_MODE && !(mapname !="tut1" || mapname !="tut2" || mapname !="tut3" || mapname !="tut4" || mapname !="tut5" || mapname !="tut6" || mapname !="tut7")) return;  //dont deal damage if in racing mode
 	
+	// HorrorScope deathmatch camera - store players last enemy entity
+	if (attacker.flags & FL_CLIENT)
+		if (targ.flags & FL_CLIENT)
+			if (damage < targ.health)
+				attacker.last_enemy = targ;
+	
+	
 	if (elohim_playmode & PROJECTILES && inflictor.classname == "missile")
 	{
 
@@ -352,6 +359,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		if (targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit
 		{
 			targ.armorvalue = targ.armorvalue - 100;
+			targ.health = targ.health - 25;
          
 			dir = targ.origin - attacker.origin;   //throw
 			dir = normalize(dir);
@@ -377,7 +385,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			}
 					
 					
-			if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && (attacker.rail_was_curved != 1 && damage != 1000)) ||  (attacker.super_damage_finished > time))    // FEBRUARY power rune doesnt ignore armor if curved shot
+			if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && (attacker.rail_was_curved != 1 && damage != 1000)) ||  (attacker.super_damage_finished > time) || targ.health <=0)    // FEBRUARY power rune doesnt ignore armor if curved shot
 			{
 				targ.health = -99;
 				Killed (targ, attacker, dmg_origin, 9000);           
@@ -402,6 +410,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			if (targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit
 			{
 				targ.armorvalue = targ.armorvalue - 100;
+				targ.health = targ.health - 25;
          
 				dir = targ.origin - attacker.origin;   //throw
 				dir = normalize(dir);
@@ -425,7 +434,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 					sound (targ, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
 				}
 					
-				if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG)  ||  (attacker.super_damage_finished > time)) && damage != 8994)
+				if (  ((attacker.player_flag & PF_ITEM_RUNE2_FLAG)  ||  (attacker.super_damage_finished > time)) && damage != 8994 || targ.health <=0)
 				{
 					targ.health = -99;
 					Killed (targ, attacker, dmg_origin, damage);           
@@ -440,9 +449,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	}
 	
 	
-	if (damage == 51 && targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit    //DEATH AURA ARMOR DAMAGE
+	if (damage == 51 && targ.armorvalue >= 100)      //    //DEATH AURA ARMOR DAMAGE
 	{
 			targ.armorvalue = targ.armorvalue - 100;
+			targ.health = targ.health - 25;
          
 			dir = targ.origin - attacker.origin;   //throw
 			dir = normalize(dir);
@@ -454,10 +464,17 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				attacker.velocity = attacker.velocity + dir*(-180);
 				//sprint(attacker, "ground throw");
 			}
-	 
+			
 			sound (targ, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit
 			stuffcmd(targ,"bf\n"); 
-			sound (attacker, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit )  
+			//sound (attacker, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit )  
+			
+			if(targ.health <=0)
+			{
+				targ.health = -99;
+				Killed (targ, attacker, dmg_origin, 51);           
+			}
+			
 			return;
 	}
 	
@@ -480,6 +497,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	if (damage == 485 && targ.armorvalue >= 100)      //every 100 units of armor deflect one (hitscan) rail hit    //PLASMA ARMOR DAMAGE    //NOVEM changed plasma from 85 to 485 damage
 	{
 			targ.armorvalue = targ.armorvalue - 100;
+			targ.health = targ.health - 25;
 			dir = targ.origin - attacker.origin;   //throw
 			dir = normalize(dir);
 			if ( !(targ.flags & FL_ONGROUND)) targ.velocity = targ.velocity + dir*400;  //throw
@@ -495,6 +513,13 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			sound (targ, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit
 			stuffcmd(targ,"bf\n"); 
 			sound (attacker, CHAN_AUTO, "bloodrailz/weapons/armorhit.wav", 1, ATTN_NORM);   //play sound when armored target is hit )  
+			
+			if(targ.health <=0)
+			{
+				targ.health = -99;
+				Killed (targ, attacker, dmg_origin, 485);           
+			}
+			
 			return;
 	}
 	

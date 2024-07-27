@@ -21,6 +21,7 @@ float PQC_MATCH_TIME = 5;
 float PQC_MATCH_RESET = 6;
 float PQC_PING_TIMES = 7;
 float MSG_MULTICAST = 4;
+float MULTICAST_ONE = 6;
 float MULTICAST_ONE_R = 7;
 void(vector where, float set) multicast = #82;
 

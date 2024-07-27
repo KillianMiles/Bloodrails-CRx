@@ -460,9 +460,12 @@ float () match_count_active_teams =
 //
 //  Gib all players and start the match.
 //
+
 void () match_begin =
 {
     local string temp;
+    
+    match_start_time = time;
 
     elohim_state = elohim_state | ELOHIM_MATCH_STARTED;
     utils_do_players(match_gib_player);

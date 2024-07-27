@@ -201,7 +201,7 @@ void () observer_fly_start =
 	self.waterlevel = 0;
     stuffcmd(self, "cl_nolerp 0\n");
     stuffcmd(self, "v_centerspeed 500\n");
-    sprint(self, "fly mode - help-fly for help\n");
+    sprint(self, "FreeCam spectator mode\n");
     self.alpha = 0.001;  //9-17-23  observer transparent
     
     if(!(self.style & ELOHIM_OBSERVER)) self.style = self.style | ELOHIM_OBSERVER;
@@ -1278,19 +1278,28 @@ void () observer_impulse =
 		observer_fly_start();
 	}
 	
-        else if (self.impulse == 100)
-        {	}
+
         else if (self.impulse == 143)
             observer_chase_start();
         else if (self.impulse == 148)
             observer_heads_up();
         else if (self.impulse == 149)
 	{ 
+			/*
 			if(!(self.oflags & OBSERVER_ACTIONCAM)) 
 			{
 				observer_clear_flags();
 				self.oflags = self.oflags | OBSERVER_ACTIONCAM;
+				HorrorScope (camera_deathmatch);	
 			}
+			else if(self.oflags & OBSERVER_ACTIONCAM) 
+			{
+				//observer_clear_flags();
+				self.oflags = self.oflags - OBSERVER_ACTIONCAM;	
+				Exit_HorrorScope();
+			}
+			*/
+			
 	}
         else if (self.impulse == 150)						
         	stuffcmd(self,"smooth\n"); 
@@ -1838,8 +1847,7 @@ void () observer_pre_think =
         {
             if (self.impulse == 100)    //NOVEM jump to impulse 5 (F1)
             {
-                if (public_join())
-                    return;
+                if (public_join()) return;
             }
             else if (self.impulse == 6)
 		{
@@ -1870,8 +1878,7 @@ void () observer_pre_think =
         {
             if (self.impulse == 100)
             {
-                if (public_join())
-                    return;
+                if (public_join()) return;
             }
             else if (self.impulse == 6)
 		{

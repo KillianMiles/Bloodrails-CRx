@@ -88,8 +88,8 @@ void() func_button =
 {
 	if (self.sounds == 0)
 	{
-		precache_sound ("buttons/airbut1.wav");
-		self.noise = "buttons/airbut1.wav";
+		precache_sound ("bloodrailz/buttons/airbut1.wav");
+		self.noise = "bloodrailz/buttons/airbut1.wav";
 	}
 	if (self.sounds == 1)
 	{

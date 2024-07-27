@@ -1057,7 +1057,29 @@ void() W_FireRailgun =
 				armored_ent = trace_ent;
 				rail_armor_hit = 1;
 				local vector railend = trace_endpos;	
+				
 			}
+			
+				
+		//HEADSHOT DETECTION
+		/*
+				local vector end_ent = normalize(trace_endpos - src) * vlen(trace_ent.origin - src);
+				local vector end_found = normalize(trace_ent.origin - src) * vlen(trace_ent.origin - src);
+				
+				if((end_ent_z > end_found_z+12 && end_ent_z < end_found_z+22 && trace_ent.frame == 0) || (end_ent_z > end_found_z+18 && trace_ent.frame == 0 && trace_ent.frame != 0))
+				{
+					
+					
+					end_ent_z   = 0; 
+					end_found_z = 0;
+					
+					
+					if(fabs(end_ent_x - end_found_x) < 8 && fabs(end_ent_y - end_found_y) < 8) ex_localsound(self, "bloodrailz/misc/headshot.wav");  // headshot announcement
+					
+				}
+				*/
+				///////////////////////////////////
+				
 			
 			local vector antilaged_trace_ent = trace_ent.origin;  //store antilagged position of target
 			adjusted_endpos = trace_endpos;
@@ -1634,7 +1656,13 @@ void() Rail_Charge_Logic=
 {
 	//RAIL TIMING LOGIC
 		if(elohim_playmode & ELOHIM_CLASSIC || self.ammo_slugs <= 0) return;
-		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL2)) return; //DECEM no sidewinder with Power
+		
+		
+		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL2)) 
+		{
+			//sprint(self,"railgun charge unavailable with POWER RUNE\n");
+			return; //DECEM no sidewinder with Power
+		}
 		
 		
 		
@@ -1672,6 +1700,7 @@ void() Rail_Charge_Logic=
 			
 			if(time - self.mag_recharge_time > RECHARGE || self.mag_recharge_time == 0)
 			{
+				
 				self.rail_powered = 1;
 				self.rail_power_time = time;
 				

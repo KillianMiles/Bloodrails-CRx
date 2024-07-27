@@ -20,7 +20,6 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 	
 	
 	
-	
 	if((elohim_playmode & ELOHIM_WRAITH) && self.wraith == 0 && total_players_global >= 4)
 	{
 		if(self.height == elohim_team1 && ghost_red == 0)
@@ -76,13 +75,15 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 	oself = self;
 	self = attacker;
 	
+	if(attacker == world) self = targ;
+	
 	//bprint(ftos(damage));
 	
-	if ((attacker.last_fragged_carrier + 1) > time && targ.frags == top_score_global) make_icon(self,4, damage);  //Flag carrier king
-	else if (attacker == targ) make_icon(self,7, damage);  //TK's
-	else if(targ.frags == top_score_global) 			make_icon(self,2, damage);   //King
-	else if((attacker.last_fragged_carrier + 1) > time)	 make_icon(self,3, damage);   //Flag carrier
-	else make_icon(self,1, damage); 
+	if ((attacker.last_fragged_carrier + 1) > time && targ.frags == top_score_global) 	make_icon(self,4, damage);  //Flag carrier king
+	else if (attacker == targ || attacker == world) 					make_icon(self,7, damage);  //TK's
+	else if(targ.frags == top_score_global) 						make_icon(self,2, damage);   //King
+	else if((attacker.last_fragged_carrier + 1) > time)					make_icon(self,3, damage);   //Flag carrier
+	else 											make_icon(self,1, damage); 
 
 	
 	
@@ -141,6 +142,13 @@ void(string gibname, float dm, float inair) ThrowGib =
 	
 	new = spawn();
 	
+	/*
+	local vector unit = normalize(self.origin - self.dmg_origin);
+	unit_x = unit_x + random()*0.5;
+	unit_y = unit_y + random()*0.5;
+	unit = normalize(unit);
+	*/
+	
 	//new.origin = self.origin + '0 0 18';
 	local float rand = random();
 	if (rand< 0.25) new.origin = self.origin + '0 0 8';
@@ -170,7 +178,262 @@ void(string gibname, float dm, float inair) ThrowGib =
 	new.flags = 0;
 };
 
+void() update_splat=
+{
+	self.frame +=1;
+	if(self.frame==4) Splat2();
+	if(self.frame==13) self.think = SUB_Remove;
+	self.nextthink = time + 0.06;
+}
 
+
+void()Splat =
+{
+	local	entity new;
+	
+	new = spawn();
+	
+	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	setsize (new, '0 0 0', '0 0 0');
+	new.scale = 0.25;
+	
+	local vector unit = normalize(self.origin - self.dmg_origin);
+	new.origin = self.origin + '0 0 24' + unit*21;
+	
+
+	
+	
+	new.classname = "splat";
+	new.movetype = MOVETYPE_NONE;
+	new.solid = SOLID_NOT;
+
+
+	new.alpha =0.9;
+	new.owner = self;
+	new.think = update_splat;
+	new.ltime = time;
+        new.nextthink = time + 0.06;
+
+	new.frame = 0;
+	new.flags = 0;
+};
+
+
+void() update_splat2=
+{
+	self.frame +=1;
+	if(self.frame==13) self.think = SUB_Remove;
+	self.nextthink = time + 0.06;
+}
+
+
+void()Splat2 =
+{
+	local	entity new;
+	new = spawn();
+	
+	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	setsize (new, '0 0 0', '0 0 0');
+	new.scale = 0.25;
+	
+	local vector unit = '0 0 0';
+	
+	local float rand = random()-0.5;
+	if (rand<0.3 && rand >0) rand = 0.3;
+	else if (rand>-0.3 && rand <0) rand = -0.3;
+	
+	local float randy = random()-0.5;
+	if (randy<0.25 && randy >0) randy = 0.25;
+	else if (randy>-0.25 && randy <0) randy = -0.25;
+	
+	unit_x = rand;
+	unit_y = randy;
+	
+	local vector vertical = '0 0 0';
+	vertical_z = 25*rand;
+
+	new.origin = self.origin + unit*(45);
+	new.origin = new.origin + vertical;
+
+	
+	new.classname = "splat";
+	new.movetype = MOVETYPE_NONE;
+	new.solid = SOLID_NOT;
+	new.alpha =0.9;
+	new.owner = self;
+	
+	new.think = update_splat2;
+	new.ltime = time;
+        new.nextthink = time + 0.06;
+
+	new.frame = 0;
+	new.flags = 0;
+};
+
+void() update_splat3=
+{
+	self.frame +=1;
+	if(self.frame==4) Splat4();
+	if(self.frame==3) Splat5();
+	if(self.frame==13) self.think = SUB_Remove;
+	self.nextthink = time + 0.05;
+}
+
+
+void()Splat3 =
+{
+	local	entity new;
+	new = spawn();
+	
+	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
+	new.scale = 0.5;
+	setsize (new, '0 0 0', '0 0 0');
+	
+	local vector unit = '0 0 0';
+	
+	local float rand = random()-0.5;
+	if (rand<0.3 && rand >0) rand = 0.3;
+	else if (rand>-0.3 && rand <0) rand = -0.3;
+	
+	local float randy = random()-0.5;
+	if (randy<0.25 && randy >0) randy = 0.25;
+	else if (randy>-0.25 && randy <0) randy = -0.25;
+	
+	unit_x = rand;
+	unit_y = randy;
+	
+	//local vector vertical = '0 0 0';
+	//vertical_z = 25*rand;
+
+	new.origin = self.origin + unit*(55);
+	new.origin = new.origin + '0 0 15';
+
+
+	
+	
+	new.classname = "splat";
+	new.movetype = MOVETYPE_NONE;
+	new.solid = SOLID_NOT;
+	
+	new.alpha = 0.9;
+	
+	new.owner = self;
+	
+	new.think = update_splat3;
+	new.ltime = time;
+        new.nextthink = time + 0.05;
+
+	new.frame = 0;
+	new.flags = 0;
+};
+
+void() update_splat4=
+{
+	self.frame +=1;
+	if(self.frame==13) self.think = SUB_Remove;
+	self.nextthink = time + 0.05;
+}
+
+
+void()Splat4 =
+{
+	local	entity new;
+	new = spawn();
+	
+	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	setsize (new, '0 0 0', '0 0 0');
+	new.scale = 0.25;
+	
+	local vector unit = '0 0 0';
+	
+	local float rand = random()-0.5;
+	if (rand<0.25 && rand >0) rand = 0.25;
+	else if (rand>-0.25 && rand <0) rand = -0.25;
+	
+	local float randy = random()-0.5;
+	if (randy<0.25 && randy >0) randy = 0.25;
+	else if (randy>-0.25 && randy <0) randy = -0.25;
+	
+	unit_x = rand;
+	unit_y = randy;
+	//unit = normalize(unit);
+	
+	local vector vertical = '0 0 0';
+	vertical_z = 25*rand;
+
+	new.origin = self.origin + unit*(rand*70);
+	new.origin = new.origin +vertical;
+	
+
+	
+	
+	
+	new.classname = "splat";
+	new.movetype = MOVETYPE_NONE;
+	new.solid = SOLID_NOT;
+	new.alpha =0.9;
+	
+	new.owner = self;
+	new.think = update_splat4;
+	new.ltime = time;
+        new.nextthink = time + 0.05;
+
+	new.frame = 0;
+	new.flags = 0;
+};
+
+void() update_splat5=
+{
+	self.frame +=1;
+	if(self.frame==13) self.think = SUB_Remove;
+	self.nextthink = time + 0.05;
+}
+
+
+void()Splat5 =
+{
+	local	entity new;
+	new = spawn();
+	
+	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
+	setsize (new, '0 0 0', '0 0 0');
+	new.scale = 0.5;
+	
+	local vector unit = '0 0 0';
+	
+	local float rand = random()-0.5;
+	if (rand<0.3 && rand >0) rand = 0.3;
+	else if (rand>-0.3 && rand <0) rand = -0.3;
+	
+	local float randy = random()-0.5;
+	if (randy<0.25 && randy >0) randy = 0.25;
+	else if (randy>-0.25 && randy <0) randy = -0.25;
+	
+	unit_x = rand;
+	unit_y = randy;
+	
+	local vector vertical = '0 0 0';
+	vertical_z = 25*rand;
+
+	new.origin = self.origin + unit*(70);
+	new.origin = new.origin +vertical;
+
+	
+	new.classname = "splat";
+	new.movetype = MOVETYPE_NONE;
+	new.solid = SOLID_NOT;
+	//new.alpha =0.9;
+	new.alpha = 0.40 + random();
+	if(new.alpha > 1) new.alpha = 0.9;
+	
+	new.owner = self;
+	new.think = update_splat5;
+	new.ltime = time;
+        new.nextthink = time + 0.05;
+
+	new.frame = 0;
+	new.flags = 0;
+};
 
 void() vial_touch =
 {
@@ -396,6 +659,11 @@ void() GibPlayer =
 {
    	local float inair;
    	if(self.airborn_pos > 55) inair = 1; //FEBRUARY
+   	
+   	
+   	Splat();
+   	Splat3();
+   	Splat5();
    	
    	ThrowGib ("progs/bloodrailz/h_player.mdl", self.health, inair);
         ThrowGib ("progs/gib1.mdl", self.health, inair);

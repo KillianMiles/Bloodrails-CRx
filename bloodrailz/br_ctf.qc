@@ -27,8 +27,8 @@ const string SOUND_HOOK_ATTACK = 	"bloodrailz/legacy/hknight_hit.wav";
 
 const string MODEL_HOOK_HEAD = 		"progs/bloodrailz/star_color.mdl";
 const string MODEL_WEAPON_HOOK = 	"progs/bloodrailz/v_axe_null.mdl";
-const string MODEL_FLAG_BLUE = 		"progs/bloodrailz/flag_blu.mdl";
-const string MODEL_FLAG_RED = 		"progs/bloodrailz/flag_red.mdl";
+const string MODEL_FLAG_BLUE = 		"progs/bloodrailz/flag_blu_notrail.mdl";
+const string MODEL_FLAG_RED = 		"progs/bloodrailz/flag_red_notrail.mdl";
 
 
 
@@ -524,10 +524,14 @@ void() ctf_flag_capture =
 		bprint(" \b[WITNESS ME!]\b ");
 		other.tier1 +=1;
 	}
-	else if(timelimit - time < 1.5) 
+	//else if(timelimit - time < 1.5) 
+	//{
+	//	bprint(" \b[MIC DROP]\b ");
+	//	other.tier2 +=1;
+	//}
+	else if((!(elohim_playmode & ELOHIM_MATCH_MODE) && timelimit - time < 1.5 && timelimit - time >= 0) || (elohim_playmode & ELOHIM_MATCH_MODE && timelimit - (time - match_start_time) < 1.5))
 	{
 		bprint(" \b[MIC DROP]\b ");
-		other.tier2 +=1;
 	}
 	bprint("\n");
 
@@ -704,6 +708,12 @@ void() ctf_flag_set =
 {
 	if (self == world || self.classname == "player")	return;
 
+	if(self.team == 5) setmodel (self, MODEL_FLAG_RED); 
+	else setmodel (self, MODEL_FLAG_BLUE); 
+	
+	self.maxs = '16 16 85';
+	setsize (self, VEC_HULL_MIN, self.maxs);
+	
 	setorigin(self,self.origin);
 
 	self.flags = FL_ITEM;		
@@ -903,7 +913,20 @@ void() flag_carry =
 	temp_flag.origin = self.origin + '0 0 -16' - f*v + v_right * 22;
     
     
-    
-	if(self.team == TEAM_BLUE) 		setorigin(red_flag_ent, temp_flag.origin);
-	else if(self.team == TEAM_RED) 		setorigin(blue_flag_ent, temp_flag.origin);
+	if(self.teleport_time > time + 0.64) 
+	{
+		//bprint("flagg ");
+		return;
+	}
+	
+	if(self.team == TEAM_BLUE) 		
+	{
+		setorigin(red_flag_ent, temp_flag.origin);
+		setmodel (red_flag_ent, "progs/bloodrailz/flag_red.mdl"); 
+	}
+	else if(self.team == TEAM_RED) 		
+	{
+		setorigin(blue_flag_ent, temp_flag.origin);
+		setmodel (blue_flag_ent, "progs/bloodrailz/flag_blu.mdl"); 
+	}
 }

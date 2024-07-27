@@ -86,7 +86,11 @@ void() Axe_Charge_Logic=
 {
 	//SHIELD TIMING LOGIC
 		if (elohim_playmode & ELOHIM_NO_SHIELD) return;
-		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL3)) return; //DECEM no shield with haste
+		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL3))
+		{
+			//sprint(self,"shield is unavailable with HASTE RUNE\n");
+			return; //DECEM no shield with haste
+		}
 		
 		local float RECHARGE = 18;
 		if(mapname == "tut1") RECHARGE = 2;
@@ -182,19 +186,30 @@ antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
 	}
    
    
-	traceline (source, source + v_forward*64, FALSE, self);
+	//traceline (source, source + v_forward*64, FALSE, self);
+	traceline (source, source + v_forward*99, FALSE, self);
 	if (trace_fraction == 1.0) return;
 
 	org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage)
 	{
-		trace_ent.axhitme = 1; //no spawnblood, no traceline axe damage because that deals double damage against armor   5/23/22
+		//trace_ent.axhitme = 1; //no spawnblood, no traceline axe damage because that deals double damage against armor   5/23/22
 	}
 	else
 	{    // hit wall
 		if(time - self.axe_time < 0.42) return;    //make sure, the axe clinks only once per hit
 		sound (self, CHAN_AUTO, "bloodrailz/weapons/br_clink.wav",1,ATTN_NORM);
+		
+	//ADD VERTICAL BUMP IF AXING GROUND WHILE SKIING, RESET SOUND COUNTER
+		if(self.skiing_on ==1 && v_forward_z < -0.77) 
+		{
+			if(self.movement_x == 400) self.velocity = self.velocity + '0 0 740';
+			else if(self.movement_x == -400) self.velocity = self.velocity + '0 0 700';
+			self.ski_sound_counter =21;
+		}
+		//////////////////
+		
 		
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
@@ -413,48 +428,51 @@ void() make_speedlines =
 	local vector v_ang;
 	 v_ang = vectoangles (v_forward*(-1));   
 	
-	if(self.speedlines_are_on == 0 && self.speedlines_are_visible == 0 && rand < 0.8 && self.axe_button_released == 1 && (time - self.speedlines_time > 0.4) && (vlen(self.velocity) > 1075 || (self.jump_flag < -600 && self.jump_flag > -750 && v_ang_x > 40 && v_ang_x < 120)))
+	if(self.speedlines_are_on == 0 && self.speedlines_are_visible == 0 && (time - self.speedlines_time > 0.4) )
 	{
+		if((rand < 0.8 && self.axe_button_released == 1  && (vlen(self.velocity) > 1075 || (self.jump_flag < -600 && self.jump_flag > -750 && v_ang_x > 40 && v_ang_x < 120))) || (self.swoop_yes ==1 && time - self.swoop_time > 0.3 && time - self.swoop_time < 3.018))
+		{
 		
-		local entity speedlines;
+			local entity speedlines;
 		
 		
-		local float y = random();
-		local float z = random();
+			local float y = random();
+			local float z = random();
 		
-		makevectors(self.v_angle);
+			makevectors(self.v_angle);
 		
-		if(normalize(self.velocity) * v_forward<0.25) return;
+			if(normalize(self.velocity) * v_forward<0.25) return;
 		
-		self.speedlines_time = time;   
-		self.speedlines_are_on = 1;
-		self.speedlines_are_visible =1;
+			self.speedlines_time = time;   
+			self.speedlines_are_on = 1;
+			self.speedlines_are_visible =1;
 		
-		speedlines = spawn();
-		
-
-		
-		setmodel (speedlines, "progs/bloodrailz/ef_speed.mdl");
-		
-		setorigin(speedlines, '0 y z');
-		speedlines.movetype = MOVETYPE_NOCLIP;
-		speedlines.solid = SOLID_NOT;
-		speedlines.classname = "crown";
-		speedlines.weapon = 0;
-		setsize (speedlines, 0,0);
-		speedlines.alpha = 0.07;
-		
-		if(random() < 0.25) speedlines.frame = 4;
-		else if(random() < 0.5) speedlines.frame = 3;
-		else if(random() < 0.75) speedlines.frame = 2;
-		else if(random() <= 1) speedlines.frame = 1;
+			speedlines = spawn();
 		
 
-		speedlines.skin = 1;
 		
-		speedlines.owner = self;
-		speedlines.nextthink = time + 0.01;
-		speedlines.think = update_speedlines;
+			setmodel (speedlines, "progs/bloodrailz/ef_speed.mdl");
+		
+			setorigin(speedlines, '0 y z');
+			speedlines.movetype = MOVETYPE_NOCLIP;
+			speedlines.solid = SOLID_NOT;
+			speedlines.classname = "crown";
+			speedlines.weapon = 0;
+			setsize (speedlines, 0,0);
+			speedlines.alpha = 0.07;
+		
+			if(random() < 0.25) speedlines.frame = 4;
+			else if(random() < 0.5) speedlines.frame = 3;
+			else if(random() < 0.75) speedlines.frame = 2;
+			else if(random() <= 1) speedlines.frame = 1;
+		
+
+			speedlines.skin = 1;
+		
+			speedlines.owner = self;
+			speedlines.nextthink = time + 0.01;
+			speedlines.think = update_speedlines;
+		}
 	}
 }
 

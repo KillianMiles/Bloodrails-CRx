@@ -345,8 +345,8 @@ void(float episode) admin_show_maps =
         sprint(self, "2: CTF_Dissocia\n");
         sprint(self, "3: CTF_Bridge\n");
         sprint(self, "4: CTF_Hanghigh\n");
-        sprint(self, "5: CTF_Longest1\n");
-        sprint(self, "6: CTF_Longest2\n");
+        sprint(self, "5: CTF_Swingest\n");
+        sprint(self, "6: CTF_Longest\n");
         sprint(self, "7: CTF_Teardown\n");
         sprint(self, "8: CTF_Eyesout\n");
         sprint(self, "9: CTF_Relic2\n");
@@ -354,12 +354,12 @@ void(float episode) admin_show_maps =
         sprint(self, "11: CTF_Edge3\n");
         sprint(self, "12: CTF_Facing\n");
         sprint(self, "13: CTF_Sandstorm\n");
-        sprint(self, "14: CTF_Lasertag1\n");
-        sprint(self, "15: CTF_Lasertag2\n");
+        sprint(self, "14: CTF_Lasertag\n");
+        sprint(self, "15: CTF_Dreamland\n");
     }
     else if (episode == 2)
     {
-        sprint(self, "1: CTF_Spongebob\n");
+        sprint(self, "1: CTF_Bikini\n");
         sprint(self, "2: CTF_Doglyfe\n");
         sprint(self, "3: CTF_Dogrun\n");
         sprint(self, "4: CTF_Daywalker\n");
@@ -377,7 +377,7 @@ void(float episode) admin_show_maps =
     }
     else if (episode == 3)
     {
-        sprint(self, "1: Storm\n");
+        sprint(self, "1: Bamboo\n");
 	sprint(self, "2: Relic\n");
         sprint(self, "3: Slug\n");
         sprint(self, "4: Widowmakr\n");
@@ -795,8 +795,8 @@ void () admin_phatten_player =
 {
     self.items = IT_AXE | IT_HOOK | IT_RAILGUN | IT_ARMOR3;
     
-    self.health = 100;
-    self.armorvalue = 200;
+    self.health = 75;
+    self.armorvalue = 75;
     self.ammo_slugs = 999;
 };
 

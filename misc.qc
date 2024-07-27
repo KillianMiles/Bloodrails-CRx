@@ -3,7 +3,14 @@ void () event_lightning =
 {
     remove(self);
 };
-// END_MOD
+
+
+enumflags {
+	FUNC_ROTATE_X_AXIS,
+	FUNC_ROTATE_Y_AXIS,
+	FUNC_ROTATE_Z_AXIS
+};
+
 
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for spotlights, etc.
@@ -57,6 +64,36 @@ void() info_null =
     // END_MOD
         remove(self);
 };
+
+
+
+void func_rotate_think()
+{
+	// do rotations
+	if (self.spawnflags & FUNC_ROTATE_X_AXIS)
+		self.avelocity.x = self.speed;
+	if (self.spawnflags & FUNC_ROTATE_Y_AXIS)
+		self.avelocity.y = self.speed;
+	if (self.spawnflags & FUNC_ROTATE_Z_AXIS)
+		self.avelocity.z = self.speed;
+
+	self.nextthink = self.ltime + 0.1;
+}
+
+void func_rotate()
+{
+	// setup brush model
+	setorigin(self, self.origin);
+	setmodel(self, self.model);
+	self.movetype = MOVETYPE_PUSH;
+	self.solid = SOLID_BSP;
+
+	// start thinking
+	self.think = func_rotate_think;
+	self.nextthink = self.ltime + 0.1;
+}
+
+
 
 /*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for lightning.
@@ -125,8 +162,8 @@ void() light_fluoro =
 			lightstyle(self.style, "m");
 	}
 	
-	precache_sound ("ambience/fl_hum1.wav");
-	ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
+	//precache_sound ("ambience/fl_hum1.wav");
+	//ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
 };
 
 /*QUAKED light_fluorospark (0 1 0) (-8 -8 -8) (8 8 8)
@@ -140,8 +177,8 @@ void() light_fluorospark =
 	if (!self.style)
 		self.style = 10;
 
-	precache_sound ("ambience/buzz1.wav");
-	ambientsound (self.origin, "ambience/buzz1.wav", 0.5, ATTN_STATIC);
+	//precache_sound ("ambience/buzz1.wav");
+	//ambientsound (self.origin, "ambience/buzz1.wav", 0.5, ATTN_STATIC);
 };
 
 /*QUAKED light_globe (0 1 0) (-8 -8 -8) (8 8 8)
@@ -158,9 +195,9 @@ void() light_globe =
 
 void() FireAmbient =
 {
-	precache_sound ("ambience/fire1.wav");
+	//precache_sound ("ambience/fire1.wav");
 // attenuate fast
-	ambientsound (self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
+	//ambientsound (self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
 };
 
 /*QUAKED light_torch_small_walltorch (0 .5 0) (-10 -10 -20) (10 10 20)
@@ -627,8 +664,8 @@ void() ambient_drip =
 */
 void() ambient_comp_hum =
 {
-	precache_sound ("ambience/comp1.wav");
-	ambientsound (self.origin, "ambience/comp1.wav", 1, ATTN_STATIC);
+	//precache_sound ("ambience/comp1.wav");
+	//ambientsound (self.origin, "ambience/comp1.wav", 1, ATTN_STATIC);
 };
 /*QUAKED ambient_thunder (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 */
@@ -640,8 +677,8 @@ void() ambient_thunder =
 */
 void() ambient_light_buzz =
 {
-	precache_sound ("ambience/fl_hum1.wav");
-	ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
+	//precache_sound ("ambience/fl_hum1.wav");
+	//ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
 };
 /*QUAKED ambient_swamp1 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 */

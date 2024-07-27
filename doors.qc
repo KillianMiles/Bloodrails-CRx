@@ -428,32 +428,7 @@ Key doors are allways wait -1.
 void() func_door =
 
 {
-
-	if (world.worldtype == 0)
-	{
-		precache_sound ("doors/medtry.wav");
-		precache_sound ("doors/meduse.wav");
-		self.noise3 = "doors/medtry.wav";
-		self.noise4 = "doors/meduse.wav";
-	}
-	else if (world.worldtype == 1)
-	{
-		precache_sound ("doors/runetry.wav");
-		precache_sound ("doors/runeuse.wav");
-		self.noise3 = "doors/runetry.wav";
-		self.noise4 = "doors/runeuse.wav";
-	}
-	else if (world.worldtype == 2)
-	{
-		precache_sound ("doors/basetry.wav");
-		precache_sound ("doors/baseuse.wav");
-		self.noise3 = "doors/basetry.wav";
-		self.noise4 = "doors/baseuse.wav";
-	}
-	else
-	{
-		dprint ("no worldtype set!\n");
-	}
+	
 	if (self.sounds == 0)
 	{
 		precache_sound ("bloodrailz/misc/null.wav");
@@ -463,31 +438,31 @@ void() func_door =
 	}
 	if (self.sounds == 1)
 	{
-		precache_sound ("doors/drclos4.wav");
-		precache_sound ("doors/doormv1.wav");
-		self.noise1 = "doors/drclos4.wav";
-		self.noise2 = "doors/doormv1.wav";
+		precache_sound ("bloodrailz/doors/drclos4.wav");
+		precache_sound ("bloodrailz/doors/doormv1.wav");
+		self.noise1 = "bloodrailz/doors/drclos4.wav";
+		self.noise2 = "bloodrailz/doors/doormv1.wav";
 	}
 	if (self.sounds == 2)
 	{
-		precache_sound ("doors/hydro1.wav");
-		precache_sound ("doors/hydro2.wav");
-		self.noise2 = "doors/hydro1.wav";
-		self.noise1 = "doors/hydro2.wav";
+		precache_sound ("bloodrailz/doors/hydro1.wav");
+		precache_sound ("bloodrailz/doors/hydro2.wav");
+		self.noise2 = "bloodrailz/doors/hydro1.wav";
+		self.noise1 = "bloodrailz/doors/hydro2.wav";
 	}
 	if (self.sounds == 3)
 	{
-		precache_sound ("doors/stndr1.wav");
-		precache_sound ("doors/stndr2.wav");
-		self.noise2 = "doors/stndr1.wav";
-		self.noise1 = "doors/stndr2.wav";
+		precache_sound ("bloodrailz/doors/stndr1.wav");
+		precache_sound ("bloodrailz/doors/stndr2.wav");
+		self.noise2 = "bloodrailz/doors/stndr1.wav";
+		self.noise1 = "bloodrailz/doors/stndr2.wav";
 	}
 	if (self.sounds == 4)
 	{
-		precache_sound ("doors/ddoor1.wav");
-		precache_sound ("doors/ddoor2.wav");
-		self.noise1 = "doors/ddoor2.wav";
-		self.noise2 = "doors/ddoor1.wav";
+		precache_sound ("bloodrailz/doors/ddoor1.wav");
+		precache_sound ("bloodrailz/doors/ddoor2.wav");
+		self.noise1 = "bloodrailz/doors/ddoor2.wav";
+		self.noise2 = "bloodrailz/doors/ddoor1.wav";
 	}
 
 
@@ -744,27 +719,21 @@ void () func_door_secret =
 	if (self.sounds == 1)
 	{
 		precache_sound ("doors/latch2.wav");
-		precache_sound ("doors/winch2.wav");
 		precache_sound ("doors/drclos4.wav");
 		self.noise1 = "doors/latch2.wav";
-		self.noise2 = "doors/winch2.wav";
 		self.noise3 = "doors/drclos4.wav";
 	}
 	if (self.sounds == 2)
 	{
-		precache_sound ("doors/airdoor1.wav");
 		precache_sound ("doors/airdoor2.wav");
-		self.noise2 = "doors/airdoor1.wav";
 		self.noise1 = "doors/airdoor2.wav";
 		self.noise3 = "doors/airdoor2.wav";
 	}
 	if (self.sounds == 3)
 	{
-		precache_sound ("doors/basesec1.wav");
-		precache_sound ("doors/basesec2.wav");
-		self.noise2 = "doors/basesec1.wav";
-		self.noise1 = "doors/basesec2.wav";
-		self.noise3 = "doors/basesec2.wav";
+		precache_sound ("doors/airdoor2.wav");
+		self.noise1 = "doors/airdoor2.wav";
+		self.noise3 = "doors/airdoor2.wav";
 	}
 
 	if (!self.dmg)
