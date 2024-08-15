@@ -1050,7 +1050,6 @@ void() make_flick_marker =
 
 void() update_rail_ammo =
 {
-	
 	if (elohim_playmode & ELOHIM_NOAMMO)
 	{
 		self.think = SUB_Remove;
@@ -1097,6 +1096,13 @@ void() update_rail_ammo =
 		{
 			self.skin = 11;
 		}
+		
+		if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;   
+	
+		if(self.owner.height == 4 || self.owner.height == 13) 
+		{
+			if(self.weapon ==2) self.alpha =0.59;  
+		}
 
 	}
 	else if (self.weapon ==9)
@@ -1106,8 +1112,15 @@ void() update_rail_ammo =
 		self.viewmodelforclient = self.owner;
 		
 		self.skin =12;
-		if(self.owner.ammo_slugs >0) self.alpha =0.0001;
-		else self.alpha = 0.59;
+		
+		
+		if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;  
+		
+		if(self.owner.height == 4 || self.owner.height == 13) 
+		{
+			if(self.owner.ammo_slugs >0) self.alpha =0.0001;
+			else self.alpha = 0.59;
+		}
 		
 		if(time - self.owner.shot_time < 0.25 && self.owner.ammo_slugs <= 0) 
 		{
@@ -1116,7 +1129,8 @@ void() update_rail_ammo =
 	}
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
-	if(self.owner.oflags & OBSERVER_FLY) self.alpha =0.001;   
+	
+	
 
 	//self.nextthink = time + 0.07;
 	self.nextthink = time + my_ticrate*21;  //DECEM
@@ -1484,15 +1498,15 @@ void(entity scorer, float msg, float dmg) make_icon =
 			icon.icon_display = scorer.icon_display;
 			icon.icon_num = scorer.icon_num;
 			
-				local vector a = '0 -148.5 110';
+				local vector a = '0 -138.5 108';
 				a_z = scorer.icon_height - 5;
 				
-				if(a_z < 110 && time - scorer.icon_time >2) a_z = 110;
+				if(a_z < 108 && time - scorer.icon_time >2) a_z = 108;
 			
-				if(scorer.icon_height >=116 || scorer.icon_height < 20)	
+				if(scorer.icon_height >=114 || scorer.icon_height < 20)	
 				{
-					setorigin(icon, '0 -148.5 110');
-					scorer.icon_height = 110;
+					setorigin(icon, '0 -138.5 108');
+					scorer.icon_height = 108;
 				}
 				else	
 				{
@@ -1537,7 +1551,7 @@ void(entity scorer, float msg, float dmg) make_icon =
 				icon2.icon_num = scorer.icon_num;
 				
 				a_z = scorer.icon_height;
-				if(a_z < 110 && time - scorer.icon_time >2) a_z = 110;
+				if(a_z < 108 && time - scorer.icon_time >2) a_z = 108;
 				
 				
 				setorigin(icon2, a);

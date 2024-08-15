@@ -593,7 +593,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint(" \b[PORKCHOP EXPRESS]\b");
 						attacker.tier1 +=1;
 				}
-				else if (vlen(horiz_vel) > 990) 
+				else if (vlen(horiz_vel) > 1000) 
 				{
 					bprint(" \b[HI-SPEED DECAP]\b");
 						attacker.tier1 +=1;
@@ -658,9 +658,17 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				makevectors(attacker.v_angle);
 				if(v_forward_z >0.9 && targ.jump_flag < -300 && attacker.flags & FL_ONGROUND) 
 				{
-					bprint(" \b[THE ASSWARD SWORD\b");
+					bprint(" \b[THE ASSWARD SWORD]\b");
 						attacker.tier2 +=1;
 				}
+				
+				
+				if(damage == 403.1)
+				{
+					bprint(" \b[IRON LOTUS]\b");
+						attacker.tier3 +=1;
+				}
+				
 					
 				bprint("\n");			
 			}
@@ -677,9 +685,9 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				{
 					client_frag(attacker, 1);
 							
-					bprint ("the king hangs on ");
-					bprint (attacker.netname);
-					bprint ("'s chain\n");	
+					//bprint ("the king hangs on ");
+					//bprint (attacker.netname);
+					//bprint ("'s chain\n");	
 				}
 					
 				bprint (targ.netname);
@@ -692,12 +700,12 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint(" \b[KUNG FU FUCKERY]\b");
 						attacker.tier3 +=1;
 				}
-				else if (attacker.airborn_pos > 100) 
+				else if (attacker.airborn_pos > 100  && targ.waterlevel >=1) 
 				{
 					bprint(" \b[FLYING HARPOON]\b");
 						attacker.tier2 +=1;
 				}
-				else if (targ.airborn_pos > 100 && targ.waterlevel <=1) 
+				else if (targ.airborn_pos > 100) 
 				{
 					bprint(" \b[CHAIN WHIP]\b");	//10/8/23
 						attacker.tier1 +=1;
@@ -806,7 +814,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				//bprint(ftos(attacker.rails_in_a_row));
 				if(attacker.rail_shots > 20 && attacker.rail_shots < 100)
 				{
-					if(attacker.rail_frags/attacker.rail_shots >= 0.75) 
+					if(attacker.rail_frags/attacker.rail_shots >= 0.65) 
 					{
 						bprint(" \b[AIMBOT PERMABAN!]\b");
 						attacker.rail_shots +=100;
@@ -836,17 +844,26 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint(" \b[SIDEWINDER]\b");
 					attacker.tier1 +=1;
 				}
+				
+				if (attacker.tarzan_time == 1) 
+				{
+					bprint(" \b[TARZAN]\b");
+					attacker.tier2 +=1;
+				}
+				
+				else if (attacker.tarzan_time == 1 && targ.flag_carrier) 
+				{
+					bprint(" \b[ALMOST MADE IT!]\b");
+					attacker.tier2 +=1;
+				}
+				
 				if(targ.KDR > 2.1 && targ.frags == top_score_global && attacker.rail_was_curved == 1) 
 				{
 					bprint(" \b[BLUE SHELL]\b");
 					attacker.tier2 +=1;
 				}
 					
-				if (attacker.tarzan_time == 1) 
-				{
-					bprint(" \b[TARZAN]\b");
-					attacker.tier2 +=1;
-				}
+				
 				if (attacker.airborn_pos > 100 && targ.airborn_pos > 100 && (attacker.airborn_pos - targ.airborn_pos > 500 || targ.airborn_pos - attacker.airborn_pos > 500)) 
 				{
 					bprint(" \b[HIGH AS FUCK]\b");
@@ -871,7 +888,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				//if((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && targ.armorvalue >= 100 && attacker.airborn_pos > ) bprint(" \b[ANTI-ARMOR ROUND]\b");
 				//else if((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && targ.armorvalue >= 100 && attacker.rail_was_curved == 0) bprint(" \b[ANTI-ARMOR ROUND]\b");
 					
-				if(attacker.rails_in_a_row >= 2.98 && time - attacker.rail_record_timer < 2.1) 
+				if(attacker.rails_in_a_row >= 2.98 && time - attacker.rail_record_timer < 2.3) 
 				{
 					bprint(" \b[THE WACO KID]\b");
 					attacker.tier3 +=1;

@@ -148,19 +148,7 @@ __wrap void() NextLevel =
         
         local string newmapname = strings_get_mapname(a);
         
-        /*
-        r = random();
-		if (r < 0.2)
-			o.map = "ctf_dissocia_c2";
-		else if (r<0.4)
-			o.map = "ctf_edge3_c2";
-		else if (r<0.6)
-			o.map = "ctf_relic2_b2";
-		else if (r<0.8)
-			o.map = "ctf_teardown_b2";
-		else
-			o.map = "ctf_bridge_b1";
-			*/
+
 	o.map =newmapname;
    
   

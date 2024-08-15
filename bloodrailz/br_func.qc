@@ -24,6 +24,10 @@ void (entity ent, float flag, float onoff) do_brflag =
 
 void() Called_in_PreThink =
 {
+	
+	
+	
+		
 		//makevectors(self.v_angle);
 		
 		if (self.classname == "player" && self.frags == top_score_global && self.hascrown == 0 && self.frags > 0 && crown_out == 0)   //CROWN
@@ -383,6 +387,13 @@ void() turn_indicator =
 
 void() Called_in_PostThink =
 {
+	
+	//local string chat = infokey(self, "chat");
+	//if(chat != "") bprint("chatting");
+	//local string blah = infokey(self,"chat");
+	//if (blah == "1") bprint("chatting");
+	
+	
 	FlickCurves();
 	check_jump (); //checks for long presses for wallrun and also for faster rail reload time when looking down
 	
@@ -694,7 +705,7 @@ void() spawn_protection =                  // spawn protection
 void(entity inflictor, vector org, entity attacker, float radius, float damage, entity ignore) areaDMG =                //area damage function for axe splash damage
     {
     
-    
+	local float extra_thors =0;
 	local	entity	head = findradius(org, radius);
 	attacker.thor_frag_count = 0;
 	
@@ -732,8 +743,8 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
 					}
 					else if(damage == 35) //MARCH
 					{
-						attacker.thor_frag_count = attacker.thor_frag_count + 1; //thor frags
-						attacker.thor_slam = 1;   //misidentified thor //comet
+						//attacker.thor_frag_count = attacker.thor_frag_count + 1; //thor frags //QCON quakecon
+						//attacker.thor_slam = 1;   //misidentified thor //comet
 						
 						dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 						dir5 = normalize(dir5);
@@ -750,6 +761,43 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
 		}
 		head = head.chain;
 	}
+	
+	
+		if(attacker.thor_frag_count >= 2 && damage == 400)  //EXTENDED THOR
+		{
+			head = findradius(org, radius*1.125);
+		
+			while (head)
+			{
+			if (head != ignore || head.classname == "smoke" || head.classname == "plasma")
+			{
+				if (head.takedamage  || head.classname == "smoke" || head.classname == "plasma")
+				{				
+					if (CanDamage (head, inflictor)  || head.classname == "smoke" || head.classname == "plasma")
+					{	
+						if(head.shields_up !=1) 
+						{
+							extra_thors = extra_thors +1; //thor frags
+						
+							dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
+							dir5 = normalize(dir5);
+							head.velocity = head.velocity + 900*dir5 + v_up*100;
+						}
+						if(head.shields_up !=1) 
+						{
+							T_DamageOrg (head, inflictor, attacker, damage, org);
+							head.armorvalue -= damage/2;
+						}
+					}			
+				}
+			}
+			head = head.chain;
+			}
+		}
+		
+
+		attacker.thor_frag_count = extra_thors + attacker.thor_frag_count;
+	
 	attacker.thor_slam = 0;
     }
   
@@ -823,6 +871,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
 				{				
 					if (CanDamage (head, inflictor))
 					{	
+						if(head.hook_is_anchored ==1 && head.hookhead.origin == attacker.origin) damage = damage+0.1;
 						T_DamageOrg (head, inflictor, attacker, damage, org);
 						attacker.done_damage = 1;
 					}			
@@ -1001,9 +1050,22 @@ void() PlayerJump =
 	
 	if(self.angles_not_zero ==0) // && !self.landed_on_decline)   //dont make jumping noise if wallrunning
 	{
-		if (random() < 0.6) sound (self, CHAN_BODY, "bloodrailz/player/br_jump1.wav", 0.9, ATTN_NORM);   // 1 -> 0.9
-		else if (random() < 0.8) sound (self, CHAN_BODY, "bloodrailz/player/br_jump2.wav", 0.9, ATTN_NORM);  
-		else sound (self, CHAN_BODY, "bloodrailz/player/br_jump3.wav", 0.9, ATTN_NORM);   // alternative jump noise
+		if (random() < 0.6) 
+		{
+			sound (self, CHAN_BODY, "bloodrailz/player/br_jump1.wav", 0.8, ATTN_NORM);   // 1 -> 0.9
+			//ex_localsound(self, "bloodrailz/player/br_jump1.wav");
+		}
+		else if (random() < 0.8) 
+		{
+			sound (self, CHAN_BODY, "bloodrailz/player/br_jump2.wav", 0.8, ATTN_NORM);  
+			//ex_localsound(self, "bloodrailz/player/br_jump2.wav");
+		}
+		else 
+		{
+			sound (self, CHAN_BODY, "bloodrailz/player/br_jump3.wav", 0.8, ATTN_NORM);   // alternative jump noise
+			//ex_localsound(self, "bloodrailz/player/br_jump3.wav");
+		}
+		
 	}
 	if (self.waterlevel <= 2) self.velocity_z = self.velocity_z + 270;
 		
@@ -1333,7 +1395,15 @@ void() update_crown =
 	//setorigin(self, (self.owner.origin + '0 0 55' + zz*(-50))  );
 	
 	if(self.owner.teleport_time == time +0.7) setmodel (self, "progs/bloodrailz/null.spr");
-	else if (self.owner.teleport_time > time +0.65)
+	else if (self.owner.teleport_time > time +0.6)
+	{
+		//bprint("switch up");
+		if(self.owner.height == elohim_team2) setmodel (self, "progs/bloodrailz/null_trail.mdl");
+		else setmodel (self, "progs/bloodrailz/null_trail_gre.mdl");
+	}
+	
+	if(self.print_killa == 1 || (self.deadflag == DEAD_DYING) || (self.deadflag == DEAD_DEAD)) setmodel (self, "progs/bloodrailz/null.spr");    
+	else if(self.model == "progs/bloodrailz/null.spr" && (self.print_killa == 0 && (self.deadflag != DEAD_DYING) && (self.deadflag != DEAD_DEAD)))
 	{
 		//bprint("switch up");
 		if(self.owner.height == elohim_team2) setmodel (self, "progs/bloodrailz/null_trail.mdl");
@@ -1343,15 +1413,6 @@ void() update_crown =
 	
 	
 	setorigin(self, (self.owner.origin + v_up*10 + v_forward*(-18) + '0 0 40')  );
-	
-	/*
-	if(pointcontents(self.owner.origin + '0 0 65') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 60') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 55') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 50') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 45') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 40') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 33') == CONTENT_SOLID || pointcontents(self.owner.origin + '0 0 32') == CONTENT_SOLID)
-	{
-		setorigin(self, (self.owner.origin + v_forward*(-18) + '0 0 28'));   //if ceiling above, lower the trail source
-		//bprint("adjust height ");
-	}
-	*/
-	
 	
 	
 	if(pointcontents(self.owner.origin + '0 0 75' + v_forward*(-18)) == CONTENT_SOLID) setorigin(self, (self.owner.origin + v_forward*(-11) + '0 0 21'));
@@ -1385,7 +1446,7 @@ void() update_crown =
 
 void() make_crown =
 {
-	local entity crown;
+	//local entity crown;
 	crown = spawn();
 	
 	//if(self.height == elohim_team1) setmodel (crown, "progs/bloodrailz/null_trail_gre.mdl");
@@ -1666,11 +1727,13 @@ void () Rebalance_Teams =
 				{	
 					if (player.frags == red_secondscore_global && player.height == 4) stuffcmd(player, "color 13\n");   //if second on winning team has more points than second on losing team - swap them
 					if (player.frags == blue_secondscore_global && player.height == 13) stuffcmd(player, "color 4\n"); 
+					bprint("Rebalancing teams..");
 				}
 				else if (winning_team_global == 13 && blue_secondscore_global > red_secondscore_global) 
 				{	
 					if (player.frags == blue_secondscore_global && player.height == 13) stuffcmd(player, "color 4\n");   //if second on winning team has more points than second on losing team - swap them
 					if (player.frags == red_secondscore_global && player.height == 4) stuffcmd(player, "color 13\n"); 
+					bprint("Rebalancing teams..");
 				}
 				else 
 				{
@@ -1692,7 +1755,7 @@ void () Rebalance_Teams =
 				//bprint("parse >5 \n");
 				if (winning_team_global == 4 && (red_secondscore_global > blue_secondscore_global || red_secondscore_global > blue_thirdscore_global)) 
 				{	
-					if(player.frags == red_secondscore_global && player.height == 4) stuffcmd(player, "color 13\n");   //if second on winning team has more points than second on losing team - swap them
+					if(player.frags == red_secondscore_global && player.height == 4) stuffcmd(player, "color 13\n");   //if second on winning team has more points than third on losing team - swap them
 					if (player.frags == blue_thirdscore_global && player.height == 13) stuffcmd(player, "color 4\n"); 
 				}
 				else if (winning_team_global == 13 && (blue_secondscore_global > red_secondscore_global || blue_secondscore_global > red_thirdscore_global)) 
@@ -2080,4 +2143,13 @@ void(string cmd) SV_ParseClientCommand =
 		default: clientcommand(self, cmd); break;
 		
 	}
+}
+
+
+float() splat_customize =
+{
+	//if(other.deadflag == DEAD_DEAD || other.deadflag == DEAD_DYING || other.deadflag == DEAD_RESPAWNABLE || other == self.owner) return FALSE;
+	
+	if(vlen(other.origin - self.origin) < 105 && (other.deadflag == DEAD_DEAD || other.deadflag == DEAD_DYING || other.deadflag == DEAD_RESPAWNABLE)) return FALSE;
+	else return TRUE;
 }

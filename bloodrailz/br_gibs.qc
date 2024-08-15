@@ -12,6 +12,13 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 	}
 	
 	
+	if(targ.frags == top_score_global && crown_out ==1 && targ.hascrown == 1 && crown)
+	{
+		remove(crown);
+		targ.hascrown = 0;
+		crown_out = 0;
+	}
+	
 	
 	local entity oself;
 	
@@ -166,7 +173,7 @@ void(string gibname, float dm, float inair) ThrowGib =
 	new.avelocity_x = random()*600;
 	new.avelocity_y = random()*600;
 	new.avelocity_z = random()*600;
-	//new.think = SUB_Remove;
+
 	new.alpha =0.8;
 	new.owner = self;
 	new.think = update_gib;
@@ -180,10 +187,11 @@ void(string gibname, float dm, float inair) ThrowGib =
 
 void() update_splat=
 {
+	//self.customizeentityforclient = splat_customize;
 	self.frame +=1;
-	if(self.frame==4) Splat2();
+	if(self.frame==3) Splat2();
 	if(self.frame==13) self.think = SUB_Remove;
-	self.nextthink = time + 0.06;
+	self.nextthink = time + 0.05;
 }
 
 
@@ -193,16 +201,15 @@ void()Splat =
 	
 	new = spawn();
 	
-	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	
 	setsize (new, '0 0 0', '0 0 0');
 	new.scale = 0.25;
 	
 	local vector unit = normalize(self.origin - self.dmg_origin);
 	new.origin = self.origin + '0 0 24' + unit*21;
 	
+	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
 
-	
-	
 	new.classname = "splat";
 	new.movetype = MOVETYPE_NONE;
 	new.solid = SOLID_NOT;
@@ -210,9 +217,12 @@ void()Splat =
 
 	new.alpha =0.9;
 	new.owner = self;
+	
+	new.customizeentityforclient = splat_customize;
+	
 	new.think = update_splat;
 	new.ltime = time;
-        new.nextthink = time + 0.06;
+        new.nextthink = time + 0.04;
 
 	new.frame = 0;
 	new.flags = 0;
@@ -221,9 +231,10 @@ void()Splat =
 
 void() update_splat2=
 {
+	//self.customizeentityforclient = splat_customize;
 	self.frame +=1;
 	if(self.frame==13) self.think = SUB_Remove;
-	self.nextthink = time + 0.06;
+	self.nextthink = time + 0.05;
 }
 
 
@@ -232,7 +243,7 @@ void()Splat2 =
 	local	entity new;
 	new = spawn();
 	
-	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	
 	setsize (new, '0 0 0', '0 0 0');
 	new.scale = 0.25;
 	
@@ -254,17 +265,21 @@ void()Splat2 =
 
 	new.origin = self.origin + unit*(45);
 	new.origin = new.origin + vertical;
+	
+	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
 
 	
 	new.classname = "splat";
 	new.movetype = MOVETYPE_NONE;
 	new.solid = SOLID_NOT;
 	new.alpha =0.9;
-	new.owner = self;
+	new.owner = self.owner;
+	
+	new.customizeentityforclient = splat_customize;
 	
 	new.think = update_splat2;
 	new.ltime = time;
-        new.nextthink = time + 0.06;
+        new.nextthink = time + 0.05;
 
 	new.frame = 0;
 	new.flags = 0;
@@ -272,9 +287,10 @@ void()Splat2 =
 
 void() update_splat3=
 {
+	//self.customizeentityforclient = splat_customize;
 	self.frame +=1;
-	if(self.frame==4) Splat4();
-	if(self.frame==3) Splat5();
+	if(self.frame==2) Splat4();
+	if(self.frame==1) Splat5();
 	if(self.frame==13) self.think = SUB_Remove;
 	self.nextthink = time + 0.05;
 }
@@ -285,7 +301,7 @@ void()Splat3 =
 	local	entity new;
 	new = spawn();
 	
-	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
+
 	new.scale = 0.5;
 	setsize (new, '0 0 0', '0 0 0');
 	
@@ -308,7 +324,7 @@ void()Splat3 =
 	new.origin = self.origin + unit*(55);
 	new.origin = new.origin + '0 0 15';
 
-
+	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
 	
 	
 	new.classname = "splat";
@@ -318,6 +334,8 @@ void()Splat3 =
 	new.alpha = 0.9;
 	
 	new.owner = self;
+	
+	new.customizeentityforclient = splat_customize;
 	
 	new.think = update_splat3;
 	new.ltime = time;
@@ -329,9 +347,10 @@ void()Splat3 =
 
 void() update_splat4=
 {
+	//self.customizeentityforclient = splat_customize;
 	self.frame +=1;
 	if(self.frame==13) self.think = SUB_Remove;
-	self.nextthink = time + 0.05;
+	self.nextthink = time + 0.04;
 }
 
 
@@ -340,7 +359,7 @@ void()Splat4 =
 	local	entity new;
 	new = spawn();
 	
-	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	
 	setsize (new, '0 0 0', '0 0 0');
 	new.scale = 0.25;
 	
@@ -365,7 +384,7 @@ void()Splat4 =
 	new.origin = new.origin +vertical;
 	
 
-	
+	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
 	
 	
 	new.classname = "splat";
@@ -373,7 +392,10 @@ void()Splat4 =
 	new.solid = SOLID_NOT;
 	new.alpha =0.9;
 	
-	new.owner = self;
+	new.owner = self.owner;
+	
+	new.customizeentityforclient = splat_customize;
+	
 	new.think = update_splat4;
 	new.ltime = time;
         new.nextthink = time + 0.05;
@@ -384,6 +406,7 @@ void()Splat4 =
 
 void() update_splat5=
 {
+	//self.customizeentityforclient = splat_customize;
 	self.frame +=1;
 	if(self.frame==13) self.think = SUB_Remove;
 	self.nextthink = time + 0.05;
@@ -395,7 +418,7 @@ void()Splat5 =
 	local	entity new;
 	new = spawn();
 	
-	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
+	
 	setsize (new, '0 0 0', '0 0 0');
 	new.scale = 0.5;
 	
@@ -418,6 +441,7 @@ void()Splat5 =
 	new.origin = self.origin + unit*(70);
 	new.origin = new.origin +vertical;
 
+	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
 	
 	new.classname = "splat";
 	new.movetype = MOVETYPE_NONE;
@@ -426,7 +450,10 @@ void()Splat5 =
 	new.alpha = 0.40 + random();
 	if(new.alpha > 1) new.alpha = 0.9;
 	
-	new.owner = self;
+	new.owner = self.owner;
+	
+	new.customizeentityforclient = splat_customize;
+	
 	new.think = update_splat5;
 	new.ltime = time;
         new.nextthink = time + 0.05;

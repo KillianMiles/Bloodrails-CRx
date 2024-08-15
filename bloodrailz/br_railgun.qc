@@ -1175,17 +1175,19 @@ void() W_FireRailgun =
 		}
    
 	
-		
-		if (total_players_global <= 2)  	//NOVEM
+		if(self.frags != top_score_global)
 		{
-			if(self.KDR < 0.4 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
-			else if(self.KDR < 0.75 && self.total_deaths > 3) FireBullets (20, dir, R25);    //FIRE BULLETS
-		}
-    
-		if (total_players_global > 2)
-		{
-			if(self.KDR < 0.4 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
-			else if(self.KDR < 0.75 && self.total_deaths > 3) FireBullets (20, dir, R25);    //FIRE BULLETS
+			if (total_players_global <= 2)  	//NOVEM
+			{
+				if(self.KDR < 0.3 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
+				else if(self.KDR < 0.5 && self.total_deaths > 3) FireBullets (20, dir, R25);    //FIRE BULLETS
+			}
+	
+			if (total_players_global > 2)
+			{
+				if(self.KDR < 0.3 && self.total_deaths > 3) FireBullets (20, dir, R33);    //FIRE BULLETS
+				else if(self.KDR < 0.5 && self.total_deaths > 3) FireBullets (20, dir, R25);    //FIRE BULLETS
+			}
 		}
     
 	}

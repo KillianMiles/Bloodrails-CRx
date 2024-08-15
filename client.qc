@@ -338,6 +338,7 @@ void() IntermissionThink =
 {
 	
 	
+	
 	if (time < intermission_exittime)
 		return;
 
@@ -347,6 +348,8 @@ void() IntermissionThink =
 
 	if (!self.button0 && !self.button1 && !self.button2)
 		return;
+		
+	if(elohim_teamfrags1 > 1.25 * elohim_teamfrags2 || elohim_teamfrags2 > 1.25 * elohim_teamfrags1) Rebalance_Teams();  //automatic rebalance after each map
 
     ExitIntermission ();
 };

@@ -914,6 +914,7 @@ void () HookPull =
 					sound (self, CHAN_WEAPON, SOUND_HOOK_LAND, 1, ATTN_NORM);
 
 					T_DamageOrg (self.enemy, self, self.owner, 18, self.owner.origin);       //hook drag damage  40 -> 12
+					
 
 					if (self.enemy.classname == "player")
 					{

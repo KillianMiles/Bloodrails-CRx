@@ -169,9 +169,9 @@ void () elohim_init_world =
   
 
 
-  elohim_version = "BR v1.0 (alpha)"; 
+  elohim_version = "BR v1.0"; 
   elohim_version_info = "Bloodrailz CRx";
-  bloodrailz_version_number = "v1.0 (alpha)";
+  bloodrailz_version_number = "v1.0";
 
 	// Initialize user map names, MOTD, and hotspots, etc..
 	userdefs_init_world();

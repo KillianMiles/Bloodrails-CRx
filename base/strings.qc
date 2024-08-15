@@ -844,7 +844,7 @@ string (float mapnum) strings_get_mapname =
 	if (mapnum == 18)
             return "ctf_eyesout_b2";
 	if (mapnum == 19)
-            return "ctf_relic2_b2"; 
+            return "ctf_relic2_b3"; 
         if (mapnum == 20)
             return "ctf_rebirth_b2";
         if (mapnum == 21)
@@ -879,7 +879,7 @@ string (float mapnum) strings_get_mapname =
 	if (mapnum == 33)
             return "ctf_firestorm_b2";
 	if (mapnum == 34)
-            return "ctf_feral_b2";
+            return "ctf_feral_b4";
         if (mapnum == 35)
             return "ctf_gulch_b3";
         if (mapnum == 36)
@@ -900,7 +900,7 @@ string (float mapnum) strings_get_mapname =
         if (mapnum == 41)
             return "ctf_bamboo_b1";
         if (mapnum == 42)
-            return "ctf_relic2_b2";
+            return "ctf_relic2_b3";
         if (mapnum == 43)
             return "slug";
         if (mapnum == 44)

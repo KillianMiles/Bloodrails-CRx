@@ -314,23 +314,17 @@ void() ctf_flag_return =
 	{
 		if (p == other) 
 		{
-			sprint4(p, returnedby.netname, " returned the ", self.netname,"\n");
+			sprint3(p, returnedby.netname, " returned the ", self.netname);
 			sound (p, CHAN_AUTO, SOUND_PLAYER_RETURNED, 1, ATTN_NONE);
+			
+			if(other.is_over_sky && other.airborn_pos > 100) sprint(other, " [YER A WIZARD, HARRY]");
+			sprint(other, "\n");
+			
             
 			client_frag(other, 1);
 			other.last_returned_flag = time;
 			make_icon(other, 5, 0);
 			
-			/*
-			if (other.player_flag & PF_TEAM_RED)			//DECEM scores
-			{
-				if(other.frags >0) elohim_teamfrags1 = elohim_teamfrags1 +1;
-			}
-			else if (other.player_flag & PF_TEAM_BLUE)
-			{
-				if(other.frags >0) elohim_teamfrags2 = elohim_teamfrags2 +1;
-			}
-			*/
 
 		}
 		else 

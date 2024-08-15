@@ -663,6 +663,11 @@ float(string) stof = #81;
 float EF_NODEPTHTEST = 8192;
 .entity viewmodelforclient;
 .entity drawonlytoclient;
+//.entity nodrawtoclient;
+
+.float() customizeentityforclient;
+float() splat_customize;
+
 float(entity ent, string tagname) gettagindex = #451;
 vector(entity ent, float tagindex) gettaginfo = #452;
 
@@ -773,7 +778,7 @@ float IT2_SIGIL4 = 8;
 
 entity red_flag_ent;
 entity blue_flag_ent;
-
+entity crown;
 
 
 float smoke_ent_number;

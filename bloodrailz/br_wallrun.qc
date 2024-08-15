@@ -656,25 +656,47 @@ void() Skiing =
 		{
 			self.shark_time = self.shark_time - 0.12;
 			//bprint(ftos(time-self.shark_time));
-			//bprint(" ");
 		}
 		
-		if(self.waterlevel > 1 && v_forward_z < -0.45 && self.velocity_z < -300) self.shark_time = time;
+		if(self.waterlevel > 1 && v_forward_z < -0.45 && self.velocity_z < -300 && pointcontents(self.origin + '0 0 30') != CONTENT_WATER) self.shark_time = time;
 		
 		
-		if(self.waterlevel > 2 && time-self.shark_time < 3 && self.movement_x == 400)			//APRIL Sharking Dolphin
+		if(mapname !="ctf_edge3_c2" && mapname !="ctf_edge3_c3" && mapname !="ctf_edge3_c4" && mapname !="ctf_edge3_c5")
 		{
-			self.velocity = self.velocity + v_forward*85;
-			if(vlen(self.velocity) > 875) self.velocity = normalize(self.velocity)*875;
-			return;
-		}
-		else if((self.waterlevel>0 && self.waterlevel<2) && (time-self.shark_time > 0.8 && time-self.shark_time < 3))
-		{
-			self.velocity = self.velocity + '0 0 45';
-			self.velocity = self.velocity + v_forward*45;
+			if(vlen(self.velocity)< 675 && time - self.shark_time > 0.5) self.shark_time = self.shark_time -3;
+			
+			if(self.waterlevel > 2 && time-self.shark_time < 3 && self.movement_x ==400)			//APRIL Sharking Dolphin
+			{
+				self.velocity = self.velocity + v_forward*80;
+				if(vlen(self.velocity) > 870) self.velocity = normalize(self.velocity)*870;
+				return;
+			}
+			
+			else if((self.waterlevel>0 && self.waterlevel<2) && (time-self.shark_time > 0.8 && time-self.shark_time < 3))
+			{
+				self.velocity = self.velocity + '0 0 45';
+				self.velocity = self.velocity + v_forward*45;
+			}
+		
 		}
 		
-		
+		else
+		{	
+			if(vlen(self.velocity)< 450 && time - self.shark_time > 0.7) self.shark_time = self.shark_time -3;
+			
+			if(self.waterlevel > 2 && time-self.shark_time < 3 && self.movement_x ==400)			//APRIL Sharking Dolphin
+			{
+				self.velocity = self.velocity + v_forward*80;
+				if(vlen(self.velocity) > 675) self.velocity = normalize(self.velocity)*675;
+				return;
+			}
+			else if((self.waterlevel>0 && self.waterlevel<2) && (time-self.shark_time > 0.8 && time-self.shark_time < 3))
+			{
+				self.velocity = self.velocity + '0 0 45';
+				self.velocity = self.velocity + v_forward*45;
+			}
+			
+		}
 		
 		if(self.impulse == 42 || (self.skiing_on ==0 && self.view_ofs_z < 22))
 		{
@@ -1007,28 +1029,16 @@ void() Water_bounce =   	//10/8/23
 			if(pointcontents(self.origin + '0 0 -40') == CONTENT_WATER || pointcontents(self.origin + '0 0 -40') == CONTENT_SLIME || pointcontents(self.origin + '0 0 -40') == CONTENT_LAVA) 
 			{
 				if(self.velocity_z < -550) self.velocity_z = self.velocity_z*(-0.7);
-				else if(self.velocity_z > -550 && self.velocity_z < -400) self.velocity = self.velocity + '0 0 125';
-				else if(self.velocity_z >= -400 && self.velocity_z < -180) 
-				{
-					self.velocity = self.velocity + '0 0 90';
-				}
 				
-				self.velocity = self.velocity + '0 0 75'; //self.origin_z = old_water_level;
-				if (pointcontents(self.origin + '0 0 -40') == CONTENT_LAVA && self.velocity_z < -550) 
-				{
-					self.velocity_z = self.velocity_z*(-0.5);
-					//bprint("UP!\n");
-				}
-				
-				//else if(self.velocity_z < -550) self.velocity = self.velocity + '0 0 200';
-				//else if(self.velocity_z < -400) self.velocity = self.velocity + '0 0 125';
+				self.velocity = self.velocity + '0 0 70'; 
 			
 				if(self.velocity_z > 100 && self.movement_x ==400) self.velocity = self.velocity + v_forward*8;   //NOVEM 3 -> 8
 				else if(self.velocity_z > 100 && self.movement_x ==-400) self.velocity = self.velocity + v_forward*-8;   //NOVEM 3 -> 8
+				
 				self.ski_time -=0.05;
 				
-				if(self.bounce_on ==1 || self.bounce_on ==2) self.bounce_on =3;	
 				
+				if(self.bounce_on ==1 || self.bounce_on ==2) self.bounce_on =3;	
 			}
 
 			

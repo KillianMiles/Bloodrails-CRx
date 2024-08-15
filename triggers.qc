@@ -420,6 +420,15 @@ void() teleport_touch =
 		
 		other.fixangle = 1;		// turn this way immediately
 		other.teleport_time = time + 0.7;
+		
+		
+		if(other.frags == top_score_global && crown_out ==1 && other.hascrown == 1 && crown)
+		{
+			remove(crown);
+			other.hascrown = 0;
+			crown_out = 0;
+		}
+		
 		if (other.flags & FL_ONGROUND)
 			other.flags = other.flags - FL_ONGROUND;
 		other.velocity = v_forward * 300;
