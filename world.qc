@@ -81,11 +81,10 @@ void() main =
 	precache_file ("gfx/p_multi.lmp");
 
 // sounds loaded by C code
-	precache_sound ("bloodrailz/misc/menu1.wav");
-	precache_sound ("bloodrailz/misc/menu2.wav");
-	precache_sound ("bloodrailz/misc/menu3.wav");
-	precache_sound ("ambience/water1.wav");
-	precache_sound ("ambience/wind2.wav");
+	precache_sound ("misc/menu1.wav");   //empty wav
+	precache_sound ("misc/menu2.wav");    //empty wav
+	precache_sound ("ambience/water1.wav");  //empty wav
+	precache_sound ("ambience/wind2.wav");  //empty wav
 
 
 
@@ -133,60 +132,31 @@ void() worldspawn =
     	cvar_set("teamplay", "0");
 	cvar_set("noexit", "1");
 
-// custom map attributes
-	if (self.model == "maps/e1m8.bsp")	cvar_set ("sv_gravity", "100");
-	else					cvar_set ("sv_gravity", "800");
-
-// custom map title
-	//self.message = GetMapName(self.message);
-	
-
-	
+	cvar_set ("sv_gravity", "800");
 
 
-	precache_sound ("bloodrailz/misc/talk.wav");		// talk
-	precache_sound ("bloodrailz/player/teledth1.wav");		// telefrag
-	precache_sound ("bloodrailz/misc/r_tele1.wav");		// teleport sounds
-	precache_sound ("bloodrailz/misc/r_tele2.wav");
-	precache_sound ("bloodrailz/misc/r_tele3.wav");
-	precache_sound ("bloodrailz/misc/r_tele4.wav");
-	precache_sound ("bloodrailz/misc/r_tele5.wav");
 
+	//precache_sound ("bloodrailz/misc/talk.wav");		// talk
+	precache_sound ("bloodrailz/triggers/r_tele1.wav");		// teleport sounds
+	precache_sound ("bloodrailz/triggers/r_tele2.wav");
+	precache_sound ("bloodrailz/triggers/r_tele3.wav");
+	precache_sound ("bloodrailz/triggers/r_tele4.wav");
+	precache_sound ("bloodrailz/triggers/r_tele5.wav");
 
-// player gib sounds
+	precache_model ("progs/bloodrailz/player.md3");
+	precache_model ("progs/bloodrailz/br_gib1.mdl");         // LibreQuake //gibs
+	precache_model ("progs/bloodrailz/br_gib2.mdl");	 // LibreQuake //gibs
+	precache_model ("progs/bloodrailz/br_gib3.mdl");	 // LibreQuake //gibs
+
 
 	
-
-// player pain sounds
-
-
-
-
-// ax sounds	
-
-
-
-
-
-
-
-	precache_sound ("doors/drclos4.wav");
-
-	precache_model ("progs/bloodrailz/player.mdl");
-	precache_model ("progs/bloodrailz/h_player.mdl");
-	precache_model ("progs/gib1.mdl");
-	precache_model ("progs/gib2.mdl");
-	precache_model ("progs/gib3.mdl");
-
 	precache_model ("progs/bloodrailz/s_bubble.spr");	// LibreQuake //drowning bubbles
 	precache_model ("progs/bloodrailz/s_explod.spr");	// LibreQuake //sprite explosion
-	precache_model ("progs/bloodrailz/s_blood_512x.spr");   //Kebby's blood animation sprite
-	precache_model ("progs/bloodrailz/s_blood_512x1.spr");   //Kebby's blood animation sprite
-	precache_model ("progs/bloodrailz/s_blood_192x.spr");   //Kebby's blood animation sprite
-	precache_model ("progs/bloodrailz/s_blood_128x.spr");   //Kebby's blood animation sprite
-	precache_model ("progs/bloodrailz/s_blood_96x.spr");   //Kebby's blood animation sprite
-	precache_model ("progs/bloodrailz/s_blood_64x.spr");   //Kebby's blood animation sprite
-	precache_model ("progs/bloodrailz/null.spr");
+
+	precache_model ("progs/bloodrailz/s_blood_512xv.spr");   //Kebby's blood animation sprite   old 128x sprite scaled up to 512 (needs to be scaled x0.25 in qc)
+	precache_model ("progs/bloodrailz/s_blood_1024.spr");   //Kebby's blood animation sprite
+
+	precache_model ("progs/bloodrailz/null.spr");		 // empty sprite
 	
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
@@ -241,14 +211,10 @@ void() worldspawn =
 	//TODO: no bot support right now
 	//localcmd("bot_reloadsettings\n");
 	
-	if (mode_is_arena() == FALSE)
-	{
-		spawn_new_entities();
-	}
+	spawn_new_entities();
 
-    // ELOHIM_MOD - do elohim specific stuff
-    elohim_init_world();
-    // END_MOD
+	elohim_init_world();
+
 
 	if (elohim_playmode & CLANRING_RUNES)
 	{

@@ -136,17 +136,11 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS)) bprint (" gets a teammate burned");
 					else if (rnum <= 1) bprint(" loses a friend in a fire");
 					smoke_teammate_frags +=1;
-					attacker.smoke_frags +=1;
 					
-					if(smoke_teammate_frags ==3 && smoke_owner == attacker) 
+					if(smoke_teammate_frags ==2 && smoke_owner == attacker) 
 					{
 						bprint(" \b[FREAK GASOLINE FIGHT ACCIDENT]\b ");  //10/5/23
 						attacker.tier2 +=1;
-					}
-					if(attacker.smoke_frags == 3 && (quasar_owner == attacker || gravity_owner == attacker)) 
-					{
-						bprint(" \b[ORANGE MOCHA FRAPPUCCINO]\b ");   //10/8/23
-							attacker.tier3 +=1;
 					}
 					bprint("\n");
 					
@@ -167,7 +161,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint ("'s repulsor field disintegrates a teammate");
 					quasar_teammate_frags +=1;
 					
-					if(quasar_teammate_frags + quasar_enemy_frags ==4) 
+					if(quasar_teammate_frags + quasar_enemy_frags ==3) 
 					{
 						bprint(" \b[GROUP TATTOO REMOVAL]\b ");  //10/5/23
 							attacker.tier2 +=1;
@@ -271,8 +265,13 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					else if (rnum <= 1) bprint(" got burnt in ");
 					bprint (attacker.netname);
 					bprint("'s fire");
-					if(attacker.smoke_frags == 4 && smoke_owner != attacker && (quasar_owner == attacker || gravity_owner == attacker)) bprint(" \b[ORANGE MOCHA FRAPPUCCINO]\b ");  //10/8/23
+					if(attacker.smoke_frags == 3) 
+					{
+						bprint(" \b[ORANGE MOCHA FRAPPUCCINO]\b ");  //10/8/23
+						attacker.smoke_frags =0;
+					}
 					else if(smoke_owner != attacker) 
+					
 					{
 						bprint(" \b[PYROMANCER]\b ");    //10/5/23
 						attacker.tier2 +=1;
@@ -323,7 +322,16 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					if (rnum < 0.5) bprint (" was disintegrated by ");
 					else if (rnum <= 1) bprint(" ripped apart by ");
 					bprint (attacker.netname);
-					bprint("'s quasar\n");
+					bprint("'s quasar");
+					
+					if(quasar_teammate_frags + quasar_enemy_frags ==3) 
+					{
+						bprint(" \b[GROUP TATTOO REMOVAL]\b ");  //10/5/23
+							attacker.tier2 +=1;
+					}
+					bprint("\n");	
+					
+					
 					return;
 				}
 				if (damage == 40.4)  //Hook chain damage
@@ -461,14 +469,14 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint ("\n");
 			}
                 
-			else if (attacker.weapon == IT_AXE && attacker.thor_slam == 1) 
+			else if ((attacker.weapon == IT_AXE && attacker.thor_slam == 1) || damage == 400) //added condition if damage is 400 (thor)
 			{
 				attacker.thor_slam = 0;
 			
 				attacker.total_kills = attacker.total_kills +1;
 				self.total_deaths = self.total_deaths +1;
 				
-					
+				/*	
 				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
 				{
 					client_frag(attacker, 1);
@@ -476,6 +484,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint (attacker.netname);
 					bprint("\n");
 				} 
+				*/
 					
 				if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
 				{
@@ -491,7 +500,13 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint (targ.netname);
 				}
 					
-				if (attacker.thor_frag_count == 1) 
+					
+				if (attacker.thor_frag_count == 0) 
+				{
+					bprint(" \b[THOR STOMP]\b ");
+					attacker.tier1 +=1;
+				}
+				else if (attacker.thor_frag_count == 1) 
 				{
 					bprint(" \b[THOR SLAM!]\b ");
 					attacker.tier1 +=1;
@@ -538,7 +553,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					attacker.axe_record_timer = time;
 				}
 					
-				if(time - attacker.axe_record_timer >= 2.4) attacker.axes_in_a_row = 0;
+				if(time - attacker.axe_record_timer >= 3.3) attacker.axes_in_a_row = 0;
 				
 				
 				 attacker.total_kills = attacker.total_kills +1;
@@ -572,18 +587,18 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					
 					
 				//bprint(ftos(attacker.axes_in_a_row));
-				if (attacker.jump_flag < -180 && attacker.airborn_pos > 50 && targ.airborn_pos < 20) 
+				if (attacker.jump_flag < -190 && attacker.airborn_pos > 50 && targ.airborn_pos < 20) 
 				{
 					bprint(" \b[AXE FROM ABOVE]\b");
 					attacker.tier1 +=1;
 				}
-				if (attacker.airborn_pos > 75 && targ.airborn_pos >= 75) 
+				if (attacker.airborn_pos > 95 && targ.airborn_pos >= 95) 
 				{
 					bprint(" \b[MID-AIR AXE]\b");
 					attacker.tier1 +=1;
 				}
 					
-				if (attacker.angles_not_zero ==1) 
+				if (attacker.angles_not_zero ==1 && vlen(attacker.velocity) > 775) 
 				{
 					bprint(" \b[APACHE]\b");   //10/5/23
 						attacker.tier2 +=1;
@@ -599,7 +614,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 						attacker.tier1 +=1;
 				}
 					
-				if (attacker.flags & FL_INWATER) 
+				if (attacker.flags & FL_INWATER && attacker.waterlevel > 1) 
 				{
 					bprint(" \b[COMMANDO]\b");
 						attacker.tier1 +=1;
@@ -631,12 +646,12 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 						attacker.tier2 +=1;
 				}
 				
-				if(attacker.axes_in_a_row >=2 && attacker.waterlevel >= 2 && targ.waterlevel >= 2) 
+				if(attacker.axes_in_a_row >=2 && attacker.waterlevel >= 1 && targ.waterlevel >= 1) 
 				{
 					bprint(" \b[MER-MAN!]\b");
 						attacker.tier1 +=1;
 				}
-				if(attacker.turn_speed > 110 || attacker.turn_speed <-110) 
+				if(attacker.turn_speed > 112 || attacker.turn_speed <-112) 
 				{
 					bprint(" \b[REX KWON DO]\b");
 						attacker.tier1 +=1;
@@ -755,20 +770,17 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				self.total_deaths = self.total_deaths +1;
 			
 					
-				//localsound(attacker, "bloodrailz/misc/ding1.wav");  // rail ding sound
+				//localsound(attacker, "bloodrailz/misc/br_ding1.wav");  // rail ding sound
 				if(random() < 0.5) 
 				{
-					//localsound(attacker, "bloodrailz/misc/ding1.wav");  // rail ding sound
-					ex_localsound(attacker, "bloodrailz/misc/ding1.wav");  // rail ding sound
-					//sound (attacker, CHAN_AUTO, "bloodrailz/misc/ding1.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
+					ex_localsound(attacker, "bloodrailz/misc/br_ding1.wav");  // rail ding sound
 				}
 				else if (random() <= 1.0) 
 				{
-					//localsound(attacker, "bloodrailz/misc/ding2.wav");  // rail ding sound
-					ex_localsound(attacker, "bloodrailz/misc/ding2.wav");  // rail ding sound     
-					//sound (attacker, CHAN_AUTO, "bloodrailz/misc/ding2.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
+					ex_localsound(attacker, "bloodrailz/misc/br_ding2.wav");  // rail ding sound     
 				}
 					
+				/*
 				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
 				{
 					//attacker.frags += 1;
@@ -779,6 +791,8 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint (" is a kingslayer\n");
 						
 				}
+				*/
+				
 				if(attacker.rail_was_curved == 0)
 				{
 					if (rnum < 0.5)
@@ -834,7 +848,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					}
 				}
 				
-				if (attacker.airborn_pos > 300 && targ.airborn_pos > 300 && attacker.rail_was_curved == 0) 
+				if (attacker.airborn_pos > 310 && targ.airborn_pos > 310 && attacker.rail_was_curved == 0) 
 				{
 					bprint(" \b[ACE OF RAILS]\b");
 					attacker.tier1 +=1;
@@ -864,22 +878,28 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				}
 					
 				
-				if (attacker.airborn_pos > 100 && targ.airborn_pos > 100 && (attacker.airborn_pos - targ.airborn_pos > 500 || targ.airborn_pos - attacker.airborn_pos > 500)) 
+				if (attacker.airborn_pos > 110 && targ.airborn_pos > 110 && (attacker.airborn_pos - targ.airborn_pos > 500 || targ.airborn_pos - attacker.airborn_pos > 500)) 
 				{
 					bprint(" \b[HIGH AS FUCK]\b");
 					attacker.tier1 +=1;
 				}
 				
-				if(attacker.turn_speed > 95 || attacker.turn_speed <-95) 
+				if(attacker.turn_speed > 97 || attacker.turn_speed <-97) 
 				{
 					bprint(" \b[BLUE STEEL]\b");	  //10/5/23
 					attacker.tier1 +=1;
 				}
-				if(attacker.skiing_on ==1 || attacker.skiing_on ==2)
+				if((attacker.skiing_on ==1 || attacker.skiing_on ==2) && (attacker.turn_speed > 12 || attacker.turn_speed <-12))
 				{
 					bprint(" \b[ACTION!!]\b");	  //10/5/23
 					attacker.tier1 +=1;
 				}
+				if ((attacker.skiing_on ==1 || attacker.skiing_on ==2) && attacker.movement_x ==-400) 
+				{
+					bprint(" \b[TAIL GUNNER]\b");
+						attacker.tier2 +=1;
+				}
+				
 				if (attacker.angles_not_zero ==1) 
 				{
 					bprint(" \b[OFF THE WALL]\b");   //10/5/23
@@ -888,7 +908,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				//if((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && targ.armorvalue >= 100 && attacker.airborn_pos > ) bprint(" \b[ANTI-ARMOR ROUND]\b");
 				//else if((attacker.player_flag & PF_ITEM_RUNE2_FLAG) && targ.armorvalue >= 100 && attacker.rail_was_curved == 0) bprint(" \b[ANTI-ARMOR ROUND]\b");
 					
-				if(attacker.rails_in_a_row >= 2.98 && time - attacker.rail_record_timer < 2.3) 
+				if(attacker.rails_in_a_row >= 2.98 && time - attacker.rail_record_timer < 2.4) 
 				{
 					bprint(" \b[THE WACO KID]\b");
 					attacker.tier3 +=1;
@@ -987,10 +1007,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					bprint (" burst into flames\n");
 					return;
 				}
-                if (rnum < 0.5)
-					bprint (" turned into hot slag\n");
-				else
-					bprint (" visits the Volcano God\n");
+				if (rnum < 0.5) bprint (" turned into hot slag\n");
 				return;
 			}
 

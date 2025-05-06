@@ -16,6 +16,7 @@ entity          world;
 float           time;
 float           frametime;
 
+
 float           force_retouch;          // force all entities to touch triggers
 								// next frame.  this is needed because
 								// non-moving things don't normally scan

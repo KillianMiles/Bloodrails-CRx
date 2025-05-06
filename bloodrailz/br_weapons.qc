@@ -270,7 +270,7 @@ void() W_Attack =
 			self.dash_counter = 0;
 			self.dash_timer = time;
 		}
-		sound (self, CHAN_WEAPON, "bloodrailz/legacy/weapons_ax1.wav", 1, ATTN_NORM);
+		sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_axe_swing.wav", 1, ATTN_NORM);
 		
 		local float boostspeed2 = vlen(self.velocity);
 		local float AxLunge1 = 30;
@@ -379,25 +379,23 @@ void() W_Attack =
 		if(time - self.shot_time < 1.33*haste_mult && self.KDR > 2.1 && self.frags == top_score_global) return;   // first place handicap
 		if(time - self.shot_time2 < 0.30) return;
 		
-		if((time - self.shot_time >= 1.3*0.5) && (time - self.shot_time < 1.3)) make_haste();
-		
 		self.shot_time = time;      //time of shot used in recharge time calculation
 		self.shot_time2 = time;
 		
 		if(self.ammo_slugs <=0)                // RAIL SLUGS RAIL AMMO
 		{
-			sound (self, CHAN_AUTO, "bloodrailz/weapons/empty.wav", 0.87, ATTN_NORM);
+			sound (self, CHAN_AUTO, "bloodrailz/weapons/br_empty.wav", 0.87, ATTN_NORM);
 		}
 		
 		
 		if(self.ammo_slugs >0)	
 		{
 			randrail = random()*3;
-			if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
+			if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
 			else
-			if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
+			if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
 			else
-			if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail22.wav",1,ATTN_NORM);
+			if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun2.wav",1,ATTN_NORM);
 		}
 		//else sound (self, CHAN_AUTO, "bloodrailz/weapons/empty1.wav",1,ATTN_NORM);
 		
@@ -443,32 +441,25 @@ void() W_ChangeWeapon =
 	{
 
 	}
-	else if (self.impulse == 6)
-	{
-			if (self.player_flag & PF_HUD) 
-			{
-				self.player_flag = self.player_flag - PF_HUD;
-				//self.button_press_display = 0;
-				stuffcmd(self, "scr_matchclock 1\n");
-				stuffcmd(self, "viewsize 110\n");
-				sprint(self, "\bHUD is:\b ON\n");
-			}
-			else if (!(self.player_flag & PF_HUD))
-			{
-				self.player_flag = self.player_flag | PF_HUD;
-				self.button_press_display = 0;
-				stuffcmd(self, "scr_matchclock 0\n");
-				stuffcmd(self, "viewsize 130\n");
-				sprint(self, "\bHUD is:\b OFF\n");
-			}
-	}
+
 	else if (self.impulse == 6)
 	{
 			if (self.player_flag & PF_HUD) 
 			{
 					self.player_flag = self.player_flag - PF_HUD;
 					//self.button_press_display = 0;
-					stuffcmd(self, "scr_matchclock 1\n");
+					
+					if(timelimit - time < 16) 
+					{	
+						stuffcmd(self, "scr_matchclock 2\n");
+						stuffcmd(self, "scr_matchclockscale 3.4\n");
+						stuffcmd(self, "scr_matchclock_y 86.5\n");
+					}
+					else 
+					{
+						stuffcmd(self, "scr_matchclock 3\n");
+						stuffcmd(self, "scr_matchclockscale 3.47\n");
+					}
 					stuffcmd(self, "viewsize 110\n");
 					sprint(self, "\bHUD is:\b ON\n");
 			}
@@ -580,7 +571,7 @@ void () haste_sound =
 	if (self.runetime > time) return;
 	
 	self.runetime = time + 2;
-	sound (self, CHAN_AUTO, SOUND_RUNE_HASTE, 1, ATTN_NORM);
+	//sound (self, CHAN_AUTO, SOUND_RUNE_HASTE, 1, ATTN_NORM);
 };
 
 

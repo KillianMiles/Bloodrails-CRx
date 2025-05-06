@@ -211,11 +211,6 @@ void() door_touch =
 
 	self.owner.attack_finished = time + 2;
 
-	if (self.owner.message != "")
-	{
-		centerprint (other, self.owner.message);
-		sound (other, CHAN_VOICE, "bloodrailz/misc/talk.wav", 1, ATTN_NORM);
-	}
 	
 // key door stuff
 	if (!self.items)
@@ -431,39 +426,18 @@ void() func_door =
 	
 	if (self.sounds == 0)
 	{
-		precache_sound ("bloodrailz/misc/null.wav");
-		precache_sound ("bloodrailz/misc/null.wav");
-		self.noise1 = "bloodrailz/misc/null.wav";
-		self.noise2 = "bloodrailz/misc/null.wav";
+		precache_sound ("bloodrailz/triggers/br_null.wav");
+		self.noise1 = "bloodrailz/triggers/br_null.wav";
+		self.noise2 = "bloodrailz/triggers/br_null.wav";
 	}
-	if (self.sounds == 1)
+	if (self.sounds == 1 || self.sounds == 2 || self.sounds == 3 || self.sounds == 4)
 	{
-		precache_sound ("bloodrailz/doors/drclos4.wav");
-		precache_sound ("bloodrailz/doors/doormv1.wav");
-		self.noise1 = "bloodrailz/doors/drclos4.wav";
-		self.noise2 = "bloodrailz/doors/doormv1.wav";
+		precache_sound ("bloodrailz/triggers/br_door_close.wav");
+		precache_sound ("bloodrailz/triggers/br_door.wav");
+		self.noise1 = "bloodrailz/triggers/br_door_close.wav";
+		self.noise2 = "bloodrailz/triggers/br_door.wav";
 	}
-	if (self.sounds == 2)
-	{
-		precache_sound ("bloodrailz/doors/hydro1.wav");
-		precache_sound ("bloodrailz/doors/hydro2.wav");
-		self.noise2 = "bloodrailz/doors/hydro1.wav";
-		self.noise1 = "bloodrailz/doors/hydro2.wav";
-	}
-	if (self.sounds == 3)
-	{
-		precache_sound ("bloodrailz/doors/stndr1.wav");
-		precache_sound ("bloodrailz/doors/stndr2.wav");
-		self.noise2 = "bloodrailz/doors/stndr1.wav";
-		self.noise1 = "bloodrailz/doors/stndr2.wav";
-	}
-	if (self.sounds == 4)
-	{
-		precache_sound ("bloodrailz/doors/ddoor1.wav");
-		precache_sound ("bloodrailz/doors/ddoor2.wav");
-		self.noise1 = "bloodrailz/doors/ddoor2.wav";
-		self.noise2 = "bloodrailz/doors/ddoor1.wav";
-	}
+
 
 
 	SetMovedir ();
@@ -686,12 +660,6 @@ void() secret_touch =
 		return;
 
 	self.attack_finished = time + 2;
-	
-	if (self.message)
-	{
-		centerprint (other, self.message);
-		sound (other, CHAN_BODY, "bloodrailz/misc/talk.wav", 1, ATTN_NORM);
-	}
 };
 
 
@@ -718,22 +686,15 @@ void () func_door_secret =
 		self.sounds = 3;
 	if (self.sounds == 1)
 	{
-		precache_sound ("doors/latch2.wav");
-		precache_sound ("doors/drclos4.wav");
-		self.noise1 = "doors/latch2.wav";
-		self.noise3 = "doors/drclos4.wav";
+
 	}
 	if (self.sounds == 2)
 	{
-		precache_sound ("doors/airdoor2.wav");
-		self.noise1 = "doors/airdoor2.wav";
-		self.noise3 = "doors/airdoor2.wav";
+
 	}
 	if (self.sounds == 3)
 	{
-		precache_sound ("doors/airdoor2.wav");
-		self.noise1 = "doors/airdoor2.wav";
-		self.noise3 = "doors/airdoor2.wav";
+
 	}
 
 	if (!self.dmg)

@@ -5,11 +5,11 @@
 
 void() respawn;
 
-const string SOUND_PICKUP_RUNE = "bloodrailz/items/runegrab.wav";      //custom made for BR
+const string SOUND_PICKUP_RUNE = "bloodrailz/items/br_runegrab.wav";      //custom made for BR
 const string SOUND_RUNE_RESIST = "bloodrailz/items/br_protect3.wav"; //librequake
 const string SOUND_RUNE_STREN = "bloodrailz/items/br_damage3.wav";    //librequake
-const string SOUND_RUNE_HASTE = "bloodrailz/misc/basekey.wav";   //changed haste rune noise ftom boss1/sight1.wav to misc/basekey.wav 
-const string SOUND_RUNE_REGEN = "bloodrailz/items/br_r_item1.wav"; //librequake
+//const string SOUND_RUNE_HASTE = "bloodrailz/misc/basekey.wav";   //changed haste rune noise ftom boss1/sight1.wav to misc/basekey.wav 
+const string SOUND_RUNE_REGEN = "bloodrailz/items/br_regen.wav"; //librequake
 
 const string MODEL_RUNE_RESIST = "progs/bloodrailz/br_rune1a.mdl";
 const string MODEL_RUNE_STREN = "progs/bloodrailz/br_rune2a.mdl";
@@ -21,7 +21,7 @@ void () runes_precache =
 	precache_sound (SOUND_PICKUP_RUNE);
 	precache_sound (SOUND_RUNE_RESIST); //resist rune
 	precache_sound (SOUND_RUNE_STREN); //strength
-	precache_sound (SOUND_RUNE_HASTE); //haste
+	//precache_sound (SOUND_RUNE_HASTE); //haste
 	precache_sound (SOUND_RUNE_REGEN);		// health box/(enviro/regen/radio) heal	
 	precache_model (MODEL_RUNE_RESIST);
 	precache_model (MODEL_RUNE_STREN);
@@ -91,13 +91,29 @@ entity () rune_select_spawn_point =
 
 void() rune_touch =
 {
-	
-	//bprint("yes rune ");
+	if(other.classname == "item_rune")
+	{
+		if(self.flags & FL_ONGROUND) self.flags = self.flags - (self.flags & FL_ONGROUND);
+		if(other.flags & FL_ONGROUND) other.flags = other.flags - (other.flags & FL_ONGROUND);
+		
+		if(vlen(other.velocity) < 400 && vlen(self.velocity) < 400) 
+		{
+			other.velocity = other.velocity + normalize(other.origin - self.origin)* 7 + '0 0 15';
+			self.velocity = self.velocity + normalize(self.origin - other.origin)* 7 + '0 0 15';
+
+		}
+		return;
+	}
+
+
 	tracebox(self.origin + '0 0 -4', '-16 -16 -4', '16 16 0', self.origin + '0 0 -5', 1, self);
 	if(trace_startsolid == TRUE  && other.classname != "player" && other.classname != "hook_entity" && other.classname != "plasma" && other.classname != "item_rune")    
 	{
-		setorigin(self, self.origin + '0 0 3');
-		//bprint("rUP!");
+		if(time - self.ltime < 2) 
+		{
+			setorigin(self, self.origin + '0 0 3');
+			//bprint(" rUP!\n");
+		}
 	}
 
 	if (elohim_playmode & ELOHIM_MATCH_MODE && !(elohim_state & ELOHIM_MATCH_STARTED))
@@ -144,7 +160,7 @@ void() rune_touch =
 		other.items2 = (other.items2 | IT2_SIGIL1);
 		sprint(other,"Plasma hook rune - Hook shoots plasma, armor regenerates slowly\n");   //rune descriptions
 		
-		 if (other.armorvalue < 200)
+		 if (other.armorvalue < 30)   // 200 -> 30
                     {
 			other.items = other.items | IT_ARMOR1;
 			other.armorvalue  	= 30;
@@ -261,14 +277,26 @@ void() update_smoke =
 
 	//makevectors(self.owner.owner.v_angle);   //DECEM
 	
-	if(self.alpha <= 0.04) 
+	if(self.alpha <= 0.04 && time - smoke_time < 40) 
 	{
 		if (self.effects & EF_RED) self.effects   = self.effects - EF_RED;
-		self.think = SUB_Remove; 
-		smoke_ent_number -=1;
-		if(smoke_ent_number < 0) smoke_ent_number =0;
+		if(time - smoke_time < 40 && !(self.is_over_sky ==1 && self.flags & FL_ONGROUND))  //DECEM
+			{
+				if(first_smoke == 1) make_smoke(smoke_origin, smoke_radius, 0);
+			}
 	}
-
+	else if((self.alpha <= 0.04 && time - smoke_time >= 40) ||(self.classname == "ground_smoke" && time - smoke_time >= 40) ) //blahnew
+	{
+		self.think = SUB_Remove;
+		if(self.classname == "ground_smoke") ground_smoke_number -= 1;
+		if(ground_smoke_number<0) ground_smoke_number =0;
+		smoke_generated =0;
+		smoke_ent_number -=1;
+		if(smoke_ent_number<0) smoke_ent_number =0;
+	}
+	
+	
+	
 	self.alpha = self.alpha - (0.0008*2+(.00325*random()));
 	
 	if(self.skin == 28) self.alpha = self.alpha + .00027;
@@ -288,7 +316,7 @@ void() update_smoke =
 		//self.movetype = MOVETYPE_FLY;
        		//self.solid = SOLID_NOT;
 	}
-	else
+	else if(self.classname == "smoke")
 	{
 		setorigin(self, self.origin + zoffset);
 	
@@ -297,12 +325,26 @@ void() update_smoke =
 			setorigin(self, self.origin + zoffset2);
 			self.speed = 1;
 		}
+		//self.alpha =.001;
+	}
+	else if(self.classname == "ground_smoke")
+	{
+		if(self.origin_z > smoke_origin_z +40) 
+		{
+			if(first_smoke == 1) make_smoke(smoke_origin, smoke_radius, 0);
+			//make_smoke(smoke_origin, smoke_radius, 0);
+		}
+		else setorigin(self, self.origin + zoffset);
+		self.alpha =.3;
 	}
 	
 	
 	if(vlen(self.origin - smoke_origin) > 250)
 	{
-				if(vlen(self.origin - smoke_origin) > 300) setmodel(self, "progs/bloodrailz/ef_smoke1.mdl");
+				if(vlen(self.origin - smoke_origin) > 300) 
+				{
+					setmodel(self, "progs/bloodrailz/ef_smoke1.mdl");
+				}
 				
 				local entity head = findradius(self.origin, 48);
 				while (head)
@@ -338,8 +380,7 @@ void() update_smoke =
 	}
 
 	
-	self.nextthink = time + my_ticrate*2;   //decem consider .01 ->.02
-	//self.nextthink = time + 0.01;
+	self.nextthink = time + my_ticrate*2;
 }
 		
 
@@ -428,54 +469,118 @@ void(vector origin1, float radius, float steam) make_smoke =
 		}
 	}
 	
+	
+	if(smoke_ent_number < 70 && time - smoke_time < 40)
+	{
+		smoke_generated +=1;
+		//bprint(ftos(smoke_generated));
+		//bprint("\n");
+		
+		local entity smoke;
+		smoke = spawn();
+		
+		
+		if(random() < 0.33 && ground_smoke_number < 10) 
+		{
+			ground_smoke_number +=1;
+			setmodel (smoke, "progs/bloodrailz/ef_smoke2.mdl");
+			smoke.classname = "ground_smoke";
+		}
+		else
+		{
+			setmodel (smoke, "progs/bloodrailz/ef_smoke2.mdl");
+			smoke.classname = "smoke";
+		}
+			
+		setorigin(smoke, origin1 + randomizer + '0 0 -10');
+		smoke.frame = frand;
+		smoke.movetype = MOVETYPE_FLY;
+		smoke.solid = SOLID_TRIGGER;
+		setsize (smoke, 0,0);
+		smoke.avelocity = '-50 -50 -325'; //500 -> 300
+		smoke.tarzan_time = 0;
+		smoke.speed = 0;
+		smoke.velocity = '0 0 0';
+		setsize (smoke, '-16 -16 -8', '16 16 8');
+	
+		smoke_ent_number +=1;
+	
+	
+		if((pointcontents(origin1 + '0 0 20') == CONTENT_WATER || pointcontents(origin1 + '0 0 20') == CONTENT_SLIME) || steam == 1)
+		{
+			if(random() <= 0.3) smoke.skin = 13; //blue
+			else if(random() <= 0.50) smoke.skin = 15;  //darker blue
+			else if(random() <= 1) smoke.skin = 18;  // teal
+		}
+		else
+		{
+			if(random() <= 0.5) smoke.skin = 28; //lightest gray
+			else if(random() <= 0.64) smoke.skin = 22;  //11->2
+			else if(random() <= 1) smoke.skin = 12;  //10 ->0
+		}
+	
+	
+		smoke.alpha = random();
+		if(smoke.alpha < 0.1 || smoke.alpha > 0.50) smoke.alpha = 0.3;
+	
+		if(smoke.skin ==12 && smoke.alpha >0.28) smoke.alpha = 0.28;
+		if(smoke.skin ==10) smoke.alpha = 0.33;
+	
+		if(steam ==1) smoke.alpha = smoke.alpha +0.09;
+	
+		if(random() < 0.08 && smoke.classname == "smoke") smoke.effects = EF_RED;
+		else if(random() < 0.04 && smoke.classname == "ground_smoke") smoke.effects = EF_RED;
+	
+		if(smoke.skin == 28) smoke.alpha = 0.23;
+	
+		smoke.owner = self.owner;
+		smoke.nextthink = time + my_ticrate;
+		smoke.think = update_smoke;
+	}
+	else if((self.classname == "smoke" || self.classname == "ground_smoke") && time - smoke_time < 40) 
+	{
 
-	local entity smoke;
-	smoke = spawn();
-	setmodel (smoke, "progs/bloodrailz/ef_smoke2.mdl");
-	setorigin(smoke, origin1 + randomizer + '0 0 -10');
-	smoke.frame = frand;
-	smoke.movetype = MOVETYPE_FLY;
-	smoke.solid = SOLID_TRIGGER;
-	smoke.classname = "smoke";
-	setsize (smoke, 0,0);
-	smoke.avelocity = '-50 -50 -325'; //500 -> 300
-	smoke.tarzan_time = 0;
-	smoke.speed = 0;
-	smoke.velocity = '0 0 0';
-	setsize (smoke, '-16 -16 -8', '16 16 8');
-	
-	smoke_ent_number +=1;
+		setorigin(self, origin1 + randomizer + '0 0 -10');
+		self.frame = frand;
+		self.movetype = MOVETYPE_FLY;
+		self.solid = SOLID_TRIGGER;
+		self.avelocity = '-50 -50 -325'; //500 -> 300
+		self.tarzan_time = 0;
+		self.speed = 0;
+		self.velocity = self.velocity/4;
+
 	
 	
-	if((pointcontents(origin1 + '0 0 20') == CONTENT_WATER || pointcontents(origin1 + '0 0 20') == CONTENT_SLIME) || steam == 1)
-	{
-		if(random() <= 0.3) smoke.skin = 13; //blue
-		else if(random() <= 0.50) smoke.skin = 15;  //darker blue
-		else if(random() <= 1) smoke.skin = 18;  // teal
+		if((pointcontents(origin1 + '0 0 20') == CONTENT_WATER || pointcontents(origin1 + '0 0 20') == CONTENT_SLIME) || steam == 1)
+		{
+			if(random() <= 0.3) self.skin = 13; //blue
+			else if(random() <= 0.50) self.skin = 15;  //darker blue
+			else if(random() <= 1) self.skin = 18;  // teal
+		}
+		else
+		{
+			if(random() <= 0.5) self.skin = 28; //lightest gray
+			else if(random() <= 0.64) self.skin = 22;  //11->2
+			else if(random() <= 1) self.skin = 12;  //10 ->0
+		}
+	
+	
+		self.alpha = random();
+		if(self.alpha < 0.1 || self.alpha > 0.50) self.alpha = 0.3;
+	
+		if(self.skin ==12 && self.alpha >0.28) self.alpha = 0.28;
+		if(self.skin ==10) self.alpha = 0.33;
+	
+		if(steam ==1) self.alpha = self.alpha +0.09;
+	
+		if(random() < 0.08) self.effects = EF_RED;
+	
+		if(self.skin == 28) self.alpha = 0.23;
+	
+		self.owner = smoke_owner;
+		self.nextthink = time + my_ticrate;
+		self.think = update_smoke;
 	}
-	else
-	{
-		if(random() <= 0.5) smoke.skin = 28; //lightest gray
-		else if(random() <= 0.64) smoke.skin = 22;  //11->2
-		else if(random() <= 1) smoke.skin = 12;  //10 ->0
-	}
-	
-	
-	smoke.alpha = random();
-	if(smoke.alpha < 0.1 || smoke.alpha > 0.50) smoke.alpha = 0.3;
-	
-	if(smoke.skin ==12 && smoke.alpha >0.28) smoke.alpha = 0.28;
-	if(smoke.skin ==10) smoke.alpha = 0.33;
-	
-	if(steam ==1) smoke.alpha = smoke.alpha +0.09;
-	
-	if(random() < 0.08) smoke.effects = EF_RED;
-	
-	if(smoke.skin == 28) smoke.alpha = 0.23;
-	
-	smoke.owner = self.owner;
-	smoke.nextthink = time + my_ticrate;
-	smoke.think = update_smoke;
 }
 		
 		
@@ -625,28 +730,31 @@ void() bangs =
 			
 			self.origin = smoke_origin;
 			self.solid = SOLID_NOT;
-			if(time - smoke_time < 40 && !(self.is_over_sky ==1 && self.flags & FL_ONGROUND))  //DECEM
+			if(time - smoke_time < 40 && !(self.is_over_sky ==1 )) //&& self.flags & FL_ONGROUND))  //DECEM
 			{
 			
-				self.smoke_counter +=1;
-				if(self.smoke_counter%4 || random() < 0.1)
+				if(smoke_ent_number < 70)
 				{
-					make_smoke(smoke_origin, smoke_radius, 0);
-					//bprint(ftos(smoke_ceiling));
-					if(self.owner.smoke_rate ==2) 
+					self.smoke_counter +=1;
+					if(self.smoke_counter%4 || random() < 0.1)
 					{
-						if(random() < 0.28)make_smoke(smoke_origin, smoke_radius, 0);
-					}
-					else if(self.owner.smoke_rate ==3) 
-					{
-						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
-						if(random() < 0.19)make_smoke(smoke_origin, smoke_radius, 0);
-					}
-					else if(self.owner.smoke_rate ==4) 
-					{
-						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
-						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
-						if(random() < 0.18)make_smoke(smoke_origin, smoke_radius, 0);
+						make_smoke(smoke_origin, smoke_radius, 0);
+						//bprint(ftos(smoke_ceiling));
+						if(self.owner.smoke_rate ==2) 
+						{
+							if(random() < 0.28) make_smoke(smoke_origin, smoke_radius, 0);
+						}
+						else if(self.owner.smoke_rate ==3) 
+						{
+							if(random() < 0.19) make_smoke(smoke_origin, smoke_radius, 0);
+							if(random() < 0.19) make_smoke(smoke_origin, smoke_radius, 0);
+						}
+						else if(self.owner.smoke_rate ==4) 
+						{
+							if(random() < 0.18) make_smoke(smoke_origin, smoke_radius, 0);
+							if(random() < 0.18) make_smoke(smoke_origin, smoke_radius, 0);
+							if(random() < 0.18) make_smoke(smoke_origin, smoke_radius, 0);
+						}
 					}
 				}
 			
@@ -688,9 +796,21 @@ void() bangs =
 			}
 			else
 			{
-				self.alpha = 0.001;
-				if(mapname == "tut1") if(time - self.ltime >=3) self.think = rune_respawn;
-				else if(time - self.ltime >=120) self.think = rune_respawn;
+					self.alpha = 0.001;
+					if(mapname == "tut1") 
+					{
+						if(time - self.ltime >=3) self.think = rune_respawn;
+					}
+					else if(time - self.ltime >=125) 
+					{
+						self.think = rune_respawn;
+						//bprint("respawn call . . .");
+					}
+					//bprint(ftos(time - self.ltime));
+					//bprint("  ");
+					//bprint(ftos(rune1_plasma));
+					//bprint("  ");
+	
 			}
 			
 			
@@ -863,8 +983,11 @@ void() bangs =
 			self.solid = SOLID_NOT;
 			
 			setorigin(self, self.origin + '0 0 50');
-			if(mapname == "tut1") if(time - self.ltime >=1.5) self.think = rune_respawn;
-			else if(time - self.ltime >=30) self.think = rune_respawn;
+			if(mapname == "tut1") 
+			{
+				if(time - self.ltime >=1.5) self.think = rune_respawn;
+			}
+			else if(time - self.ltime >=25) self.think = rune_respawn;
 	
 			
 		}
@@ -937,8 +1060,8 @@ void() bangs =
 		
 				if((gravity_counter ==10 || random() < 0.05) && (time - gravity_time < 28.5))
 				{
-					if(random() < 0.5) sound(self, CHAN_AUTO, "bloodrailz/weapons/gravity4.wav", 0.7, ATTN_NORM);
-					else if(random() <=1) sound(self, CHAN_AUTO, "bloodrailz/weapons/gravity5.wav", 0.7, ATTN_NORM);
+					if(random() < 0.5) sound(self, CHAN_AUTO, "bloodrailz/weapons/br_gravity1.wav", 0.7, ATTN_NORM);
+					else if(random() <=1) sound(self, CHAN_AUTO, "bloodrailz/weapons/br_gravity2.wav", 0.7, ATTN_NORM);
 				}
 
 				
@@ -959,7 +1082,7 @@ void() bangs =
 			
 		
 				//if(time - self.ltime >=120) self.think = rune_respawn;
-			
+				
 				head = findradius(self.origin, 420);
 				while (head)
 				{
@@ -969,10 +1092,10 @@ void() bangs =
 					{
 						
 						
-						if (head.takedamage || head.classname == "plasma" || head.classname == "smoke" || head.classname == "dummy" || head.classname == "giblets")
+						if (head.takedamage || head.classname == "plasma" || head.classname == "smoke" || head.classname == "dummy" || head.classname == "vials" || head.classname == "giblets")
 						{				
 							
-							if (CanDamage (head, self) || head.classname == "plasma" || head.classname == "smoke" || head.classname == "dummy")
+							if (CanDamage (head, self) || head.classname == "plasma" || head.classname == "smoke" || head.classname == "dummy" || head.classname == "vials" || head.classname == "giblets")
 							{	
 								//local vector dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								//dir5 = normalize(dir5);
@@ -987,7 +1110,34 @@ void() bangs =
 								else if(vlen(dir5) < 400) head.velocity = head.velocity + 180*(normalize(dir5));
 								else if(vlen(dir5) < 420) head.velocity = head.velocity + 100*(normalize(dir5));
 								
-								if(head.classname == "giblets") head.velocity = head.velocity + 100*(normalize(dir5));
+								if(head.classname == "vials") 
+								{
+									if(time - gravity_time < 20.75)
+									{
+										head.velocity = head.velocity + 75*(normalize(self.origin - head.origin));
+										head.velocity = head.velocity + '0 0 13';
+									}
+									else 
+									{
+										head.velocity = head.velocity + 270*(normalize(head.origin - self.origin));
+										head.velocity = head.velocity + '0 0 95';
+									}
+								}
+								
+								if(head.classname == "giblets") 
+								{
+									if(time - gravity_time < 20.75)
+									{
+										head.velocity = head.velocity + (40+ 20*random())*(normalize(self.origin - head.origin));
+										head.velocity = head.velocity + '0 0 19';
+									}
+									else 
+									{
+										head.velocity = head.velocity + (210+ 50*random())*(normalize(head.origin - self.origin));
+										head.velocity = head.velocity + '0 0 95';
+									}
+								}
+								
 							
 								if(vlen(dir5) < 250 && vlen(head.velocity)> 1200) head.velocity = head.velocity*0.95;
 								
@@ -1013,6 +1163,13 @@ void() bangs =
 						
 							}
 							if(head.classname == "plasma") head.plasma_time = time; 
+							
+							if(head.shields_up !=1 && (head.classname == "player" || head.classname == "dummy") && vlen(head.origin - self.origin) < 75)
+							{
+									T_DamageOrg (head, self, self.owner, 30, self.origin);
+									if(head.armorvalue >0) head.armorvalue -= 10;
+									if(head.armorvalue <=0) head.armorvalue =0;
+							}
 									
 						}
 					}
@@ -1020,35 +1177,15 @@ void() bangs =
 				}
 			
 			
-				head = findradius(self.origin, 75);
-				while (head)
-				{
-					if (head != world)
-					{
-
-						if (head.takedamage)
-						{				
-							if (CanDamage (head, self))
-							{	
-								if(head.shields_up !=1) 
-								{
-									T_DamageOrg (head, self, self.owner, 30, self.origin);
-								
-									if(head.armorvalue >0) head.armorvalue -= 10;
-									if(head.armorvalue <=0) head.armorvalue =0;
-								}
-							
-							}			
-						}
-					}
-					head = head.chain;
-				}
 			}
 			else
 			{
 				self.alpha = 0.001;
 				gravity_origin1 = '0 0 0';
-				if(mapname == "tut1") if(time - self.ltime >=3) self.think = rune_respawn;
+				if(mapname == "tut1") 
+				{
+					if(time - self.ltime >=3) self.think = rune_respawn;
+				}
 				else if(time - self.ltime >=120) self.think = rune_respawn;
 			}
 			
@@ -1089,18 +1226,18 @@ void() bangs =
 					//bprint(ftos(smoke_ceiling));
 					if(self.owner.smoke_rate ==2) 
 					{
-						if(random() < 0.3)make_smoke(quasar_origin1 +  + '0 0 -1', 80, 1);
+						if(random() < 0.24)make_smoke(quasar_origin1 +  + '0 0 -1', 80, 1);
 					}
 					else if(self.owner.smoke_rate ==3) 
 					{
-						if(random() < 0.20)make_smoke(quasar_origin1 + '0 0 -1', 80, 1);
-						if(random() < 0.20)make_smoke(quasar_origin1 + '0 0 -1', 80, 1);
+						if(random() < 0.18)make_smoke(quasar_origin1 + '0 0 -1', 80, 1);
+						if(random() < 0.18)make_smoke(quasar_origin1 + '0 0 -1', 80, 1);
 					}
 					else if(self.owner.smoke_rate ==4) 
 					{
-						if(random() < 0.19)make_smoke(quasar_origin1, 80, 1);
-						if(random() < 0.19)make_smoke(quasar_origin1, 80, 1);
-						if(random() < 0.19)make_smoke(quasar_origin1, 80, 1);
+						if(random() < 0.16)make_smoke(quasar_origin1, 80, 1);
+						if(random() < 0.16)make_smoke(quasar_origin1, 80, 1);
+						if(random() < 0.16)make_smoke(quasar_origin1, 80, 1);
 					}
 				}
 			}
@@ -1127,8 +1264,8 @@ void() bangs =
 				if((quasar_buzz_counter ==10 || random() < 0.12) && time - quasar_time < 28.3)
 				{
 		
-					if(random() < 0.5) sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar1.wav", 0.55, ATTN_NORM);
-					else sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar2.wav", 0.55, ATTN_NORM);
+					if(random() < 0.5) sound(self, CHAN_AUTO, "bloodrailz/weapons/br_quasar1.wav", 0.55, ATTN_NORM);
+					else sound(self, CHAN_AUTO, "bloodrailz/weapons/br_quasar2.wav", 0.55, ATTN_NORM);
 					quasar_buzz_counter =0;
 				}
 				quasar_buzz_counter +=1;
@@ -1186,29 +1323,57 @@ void() bangs =
 					if (head != world && head != self)
 					{
 
-						if (head.takedamage || head.classname == "plasma" || head.classname == "smoke")
+						if (head.takedamage || head.classname == "plasma" || head.classname == "smoke" || head.classname == "vials" || head.classname == "giblets")
 						{				
-							if (CanDamage (head, self) || head.classname == "plasma" || head.classname == "smoke")
+							if (CanDamage (head, self) || head.classname == "plasma" || head.classname == "smoke" || head.classname == "vials" || head.classname == "giblets")
 							{	
 								dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								dir5 = normalize(dir5);
 								head.velocity = head.velocity + 220*dir5 + v_up*125;
 								
+								if(head.classname == "vials") 
+								{
+									head.velocity = head.velocity + 110*(normalize(head.origin - self.origin));
+									head.velocity = head.velocity + '0 0 85';
+								}
+								
+								if(head.classname == "giblets") 
+								{
+									head.velocity = head.velocity + 70*(normalize(head.origin - self.origin));
+									head.velocity = head.velocity + '0 0 85';
+								}
+								
 								if(head.classname == "plasma" || head.classname == "smoke") head.owner = self;  //10/5/23
 								
 								if(quasar_push_sound ==0) 
 								{
-									sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar_push.wav", 1, ATTN_NORM);
+									sound(self, CHAN_AUTO, "bloodrailz/weapons/br_quasar_push.wav", 1, ATTN_NORM);
 									quasar_push_sound = time;
 								}
 								else if(quasar_push_sound !=0 && time - quasar_push_sound > 0.8) 
 								{
-									sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar_push.wav", 1, ATTN_NORM);
+									sound(self, CHAN_AUTO, "bloodrailz/weapons/br_quasar_push.wav", 1, ATTN_NORM);
 									quasar_push_sound =time;
 								}
 							
 						
-							}			
+							}	
+							if(head.shields_up !=1 && head.classname == "player") 
+							{
+								if(vlen(head.origin - self.origin) > 175)
+								{
+									T_DamageOrg (head, self, self.owner, 5.5, self.origin);
+									if(head.armorvalue >0) head.armorvalue -= 4;
+									if(head.armorvalue <=0) head.armorvalue =0;
+								}
+								else
+								{
+									T_DamageOrg (head, self, self.owner, 19, self.origin);
+									if(head.armorvalue >0) head.armorvalue -= 9;
+									if(head.armorvalue <=0) head.armorvalue =0;
+								}
+							}
+									
 						}
 					}
 					head = head.chain;
@@ -1217,60 +1382,16 @@ void() bangs =
 			
 				//quasar_push_sound =0;
 				
-				head = findradius(self.origin, 330);
-				while (head)
-				{
-					if (head != world)
-					{
-
-						if (head.takedamage)
-						{				
-							if (CanDamage (head, self))
-							{	
-								if(head.shields_up !=1) 
-								{
-									T_DamageOrg (head, self, self.owner, 5.5, self.origin);
-								
-									if(head.armorvalue >0) head.armorvalue -= 4;
-									if(head.armorvalue <=0) head.armorvalue =0;
-								}
-								
-							}			
-						}
-					}
-					head = head.chain;
-				}
 				
-				head = findradius(self.origin, 175);
-				while (head)
-				{
-					if (head != world)
-					{
-
-						if (head.takedamage)
-						{				
-							if (CanDamage (head, self))
-							{	
-								if(head.shields_up !=1) 
-								{
-									T_DamageOrg (head, self, self.owner, 19, self.origin);
-								
-									if(head.armorvalue >0) head.armorvalue -= 9;
-									if(head.armorvalue <=0) head.armorvalue =0;
-									//sprint(head, "180\n");
-								}
-								
-							}			
-						}
-					}
-					head = head.chain;
-				}
 			}
 			else
 			{
 				self.alpha = 0.001;
 				quasar_origin1 = '0 0 0';
-				if(mapname == "tut1") if(time - self.ltime >=3) self.think = rune_respawn;
+				if(mapname == "tut1") 
+				{
+					if(time - self.ltime >=3) self.think = rune_respawn;
+				}
 				else if(time - self.ltime >=120) self.think = rune_respawn;
 			}
 	}
@@ -1518,7 +1639,7 @@ void() rune_drop =
 	}
 	
     rune_clear_player_flags();
-    sound (self, CHAN_AUTO, "bloodrailz/items/runedrop.wav", 1, ATTN_NORM);
+    sound (self, CHAN_AUTO, "bloodrailz/items/br_runedrop.wav", 1, ATTN_NORM);
     self.runetime = time + 0.8;
 };
 
@@ -1584,22 +1705,11 @@ void() rune_spawn_start =
 	remove(self);
 };
 
-/*
-void() RuneRotHealthThink =
-{
-	other = self.owner;
 
-	if ((((other.health <= 100) || (other.player_flag & ITEM_RUNE4_FLAG)) || (other.items & IT_SUPERHEALTH)))
-	{
-		remove(self);
-		return;
-	}
 
-	other.health = (other.health - 1);
-	self.think = RuneRotHealthThink;
-	self.nextthink = (time + 1);
-};
-*/
+
+
+
 void() rune_toss =
 {
 	local entity item;
@@ -1732,10 +1842,12 @@ void() rune_check =
 					}
 					head = head.chain;
 					
+					
 					if (toRemove)
 					{
 						remove(toRemove);
 						toRemove = world;
 					}
+
 				}
 }

@@ -776,41 +776,7 @@ void () console_version_info =
     cprint("\n");
 };
 
-//
-//  C H E C K  L E V E L
-//
-//  Check to see if we've found the next level in levels.cfg
-//
-void (float newlevel) console_check_level =
-{
-    // To choose the next level, we should set nextmap when
-    // elohim_levelcount == elohim_level.  If the current level is the
-    // last one in the list then this will never occur, so we should also
-    // set nextmap when we see the first level in the list.
-    if (elohim_levelcount == 0 || elohim_levelcount == elohim_level)
-    {
-        nextmap = strings_get_mapname(newlevel);
-        utils_set_cvar("v_kickroll", elohim_levelcount + 1);
-    }
 
-    elohim_levelcount = elohim_levelcount + 1;
-};
-
-//
-//  G E T  U S E R  N E X T L E V E L
-//
-//  Check for a user-defined level sequence (dedicated only).
-//
-void () console_get_user_nextlevel =
-{
-    if (elohim_playmode & ELOHIM_DEDICATED_SERVER)
-    {
-        // elohim_levelcount = 0;
-        // elohim_lastcount = 0;
-        // elohim_nextcheck = 0;
-        // localcmd("exec levels.cfg\n");
-    }
-};
 
 //
 //  G E T  O R I G I N
@@ -995,7 +961,7 @@ void (float command) console_command =
         elohim_num_cameras = elohim_num_cameras + 1;
     }
     else if (command >= 100 && command < 170)
-        console_check_level(command - 100);
+       {}
     else if (command >= 1000)
     {
         elohim_password = command;

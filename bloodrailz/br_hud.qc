@@ -224,7 +224,6 @@ void() Shield_HUD =
 		s_hud.movetype = MOVETYPE_NOCLIP;
 		s_hud.solid = SOLID_NOT;
 		s_hud.classname = "s_hud";
-		//s_hud.effects = s_hud.effects | EF_NODEPTHTEST;
 		setsize (s_hud, 0,0);
 		s_hud.owner = self;
 		s_hud.nextthink = time + 0.05;
@@ -1008,7 +1007,7 @@ void() make_flick_marker =
 	if(self.marker_up == 0)
 	{
 		
-		sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "bloodrailz/weapons/br_lockon.wav", 1, ATTN_NORM);
 
 		
 		self.marker_up =1;
@@ -1319,7 +1318,7 @@ void hud_update() =
 		
 	}
 	
-	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && !(mapname !="tut1" || mapname !="tut2" || mapname !="tut3" || mapname !="tut4" || mapname !="tut5" || mapname !="tut6" || mapname !="tut7")  && self.classname == "player")
+	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && (mapname !="tut1" && mapname !="tut2")  && self.classname == "player")
 	{
 		if(self.racing_on == 1) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n\x10", utils_get_time(time - chrono_time), "\x11                              \n\x10\svel:", ftos(current_speed), bracket_spacer);   //debug?   hud 
 		else if(self.racing_on == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n\x10", utils_get_time(self.my_previous_time), "\x11                              \n\x10\svel:",    ftos(current_speed), bracket_spacer);   //debug?   hud 
@@ -1453,12 +1452,13 @@ void() update_icon =
 	
 	if(self.alpha < 0.95 && time - self.cnt < 0.7) 
 	{
-		self.alpha +=0.03;
+		//self.alpha +=0.03;
+		self.alpha +=0.05;
 		if(self.alpha >= 0.95) self.alpha = 0.95;
 	}
 	else if(time - self.cnt > 1.1) 
 	{
-		self.alpha -=0.02;
+		self.alpha -=0.025;
 		if(self.alpha < 0.05 && self.classname == "icon") 
 		{
 			self.think = SUB_Remove;
@@ -1498,15 +1498,15 @@ void(entity scorer, float msg, float dmg) make_icon =
 			icon.icon_display = scorer.icon_display;
 			icon.icon_num = scorer.icon_num;
 			
-				local vector a = '0 -138.5 108';
+				local vector a = '0 -138.5 104';
 				a_z = scorer.icon_height - 5;
 				
-				if(a_z < 108 && time - scorer.icon_time >2) a_z = 108;
+				if(a_z < 104 && time - scorer.icon_time >2) a_z = 104;
 			
-				if(scorer.icon_height >=114 || scorer.icon_height < 20)	
+				if(scorer.icon_height >=110 || scorer.icon_height < 20)	
 				{
-					setorigin(icon, '0 -138.5 108');
-					scorer.icon_height = 108;
+					setorigin(icon, '0 -138.5 104');
+					scorer.icon_height = 104;
 				}
 				else	
 				{
@@ -1522,11 +1522,12 @@ void(entity scorer, float msg, float dmg) make_icon =
 
 		
 
-			icon.velocity = '0 0 9.5';	
+			icon.velocity = '0 0 8.0';	
 			icon.frame = 0;	
 			icon.alpha = 0.001;
 			
 			icon.cnt = time;
+			//icon.effects = icon.effects | EF_NODEPTHTEST;
 			
 				
 			icon.weapon = msg;
@@ -1551,7 +1552,7 @@ void(entity scorer, float msg, float dmg) make_icon =
 				icon2.icon_num = scorer.icon_num;
 				
 				a_z = scorer.icon_height;
-				if(a_z < 108 && time - scorer.icon_time >2) a_z = 108;
+				if(a_z < 104 && time - scorer.icon_time >2) a_z = 104;
 				
 				
 				setorigin(icon2, a);
@@ -1560,10 +1561,11 @@ void(entity scorer, float msg, float dmg) make_icon =
 					else setorigin(icon2, a);
 
 
-				icon2.velocity = '0 0 9.5';	
+				icon2.velocity = '0 0 8.0';	
 				icon2.frame = 0;	
 				icon2.alpha = 0.001;
 				icon2.cnt = time;
+				//icon2.effects = icon2.effects | EF_NODEPTHTEST;
 					
 				icon2.weapon = msg;
 				icon2.health = dmg;
@@ -1574,5 +1576,213 @@ void(entity scorer, float msg, float dmg) make_icon =
 			
 			if(scorer.icon_time != time) scorer.icon_time = time;
 				
+}
+
+
+void() update_armoricon =
+{	
+	makevectors(self.owner.owner.v_angle);
+	self.viewmodelforclient = self.owner;
+	
+	
+	if(self.owner.armorvalue < 200 && self.skin == 1 && self.owner.armor_change ==0)
+	{
+		self.owner.armor_change =2;
+		self.alpha = 0.99;
+		self.frame = 1;
+	}
+	else if(self.owner.armorvalue < 100 && self.skin == 0 && self.owner.armor_change ==0)
+	{
+		self.owner.armor_change =1;
+		self.frame = 1;
+		self.alpha = 0.99;
+	}
+	
+	
+	if(self.owner.armor_change !=0)
+	{
+		if (self.owner.armor_change ==1 && self.alpha > 0.01)
+		{
+			if(self.alpha <0.7) self.frame = 0;
+			
+			self.skin = 2;
+			if(self.alpha > 0.4) self.alpha = self.alpha -0.07;
+			else if(self.alpha <= 0.4) self.alpha = self.alpha -0.1;
+		}
+		else if(self.owner.armor_change ==1 && self.alpha <=0.01)
+		{
+			self.owner.armor_change =0;
+			self.owner.armor_displayed =0;
+		}
+		
+		if (self.owner.armor_change ==2 && self.alpha > 0.6)
+		{
+			if(self.alpha <0.8) self.frame = 0;
+			
+			if(self.alpha <0.7) self.skin = 0;
+			else if(self.alpha <0.9) self.skin = 4;
+			else self.skin = 3;
+
+			self.alpha = self.alpha - 0.025;
+		}
+		else if(self.owner.armor_change ==2 && self.alpha <=0.6)
+		{
+			self.frame = 0;
+			self.skin = 0;
+			self.alpha = 0.8;
+			self.owner.armor_change =0;
+		}
+	}
+
+	else if(self.owner.armor_change ==0)
+	{
+		if(self.owner.armorvalue >= 200) //2x hit
+		{
+			self.skin = 1;
+			self.alpha = 0.8;
+		}
+		else if(self.owner.armorvalue >= 100) //1x hit
+		{
+			self.skin = 0;
+			self.alpha = 0.8;
+		}
+		else if(self.owner.armorvalue < 100)
+		{
+			self.owner.armor_displayed =0;
+			self.owner.armor_change =0;
+			self.think = SUB_Remove;
+		}
+	}
+	
+	if(self.owner.health <=0)
+	{
+		self.owner.armor_displayed =0;
+		self.owner.armor_change =0;
+		self.think = SUB_Remove;
+	}
+	
+	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;
+	
+	if(intermission_running)   //dont show during intermission
+	{
+		self.think = SUB_Remove;
+		self.owner.armor_displayed =0;
+		self.owner.armor_change =0;
+	}
+	
+	self.nextthink = time+my_ticrate*3;  //DECEM
+
+}
+
+void() make_armoricon =
+{
+			if(self.armor_displayed ==0 && self.armorvalue >= 100)
+			{
+				self.armor_displayed =1;
+				local entity icon;
+		
+				icon = spawn ();
+		
+				icon.owner = self;
+				icon.movetype = MOVETYPE_NOCLIP;
+				icon.solid = SOLID_NOT;
+		
+				icon.touch = SUB_Null;
+				icon.classname = "armoricon";
+				setmodel (icon, "progs/bloodrailz/armor_icons.mdl");		
+				setsize (icon, 0, 0);	
+			
+			
+				local vector a = '0 -146.8 70';
+				setorigin(icon, a);
+
+			
+	
+				icon.frame = 0;	
+				icon.alpha = 0.8;
+			
+				icon.think = update_armoricon;
+				icon.nextthink = time;
+			}
+							
+}
+
+
+
+void() update_reticule =
+{	
+	makevectors(self.owner.owner.v_angle);
+	self.viewmodelforclient = self.owner;
+	
+	local float RECHARGE_r = 21;   //cooldown time
+	if(mapname == "tut1") RECHARGE_r = 2;
+	
+	local float RECHARGE = 18;
+	if(mapname == "tut1") RECHARGE = 2;
+	
+	
+	if(!(self.owner.player_flag & PF_ITEM_RUNE2_FLAG) && !(self.owner.player_flag & PF_ITEM_RUNE3_FLAG))
+	{
+		if((time - self.owner.shield_recharge_time < RECHARGE && self.owner.shield_recharge_time != 0) && (time - self.owner.mag_recharge_time < RECHARGE_r && self.owner.mag_recharge_time != 0)) self.skin = 0;
+		else if((time - self.owner.shield_recharge_time > RECHARGE || self.owner.shield_recharge_time == 0) && (time - self.owner.mag_recharge_time > RECHARGE_r || self.owner.mag_recharge_time == 0)) self.skin = 1;
+		else if((time - self.owner.shield_recharge_time > RECHARGE || self.owner.shield_recharge_time == 0) && self.owner.mag_recharge_time != 0) self.skin = 3;
+		else if((time - self.owner.mag_recharge_time > RECHARGE_r || self.owner.mag_recharge_time == 0) && self.owner.shield_recharge_time != 0) self.skin = 2;
+	}
+	else if(self.owner.player_flag & PF_ITEM_RUNE2_FLAG)
+	{
+		if((time - self.owner.shield_recharge_time < RECHARGE && self.owner.shield_recharge_time != 0)) self.skin = 0;
+		else if((time - self.owner.shield_recharge_time > RECHARGE || self.owner.shield_recharge_time == 0)) self.skin = 3;
+
+	}
+	else if(self.owner.player_flag & PF_ITEM_RUNE3_FLAG)
+	{
+		if((time - self.owner.mag_recharge_time < RECHARGE_r && self.owner.mag_recharge_time != 0)) self.skin = 0;
+		else if((time - self.owner.mag_recharge_time > RECHARGE_r || self.owner.mag_recharge_time == 0)) self.skin = 2;
+	}
+	
+
+	
+	//if(self.skin ==0) self.alpha = 0.10;
+	
+	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;
+	
+	if(intermission_running)   //dont show during intermission
+	{
+		self.think = SUB_Remove;
+		self.owner.reticule_displayed =0;
+	}
+	
+	self.nextthink = time+my_ticrate*3;  //DECEM
+
+}
+
+void() make_reticule =
+{
+			if(self.reticule_displayed ==0)
+			{
+				self.reticule_displayed =1;
+				local entity icon;
+		
+				icon = spawn ();
+		
+				icon.owner = self;
+				icon.movetype = MOVETYPE_NOCLIP;
+				icon.solid = SOLID_NOT;
+		
+				icon.touch = SUB_Null;
+				icon.classname = "reticule";
+				setmodel (icon, "progs/bloodrailz/reticule.mdl");		
+				setsize (icon, 0, 0);	
+			
+				local vector a = '0 0 0';
+				setorigin(icon, a);
+	
+				icon.frame = 0;	
+				icon.alpha = 0.18;
+			
+				icon.think = update_reticule;
+				icon.nextthink = time;
+			}
+							
 }
 

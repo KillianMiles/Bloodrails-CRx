@@ -239,21 +239,15 @@ void () admin_start_code =
 //
 void () admin_change_level =
 {
-   /*
-    if (request_mapname == "start0")
-    {
-        serverflags = 0;
-        changelevel("start");
-    }
-    else if (request_mapname == "start1")
-    {
-        serverflags = 15;
-        changelevel("start");
-    }
-    else
-    */
 	rune_clear_player_flags();
-
+	
+	
+	if(request_mapname == "ctf_takayama_r1" && !(maplist & 1)) maplist = maplist | 1;
+	else if(request_mapname == "ctf_dissocia_r1" && !(maplist & 2)) maplist = maplist | 2;
+	
+	cvar_set("saved4", ftos(maplist));
+	
+	if(!(maplist & current_map)) maplist = maplist | current_map;
         changelevel (request_mapname);
 };
 
@@ -323,12 +317,7 @@ void (float warpnum) admin_init_warp =
 		admin_show_episodes(warpnum);
         if (warpnum == 0)
 		    self.use=admin_select_episode;
-        /*
-        else if (warpnum == 1)
-            self.use=admin_select_episode2;
-        else
-            self.use=admin_select_episode3;
-            */
+
 	}
 
 	if (self.warp_map)
@@ -346,7 +335,7 @@ void(float episode) admin_show_maps =
         sprint(self, "3: CTF_Bridge\n");
         sprint(self, "4: CTF_Hanghigh\n");
         sprint(self, "5: CTF_Swingest\n");
-        sprint(self, "6: CTF_Longest\n");
+        sprint(self, "6: --empty--");
         sprint(self, "7: CTF_Teardown\n");
         sprint(self, "8: CTF_Eyesout\n");
         sprint(self, "9: CTF_Relic2\n");
@@ -361,9 +350,9 @@ void(float episode) admin_show_maps =
     {
         sprint(self, "1: CTF_Bikini\n");
         sprint(self, "2: CTF_Doglyfe\n");
-        sprint(self, "3: CTF_Dogrun\n");
+        sprint(self, "3: CTF_Bamboo\n");
         sprint(self, "4: CTF_Daywalker\n");
-        sprint(self, "5: CTF_Volcano\n");
+        sprint(self, "5: CTF_Easter\n");
         sprint(self, "6: CTF_Fulcrum\n");
         sprint(self, "7: CTF_Albatross\n");
         sprint(self, "8: CTF_Firestorm\n");
@@ -452,55 +441,55 @@ void(float episode) admin_show_maps2 =
 {
     if (episode == 1)
     {
-        sprint(self, "1: ctf1 - McKinley Base\n");
-        sprint(self, "2: ctf2 - The Kiln\n");
-        sprint(self, "3: ctf3 - DySpHoRiA\n");
-        sprint(self, "4: ctf4 - The Forgotten Mines\n");
-        sprint(self, "5: ctf5 - Da Ancient War Grounds\n");
-        sprint(self, "6: ctf6 - Vertigo\n");
-        sprint(self, "7: ctf7 - Tale of Two Cities\n");
-        sprint(self, "8: ctf8 - The Strongbox\n");
-        sprint(self, "9: ctf9\n");
+        sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 2)
     {
-        sprint(self, "1: ctf2m1 - McKinley Station\n");
-        sprint(self, "2: ctf2m2 - The Warzone\n");
-        sprint(self, "3: ctf2m3 - Spill the Blood\n");
-        sprint(self, "4: ctf2m4 - Ruins of NeoMinonk\n");
-        sprint(self, "5: ctf2m5 - Disciple War Grounds\n");
-        sprint(self, "6: ctf2m6 - The Two Towers\n");
-        sprint(self, "7: ctf2m7 - Gloom Castles\n");
-        sprint(self, "8: ctf2m8 - Capturephobolis\n");
-        sprint(self, "9: ctf_start\n");
+        sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 3)
     {
-        sprint(self, "1: ctf3m1 - Remix\n");
-        sprint(self, "2: ctf3m2 - Red Alert\n");
-        sprint(self, "3: ctf3m3 - Stop the Flow\n");
-        sprint(self, "4: ctf3m4 - Nameless Mines\n");
-        sprint(self, "5: ctf3m5 - Egyptian Pig Factory\n");
-        sprint(self, "6: ctf3m6 - Terra Firma\n");
-        sprint(self, "7: ctf3m7 - The Dark Age\n");
-        sprint(self, "8: ctf3m8 - The Place of Two Bases\n");
-        sprint(self, "9: ctf3m9 - The CHEAT Complex 2\n");
+        sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 4)
     {
-        sprint(self, "1: boom\n");
-        sprint(self, "2: kaboom\n");
-        sprint(self, "3: pound\n");
-        sprint(self, "4: pigremix\n");
-        sprint(self, "5: mctf1\n");
-        sprint(self, "6: rctf1\n");
-        sprint(self, "7: rctf2\n");
-        sprint(self, "8: rctf4\n");
-        sprint(self, "9: rctf5\n");
+        sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 5)
     {
-        sprint(self, "1: ctfgold7\n");
+        sprint(self, "1: \n");
         sprint(self, "2: \n");
         sprint(self, "3: \n");
         sprint(self, "4: \n");

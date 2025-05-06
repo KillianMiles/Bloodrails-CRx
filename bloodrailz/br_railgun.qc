@@ -198,16 +198,20 @@ void() rail_fade = {
 	
 
 	if (self.cnt == 6)
+	{
 		self.alpha = self.alpha - 0.19;
 		if(self.alpha <= 0) self.alpha = 0.01;
+		self.frame = 1;
+	}
 	else if (self.cnt == 5)
 	{
-		
-		if (rand < 0.20)          //randomly deleting segments
+		self.frame = 1;
+		if (rand < 0.06)          //randomly deleting segments  .02 -> .01
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
 				self.nextthink = time + 0.05;
+				
 				return;
 			}
 		
@@ -217,12 +221,13 @@ void() rail_fade = {
 	}	
 	else if (self.cnt == 4)
 	{
-		
-			if (rand < 0.10)          //randomly deleting segments
+		self.frame = 1;
+			if (rand < 0.07)          //randomly deleting segments
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
 				self.nextthink = time + 0.05;
+				
 				return;
 			}
 		
@@ -231,12 +236,13 @@ void() rail_fade = {
 	}
 	else if (self.cnt == 3)
 	{
-		
-			if (rand < 0.08)          //randomly deleting segments
+		self.frame = 2;
+			if (rand < 0.09)          //randomly deleting segments
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
 				self.nextthink = time + 0.05;
+				
 				return;
 			}
 		if(self.alpha == 0.01) self.alpha = 0.01;
@@ -245,11 +251,13 @@ void() rail_fade = {
 	}
 	else if (self.cnt == 2)
 	{	
-			if (rand < 0.08)          //randomly deleting segments
+		self.frame = 2;
+			if (rand < 0.10)          //randomly deleting segments
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
 				self.nextthink = time + 0.05;
+				
 				return;
 			}
 			if(self.alpha == 0.01) self.alpha = 0.01;
@@ -257,6 +265,7 @@ void() rail_fade = {
 	}
 	else if (self.cnt == 1) 
 	{
+		self.frame = 2;
 		self.alpha = 0.02;
 		self.think = SUB_Remove;
 		self.nextthink = time + 0.05;
@@ -266,12 +275,18 @@ void() rail_fade = {
 	self.cnt = self.cnt - 1;
 };
 
-void(vector start, vector end, vector myAngles, entity shooter) rail_make =
+
+
+
+
+
+
+void(vector start, vector end, vector myAngles, entity shooter) rail_make = 
 {
 	local vector vec,  loopsrc,  destination;
 	local vector drawsrc;
 	local entity thedude;
-	local float traillen, segments, old_segments;
+	local float traillen, segments;
 	entity prj;
 	local float rotation_amount;
 	local float alpha_rand;
@@ -294,209 +309,231 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 	// now using drawsrc instead of src now, so we trace damage from eye position and trail from gun position
 	traceline(drawsrc, destination, TRUE, self);
 	traillen = vlen(trace_endpos - drawsrc);
-	if (traillen > 2500 && (pointcontents(trace_endpos) == CONTENT_SKY)) traillen = traillen - 1300;       // 1800 -> 2800 , 900 -> 1300   // RAIL DRAW ISSUE RAIL NOT DRAWING explore this
-	segments = floor(traillen / 50);
 	
-	//sprint(self, ftos(segments));
-	if(segments>140) segments = 140;
-	old_segments = segments;
-
+	//bprint(ftos(traillen));
+	//bprint(" trail length\n");
 	
+	
+	if (traillen >= 4000 && (pointcontents(trace_endpos) == CONTENT_SKY)) traillen = traillen - 1100;
+	//else if (traillen > 8000) traillen = traillen - 1500;
 
-	if (segments < 40 && shooter == self)
+
+
+
+	if (shooter == self)
 	{
-		//if (traillen > 1800 && (pointcontents(trace_endpos) == CONTENT_SKY)) traillen = traillen - 800;
-		//segments = floor(traillen / 50);
-		
-		//sprint(self, ftos(segments));
-		//sprint(self, ftos(traillen), " ");
-	while (segments)
-	{
-		vec = normalize(trace_endpos - drawsrc);
-		prj = spawn ();
-		
-		prj.owner = self;
-		prj.movetype = MOVETYPE_NOCLIP;
-		prj.solid = SOLID_NOT;
-		  prj.angles = vectoangles(shootDir);
-		
-		prj.touch = SUB_Null;
-		prj.classname = "railtrail";
-		setmodel (prj, "progs/bloodrailz/rail1.mdl");
-				
-		setsize (prj, 0, 0);	
-		
-		if (self.height == elohim_team1) 
-		{
-			if(random() < 0.13) prj.skin = 3;   //Orange
-			else if(random() > 0.87) prj.skin = 4;   //Dark-red
-			else prj.skin = 1;    //red
+			if (traillen < 50) segments = 1;		//short link
+			else if (traillen < 75) segments = 2;		//short link
+			else if (traillen < 150) segments = 3;		//short link
+			else if (traillen < 200) segments = 4;		//short link
 			
-		}
-		else if (self.height == elohim_team2) 
-		{
-			if(random() < 0.13) prj.skin = 0;   //White-blue
-			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
-			else prj.skin = 2;      //light blue	
-		}
-		
-		else 
-		{
-			if(random() < 0.13) prj.skin = 2;   //Light-blue
-			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
-			else prj.skin = 0;      //White blue
-		}
-		
-		
-		setorigin (prj, drawsrc + vec * 50 * segments);
-		prj.velocity = '0 0 0';	
-		
-	
-		
-			alpha_rand = random();
-			if (alpha_rand < 0.5) prj.alpha = 0.60;
-			else prj.alpha = 1;
-		
-		//teamred's magic
-		
+			else if (traillen < 250) segments = 2;
+			else if (traillen < 300) segments = 2;
+			else if (traillen < 400) segments = 3;
+			else if (traillen < 600) segments = 4;
+			else if (traillen < 800) segments = 5;
+			else if (traillen < 1000) segments = 6;
+			else if (traillen < 1250) segments = 7;
+			else if (traillen < 1750) segments = 9;
+			else if (traillen < 2000) segments = 13; 	 //4,7,10,          13  //5,10,13
+			else if (traillen < 2500) segments = 15;         //4,7,10,13,       15  //5,10,13,15
+			else if (traillen < 3000) segments = 16; //14    //4,7,10,13,       16  //5,10,13,16
+			else if (traillen < 3500) segments = 17; //14    //4,7,10,13,       17  //5,10,13,17
+			else if (traillen < 4000) segments = 19; //16    //4,7,10,13,16,    19  //5,10,13,16,19
+			else if (traillen < 5000) segments = 20; //17    //4,7,10,13,16,    20  //5,10,13,16,20
+			else if (traillen < 6000) segments = 21; //18    //4,7,10,13,16,19, 21  //5,10,13,16,21
+			else if (traillen < 7000) segments = 22; //18    //4,7,10,13,16,19, 22  //5,10,13,16,19,22
+			else if (traillen >=7000) segments = 22; //18    //4,7,10,13,16,19, 22  //5,10,13,16,19,22
 			
+			local float sky_shot =0;
+			if(pointcontents(trace_endpos) == CONTENT_SKY && traillen >= 1000) sky_shot =1;  //rail hits SKY brush so we dont care if rail draws super long
 			
-			prj.avelocity_x = random()-0.5;
-			prj.avelocity_y = random()-0.5;
-			prj.avelocity_z = random()-0.5;
-		
-			prj.avelocity = normalize(prj.avelocity);
-			rotation_amount = 18.0;
-			prj.avelocity = prj.avelocity*rotation_amount;
-			
-
-		prj.frame = 4;	
-		prj.think = rail_fade;
-		prj.nextthink = time + 0.2 + (segments*0.002); //fade delay
-		segments = segments - 1;
-		prj.cnt = 5;	
-	
-	}
-	}
-
-
-	if (segments >= 40 && shooter == self)
-	{
-		segments = 40;
-		if (traillen < 3000 && (pointcontents(trace_endpos) == CONTENT_SKY)) segments = 31;
-		else if (traillen < 4000 && (pointcontents(trace_endpos) == CONTENT_SKY)) segments = 33;
-		else if (traillen < 5000 && (pointcontents(trace_endpos) == CONTENT_SKY)) segments = 34;
-		else if (traillen < 6000 && (pointcontents(trace_endpos) == CONTENT_SKY)) segments = 35;
-		else if (traillen >= 6000 && (pointcontents(trace_endpos) == CONTENT_SKY)) segments = 36;
-		
-		if(traillen >= 7500 && pointcontents(trace_endpos) == CONTENT_SKY) 
-		{
-			segments = 36;
-			traillen = 7000;
-		}
-		
-		local float old_seg = segments - 3;
-		
-		spacing_long = floor(traillen / segments);
-		//sprint(self, ftos(segments), " ");
-		//sprint(self, ftos(traillen), " ");
-		//sprint(self, ftos(spacing_long), " ");
-		
-			//bprint(ftos(traillen));
-			//bprint(" traillen\n");
 			//bprint(ftos(segments));
-			//bprint(" segments\n");
-		
-	while (segments)
-	{
-		vec = normalize(trace_endpos - drawsrc);
-		prj = spawn ();
-		
-		prj.owner = shooter;
-		prj.movetype = MOVETYPE_NOCLIP;
-		prj.solid = SOLID_NOT;
-		  prj.angles = vectoangles(shootDir);
-		prj.touch = SUB_Null;
-		prj.classname = "railtrail";
-		setmodel (prj, "progs/bloodrailz/rail1.mdl");
-		
-		
-		if(spacing_long < 70)
+			//bprint(" nominal segments\n");
+			//local float count_segs =0;
+			
+			if((total_players_global > 8 || smoke_ent_number > 8) ) 
 			{
-				if(random() < 0.3 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
+				if(segments >= 22) segments = segments - 2;
+				else if(segments >= 21) segments = segments - 2;
+				else if(segments >= 20) segments = segments - 2;
 			}
 			
-		if(spacing_long >= 70 && spacing_long < 85)
-			{
-				if(random() < 0.4 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
-			}
 			
-		if(spacing_long >= 85 && spacing_long < 100)
-			{
-				if(random() < 0.5 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
-			}
 		
-		if(spacing_long >= 100 && spacing_long < 125)
+			local float old_seg = segments;
+			spacing_long = floor(traillen / segments);
+			
+			
+			local float sky_skip =0;
+			if     (sky_shot ==1 && segments ==7) sky_skip=1;
+			else if(sky_shot ==1 && segments ==8) sky_skip=1;
+			else if(sky_shot ==1 && segments ==9) sky_skip=1;
+			else if(sky_shot ==1 && segments ==10) sky_skip=1;
+			else if(sky_shot ==1 && segments ==11) sky_skip=1;
+			else if(sky_shot ==1 && segments ==12) sky_skip=1;
+			else if(sky_shot ==1 && segments ==13) sky_skip=2;
+			else if(sky_shot ==1 && segments ==14) sky_skip=2;
+			else if(sky_shot ==1 && segments ==15) sky_skip=3;
+			else if(sky_shot ==1 && segments ==16) sky_skip=3;
+			else if(sky_shot ==1 && segments ==17) sky_skip=3;
+			else if(sky_shot ==1 && segments ==18) sky_skip=4;
+			else if(sky_shot ==1 && segments ==19) sky_skip=4;
+			else if(sky_shot ==1 && segments ==20) sky_skip=4;
+			else if(sky_shot ==1 && segments ==21) sky_skip=5;
+			else if(sky_shot ==1 && segments ==22) sky_skip=5;
+
+			
+			local float skip =0;
+			if(segments ==22 && sky_shot ==0) skip=4;
+			else if(segments >16 && sky_shot ==0) skip=3;
+			else if((segments ==16 || segments ==15 || segments ==14 || segments ==13 || segments==12) && sky_shot ==0) skip=2;
+			else if((segments ==9 || segments ==10 || segments==11) && sky_shot ==0) skip=1;
+			
+			local float skip_go =0;
+			local float sky_skip_go =0;
+			
+			//bprint(ftos(spacing_long));
+			//bprint(" spacing\n");
+			
+			
+		
+		while (segments)
+		{
+			skip_go=0;
+			sky_skip_go=0;
+			
+			if(skip ==0 || (skip==1 && (segments!=6)) || (skip==2 && (segments!=6 && segments!=11)) || (skip==3 && (segments!=6 && segments!=11 && segments!=16)) || (skip==4 && (segments!=6 && segments!=11 && segments!=16 && segments!=21)))
 			{
-				if(random() < 0.9 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
-				if(random() >= 0.9 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail2.mdl");
+				skip_go=1;
+			}
+
+			if(sky_skip ==0 || (sky_skip==1 && (segments!=6))|| (sky_skip==2 && (segments!=6 && segments!=11)) || (sky_skip==3 && (segments!=6 && segments!=11 && segments!=14)) || (sky_skip==4 && (segments!=6 && segments!=11 && segments!=14 && segments!=17)) || (sky_skip==5 && (segments!=6 && segments!=11 && segments!=14 && segments!=17 && segments!=20)))
+			{
+				sky_skip_go=1;
 			}
 			
-		if(spacing_long >= 125)
+			
+			//if(skip ==0 || (skip==2 && (segments!=6 && segments!=11)) || (skip==3 && (segments!=6 && segments!=11 && segments!=16)) || (skip==4 && (segments!=6 && segments!=11 && segments!=16 && segments!=21)))
+			if(skip_go==1 && sky_skip_go==1)
 			{
-				if(random() < 0.6 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail2.mdl");
-				if(random() >= 0.6 && segments > 2 && segments < old_seg) setmodel (prj, "progs/bloodrailz/rail3.mdl");
-			}
+				//count_segs +=1;
 				
-		setsize (prj, 0, 0);	
-		if (self.height == elohim_team1) 
-		{
-			if(random() < 0.13) prj.skin = 3;   //Orange
-			else if(random() > 0.87) prj.skin = 4;   //Dark-red
-			else prj.skin = 1;    //red
+				vec = normalize(trace_endpos - drawsrc);
+				prj = spawn ();
+		
+				prj.owner = shooter;
+				prj.movetype = MOVETYPE_NOCLIP;
+				prj.solid = SOLID_NOT;
+				prj.angles = vectoangles(shootDir);
+				
+				prj.angles_z = (2*random()-1) * 25;
+				
+				prj.touch = SUB_Null;
+				prj.classname = "railtrail";
 			
-		}
-		else if (self.height == elohim_team2) 
-		{
-			if(random() < 0.13) prj.skin = 0;   //White-blue
-			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
-			else prj.skin = 2;      //light blue	
-		}
+				prj.frame =0;
 		
-		else 
-		{
-			if(random() < 0.13) prj.skin = 2;   //Light-blue
-			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
-			else prj.skin = 0;      //White blue
-		}
-		
-		setorigin (prj, drawsrc + vec * spacing_long * segments);
-		prj.velocity = '0 0 0';	
-		
-		//teamred's magic
-			alpha_rand = random();
-			if (alpha_rand < 0.5) prj.alpha = 0.60;
-			else prj.alpha = 1;
-			//else if (alpha_rand < 0.44) prj.alpha = 0.8;
 			
-			prj.avelocity_x = random()-0.5;
-			prj.avelocity_y = random()-0.5;
-			prj.avelocity_z = random()-0.5;
-		
-			prj.avelocity = normalize(prj.avelocity);
-			rotation_amount = 18.0;
-			if(spacing_long >= 100) rotation_amount = 15.0;
-			if(spacing_long >= 125) rotation_amount = 15.0;
-			prj.avelocity = prj.avelocity*rotation_amount;
+				//if(segments == old_seg || segments == 1) setmodel (prj, "progs/bloodrailz/rail1.mdl");   //DRAW THE FIRST AND LAST SEGMENTS AS SHORT MODELS SO STUFF DOESNT POKE THRU WALLS
 			
 
-		prj.frame = 4;	
-		prj.think = rail_fade;
-		prj.nextthink = time + 0.2 + (segments*0.002); // delay fade time using segment number for neat effect (vf)
-		segments = segments - 1;
-		prj.cnt = 5;	
+			
+				
+				setsize (prj, 0, 0);	
+				if (self.height == elohim_team1) 
+				{
+					if(random() < 0.13) prj.skin = 3;   //Orange
+					else if(random() > 0.87) prj.skin = 4;   //Dark-red
+					else prj.skin = 1;    //red
+				}
+				else if (self.height == elohim_team2) 
+				{
+					if(random() < 0.13) prj.skin = 0;   //White-blue
+					else if(random() > 0.87) prj.skin = 5;   //Dark-blue
+					else prj.skin = 2;      //light blue	
+				}
+				else 
+				{
+					if(random() < 0.13) prj.skin = 2;   //Light-blue
+					else if(random() > 0.87) prj.skin = 5;   //Dark-blue
+					else prj.skin = 0;      //White blue
+				}
+		
+				
+				local float low_rotation=0;
+				
+				if (traillen < 200) setmodel (prj, "progs/bloodrailz/rail1.mdl");
+				else if (traillen>=200) setmodel (prj, "progs/bloodrailz/rail1_comp.mdl");
+			
+				if(sky_shot==0)
+				{
+					if     (skip==4 && (segments ==5 || segments ==10 || segments==15 || segments==20)) 		{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					else if(skip==3 && (segments ==5 || segments ==10 || segments==15)) 				{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					else if(skip==2 && (segments ==5 || segments ==10)) 						{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					else if(skip==1 && (segments ==5)) 								{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+				}
+				else if(sky_shot==1)
+				{
+					if     (sky_skip==5 && (segments ==5 || segments ==10 || segments==13 || segments==16 || segments==19 || segments==old_seg)) 	{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					else if(sky_skip==4 && (segments ==5 || segments ==10 || segments==13 || segments==16 || segments==old_seg))  			{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					else if(sky_skip==3 && (segments ==5 || segments ==10 || segments==13 ||segments==old_seg)) 					{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					else if(sky_skip==2 && (segments ==5 || segments ==10 || segments==old_seg))							{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					else if(sky_skip==1 && (segments ==5 || segments==old_seg))									{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+				}
+				
+				if(traillen >= 200)
+				{
+					if(segments == 1 && spacing_long < 125) setorigin (prj, drawsrc + vec * 120);
+					else if(segments == 1 && spacing_long < 200) setorigin (prj, drawsrc + vec * 170);
+					else if(segments == 1 && spacing_long < 300) setorigin (prj, drawsrc + vec * 220);
+					else if(segments == old_seg && sky_shot==0) setorigin (prj, drawsrc + vec*spacing_long*segments - vec*120);
+					else setorigin (prj, drawsrc + vec * spacing_long * segments);
+				}
+				else setorigin (prj, drawsrc + vec * spacing_long * segments);
+				
+			
+				prj.velocity = '0 0 0';	
+		
+				//teamred's magic
+				alpha_rand = random();
+				if (alpha_rand < 0.5) prj.alpha = 0.60;
+				else prj.alpha = 1;
+				//else if (alpha_rand < 0.44) prj.alpha = 0.8;
+			
+					
+					prj.avelocity_x = random()-0.5;
+					prj.avelocity_y = random()-0.5;
+					prj.avelocity_z = random()-0.5;
+		
+					prj.avelocity = normalize(prj.avelocity);
+					rotation_amount = 6.0;
+				
+					if(spacing_long >= 125 && sky_shot ==0 && low_rotation ==0) rotation_amount = 15.0;
+					else if(spacing_long >= 100 && sky_shot ==0 && low_rotation ==0) rotation_amount = 15.0;
+					else if(low_rotation ==1) rotation_amount = 6.0;
+				
+					prj.avelocity = prj.avelocity*rotation_amount;
+					
+					
+
+			
+			
+				prj.cnt = 5;
+				prj.frame = 4;	
+				prj.think = rail_fade;
+				prj.nextthink = time + 0.2 + (segments*0.008); //fade delay   //
+			}
+			
+			segments = segments - 1;	
+			
+			//if(segments==0)
+			//{
+			//	bprint(ftos(count_segs));
+			//	bprint(" actual segments\n");
+			//}
 	
-	}
+		}
 	}
 	
 
@@ -505,12 +542,14 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 	{
 	
 	traillen = vlen(trace_endpos - drawsrc);
-	segments = floor(traillen / 33);
+	segments = floor(traillen / 150);   //33->150
 	local float seg_total;
 	
-	if(segments > 21) segments = 21;
+	if(segments > 4) segments = 4;
 	seg_total = segments;
-	//sprint(self, ftos(segments));
+	
+	//bprint(ftos(segments));
+	//bprint(" segments\n");
 	
 	while (segments)
 	{
@@ -523,7 +562,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "railtrail";
-		setmodel (prj, "progs/bloodrailz/rail1.mdl");
+		setmodel (prj, "progs/bloodrailz/rail1_comp.mdl");
 				
 		setsize (prj, 0, 0);	
 		
@@ -533,9 +572,9 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			else if(random() > 0.87) prj.skin = 4;   //Dark-red
 			else prj.skin = 1;    //red
 			
-			if (segments < 2) prj.skin = 2;
-			else if (segments < 3) prj.skin = 0;
-			else if (segments < 5) prj.skin = 5;
+			if (segments ==1) prj.skin = 2;
+			else if (segments ==2) prj.skin = 0;
+			//else if (segments < ==3) prj.skin = 5;
 			
 		}
 		else if (self.height == elohim_team2) 
@@ -544,9 +583,9 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
 			else prj.skin = 2;      //light blue	
 			
-			if (segments < 2) prj.skin = 1;
-			else if (segments < 3) prj.skin = 3;
-			else if (segments < 5) prj.skin = 4;
+			if (segments ==1) prj.skin = 1;
+			else if (segments ==2) prj.skin = 3;
+			//else if (segments ==3) prj.skin = 4;
 			
 		}
 		
@@ -556,13 +595,19 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
 			else prj.skin = 0;      //White blue
 			
-			if (segments < 2) prj.skin = 1;
-			else if (segments < 3) prj.skin = 3;
-			else if (segments < 5) prj.skin = 4;
+			if (segments ==1) prj.skin = 1;
+			else if (segments ==2) prj.skin = 3;
+			//else if (segments ==3) prj.skin = 4;
 		}
 		
 		
-		setorigin (prj, drawsrc + vec * 40 * (segments));
+
+		if(segments == 1) setorigin (prj, drawsrc + vec * 110);
+		else if(segments == 2) setorigin (prj, drawsrc + vec * 250);
+		else if(segments == 3) setorigin (prj, drawsrc + vec * 400);
+		else if(segments == 4) setorigin (prj, drawsrc + vec * 650);
+		
+		
 		prj.velocity = '0 0 0';	
 		
 		
@@ -585,18 +630,19 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 		
 		
 		//teamred's magic
-		
+	
 			prj.avelocity_x = random()-0.5;
 			prj.avelocity_y = random()-0.5;
 			prj.avelocity_z = random()-0.5;
 		
 			prj.avelocity = normalize(prj.avelocity);
-			rotation_amount = 10.0;
+			rotation_amount = 11.0;
 			prj.avelocity = prj.avelocity*rotation_amount;
+
 			
 		prj.frame = 4;	
 		prj.think = rail_fade;
-		prj.nextthink = time + 0.2 + (segments*0.025); // delay fade time using segment number for neat effect (vf)
+		prj.nextthink = time + 0.2 + (segments*0.020); // delay fade time using segment number for neat effect (vf)
 		segments = segments - 1;
 		
 		prj.cnt = 5;	
@@ -613,48 +659,76 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 
 
 
-void( vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
+
+void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 {
 	//local vector p0, p1, p2, p3;
-	local float t = 1;
+	local float t = 1, count = 1;
 	local float oneMinusT = 1-t;
 	
 	local vector last_result = '0 0 0';
 	local vector result = '0 0 0';
 	
 	local float pointCount;
-	local float total_length = vlen(p3-p0);
 	
-	if(total_length < 100) pointCount = 3;
-	else if (total_length < 200) pointCount = 4;
-	else if (total_length < 300) pointCount = 7;
-	else if (total_length < 400) pointCount = 10;
-	else if (total_length < 500) pointCount = 15;
-	else if (total_length < 590) pointCount = 18;
-	else if (total_length < 650) pointCount = 20;
-	else if (total_length < 740) pointCount = 23;
-	else if (total_length < 800) pointCount = 25;
-	else if (total_length < 1000) pointCount = 30;
-	else if (total_length < 1400) pointCount = 32;
-	else if (total_length < 1600) pointCount = 33;
-	else if (total_length < 2000) pointCount = 35;
-	else if (total_length < 4000) pointCount = 40;
-	else if (total_length < 6000) pointCount = 45;
-	else if (total_length < 8000)  pointCount = 50;
-	else if (total_length < 30000)  pointCount = 50;
-	//sprint(self, ftos(pointCount));
+	local float seg1 = vlen(p3-p2);
+	local float seg2 = vlen(p2-p1);
+	local float seg3 = vlen(p1-p0);
+	local float total_length = seg1+seg2+seg3;
+	
+	local float min_distance = vlen(p3-p0);
+	local float curvature = total_length - min_distance;
+	
+	float spacing = total_length/217;
+	
+	if(total_length < 100) pointCount = 4;
+	else if (total_length < 200) pointCount = 5;
+	else if (total_length < 300) pointCount = 6;
+	else if (total_length < 400) pointCount = 7;
+	else if (total_length < 500) pointCount = 9;
+	else if (total_length < 600) pointCount = 10;
+	else if (total_length < 700) pointCount = 12;
+	else if (total_length < 800) pointCount = 13;
+	else if (total_length < 1000) pointCount = 14;
+	else if (total_length < 1400) pointCount = 11;
+	else if (total_length < 1600) pointCount = 11;
+	else if (total_length < 2000) pointCount = 12;
+	else if (total_length < 3000) pointCount = 12;
+	else if (total_length < 4000) pointCount = 13;
+	else if (total_length < 5000) pointCount = 16;
+	else if (total_length < 6000) pointCount = 17;
+	else if (total_length < 7500)  pointCount = 18;
+	else if (total_length >=7500)  pointCount = 19;
 	
 	
-	local float short_seg = 0;
-	if(pointCount <= 23) 
+	if((total_players_global > 8 || smoke_ent_number > 8)) 
 	{
-		short_seg =1;
-		pointCount = pointCount * 2;
+		if(pointCount == 16) pointCount = pointCount - 2;
+		else if(pointCount == 17) pointCount = pointCount - 2;
+		else if(pointCount == 18) pointCount = pointCount - 2;
+		else if(pointCount == 19) pointCount = pointCount - 2;
 	}
 	
-	local float delta = 1.0 / pointCount;
+	
+	local float sky_long =0;
+
+	if(pointcontents(p3) == CONTENT_SKY && total_length >= 4000) sky_long =2;
+	else if(pointcontents(p3) == CONTENT_SKY && total_length >= 2000) sky_long =1;
+	
+	local float short_seg = 0;
+	if(total_length < 1000) 
+	{
+		short_seg =1;
+	}
 	
 	
+	local float delta = (1.0 / pointCount) -.003;
+	
+	//bprint(ftos(total_length));
+	//bprint("\n");
+	
+	
+
 
 	
 	while(t >= 0)
@@ -665,83 +739,144 @@ void( vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 			 (3*oneMinusT*oneMinusT*t)*p1 + 
 			 (3*oneMinusT*t*t)*p2 + 
 			 (t*t*t)*p3;
-		if(t < 1-delta )
+		if(t < 1)//-delta )
 		{
+			count +=1;
+			
 			local vector dir = last_result - result;
-			//draw_line(last_result, result, 251, 15, TRUE);
 			
-			local entity prj;
-			prj = spawn ();
+			if(sky_long ==0)
+			{
+				local entity prj;
+				prj = spawn ();
 		
-		prj.owner = self;
-		prj.movetype = MOVETYPE_NOCLIP;
-		prj.solid = SOLID_NOT;
-		  prj.angles = vectoangles(dir);
+				prj.owner = self;
+				prj.movetype = MOVETYPE_NOCLIP;
+				prj.solid = SOLID_NOT;
+				prj.angles = vectoangles(dir);
 		
-		prj.touch = SUB_Null;
-		prj.classname = "railtrail";
+				prj.touch = SUB_Null;
+				prj.classname = "railtrail";
 		
-		setmodel (prj, "progs/bloodrailz/rail1.mdl");
-		if(short_seg == 1) setmodel (prj, "progs/bloodrailz/rail0.mdl");
-				
-		setsize (prj, 0, 0);	
-		
-		if (self.height == elohim_team1) 
-		{
-			if(random() < 0.13) prj.skin = 3;   //Orange
-			else if(random() > 0.87) prj.skin = 4;   //Dark-red
-			else prj.skin = 1;    //red
+				if((short_seg == 1 && pointCount == 14) || (short_seg == 1 && pointCount >= 6 && count <(pointCount-4)))        setmodel (prj, "progs/bloodrailz/rail1.mdl");
+				else if(short_seg == 1 && pointCount != 14) 									setmodel (prj, "progs/bloodrailz/rail0.mdl");
+				else					   									setmodel (prj, "progs/bloodrailz/rail1_comp.mdl");  //blahnew
 			
-		}
-		else if (self.height == elohim_team2) 
-		{
-			if(random() < 0.13) prj.skin = 0;   //White-blue
-			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
-			else prj.skin = 2;      //light blue	
-		}
+				//if(short_seg == 1) setmodel (prj, "progs/bloodrailz/rail1_comp_fifth.mdl");
+					
+				setsize (prj, 0, 0);	
 		
-		else 
-		{
-			if(random() < 0.13) prj.skin = 2;   //Light-blue
-			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
-			else prj.skin = 0;      //White blue
-		}
+				if (self.height == elohim_team1) 
+				{
+					if(random() < 0.13) prj.skin = 3;   //Orange
+					else if(random() > 0.87) prj.skin = 4;   //Dark-red
+					else prj.skin = 1;    //red
+			
+				}
+				else if (self.height == elohim_team2) 
+				{
+					if(random() < 0.13) prj.skin = 0;   //White-blue
+					else if(random() > 0.87) prj.skin = 5;   //Dark-blue
+					else prj.skin = 2;      //light blue	
+				}
+		
+				else 
+				{
+					if(random() < 0.13) prj.skin = 2;   //Light-blue
+					else if(random() > 0.87) prj.skin = 5;   //Dark-blue
+					else prj.skin = 0;      //White blue
+				}
 		
 		
-		
-		setorigin (prj, result);
-		prj.velocity = '0 0 0';	
-		
-	
-		local float alpha_rand = random();
-			if (alpha_rand < 0.5) prj.alpha = 0.60;
-			else prj.alpha = 1;
-		
-		
-		//teamred's magic
+				local float alpha_rand = random();
+				if (alpha_rand < 0.5) prj.alpha = 0.60;
+				else prj.alpha = 1;
 		
 			
-			local float rotation_amount;
-			prj.avelocity_x = random()-0.5;
-			prj.avelocity_y = random()-0.5;
-			prj.avelocity_z = random()-0.5;
-		
-			prj.avelocity = normalize(prj.avelocity);
-			rotation_amount = 13.0;
-			prj.avelocity = prj.avelocity*rotation_amount;
+				if(count ==(pointCount) && short_seg ==1) 
+				{
+					setorigin (prj, result + start*20);
+					prj.alpha = 0.25;
+				}
+				else if(count ==(pointCount-1) && short_seg ==1) 
+				{
+					setorigin (prj, result + start*10);
+					prj.alpha = 0.30;
+				}
+				else if(count ==(pointCount-1) && short_seg ==1) 
+				{
+					setorigin (prj, result + start*5);
+					prj.alpha = 0.35;
+				}
+				else if(count ==(pointCount-1) && short_seg ==1) 
+				{
+					prj.alpha = 0.40;
+				}
+				else if(count ==(pointCount-1) && short_seg ==1) 
+				{
+					prj.alpha = 0.45;
+				}
+				else if(count ==(pointCount-1) && short_seg ==1) 
+				{
+					prj.alpha = 0.50;
+				}
 			
-			
+				else if(count ==pointCount && short_seg ==0)
+				{
+					if(short_seg ==0) setorigin (prj, p0 + start*110);  //blahnew
+					prj.alpha = 0.15;
+				}
+				else if(count ==(pointCount-1) && short_seg ==0)
+				{
+					if(short_seg ==0) setorigin (prj, result);
+					prj.alpha = 0.65;
+					//prj.skin = 3;
+				}
 
-		prj.frame = 4;	
-		prj.think = rail_fade;
-		prj.nextthink = time + 0.25 + (t*0.002); //fade delay 0.2 -> 0.25 so that curved rails hang a bit longer
-		prj.cnt = 5;	
+				else setorigin (prj, result);
+		
 			
+				//if(count ==pointCount) prj.skin = 3;
+				//if(count ==pointCount-1) prj.skin = 4;
+				//if(count ==pointCount-2) prj.skin = 3;
 			
+				prj.velocity = '0 0 0';	
+		
+		
+				if(vlen(dir) < 20) setmodel (prj, "progs/bloodrailz/rail_a.mdl");
+				else if (vlen(dir) < 33) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
+				else if (vlen(dir) < 45) setmodel (prj, "progs/bloodrailz/rail_b1.mdl");
+				else if (vlen(dir) < 75) setmodel (prj, "progs/bloodrailz/rail_c.mdl");
+				else if (vlen(dir) < 120) setmodel (prj, "progs/bloodrailz/rail1_comp120.mdl");  //120 length	
+				//else if (vlen(dir) < 240) setmodel (prj, "progs/bloodrailz/rail_e.mdl");  //232 length
+				//else if (vlen(dir) < 295) setmodel (prj, "progs/bloodrailz/rail_f.mdl");  //289 length
+				//else if (vlen(dir) < 400) setmodel (prj, "progs/bloodrailz/rail_g.mdl");  //376 length
+		
+		
+		
+				//teamred's magic
 			
-			
-			
+				
+					local float rotation_amount;
+					prj.avelocity_x = random()-0.5;
+					prj.avelocity_y = random()-0.5;
+					prj.avelocity_z = random()-0.5;
+		
+					prj.avelocity = normalize(prj.avelocity);
+					rotation_amount = 13.0;
+					prj.avelocity = prj.avelocity*rotation_amount;
+				
+				
+
+				prj.frame = 4;	
+				prj.think = rail_fade;
+				prj.nextthink = time + 0.25 + (t*0.002); //fade delay 0.2 -> 0.25 so that curved rails hang a bit longer
+				prj.cnt = 5;	
+			}	
+			sky_long -=1;
+			if(sky_long <0) sky_long =0;
 		}
+		
 		t = t - delta;
 	}
 }
@@ -916,7 +1051,7 @@ void() FlickCurves=
 							controlPt = controlPt_25;
 							foundPath = TRUE;
 
-							//sprint(self, "25 \n");
+							//sprint(self, "   25 \n");
 						}
 					}
 					
@@ -941,7 +1076,9 @@ void() FlickCurves=
 						controlPt = controlPt_12;
 						//sprint(self, "12 \n");
 					}
-					DrawCurvedRail( self.origin + '0 0 16', controlPt, controlPt , self.flickEnt.origin+'0 0 25');    // replaced viewOffset with '0 0 18'
+					if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16' + v_forward*5, controlPt, controlPt , self.flickEnt.origin+'0 0 25');    // replaced viewOffset with '0 0 18'
+					else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16' + v_forward*5, controlPt, controlPt , self.flickEnt.origin+'0 0 25');
+					
 					T_DamageOrg(self.flickEnt, self, self, 1000, controlPt_50);
 					self.ammo_slugs = self.ammo_slugs -1;
 
@@ -958,16 +1095,18 @@ void() FlickCurves=
 				t = self.origin + t;
 				if(self.health>0)
 				{
-					DrawCurvedRail( self.origin + '0 0 16', t, t , self.lastMouseUp); 
+					if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, t, t , self.lastMouseUp); 
+					else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, t, t , self.lastMouseUp); 
+					
 					self.ammo_slugs = self.ammo_slugs -1;
 				
 					local float randrail = random()*3;
     
-					if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
+					if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
 					else
-					if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail1.wav",1,ATTN_NORM);
+					if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
 					else
-					if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/rail22.wav",1,ATTN_NORM);
+					if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun2.wav",1,ATTN_NORM);
 				}
 			}
 		}//end button up
@@ -992,11 +1131,28 @@ void() FlickCurves=
 void() W_FireRailgun =
 {
 	
+	if(infokey(self, "rail_cvar") =="1")
+	{
+		if(!(self.player_flag & PF_CLEANTRAIL)) self.player_flag = self.player_flag | PF_CLEANTRAIL;
+	}
+	else 
+	{
+		if(self.player_flag & PF_CLEANTRAIL) self.player_flag = self.player_flag - PF_CLEANTRAIL;
+	}
+	
+	
 	//bprint(ftos(self.origin_x));
 	//bprint("\n");
 	//bprint(ftos(self.origin_y));
 	//bprint("\n");
 	//bprint(ftos(self.origin_z));
+	//bprint("\n");
+	
+	//bprint(ftos(self.origin_x));
+	//bprint("\n");
+	//bprint(ftos(self.origin_y));
+	//bprint("\n");
+	//bprint(ftos(v_forward_z));
 	//bprint("\n");
 	
 	
@@ -1008,7 +1164,8 @@ void() W_FireRailgun =
 	//make_icon(self, 7, 0);
 	//make_icon(self, 5, 1000);
 	
-	
+	//maplist = cvar("saved4");
+	//bprint(ftos(maplist));
 	
 	
 	rail_jump();
@@ -1031,9 +1188,9 @@ void() W_FireRailgun =
 	
 
 	local float n = random()*3;
-	if (n <= 1) 	sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.8,ATTN_NORM);
-	else if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.8,ATTN_NORM);
-	else if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.8,ATTN_NORM);
+	if (n <= 1) 	sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.3,ATTN_NORM);
+	else if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.3,ATTN_NORM);
+	else if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.3,ATTN_NORM);
     
     
 
@@ -1051,7 +1208,7 @@ void() W_FireRailgun =
 			//src = self.origin + v_forward*8 + '0 0 16';
 			hitscanrail = 1;  //RAIL 711
     	
-			if (trace_ent.armorvalue >= 100) 
+			if (trace_ent.armorvalue >= 100 || trace_ent.classname == "dummy") 
 			{
 				local entity armored_ent;
 				armored_ent = trace_ent;
@@ -1061,8 +1218,8 @@ void() W_FireRailgun =
 			}
 			
 				
-		//HEADSHOT DETECTION
-		/*
+				//HEADSHOT DETECTION
+				/*
 				local vector end_ent = normalize(trace_endpos - src) * vlen(trace_ent.origin - src);
 				local vector end_found = normalize(trace_ent.origin - src) * vlen(trace_ent.origin - src);
 				
@@ -1212,7 +1369,8 @@ void() W_FireRailgun =
 		{
 			local float ref_length = vlen(adjusted_ent - self.origin);
 			local vector ref_controlPt = self.origin + v_forward*0.5*ref_length;
-			DrawCurvedRail( self.origin + '0 0 16', ref_controlPt, ref_controlPt , adjusted_ent);
+			if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, ref_controlPt, ref_controlPt , adjusted_ent);
+			else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, ref_controlPt, ref_controlPt , adjusted_ent);
 			//bprint("adjusted\n");
 		}
 		
@@ -1243,7 +1401,7 @@ void() W_FireRailgun =
 		makevectors(self.v_angle);
 		start = self.origin + '0 0 16'+ v_forward*5;
 		mdir = aim(self, 10000);
-		end = start + (mdir * 8192);
+		end = start + (mdir * 9100);
 
 		if(antilag_hit_for_curve == 0)
 		{
@@ -1255,7 +1413,8 @@ void() W_FireRailgun =
 		{
 			local float length = vlen(adjusted_ent - self.origin);
 			local vector controlPt = self.origin + v_forward*0.5*length;
-			DrawCurvedRail( self.origin + '0 0 16', controlPt, controlPt , adjusted_ent);
+			if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, controlPt, controlPt , adjusted_ent);
+			else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, controlPt, controlPt , adjusted_ent);
 			//bprint("adjusted\n");
 		}
 		//sprint(self, "regular shot");
@@ -1315,7 +1474,7 @@ void() T_MissileTouch =
 
 
 
-//	sound (self, CHAN_WEAPON, "bloodrailz/weapons/r_exp3.wav", 1, ATTN_NORM);
+//	sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_explosion.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
 
 	if(other.classname == "player")
@@ -1401,11 +1560,11 @@ void() W_FireProjectile =
 	
 	local float n = random()*3;
     
-	if (n <= 1) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.8,ATTN_NORM);
+	if (n <= 1) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.3,ATTN_NORM);
 	else
-	if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.8,ATTN_NORM);
+	if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.3,ATTN_NORM);
 	else
-	if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.8,ATTN_NORM);
+	if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.3,ATTN_NORM);
 
 	//self.punchangle_x = -2;
 	makevectors(self.v_angle);   
@@ -1497,6 +1656,9 @@ void() rail_jump =
 		make_railpop();
 	}
 	
+	
+
+	
  
 	if(time - self.grind_time < 0.2)         /////////////////////////WALLRUN RAIL JUMP
 	{
@@ -1549,8 +1711,6 @@ void() rail_jump =
 			self.anglestored = 0;
 			self.angles_not_zero = 0;
 			
-			setmodel (self, "progs/bloodrailz/player.mdl");
-			setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 
 			stuffcmd(self, "cl_forwardspeed 0\n");
 			stuffcmd(self, "cl_sidespeed 0\n");
@@ -1580,7 +1740,7 @@ void() rail_jump =
 	
 		if(time - self.thor_time < 0.3) 
 		{
-			self.velocity = self.velocity - dir*775;   //THOR JUMP
+			self.velocity = self.velocity - dir*750;   //THOR JUMP
 			//sprint(self, "thor jump\n");
 		}
 			
@@ -1646,6 +1806,8 @@ void() rail_jump =
 		self.ammo_slugs+=1;
 		self.rail_shots -=1;
 	}
+
+
 
 
 }
@@ -1717,7 +1879,7 @@ void() Rail_Charge_Logic=
 			
 			else if (time - self.mag_recharge_time <= RECHARGE && self.mag_recharge_time != 0)	
 			{
-				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+1) && self.rail_power_time != 0 && self.rail_powered == 0) sound (self, CHAN_WEAPON, "bloodrailz/misc/menu3.wav", 0.9, ATTN_NORM);
+				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+1) && self.rail_power_time != 0 && self.rail_powered == 0) sound (self, CHAN_WEAPON, "bloodrailz/misc/br_depleted.wav", 0.9, ATTN_NORM);
 				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+0.024) && self.rail_power_time != 0 && self.rail_powered == 0) sprint(self, "mag-field depleted\n");
 			
 			}

@@ -17,6 +17,8 @@ __wrap void(entity client, string s, optional string s1, optional string s2, opt
   prior(client, s);
 };
 */
+
+
 void()Splat;
 void()Splat2;
 void()Splat3;
@@ -28,6 +30,15 @@ void()update_splat2;
 void()update_splat3;
 void()update_splat4;
 void()update_splat5;
+
+void() make_armoricon;
+void() update_armoricon;
+.float armor_displayed;
+.float armor_change;
+
+void() make_reticule;
+void() update_reticule;
+.float reticule_displayed;
 
 void() swoop;
 void(float what_type) make_tut_icon;
@@ -54,7 +65,8 @@ void() auto_dash;
 void() Plasma_Charge_Logic;
 
 void() Called_in_PreThink;
-void() Called_in_PostThink
+void() Called_in_PostThink;
+void(vector origin1, float radius, float steam) make_smoke;
 
 void(entity targ, entity attacker, float damage) ClientObituary;
 void(entity targ, entity attacker, vector damage_origin, float damage) Killed;
@@ -78,7 +90,7 @@ void() bloodrails_precache;       //called by worldspawn
 void() movement_check;            //movement checks
 void() GibPlayerChangeTeams;
 void() spawn_protection;
-void() goomba_stomp;
+void() crash_stomp;
 //void() ceiling_ride;
 void() Skiing;
 void() Water_bounce;
@@ -126,12 +138,10 @@ void () observer_start;
 
 void() update_aura;
 void() make_aura;
-void() update_haste;    //runes
-void() make_haste;
 void() update_power
 void(vector origin, float _alpha, float _frame) make_power;
 
-void(vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedRail;
+void(vector start, vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedRail;
 void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make; 
 void() clean_rail_fade;
 
@@ -149,7 +159,7 @@ void() Rail_Charge_Logic;    //charge-up logic for curved rail
 void() update_flick_marker;
 void() make_flick_marker;
 void() FlickCurves;     //Calculatations related to curved rail flicks
-void( vector p0, vector p1, vector p2, vector p3) DrawCurvedRail;    //draws curved rail trails
+void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail;    //draws curved rail trails
 
 void(entity inflictor, vector origin, entity attacker, float radius, float damage, entity ignore) areaDMG;           // various Area of Effect functions, used in axe splash damage etc
 void(entity inflictor, vector org, entity attacker, float radius, float throw_high, entity ignore) areaTHROW;        // used in Thor slam
@@ -172,94 +182,86 @@ void() bloodrails_precache =
 	// S O U N D S 
 	precache_sound ("misc/h2ohit1.wav");		// landing splash
 	
-	precache_sound ("bloodrailz/legacy/weapons_ax1.wav");		// ax swoosh
-	precache_sound ("bloodrailz/player/gib.wav");		// player gib sound
+	precache_sound ("bloodrailz/weapons/br_axe_swing.wav");		// ax swoosh
+	precache_sound ("bloodrailz/player/br_gib.wav");		// LQ z_gib.wav
 	
 	
-	precache_sound ("bloodrailz/player/h2ojump.wav");		// Christian Ice // player jumping into water
-	precache_sound ("bloodrailz/player/inh2o.wav");		// Christian Ice //player enter water
-	precache_sound ("bloodrailz/player/inlava.wav");		// Christian Ice // player enter lava
-	precache_sound ("bloodrailz/player/teledth1.wav");		// Christian Ice // lava burn
-	precache_sound ("bloodrailz/player/udeath.wav");		// Christian Ice // player gib sound
-	precache_sound ("bloodrailz/player/h2odeath.wav");		// Christian Ice // drowning death
+	precache_sound ("bloodrailz/player/br_splash.wav");		// Christian Ice // player jumping into water
+	precache_sound ("bloodrailz/player/br_water.wav");		// Christian Ice //player enter water
+	precache_sound ("bloodrailz/player/br_lava.wav");		// Christian Ice // player enter lava
+	precache_sound ("bloodrailz/player/br_death.wav");		// LQ
 	
 	
 
-	precache_sound ("bloodrailz/misc/outwater.wav");		// leaving water sound
-	precache_sound ("bloodrailz/misc/water1.wav");			// Christian Ice swimming
-	precache_sound ("bloodrailz/misc/water2.wav");			// Christian Ice swimming
-	precache_sound ("bloodrailz/misc/talk.wav");			// Christian Ice swimming
-	precache_sound ("bloodrailz/misc/swoop.wav");			//quake 1 windfly noise
+	precache_sound ("bloodrailz/misc/br_outwater.wav");		// leaving water sound
+	precache_sound ("bloodrailz/misc/br_water1.wav");			// Christian Ice swimming
+	precache_sound ("bloodrailz/misc/br_water2.wav");			// Christian Ice swimming
+	//precache_sound ("bloodrailz/misc/talk.wav");			// Christian Ice 
+	precache_sound ("bloodrailz/misc/br_swoop.wav");			//soniss library
 	
 	
 	
 	
 	
-	precache_sound ("bloodrailz/weapons/br_exp1.wav");		// Christian Ice
+	precache_sound ("bloodrailz/weapons/br_explosion.wav");		// Christian Ice
 	
 	precache_sound ("bloodrailz/weapons/br_ric1.wav");		// Christian ice
 	precache_sound ("bloodrailz/weapons/br_ric2.wav");		// Christian ice
 	precache_sound ("bloodrailz/weapons/br_ric3.wav");		// Christian ice
-	precache_sound ("bloodrailz/weapons/rail1.wav");		// Bloodrailz railgun
-	precache_sound ("bloodrailz/weapons/rail22.wav");		// Bloodrailz railgun with recharge woosh
+	precache_sound ("bloodrailz/weapons/railgun1.wav");		// Bloodrailz railgun
+	precache_sound ("bloodrailz/weapons/railgun2.wav");		// Bloodrailz railgun with recharge woosh
 	precache_sound ("bloodrailz/weapons/plasma1.wav");		// plasma noise Q3
 	precache_sound ("bloodrailz/weapons/plasma2.wav");		// plasma noise Q3
-	precache_sound ("bloodrailz/weapons/plasma_bounce.wav");		// edited from inv2 and suit.wav from christian ice pak
-	precache_sound ("bloodrailz/weapons/empty.wav");            //br custom
+	precache_sound ("bloodrailz/weapons/br_plasma_bounce.wav");		// edited from inv2 and suit.wav from christian ice pak
+	precache_sound ("bloodrailz/weapons/br_empty.wav");            //br custom
 	precache_sound ("bloodrailz/weapons/chain_whip.wav");
 	
 	
-	
+	precache_sound ("bloodrailz/misc/br_depleted.wav");  //soniss free libraries DSGNBass crunchy bass
 
 	precache_sound("bloodrailz/weapons/armorhit.wav");  	 //play sound when armored opponent is hit with rail
 	precache_sound("bloodrailz/weapons/axe_charge.wav");  	// shield power-up
 	precache_sound("bloodrailz/weapons/shield_pulse.wav"); 	 //shield up
 	precache_sound("bloodrailz/weapons/slowdn.wav"); 	 //rail charge down
 	//precache_sound("bloodrailz/weapons/charge_up.wav"); 	 //rail charge down
-	precache_sound("bloodrailz/weapons/lockon.wav"); // curved shot lockon
+	precache_sound("bloodrailz/weapons/br_lockon.wav"); // curved shot lockon
 	
-	precache_sound("bloodrailz/weapons/ammo_ding.wav");     // custom br sound
-	precache_sound("bloodrailz/weapons/br_clink.wav");     // still the regular Quake sound
-	precache_sound("bloodrailz/weapons/gravity4.wav");     // br custom based on Christian Ice release 
-	precache_sound("bloodrailz/weapons/gravity5.wav");     //  br custom based on Christian Ice release
-	precache_sound("bloodrailz/weapons/quasar_push.wav");     // soniss free sounds CB Sound Design - Whoosh and Push Sci Fi Hit 3
-	precache_sound("bloodrailz/weapons/quasar1.wav");     // based on librequake pent noises
-	precache_sound("bloodrailz/weapons/quasar2.wav");     // based on librequake pent noises
+	precache_sound("bloodrailz/weapons/br_ammo_ding.wav");     // custom br sound
+	precache_sound("bloodrailz/weapons/br_clink.wav");     // soniss free library and LQ
+	precache_sound("bloodrailz/weapons/br_gravity1.wav");     // br custom based on Christian Ice release 
+	precache_sound("bloodrailz/weapons/br_gravity2.wav");     //  br custom based on Christian Ice release
+	precache_sound("bloodrailz/weapons/br_quasar_push.wav");     // soniss free sounds CB Sound Design - Whoosh and Push Sci Fi Hit 3
+	precache_sound("bloodrailz/weapons/br_quasar1.wav");     // based on librequake pent noises
+	precache_sound("bloodrailz/weapons/br_quasar2.wav");     // based on librequake pent noises
 
 		//////////////////////////
-	precache_sound ("bloodrailz/ambience/red.wav");		// red scores sound
-	precache_sound ("bloodrailz/ambience/blue.wav");	        // blue scores sound
+	precache_sound ("bloodrailz/ctf/red.wav");		// red scores sound
+	precache_sound ("bloodrailz/ctf/blue.wav");	        // blue scores sound
 		//////////////////////////
-	precache_sound ("bloodrailz/misc/menu3.wav");  		 //shield depleted
-	precache_sound ("bloodrailz/misc/take_flag.wav");		//take flag grab flag noise
-	precache_sound ("bloodrailz/misc/grind1.wav");	
-	precache_sound ("bloodrailz/misc/grind2.wav");
-	precache_sound ("bloodrailz/misc/grind3.wav");
+	precache_sound ("bloodrailz/misc/br_depleted.wav");  		 //shield depleted
+	precache_sound ("bloodrailz/ctf/flag_taken.wav");		//take flag grab flag noise
+	precache_sound ("bloodrailz/misc/br_grind1.wav");	
+	precache_sound ("bloodrailz/misc/br_grind2.wav");
+	precache_sound ("bloodrailz/misc/br_grind3.wav");
 	
-	precache_sound ("bloodrailz/misc/runsteps1.wav");         //xonotic
-	precache_sound ("bloodrailz/misc/runsteps2.wav");
-	precache_sound ("bloodrailz/misc/runsteps3.wav");
+	//precache_sound ("bloodrailz/misc/runsteps1.wav");         //xon
+	//precache_sound ("bloodrailz/misc/runsteps2.wav");
+	//precache_sound ("bloodrailz/misc/runsteps3.wav");
 	
-	precache_sound ("bloodrailz/misc/water1.wav");         //christian ice
-	precache_sound ("bloodrailz/misc/water2.wav");
+
 	precache_sound ("bloodrailz/misc/water_bubble1.wav");
 	precache_sound ("bloodrailz/misc/water_bounce1.wav");
 	
-	precache_sound ("bloodrailz/misc/ding1.wav");                                // localsound rail hit xon
-	precache_sound ("bloodrailz/misc/ding2.wav");                                // localsound rail hit xon
-	precache_sound ("bloodrailz/misc/sameteam.wav");			// localsound on your team  xon
-	precache_sound ("bloodrailz/misc/headshot.wav");			// localsound on your team  xon
+	precache_sound ("bloodrailz/misc/br_ding1.wav");                                // localsound rail hit
+	precache_sound ("bloodrailz/misc/br_ding2.wav");                                // localsound rail hit 
+	precache_sound ("bloodrailz/ctf/sameteam.wav");			// localsound on your team  xon
 		//////////////////////////
 	
-	precache_sound ("bloodrailz/player/gib1.wav");		// custom noise
-	precache_sound ("bloodrailz/player/gib2.wav");		// custom noise
-	precache_sound ("bloodrailz/player/gib3.wav");		// custom noise
-	precache_sound ("bloodrailz/player/gib7.wav");		// custom noise
+
 	
-	precache_sound ("bloodrailz/player/tornoff2.wav");		// Christian Ice gib sound
 	
-	precache_sound ("bloodrailz/player/air_boost.wav");		
-	precache_sound ("bloodrailz/player/slimbrn2.wav");		// Christian Ice player enter slime
+	precache_sound ("bloodrailz/player/br_air_boost.wav");		
+	precache_sound ("bloodrailz/player/br_slime.wav");		// Christian Ice player enter slime
 	precache_sound ("bloodrailz/player/br_jump1.wav");             //Christian Ice jump noises
 	precache_sound ("bloodrailz/player/br_jump2.wav");             // Christian ice
 	precache_sound ("bloodrailz/player/br_jump3.wav");             // Christian ice
@@ -269,11 +271,10 @@ void() bloodrails_precache =
 	precache_sound ("bloodrailz/player/br_land3.wav");			// player landing2   xon
 	precache_sound ("bloodrailz/player/br_land4.wav");			// player landing2   xon
 	
-	precache_sound ("bloodrailz/player/axhit_flesh.wav");			// Xonotic
-	//precache_sound ("bloodrailz/player/axhit_stone.wav");			// Xonotic -- to be finished
+	precache_sound ("bloodrailz/player/br_axhit_flesh.wav");			// Xonotic
 	
 		/////////////
-	precache_sound ("bloodrailz/items/itembk2.wav");		// Christian Ice item respawn sound
+	precache_sound ("bloodrailz/items/br_item_respawn.wav");		// Christian Ice item respawn sound
 	precache_sound ("bloodrailz/items/br_damage.wav");          //Librequake
 	precache_sound ("bloodrailz/items/br_damage2.wav");         //Librequake
 	precache_sound ("bloodrailz/items/br_damage3.wav");       //Librequake
@@ -286,16 +287,16 @@ void() bloodrails_precache =
 	precache_sound ("bloodrailz/items/br_protect2.wav");     //Librequake
 	precache_sound ("bloodrailz/items/br_protect3.wav");    //Librequake
 	
-	precache_sound ("bloodrailz/items/cells.wav");	    //from soniss free sounds David Dumais Audio - Sci-Fi weapons Pack1 - DSGNBass_Weapon Power Down 04_DDUMAIS_NONE.wav
-	precache_sound ("bloodrailz/items/runegrab.wav");	    //custom made for BR
-	precache_sound ("bloodrailz/items/runedrop.wav");     //custom made for BR
-	precache_sound ("bloodrailz/items/br_armor1.wav");   //Librequake
-	precache_sound ("bloodrailz/items/zap.wav");   //Librequake
+	precache_sound ("bloodrailz/items/br_loot.wav");	    //from soniss free sounds David Dumais Audio - Sci-Fi weapons Pack1 - DSGNBass_Weapon Power Down 04_DDUMAIS_NONE.wav
+	precache_sound ("bloodrailz/items/br_runegrab.wav");	    //custom made for BR
+	precache_sound ("bloodrailz/items/br_runedrop.wav");     //custom made for BR
+	precache_sound ("bloodrailz/items/br_armor.wav");   //Librequake
+	precache_sound ("bloodrailz/items/br_zap.wav");   //Librequake
 	
-	precache_sound("bloodrailz/items/br_r_item1.wav");   //Librequake
+	precache_sound("bloodrailz/items/br_regen.wav");   //Librequake
 	
 	
-	precache_sound ("bloodrailz/buttons/switch04.wav"); 		//Christian Ice (as well as airbut1, switch02 and switch21) //match timer 
+	precache_sound ("bloodrailz/triggers/br_switch04.wav"); 		//Christian Ice (as well as airbut1) //match timer 
 
 	
 	
@@ -303,15 +304,7 @@ void() bloodrails_precache =
 	// M O D E L S
 	
 	
-	precache_model ("progs/bloodrailz/player_left_5.mdl");
-	precache_model ("progs/bloodrailz/player_left_10.mdl");
-	precache_model ("progs/bloodrailz/player_left_15.mdl");
-	precache_model ("progs/bloodrailz/player_left_20.mdl");
-	
-	precache_model ("progs/bloodrailz/player_right_5.mdl");
-	precache_model ("progs/bloodrailz/player_right_10.mdl");
-	precache_model ("progs/bloodrailz/player_right_15.mdl");
-	precache_model ("progs/bloodrailz/player_right_20.mdl");
+
 	
 	precache_model ("progs/bloodrailz/null.mdl");
 	precache_model ("progs/bloodrailz/null_trail.mdl");
@@ -331,11 +324,16 @@ void() bloodrails_precache =
 	
 	precache_model ("progs/bloodrailz/vial.mdl");
 	precache_model ("progs/bloodrailz/br_chain.mdl");
+	precache_model ("progs/bloodrailz/br_chain2.mdl");
+	
 	precache_model ("progs/bloodrailz/star_color.mdl");
 	precache_model ("progs/bloodrailz/hookx.mdl");
 	precache_model ("progs/bloodrailz/marker.mdl");
 	precache_model ("progs/bloodrailz/marker150.mdl");
 	precache_model ("progs/bloodrailz/marker250.mdl");
+	
+	precache_model ("progs/bloodrailz/reticule.mdl");
+	precache_model ("progs/bloodrailz/armor_icons.mdl");
 	
 	
 	
@@ -354,10 +352,10 @@ void() bloodrails_precache =
 	
 	precache_model ("progs/bloodrailz/rail0.mdl"); //short segment, half the length of rail1. - used in curved rail trails
 	precache_model ("progs/bloodrailz/rail1.mdl");
-	precache_model ("progs/bloodrailz/rail2.mdl");
-	precache_model ("progs/bloodrailz/rail3.mdl");
+	precache_model ("progs/bloodrailz/rail1_comp.mdl");
+	precache_model ("progs/bloodrailz/rail1_comp120.mdl");
+	precache_model ("progs/bloodrailz/rail1_comp_450.mdl");
 	
-	precache_model ("progs/bloodrailz/rail1_1.mdl");
 	precache_model ("progs/bloodrailz/rail2_1.mdl");
 	precache_model ("progs/bloodrailz/rail3_1.mdl");
 	
@@ -367,8 +365,21 @@ void() bloodrails_precache =
 	precache_model ("progs/bloodrailz/rail_c.mdl");
 	precache_model ("progs/bloodrailz/rail_d.mdl");
 	precache_model ("progs/bloodrailz/rail_e.mdl");
+	precache_model ("progs/bloodrailz/rail_f.mdl");
+	precache_model ("progs/bloodrailz/rail_g.mdl");
 	
-	precache_model ("progs/bloodrailz/rail5.mdl");
+	precache_model ("progs/bloodrailz/rail_d_half.mdl");
+	precache_model ("progs/bloodrailz/rail_e_half.mdl");
+	precache_model ("progs/bloodrailz/rail_f_half.mdl");
+	precache_model ("progs/bloodrailz/rail_g_half.mdl");
+	
+	precache_model ("progs/bloodrailz/rail_long4600.mdl");
+	precache_model ("progs/bloodrailz/rail_long2400.mdl");
+	precache_model ("progs/bloodrailz/rail_long1200.mdl");
+	precache_model ("progs/bloodrailz/rail_long600.mdl");
+	precache_model ("progs/bloodrailz/rail_long300.mdl");
+	precache_model ("progs/bloodrailz/rail_long150.mdl");
+	precache_model ("progs/bloodrailz/rail_long60.mdl");
 	
 	precache_model ("progs/bloodrailz/br_rune1a.mdl");
 	precache_model ("progs/bloodrailz/br_rune2a.mdl");
@@ -377,10 +388,8 @@ void() bloodrails_precache =
 	
 	precache_model ("progs/bloodrailz/ef_smoke1.mdl");
 	precache_model ("progs/bloodrailz/ef_smoke2.mdl");
-	precache_model ("progs/bloodrailz/ef_thor.mdl");
 	precache_model ("progs/bloodrailz/ef_thor_big.mdl");
 	precache_model ("progs/bloodrailz/ef_power.mdl");
-	precache_model ("progs/bloodrailz/ef_haste.mdl");
 	precache_model ("progs/bloodrailz/ef_aura1.mdl");
 	precache_model ("progs/bloodrailz/ef_shields.mdl");
 	precache_model ("progs/bloodrailz/ef_speed.mdl");
@@ -454,6 +463,7 @@ float	intermission_exittime;
 .float axe_splash_time;
 .float axe_time;
 
+float thor_strike_time;
 .float thor_time;
 .float thor_slam;
 .float death_aura_frag;
@@ -506,8 +516,6 @@ float rune2_power;
 float rune3_haste;
 float rune4_aura;
 
-
-float hasteeffect;
 
 .float speed_sound;
 .float dash_timer;    //axe-dash timer
@@ -702,6 +710,8 @@ float ghost_blue;
 .float 		marker_up;
 
 #define DP_QC_SPRINTF
+#define CVAR_AUTOCVAR	
+
 string(string fmt, ...) sprintf = #627;
 
 
@@ -751,6 +761,7 @@ float CTF_FLAG_CARRIED = 1;
 float CTF_FLAG_DROPPED = 2;
 
 //flag effects
+float EF_ADDITIVE = 32;
 float EF_BLUE = 64;
 float EF_RED = 128;
 
@@ -778,46 +789,12 @@ float IT2_SIGIL4 = 8;
 
 entity red_flag_ent;
 entity blue_flag_ent;
-entity crown;
+entity crown_ent;
 
 
+float smoke_generated;
+float ground_smoke_number;
 float smoke_ent_number;
-/*
-.float brflags;
 
+.float chain_too_short;
 
-float BR_HOOK_OUT = 1;
-float BR_HASCROWN = 2;
-float BR_SHIELDS_UP = 4;
-float BR_AXE_POWERED = 8;
-float BR_RAIL_WAS_CURVED = 16;
-float BR_RAIL_POWERED = 32;
-float BR_SPARKS_OUT = 128;
-float BR_ANGLES_NOT_ZERO =256;
-float BR_XXXX = 512;
-float BR_XXXXXXXX = 1024;
-float BR_IS_OVER_SKY = 2048;
-
-float BR_RAILJUMP_YES = 32768;
-float BR_HOOK_BUTTON_RELEASED = 65536;
-float BR_RAIL_BUTTON_RELEASED = 131072;
-float BR_AXE_BUTTON_RELEASED = 262144;
-float BR_LEANING = 524288;
-
-
-float HUD_FLAG_CARRIER = 1;
-float HUD_RAIL_HUD = 2;
-float HUD_SHIELD_HUD = 4; 
-float HUD_CTFHUD = 8;
-float HUD_SYMBOLS_HUD = 16;
-float HUD_FLAGSCORES_RED = 32;
-float HUD_FLAGSCORES_BLUE = 64;
-float HUD_BUTTON_PRESS_DISPLAY = 128;
-float HUD_RAIL_AMMO_DISPLAYED = 256;
-float HUD_MARKER_UP = 512;
-float HUD_WRAITH =1024;
-float HUD_FLAG_DISPLAYED =2048;
-float HUD_RUNE_DISPLAYED =4096;
-float HUD_SPEEDLINES_ARE_ON = 8192;
-float HUD_SPEEDLINES_ARE_VISIBLE = 16384;
-*/

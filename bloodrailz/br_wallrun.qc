@@ -104,21 +104,30 @@ void() swoop =
 		if(self.swoop_yes ==0)
 		{
 			self.swoop_time = time;
+			//if(self.is_over_sky) self.swoop_time = self.swoop_time + 10;
 			self.swoop_yes =1;
-			//sound (self, CHAN_AUTO, "bloodrailz/misc/swoop.wav", 1, ATTN_NORM);
+			//sound (self, CHAN_AUTO, "bloodrailz/misc/br_swoop.wav", 1, ATTN_NORM);
 		}
-		if (time - self.swoop_time > 3.5) self.swoop_yes =0;
-		else if(time - self.swoop_time > 1.75) return;
+		if(self.airborn_pos <330)
+		{
+			if (time - self.swoop_time > 4.0) self.swoop_yes =0;
+			else if(time - self.swoop_time > 1.75) return;
+		}
+		else
+		{
+			if (time - self.swoop_time > 5.25) self.swoop_yes =0;
+			else if(time - self.swoop_time > 3.3) return;
+		}
 		
-		if(vlen(self.velocity) < 500)
+		if(vlen(self.velocity) < 500 && self.airborn_pos > 300)
 		{
 			self.swoop_yes =0;
 			self.swoop_time = self.swoop_time + 3.5;
 		}
 		
-		if(self.swoop_yes ==1  && time - self.swoop_time > 0.3)   //added min time for swoop
+		if(self.swoop_yes ==1  && time - self.swoop_time > 0.3 ) //|| (pointcontents(self.origin + '0 0 -50') == CONTENT_WATER || pointcontents(self.origin + '0 0 -50') == CONTENT_LAVA)))   //added min time for swoop
 		{
-			if(time-self.swoop_time> 0.3 && time-self.swoop_time< 0.316) sound (self, CHAN_AUTO, "bloodrailz/misc/swoop.wav", 1, ATTN_NORM);
+			if(time-self.swoop_time> 0.3 && time-self.swoop_time< 0.316) sound (self, CHAN_AUTO, "bloodrailz/misc/br_swoop.wav", 1, ATTN_NORM);
 			
 			local vector for_hor = v_forward;
 			
@@ -133,10 +142,29 @@ void() swoop =
 			
 			if(self.airborn_pos < 75) self.velocity_z = self.velocity_z +11;  //if cloaw to ground - skim low
 			
+			
+			if(self.waterlevel ==1) 
+			{
+				local float pre_splash_vel = vlen(self.velocity);
+				
+				if (self.velocity_z < 0) self.velocity_z =0;
+				self.velocity = normalize(self.velocity)*pre_splash_vel*1.05;
+				if(vlen(self.velocity)> 1250) self.velocity = normalize(self.velocity)*1250;
+			}
+			
 			if(v_forward_z > 0.3) self.velocity_z = self.velocity_z +2; 
 			if(v_forward_z > 0.4) self.velocity_z = self.velocity_z +2; 
 			if(v_forward_z > 0.55) self.velocity_z = self.velocity_z +1.75; 
 			if(v_forward_z > 0.7) self.velocity = self.velocity + v_forward*1.5;
+			
+			if(v_forward_z > 0.3 && self.airborn_pos > 300) self.velocity = self.velocity + v_forward*1.2;
+			if(v_forward_z < 0.5 && self.airborn_pos > 300) self.velocity_z = self.velocity_z +1.25; 
+			
+			if(v_forward_z < -0.3 && self.airborn_pos > 300)    //if looking down
+			{
+				self.velocity_z = self.velocity_z -1.0; 
+				self.velocity = self.velocity + v_forward*1.0;
+			}
 
 		
 		
@@ -192,9 +220,9 @@ void() ceiling_ride =
 	
 	if (self.grind_sound_counter1 >= 32)
 	{
-			if (random() < 0.34) sound (self, CHAN_AUTO, "bloodrailz/misc/grind1.wav", 0.20, ATTN_NORM);
-			else if (random() < 0.67) sound (self, CHAN_AUTO, "bloodrailz/misc/grind2.wav", 0.20, ATTN_NORM);
-			else sound (self, CHAN_AUTO, "bloodrailz/misc/grind3.wav", 0.20, ATTN_NORM);
+			if (random() < 0.34) sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind1.wav", 0.20, ATTN_NORM);
+			else if (random() < 0.67) sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind2.wav", 0.20, ATTN_NORM);
+			else sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind3.wav", 0.20, ATTN_NORM);
 			self.grind_sound_counter1 = 0;	
 	}
 	else if (self.grind_sound_counter1 < 32) self.grind_sound_counter1 = self.grind_sound_counter1 +1;
@@ -295,10 +323,11 @@ void() WallRun =
 				stuffcmd(self, "cl_screenangle 18\n");
 			}
 			
-			if (self.punchang >= 18) 	  setmodel (self, "progs/bloodrailz/player_right_20.mdl");
-			else if (self.punchang >= 14) setmodel (self, "progs/bloodrailz/player_right_15.mdl");
-			else if (self.punchang >= 10) setmodel (self, "progs/bloodrailz/player_right_10.mdl");
-			else if (self.punchang >= 5)  setmodel (self, "progs/bloodrailz/player_right_5.mdl");
+			if (self.punchang >= 18)      self.angles_z = 20;
+			else if (self.punchang >16) self.angles_z = 16;
+			else if (self.punchang>12) self.angles_z = 12;
+			else if (self.punchang>8) self.angles_z = 8;
+			else if (self.punchang >4)  self.angles_z = 4;
 			
 			self.anglestored = self.punchang;
 		
@@ -329,23 +358,23 @@ void() WallRun =
 		
 			if (self.grind_sound_counter == 32 && self.skiing_on ==0)
 			{	
-				sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.12, ATTN_NORM);
+				//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.12, ATTN_NORM);
 				if (random() < 0.34) 
 				{
-					sound (self, CHAN_AUTO, "bloodrailz/misc/grind1.wav", 0.4, ATTN_NORM);
-					sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.3, ATTN_NORM);
+					sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind1.wav", 0.4, ATTN_NORM);
+					//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.2, ATTN_NORM);
 				}
 				
 				else if (random() < 0.67) 
 				{
-					sound (self, CHAN_AUTO, "bloodrailz/misc/grind2.wav", 0.4, ATTN_NORM);
-					sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps2.wav", 0.3, ATTN_NORM);
+					sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind2.wav", 0.4, ATTN_NORM);
+					//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps2.wav", 0.2, ATTN_NORM);
 				}
 			
 				else 
 				{
-					sound (self, CHAN_AUTO, "bloodrailz/misc/grind3.wav", 0.4, ATTN_NORM);
-					sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps3.wav", 0.3, ATTN_NORM);
+					sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind3.wav", 0.4, ATTN_NORM);
+					//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps3.wav", 0.2, ATTN_NORM);
 				}
 				self.grind_sound_counter = 0;	
 			}
@@ -385,10 +414,11 @@ void() WallRun =
 				stuffcmd(self, "cl_screenangle -18\n");
 			}
 			
-			if (self.punchang <= -18)      setmodel (self, "progs/bloodrailz/player_left_20.mdl");
-			else if (self.punchang <= -14) setmodel (self, "progs/bloodrailz/player_left_15.mdl");
-			else if (self.punchang <= -10) setmodel (self, "progs/bloodrailz/player_left_10.mdl");
-			else if (self.punchang <= -5)  setmodel (self, "progs/bloodrailz/player_left_5.mdl");
+			if (self.punchang <= -18)      self.angles_z = -20;
+			else if (self.punchang <= -16) self.angles_z = -16;
+			else if (self.punchang <= -12) self.angles_z = -12;
+			else if (self.punchang <= -8)  self.angles_z = -8;
+			else if (self.punchang <= -4)  self.angles_z = -4;
 			
 			
 			self.anglestored = self.punchang;
@@ -418,21 +448,21 @@ void() WallRun =
 		
 			if (self.grind_sound_counter == 32 && self.skiing_on ==0)
 			{
-				sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.12, ATTN_NORM);
+				//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.12, ATTN_NORM);
 				if (random() < 0.34) 
 				{
-					sound (self, CHAN_AUTO, "bloodrailz/misc/grind1.wav", 0.4, ATTN_NORM);
-					sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.3, ATTN_NORM);
+					sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind1.wav", 0.4, ATTN_NORM);
+					//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps1.wav", 0.2, ATTN_NORM);
 				}
 				else if (random() < 0.67) 
 				{
-					sound (self, CHAN_AUTO, "bloodrailz/misc/grind2.wav", 0.4, ATTN_NORM);
-					sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps2.wav", 0.3, ATTN_NORM);
+					sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind2.wav", 0.4, ATTN_NORM);
+					//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps2.wav", 0.2, ATTN_NORM);
 				}
 				else 
 				{
-					sound (self, CHAN_AUTO, "bloodrailz/misc/grind3.wav", 0.4, ATTN_NORM);
-					sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps3.wav", 0.3, ATTN_NORM);
+					sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind3.wav", 0.4, ATTN_NORM);
+					//sound (self, CHAN_AUTO, "bloodrailz/misc/runsteps3.wav", 0.2, ATTN_NORM);
 				}
 				self.grind_sound_counter = 0;	
 			}
@@ -465,23 +495,23 @@ void() WallRun =
 			else if (self.punchang < 0) self.punchang = self.punchang + 1.15;
 			self.anglestored = self.punchang;
 			
-			if (self.punchang <= -18)      setmodel (self, "progs/bloodrailz/player_left_20.mdl");
-			else if (self.punchang <= -14) setmodel (self, "progs/bloodrailz/player_left_15.mdl");
-			else if (self.punchang <= -10) setmodel (self, "progs/bloodrailz/player_left_10.mdl");
-			else if (self.punchang <= -5)  setmodel (self, "progs/bloodrailz/player_left_5.mdl");
+			if (self.punchang <= -18)      self.angles_z = -20;
+			else if (self.punchang <= -16) self.angles_z = -16;
+			else if (self.punchang <= -12) self.angles_z = -12;
+			else if (self.punchang <= -8)  self.angles_z = -8;
+			else if (self.punchang <= -4)  self.angles_z = -4;
 			
-			if (self.punchang >= 18)      setmodel (self, "progs/bloodrailz/player_right_20.mdl");
-			else if (self.punchang >= 14) setmodel (self, "progs/bloodrailz/player_right_15.mdl");
-			else if (self.punchang >= 10) setmodel (self, "progs/bloodrailz/player_right_10.mdl");
-			else if (self.punchang >= 5)  setmodel (self, "progs/bloodrailz/player_right_5.mdl");
+			if (self.punchang >= 18)      self.angles_z = 20;
+			else if (self.punchang >16) self.angles_z = 16;
+			else if (self.punchang>12) self.angles_z = 12;
+			else if (self.punchang>8) self.angles_z = 8;
+			else if (self.punchang >4)  self.angles_z = 4;
 			
 			if (self.punchang >= -1.15 && self.punchang <= 1.15) 
 			{
 				self.punchang = 0;
 				self.anglestored = 0;
 				self.angles_not_zero = 0;
-				if(self.health > 0) setmodel (self, "progs/bloodrailz/player.mdl");  //10/9/23 
-				setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 				return;
 			}
 					
@@ -661,11 +691,11 @@ void() Skiing =
 		if(self.waterlevel > 1 && v_forward_z < -0.45 && self.velocity_z < -300 && pointcontents(self.origin + '0 0 30') != CONTENT_WATER) self.shark_time = time;
 		
 		
-		if(mapname !="ctf_edge3_c2" && mapname !="ctf_edge3_c3" && mapname !="ctf_edge3_c4" && mapname !="ctf_edge3_c5")
+		if(mapname !="ctf_edge3_c2" && mapname !="ctf_edge3_c3" && mapname !="ctf_edge3_c4" && mapname !="ctf_edge3_c5" && mapname !="ctf_edge3_r1" && mapname !="ctf_edge3_r2" && mapname !="ctf_edge3_r3")
 		{
-			if(vlen(self.velocity)< 675 && time - self.shark_time > 0.5) self.shark_time = self.shark_time -3;
+			//if(vlen(self.velocity)< 675 && time - self.shark_time > 0.5) self.shark_time = self.shark_time -3; //stop dolphining if speed falls below certain value
 			
-			if(self.waterlevel > 2 && time-self.shark_time < 3 && self.movement_x ==400)			//APRIL Sharking Dolphin
+			if(self.waterlevel > 2 && time-self.shark_time < 3 && self.movement_x ==400)			//APRIL Sharking Dolphin  
 			{
 				self.velocity = self.velocity + v_forward*80;
 				if(vlen(self.velocity) > 870) self.velocity = normalize(self.velocity)*870;
@@ -682,12 +712,12 @@ void() Skiing =
 		
 		else
 		{	
-			if(vlen(self.velocity)< 450 && time - self.shark_time > 0.7) self.shark_time = self.shark_time -3;
+			//if(vlen(self.velocity)< 200 && time - self.shark_time > 0.7) self.shark_time = self.shark_time -3;   //stop dolphining if speed falls below certain value
 			
 			if(self.waterlevel > 2 && time-self.shark_time < 3 && self.movement_x ==400)			//APRIL Sharking Dolphin
 			{
 				self.velocity = self.velocity + v_forward*80;
-				if(vlen(self.velocity) > 675) self.velocity = normalize(self.velocity)*675;
+				if(vlen(self.velocity) > 500) self.velocity = normalize(self.velocity)*500;
 				return;
 			}
 			else if((self.waterlevel>0 && self.waterlevel<2) && (time-self.shark_time > 0.8 && time-self.shark_time < 3))
@@ -710,11 +740,11 @@ void() Skiing =
 		if((self.impulse == 42 || self.skiing_on ==3) && time-self.ski_time < slide_duration && self.view_ofs_z < 10 && self.airborn_pos < 18)// && trace_startsolid == TRUE)  //DECEM
 		{
 			
-			//sound (self, CHAN_BODY, "bloodrailz/player/air_boost.wav", 0.7, ATTN_NORM);
+			//sound (self, CHAN_BODY, "bloodrailz/player/br_air_boost.wav", 0.7, ATTN_NORM);
 			
-			if (random() < 0.6) sound (self, CHAN_BODY, "bloodrailz/player/br_jump1.wav", 0.8, ATTN_NORM);   // 1 -> 0.9
-			else if (random() < 0.8) sound (self, CHAN_BODY, "bloodrailz/player/br_jump2.wav", 0.8, ATTN_NORM);  
-			else sound (self, CHAN_BODY, "bloodrailz/player/br_jump3.wav", 0.8, ATTN_NORM);   // alternative jump noise
+			if (random() < 0.6) sound (self, CHAN_BODY, "bloodrailz/player/br_jump1.wav", 0.59, ATTN_NORM);   // 1 -> 0.9
+			else if (random() < 0.8) sound (self, CHAN_BODY, "bloodrailz/player/br_jump2.wav", 0.59, ATTN_NORM);  
+			else sound (self, CHAN_BODY, "bloodrailz/player/br_jump3.wav", 0.59, ATTN_NORM);   // alternative jump noise
 			
 			if(self.velocity_z > 0) 
 			{
@@ -741,7 +771,7 @@ void() Skiing =
 					if(time - self.ski_button_time < 0.4)
 					{
 						self.boost_time = 1;
-						if(self.velocity_z > -850) sound (self, CHAN_BODY, "bloodrailz/player/air_boost.wav", 0.7, ATTN_NORM);
+						if(self.velocity_z > -850) sound (self, CHAN_BODY, "bloodrailz/player/br_air_boost.wav", 0.7, ATTN_NORM);
 				
 						if(self.velocity_z > 1000) self.velocity = self.velocity + '0 0 175';   //boost up
 						else if(self.velocity_z > 800) self.velocity = self.velocity + '0 0 225'; 
@@ -952,15 +982,15 @@ void() Skiing =
 			
 				if(vlen(self.velocity) > 725)
 				{
-					if (random() < 0.34) 		sound (self, CHAN_AUTO, "bloodrailz/misc/grind1.wav", 0.40, ATTN_NORM);
-					else if (random() < 0.67) 	sound (self, CHAN_AUTO, "bloodrailz/misc/grind2.wav", 0.40, ATTN_NORM);
-					else 				sound (self, CHAN_AUTO, "bloodrailz/misc/grind3.wav", 0.40, ATTN_NORM);
+					if (random() < 0.34) 		sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind1.wav", 0.40, ATTN_NORM);
+					else if (random() < 0.67) 	sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind2.wav", 0.40, ATTN_NORM);
+					else 				sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind3.wav", 0.40, ATTN_NORM);
 				}
 				else if(vlen(self.velocity) > 470)
 				{
-					if (random() < 0.34) 		sound (self, CHAN_AUTO, "bloodrailz/misc/grind1.wav", 0.31, ATTN_NORM);
-					else if (random() < 0.67) 	sound (self, CHAN_AUTO, "bloodrailz/misc/grind2.wav", 0.31, ATTN_NORM);
-					else 				sound (self, CHAN_AUTO, "bloodrailz/misc/grind3.wav", 0.31, ATTN_NORM);
+					if (random() < 0.34) 		sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind1.wav", 0.31, ATTN_NORM);
+					else if (random() < 0.67) 	sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind2.wav", 0.31, ATTN_NORM);
+					else 				sound (self, CHAN_AUTO, "bloodrailz/misc/br_grind3.wav", 0.31, ATTN_NORM);
 				}
 		
 

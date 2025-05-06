@@ -237,15 +237,6 @@ void() SUB_UseTargets =
 	}
 	
 	
-//
-// print the message
-//
-	if (activator.classname == "player" && self.message != "")
-	{
-		centerprint (activator, self.message);
-		if (!self.noise)
-			sound (activator, CHAN_VOICE, "bloodrailz/misc/talk.wav", 1, ATTN_NORM);
-	}
 
 //
 // kill the killtagets

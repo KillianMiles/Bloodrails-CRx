@@ -539,7 +539,7 @@ void () match_timer_think1 =
     }
     else if (self.count <= 3)
     {
-        sound (world, CHAN_AUTO, "buttons/switch04.wav", 1, ATTN_NONE);
+        sound (world, CHAN_AUTO, "bloodrailz/triggers/br_switch04.wav", 1, ATTN_NONE);
         if (self.count < 2)
         {
             self.nextthink = time + 1;
@@ -743,7 +743,7 @@ void () match_show_ghost_code =
 //
 //  R E Q U E S T  R E S T O R E  G H O S T
 //
-//  Request to be restored from a ghost.  The player is prompted
+//  Request to be restored from a ghost.  The player is asked
 //  to enter his three digit ghost code.
 //
 void () match_request_restore_ghost =

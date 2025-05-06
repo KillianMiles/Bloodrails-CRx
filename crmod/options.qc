@@ -287,7 +287,7 @@ void () options_change =
     }
 
     // play sound
-    stuffcmd(self, "play misc/menu3.wav\n");
+    stuffcmd(self, "play bloodrailz/misc/br_depleted.wav\n");
 };
 
 //
@@ -410,7 +410,6 @@ void () options_pre_think =
             if (self.t_length == 4)
                 self.t_length = 6;
         }
-        stuffcmd(self, "play misc/menu1.wav\n");
     }
     else if (self.button0)
     {

@@ -828,60 +828,60 @@ string (float mapnum) strings_get_mapname =
     if (mapnum < 26)
     {
         if (mapnum == 11)
-            return "ctf_takayama_c1";
+            return "ctf_takayama_r1";
         if (mapnum == 12)
-            return "ctf_dissocia_c2";
+            return "ctf_dissocia_r1";
         if (mapnum == 13)
-            return "ctf_bridge_b1";
+            return "ctf_bridge_r1";
         if (mapnum == 14)
-            return "ctf_hanghigh_c2";
+            return "ctf_hanghigh_r1";
         if (mapnum == 15)
-            return "ctf_swingest_b1";
+            return "ctf_swingest_r1";
         if (mapnum == 16)
-            return "ctf_longest_b1";
+            return "";
         if (mapnum == 17)
-            return "ctf_teardown_b2";
+            return "ctf_teardown_r1";
 	if (mapnum == 18)
-            return "ctf_eyesout_b2";
+            return "ctf_eyesout_r1";
 	if (mapnum == 19)
-            return "ctf_relic2_b3"; 
+            return "ctf_relic2_r1"; 
         if (mapnum == 20)
-            return "ctf_rebirth_b2";
+            return "ctf_rebirth_r1";
         if (mapnum == 21)
-            return "ctf_edge3_c2";
+            return "ctf_edge3_r1";
         if (mapnum == 22)
-            return "ctf_facing_c1";
+            return "ctf_faceoff_r1";
         if (mapnum == 23)
-            return "ctf_sandstorm_b3";
+            return "ctf_sandstorm_r1";
         if (mapnum == 24)
-            return "ctf_lasertag_b1";
+            return "ctf_lasertag_r1";
         if (mapnum == 25)
-            return "ctf_dreamland_b1";
+            return "ctf_dreamland_r1";
               
         return "";
     }
     if (mapnum < 41)
     {
         if (mapnum == 26)
-            return "ctf_bikini_b1";
+            return "ctf_bikini_r1";
         if (mapnum == 27)
-            return "ctf_doglyfe_b2";
+            return "ctf_doglyfe_r1";
         if (mapnum == 28)
-            return "ctf_dogrun_b1";
+            return "ctf_bamboo_r1";
         if (mapnum == 29)
-            return "ctf_daywalker_c2";
+            return "ctf_daywalker_r1";
         if (mapnum == 30)
-            return "ctf_volcano_b2";
+            return "ctf_easter_r1";
         if (mapnum == 31)
-            return "ctf_fulcrum_c1";
+            return "ctf_fulcrum_r1";
         if (mapnum == 32)
-            return "ctf_albatross_b1";
+            return "ctf_albatross_r1";
 	if (mapnum == 33)
-            return "ctf_firestorm_b2";
+            return "ctf_firestorm_r1";
 	if (mapnum == 34)
-            return "ctf_feral_b4";
+            return "ctf_feral_r1";
         if (mapnum == 35)
-            return "ctf_gulch_b3";
+            return "ctf_gulch_r1";
         if (mapnum == 36)
             return "";
         if (mapnum == 37)
@@ -898,25 +898,25 @@ string (float mapnum) strings_get_mapname =
     if (mapnum < 56)
     {
         if (mapnum == 41)
-            return "ctf_bamboo_b1";
+            return "ctf_bamboo_r1";
         if (mapnum == 42)
-            return "ctf_relic2_b3";
+            return "ctf_relic2_r1";
         if (mapnum == 43)
-            return "slug";
+            return "";
         if (mapnum == 44)
-            return "widowmakr";
+            return "";
         if (mapnum == 45)
-            return "shiro2";
+            return "";
         if (mapnum == 46)
-            return "barrel";
+            return "";
         if (mapnum == 47)
-            return "longest_yard";
+            return "";
         if (mapnum == 48)
-            return "dranzdm8";
+            return "";
         if (mapnum == 49)
-            return "endif";
+            return "";
         if (mapnum == 50)
-            return "yunroot";
+            return "";
         if (mapnum == 51)
             return "";
         if (mapnum == 52)
@@ -932,11 +932,11 @@ string (float mapnum) strings_get_mapname =
     if (mapnum < 71)
     {
         if (mapnum == 56)
-            return "race_valley_b2";
+            return "";
         if (mapnum == 57)
-            return "race_orange_b1";
+            return "";
         if (mapnum == 58)
-            return "race_diss_b1";
+            return "";
         if (mapnum == 59)
             return "";
         if (mapnum == 60)
@@ -1076,95 +1076,95 @@ string (float mapnum) strings_get_mapname =
     if (mapnum < 120)
     {
         if (mapnum == 111)
-            return "ctf1";
+             return "";
         if (mapnum == 112)
-            return "ctf2";
+           return "";
         if (mapnum == 113)
-            return "ctf3";
+           return "";
         if (mapnum == 114)
-            return "ctf4";
+           return "";
         if (mapnum == 115)
-            return "ctf5";
+          return "";
         if (mapnum == 116)
-            return "ctf6";
+          return "";
         if (mapnum == 117)
-            return "ctf7";
-	    if (mapnum == 118)
-            return "ctf8";
-	    if (mapnum == 119)
-            return "ctf9";   
+          return "";
+	if (mapnum == 118)
+	  return "";
+	if (mapnum == 119)
+          return "";
         return "";
     }
     if (mapnum < 130)
     {
         if (mapnum == 121)
-            return "ctf2m1";
+             return "";
         if (mapnum == 122)
-            return "ctf2m2";
+            return "";
         if (mapnum == 123)
-            return "ctf2m3";
+            return "";
         if (mapnum == 124)
-            return "ctf2m4";
+            return "";
         if (mapnum == 125)
-            return "ctf2m5";
+            return "";
         if (mapnum == 126)
-            return "ctf2m6";
+           return "";
         if (mapnum == 127)
-            return "ctf2m7";
-	    if (mapnum == 128)
-            return "ctf2m8";
-	    if (mapnum == 129)
-            return "ctf_start";   
+            return "";
+	if (mapnum == 128)
+           return "";
+	if (mapnum == 129)
+           return "";  
         return "";
     }
     if (mapnum < 140)
     {
         if (mapnum == 131)
-            return "ctf3m1";
+             return "";
         if (mapnum == 132)
-            return "ctf3m2";
+             return "";
         if (mapnum == 133)
-            return "ctf3m3";
+            return "";
         if (mapnum == 134)
-            return "ctf3m4";
+             return "";
         if (mapnum == 135)
-            return "ctf3m5";
+             return "";
         if (mapnum == 136)
-            return "ctf3m6";
+            return "";
         if (mapnum == 137)
-            return "ctf3m7";
-	    if (mapnum == 138)
-            return "ctf3m8";
-	    if (mapnum == 139)
-            return "ctf3m9";   
+            return "";
+	if (mapnum == 138)
+            return "";
+	if (mapnum == 139)
+            return ""; 
         return "";
     }
     if (mapnum < 150)
     {
         if (mapnum == 141)
-            return "boom";
+             return "";
         if (mapnum == 142)
-            return "kaboom";
+            return "";
         if (mapnum == 143)
-            return "pound";
+             return "";
         if (mapnum == 144)
-            return "pigremix";
+             return "";
         if (mapnum == 145)
-            return "mctf1";
+             return "";
         if (mapnum == 146)
-            return "rctf1";
+             return "";
         if (mapnum == 147)
-            return "rctf2";
-	    if (mapnum == 148)
-            return "rctf4";
-	    if (mapnum == 149)
-            return "rctf5";
+             return "";
+	if (mapnum == 148)
+            return "";
+	if (mapnum == 149)
+            return "";
         return "";
     }
     if (mapnum < 160)
     {
 		if (mapnum == 151)
-			return "ctfgold7";
+			return "";
 		if (mapnum == 152)
 			return "";
 		if (mapnum == 153)
@@ -1488,12 +1488,7 @@ string (float mode) strings_get_mode =
         return "TDM - public";
     else if (mode == 5)
         return "TDM - match";
-//    else if (mode == 6)
- //       return "Rocket Arena";
- ////   else if (mode == 7)
-//        return "Clan Arena";
- //   else if (mode == 8)
- //       return "Airshot";
+
     else
         return "Normal";
 };

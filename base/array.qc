@@ -54,36 +54,7 @@ void (float index, string name) array_set_user_map =
         array_user_map9 = name;
 };
 
-//
-//  G E T  U S E R  M A P
-//
-//  returns array_user_map[index]
-//
-string (float index) array_get_user_map =
-{
-    if (index == 0)
-        return array_user_map0;
-    if (index == 1)
-        return array_user_map1;
-    if (index == 2)
-        return array_user_map2;
-    if (index == 3)
-        return array_user_map3;
-    if (index == 4)
-        return array_user_map4;
-    if (index == 5)
-        return array_user_map5;
-    if (index == 6)
-        return array_user_map6;
-    if (index == 7)
-        return array_user_map7;
-    if (index == 8)
-        return array_user_map8;
-    if (index == 9)
-        return array_user_map9;
-    else
-        return "";
-};
+
 
 //--------------------------------------------------------------------------
 // KICKS

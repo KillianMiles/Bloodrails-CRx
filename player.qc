@@ -256,7 +256,7 @@ void() PainSound =
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 
@@ -265,7 +265,7 @@ void() PainSound =
 	{
 		//DeathBubbles(1);
 
-		sound (self, CHAN_VOICE, "bloodrailz/player/h2odeath.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 1, ATTN_NORM);
 		return;
 	}
 
@@ -274,10 +274,8 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			//if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
-			//else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
-			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/slimbrn2.wav", 0.95, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "bloodrailz/player/inlava.wav", 0.95, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/br_slime.wav", 0.95, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 0.95, ATTN_NORM);
 			return;
 		}
 	}
@@ -286,10 +284,8 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			//if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn1.wav", 0.8, ATTN_NORM);
-			//else sound (self, CHAN_VOICE, "bloodrailz/legacy/lburn2.wav", 0.8, ATTN_NORM);
-			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/slimbrn2.wav", 0.95, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "bloodrailz/player/inlava.wav", 0.95, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/br_slime.wav", 0.95, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 0.95, ATTN_NORM);
 			return;
 		}
 	}
@@ -307,7 +303,7 @@ void() PainSound =
 	if (self.axhitme == 1)
 	{
 		self.axhitme = 0;
-		sound (self, CHAN_VOICE, "bloodrailz/player/axhit_flesh.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_axhit_flesh.wav", 1, ATTN_NORM);
 		return;
 	}
 	
@@ -390,7 +386,7 @@ void() DeathSound =
 {
 	if (self.waterlevel == 3)   // water death sounds
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/h2odeath.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 1, ATTN_NONE);
 		return;
 	}
 	
@@ -476,7 +472,7 @@ void() PlayerDie =
 	if (self.velocity_z < 10) self.velocity_z = self.velocity_z + random()*300;
 
     // ELOHIM_MOD - check for no gibs
-    if ((self.health < -40 && !(elohim_playmode & ELOHIM_NO_GIBS)) || (elohim_playmode & AIR_ARENA_MODE)) // END_MOD
+    if ((self.health < 0 && !(elohim_playmode & ELOHIM_NO_GIBS))) // END_MOD
 	{
 		GibPlayer ();
 		PlayerDead(); // ELOHIM_MOD - check for match mode autorespawn
@@ -512,7 +508,7 @@ void() PlayerDie =
 
 void() set_suicide_frame =
 {	// used by klill command and diconnect command
-	if (self.model != "progs/bloodrailz/player.mdl")
+	if (self.model != "progs/bloodrailz/player.md3")
 		return;	// allready gibbed
 	self.frame = $deatha11;
 	self.solid = SOLID_NOT;

@@ -1,4 +1,5 @@
 .vector dmg_origin;
+.float nogib_death;
 
 
 
@@ -12,9 +13,9 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 	}
 	
 	
-	if(targ.frags == top_score_global && crown_out ==1 && targ.hascrown == 1 && crown)
+	if(targ.frags == top_score_global && crown_out ==1 && targ.hascrown == 1 && crown_ent.classname == "crown")
 	{
-		remove(crown);
+		remove(crown_ent);
 		targ.hascrown = 0;
 		crown_out = 0;
 	}
@@ -56,6 +57,7 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 	
 	//set where killing damage came from
 	self.dmg_origin = damage_origin;
+	if(damage ==9) self.nogib_death = 1; //set value IF player was killed by fire (this is so we can change gib sequence to conserve entities)
 	
 	if (self.health < -99) self.health = -99;	
 
@@ -136,8 +138,8 @@ vector(float dm, float inair) VelocityForDamage =
 
 void() update_gib =
 {
-	self.alpha = self.alpha -0.02;
-	if(self.alpha <= 0.02) self.think = SUB_Remove;
+	self.alpha = self.alpha -0.025;
+	if(self.alpha <= 0.025) self.think = SUB_Remove;
 	
 	self.nextthink = time + 0.01;
 }
@@ -145,6 +147,8 @@ void() update_gib =
 
 void(string gibname, float dm, float inair) ThrowGib =
 {
+	
+	
 	local	entity new;
 	
 	new = spawn();
@@ -163,13 +167,16 @@ void(string gibname, float dm, float inair) ThrowGib =
 	else if (rand< 0.75) new.origin = self.origin + '0 0 30';
 	else if (rand<= 1) new.origin = self.origin + '0 0 40';
 	
+	new.velocity = VelocityForDamage (dm, inair);
+	
+	new.origin = new.origin + normalize(new.velocity)*45;
 	
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');
 	new.classname = "giblets";
-	new.velocity = VelocityForDamage (dm, inair);
+	
 	new.movetype = MOVETYPE_BOUNCE;
-	new.solid = SOLID_NOT;
+	new.solid = SOLID_TRIGGER;  // _NOT -> _TRIGGER
 	new.avelocity_x = random()*600;
 	new.avelocity_y = random()*600;
 	new.avelocity_z = random()*600;
@@ -179,7 +186,7 @@ void(string gibname, float dm, float inair) ThrowGib =
 	new.think = update_gib;
 	new.ltime = time;
 
-        new.nextthink = time + 4 + random()*3;
+        new.nextthink = time + 2.0 + random()*2.0;
 
 	new.frame = 0;
 	new.flags = 0;
@@ -189,7 +196,19 @@ void() update_splat=
 {
 	//self.customizeentityforclient = splat_customize;
 	self.frame +=1;
+	
+	if(self.frame==1) 
+	{
+		Splat3();
+		if(self.owner.nogib_death == 0)
+		{
+			Splat5();
+			Splat5();
+		}
+	}
+	if(self.frame==2 && total_players_global < 9 && smoke_ent_number < 8) Splat4();
 	if(self.frame==3) Splat2();
+	
 	if(self.frame==13) self.think = SUB_Remove;
 	self.nextthink = time + 0.05;
 }
@@ -203,12 +222,17 @@ void()Splat =
 	
 	
 	setsize (new, '0 0 0', '0 0 0');
-	new.scale = 0.25;
+	new.scale = 0.125;
 	
 	local vector unit = normalize(self.origin - self.dmg_origin);
 	new.origin = self.origin + '0 0 24' + unit*21;
 	
-	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+		if(random()<0.7) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	else 
+	{
+		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		new.scale = 0.25;
+	}
 
 	new.classname = "splat";
 	new.movetype = MOVETYPE_NONE;
@@ -218,7 +242,7 @@ void()Splat =
 	new.alpha =0.9;
 	new.owner = self;
 	
-	new.customizeentityforclient = splat_customize;
+	//new.customizeentityforclient = splat_customize;
 	
 	new.think = update_splat;
 	new.ltime = time;
@@ -232,8 +256,9 @@ void()Splat =
 void() update_splat2=
 {
 	//self.customizeentityforclient = splat_customize;
-	self.frame +=1;
+	
 	if(self.frame==13) self.think = SUB_Remove;
+	self.frame +=1;
 	self.nextthink = time + 0.05;
 }
 
@@ -245,7 +270,7 @@ void()Splat2 =
 	
 	
 	setsize (new, '0 0 0', '0 0 0');
-	new.scale = 0.25;
+	new.scale = 0.125;
 	
 	local vector unit = '0 0 0';
 	
@@ -266,7 +291,12 @@ void()Splat2 =
 	new.origin = self.origin + unit*(45);
 	new.origin = new.origin + vertical;
 	
-	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	if(random()<0.59) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	else 
+	{
+		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		new.scale = 0.25;
+	}
 
 	
 	new.classname = "splat";
@@ -275,7 +305,7 @@ void()Splat2 =
 	new.alpha =0.9;
 	new.owner = self.owner;
 	
-	new.customizeentityforclient = splat_customize;
+	//new.customizeentityforclient = splat_customize;
 	
 	new.think = update_splat2;
 	new.ltime = time;
@@ -288,10 +318,9 @@ void()Splat2 =
 void() update_splat3=
 {
 	//self.customizeentityforclient = splat_customize;
-	self.frame +=1;
-	if(self.frame==2) Splat4();
-	if(self.frame==1) Splat5();
+	
 	if(self.frame==13) self.think = SUB_Remove;
+	self.frame +=1;
 	self.nextthink = time + 0.05;
 }
 
@@ -302,7 +331,7 @@ void()Splat3 =
 	new = spawn();
 	
 
-	new.scale = 0.5;
+	new.scale = 0.1;
 	setsize (new, '0 0 0', '0 0 0');
 	
 	local vector unit = '0 0 0';
@@ -324,7 +353,13 @@ void()Splat3 =
 	new.origin = self.origin + unit*(55);
 	new.origin = new.origin + '0 0 15';
 
-	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
+	if(random()<0.55) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	else
+	{
+		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		new.scale = 0.25;
+	}
+	
 	
 	
 	new.classname = "splat";
@@ -333,9 +368,9 @@ void()Splat3 =
 	
 	new.alpha = 0.9;
 	
-	new.owner = self;
+	new.owner = self.owner;
 	
-	new.customizeentityforclient = splat_customize;
+	//new.customizeentityforclient = splat_customize;
 	
 	new.think = update_splat3;
 	new.ltime = time;
@@ -348,8 +383,9 @@ void()Splat3 =
 void() update_splat4=
 {
 	//self.customizeentityforclient = splat_customize;
-	self.frame +=1;
+	
 	if(self.frame==13) self.think = SUB_Remove;
+	self.frame +=1;
 	self.nextthink = time + 0.04;
 }
 
@@ -361,7 +397,7 @@ void()Splat4 =
 	
 	
 	setsize (new, '0 0 0', '0 0 0');
-	new.scale = 0.25;
+	new.scale = 0.125;
 	
 	local vector unit = '0 0 0';
 	
@@ -384,7 +420,7 @@ void()Splat4 =
 	new.origin = new.origin +vertical;
 	
 
-	setmodel (new, "progs/bloodrailz/s_blood_512x.spr");
+	setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
 	
 	
 	new.classname = "splat";
@@ -394,7 +430,7 @@ void()Splat4 =
 	
 	new.owner = self.owner;
 	
-	new.customizeentityforclient = splat_customize;
+	//new.customizeentityforclient = splat_customize;
 	
 	new.think = update_splat4;
 	new.ltime = time;
@@ -407,8 +443,8 @@ void()Splat4 =
 void() update_splat5=
 {
 	//self.customizeentityforclient = splat_customize;
-	self.frame +=1;
 	if(self.frame==13) self.think = SUB_Remove;
+	self.frame +=1;
 	self.nextthink = time + 0.05;
 }
 
@@ -420,7 +456,7 @@ void()Splat5 =
 	
 	
 	setsize (new, '0 0 0', '0 0 0');
-	new.scale = 0.5;
+	new.scale = 0.1;
 	
 	local vector unit = '0 0 0';
 	
@@ -441,7 +477,12 @@ void()Splat5 =
 	new.origin = self.origin + unit*(70);
 	new.origin = new.origin +vertical;
 
-	setmodel (new, "progs/bloodrailz/s_blood_192x.spr");
+	if(random()<0.60) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	else 
+	{
+		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		new.scale = 0.25;
+	}
 	
 	new.classname = "splat";
 	new.movetype = MOVETYPE_NONE;
@@ -452,7 +493,7 @@ void()Splat5 =
 	
 	new.owner = self.owner;
 	
-	new.customizeentityforclient = splat_customize;
+	//new.customizeentityforclient = splat_customize;
 	
 	new.think = update_splat5;
 	new.ltime = time;
@@ -465,7 +506,7 @@ void()Splat5 =
 void() vial_touch =
 {
 
-   	 if (other.classname != "player") return;
+   	if (other.classname != "player") return;
 	if (other.health <= 0) return;
 
 	if ((self.style & ELOHIM_OBSERVER) || (other.style & ELOHIM_OBSERVER) ||
@@ -499,10 +540,10 @@ void() vial_touch =
 		if (other.armorvalue < 200)
                 {
 			other.armorvalue  	= other.armorvalue + 20;
-			other.health  	= other.health + 10;
-			if (other.health >100) other.health = 100;
 			if (other.armorvalue >200) other.armorvalue = 200;
                 }      
+                other.health  	= other.health + 15;
+                if(other.health > 125) other.health = 125;
 
 		
 	}
@@ -510,7 +551,7 @@ void() vial_touch =
 
 
 
-	sound (other, CHAN_AUTO, "bloodrailz/items/cells.wav", 1, ATTN_NORM);
+	sound (other, CHAN_AUTO, "bloodrailz/items/br_loot.wav", 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	remove(self);
 };
@@ -521,7 +562,7 @@ void () update_vial =
 	
 	if (self.flags & FL_ONGROUND) self.flags = self.flags - (self.flags & FL_ONGROUND);
 	
-	if(time - self.ltime > 13 + 10*self.cnt)
+	if(time - self.ltime > 10 + 10*self.cnt)
 	{
 		if(self.skin ==1 || self.skin ==6)   //BLUE
 		{
@@ -605,6 +646,7 @@ void(float dm, float inair) ThrowVial =
 	new1.ltime = time;
 	new1.cnt = random();
 	new1.speed = 0;
+	new1.classname = "vials";
 	
 	
 	new1.ltime = time;
@@ -653,32 +695,34 @@ void(float dm, float inair) ThrowVial =
 
 void() GibPlayerChangeTeams =
 {
+       
         local float inair;
    	if(self.airborn_pos > 55) inair = 1; //FEBRUARY
-        ThrowGib ("progs/gib1.mdl", self.health, inair);
-        ThrowGib ("progs/gib2.mdl", self.health, inair);
-            ThrowGib ("progs/gib3.mdl", self.health, inair);
-            ThrowGib ("progs/bloodrailz/h_player.mdl", self.health, inair);
+        ThrowGib ("progs/bloodrailz/br_gib1.mdl", self.health, inair);
+        ThrowGib ("progs/bloodrailz/br_gib2.mdl", self.health, inair);
+            ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
+            ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
 
 	self.deadflag = DEAD_DYING;
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (damage_attacker.classname == "teledeath2")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 		
 	if (random() < 0.5)
-		sound (self, CHAN_VOICE, "bloodrailz/player/gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
 	else
-		sound (self, CHAN_VOICE, "bloodrailz/player/udeath.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_death.wav", 1, ATTN_NONE);
 };
+
 
 
 
@@ -687,37 +731,49 @@ void() GibPlayer =
    	local float inair;
    	if(self.airborn_pos > 55) inair = 1; //FEBRUARY
    	
-   	
-   	Splat();
-   	Splat3();
-   	Splat5();
-   	
-   	ThrowGib ("progs/bloodrailz/h_player.mdl", self.health, inair);
-        ThrowGib ("progs/gib1.mdl", self.health, inair);
-        ThrowGib ("progs/gib2.mdl", self.health, inair);
-            ThrowGib ("progs/gib3.mdl", self.health, inair);
-            ThrowGib ("progs/bloodrailz/h_player.mdl", self.health, inair);
+   	if(self.nogib_death ==0)
+   	{
+		ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
+		ThrowGib ("progs/bloodrailz/br_gib1.mdl", self.health, inair);
+		if(total_players_global <= 12 && smoke_ent_number < 8) ThrowGib ("progs/bloodrailz/br_gib2.mdl", self.health, inair);
+		if(total_players_global <= 8 && smoke_ent_number < 8) ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
+		if(total_players_global < 8 && smoke_ent_number < 8) ThrowGib ("progs/bloodrailz/br_gib2.mdl", self.health, inair);
+	}
+	
+	Splat();
            
-            if(random()< 0.59) ThrowVial (-20, inair);
-            if(random()< 0.59) ThrowVial (-30, inair);
-            if(random()< 0.59) ThrowVial (-40, inair);
+        if(self.nogib_death != 2)
+        {
+		if(total_players_global > 8)
+		{
+			if(random()< 0.40) ThrowVial (-20, inair);
+			//if(total_players_global <= 9 && smoke_ent_number < 8) if(random()< 0.40) ThrowVial (-30, inair);
+			//if(total_players_global <= 9 && smoke_ent_number < 8) if(random()< 0.40) ThrowVial (-40, inair);
+		}
+		else
+		{
+			if(random()< 0.44) ThrowVial (-20, inair);
+			if(smoke_ent_number < 8) if(random()< 0.44) ThrowVial (-30, inair);
+			if(total_players_global <= 6 && smoke_ent_number < 8) if(random()< 0.42) ThrowVial (-40, inair);
+		}
+	}
             
 	self.deadflag = DEAD_DYING;
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (damage_attacker.classname == "teledeath2")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/teledth1.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 		
 	if (random() < 0.5)
-		sound (self, CHAN_VOICE, "bloodrailz/player/gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
 	else
-		sound (self, CHAN_VOICE, "bloodrailz/player/udeath.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "bloodrailz/player/br_death.wav", 1, ATTN_NONE);
 };

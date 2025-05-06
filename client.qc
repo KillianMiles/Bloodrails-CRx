@@ -196,7 +196,7 @@ void() DecodeLevelParms =
 	self.player_flag = parm13;
 	self.hudspace = parm14;
 
-    if (world.model == "maps/ctf_dissocia_c2.bsp")
+    if (world.model == "maps/ctf_dissocia_r1.bsp")
         SetNewParms2 ();   // take away all stuff on starting new episode
 
     // END_MOD
@@ -342,9 +342,6 @@ void() IntermissionThink =
 	if (time < intermission_exittime)
 		return;
 
-    // ELOHIM_MOD - make sure we've finished looking through levels.cfg
-    if (elohim_levelcount)
-        return;
 
 	if (!self.button0 && !self.button1 && !self.button2)
 		return;
@@ -448,10 +445,7 @@ void() changelevel_touch =
 	
 	nextmap = self.map;
 
-    // ELOHIM_MOD
-    // check to see if there is a user-specified level sequence
-    console_get_user_nextlevel();
-    // END_MOD
+
 
 	SUB_UseTargets ();
 
@@ -863,6 +857,7 @@ void() PutDummyInServer =
 	dummy.effects = 0;
 	dummy.velocity = '0 0 0';
 	dummy.frags = -1;
+	
 
 	
 
@@ -881,7 +876,9 @@ void() PutDummyInServer =
 	setorigin(dummy, spot.origin + '0 0 80');	//R00k: change our origin and relink our edict.
 	dummy.oldorigin = dummy.origin;			//R00k: update oldorigin so we dont respawn where we died.
 
-	setmodel(dummy, "progs/bloodrailz/player.mdl");
+	setmodel(dummy, "progs/bloodrailz/player.md3");
+	dummy.skin = 0;
+	dummy.frame = 18;
 
 	setsize (dummy, VEC_HULL_MIN, VEC_HULL_MAX);
 	
@@ -950,7 +947,17 @@ void() PutClientInServer =
 	//else if(self.player_flag & PF_ITEM_RUNE4_FLAG) self.player_flag -= PF_ITEM_RUNE4_FLAG;
 
 	DecodeLevelParms ();
+	
+	
 
+	if(infokey(self, "rail_cvar") =="1")
+	{
+		if(!(self.player_flag & PF_CLEANTRAIL)) self.player_flag = self.player_flag | PF_CLEANTRAIL;
+	}
+	else 
+	{
+		if(self.player_flag & PF_CLEANTRAIL) self.player_flag = self.player_flag - PF_CLEANTRAIL;
+	}
 
 
 
@@ -1016,8 +1023,7 @@ void() PutClientInServer =
 // oh, this is a hack!
 
 
-	setmodel(self, "progs/bloodrailz/player.mdl");
-
+	setmodel(self, "progs/bloodrailz/player.md3");
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
 	self.view_ofs = '0 0 22';
@@ -1062,12 +1068,19 @@ void() PutClientInServer =
 	
 	
 	self.alpha = 1; //JANUARY player model gib bug
+	if(self.nogib_death ==1 || self.nogib_death ==2) self.nogib_death =0;
 	
 	stuffcmd(self, "cl_forwardspeed 200\n");     //make sure the maxspeed gets reset 9-17-23
 	stuffcmd(self, "cl_sidespeed 350\n");
 	stuffcmd(self, "gl_polyblend 1\n");
 	stuffcmd(self, "gl_cshiftpercent_damage 25\n");
 	stuffcmd(self,"r_particledesc particles\n");  //exec particles config
+	
+	stuffcmd(self, "cl_web_download_url q1tools.github.io\n");
+	//stuffcmd(self, "cl_web_download_url2 http://files.crxquake.com/bloodrails/\n");
+	
+	
+	
 	
 	stuffcmd(self, "cl_bob 0.0032\n");
 	stuffcmd(self, "cl_bobcycle 2.5\n");
@@ -1206,7 +1219,7 @@ void() NextLevel =
 		// go back to start if no trigger_changelevel
 		if (!o)
 		{
-			mapname = "ctf_dissocia_c2";
+			mapname = "ctf_dissocia_r1";
 			o = spawn();
 			o.map = mapname;
 		}
@@ -1218,8 +1231,7 @@ void() NextLevel =
 		nextmap = o.map;
 	gameover = TRUE;
 
-    // check to see if there is a user-specified level sequence
-    console_get_user_nextlevel();
+
 
     o.think = execute_changelevel;
     o.nextthink = time + 0.1;
@@ -1332,7 +1344,7 @@ void() WaterMove =
 	{
 		if (self.flags & FL_INWATER)
 		{
-			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_AUTO, "bloodrailz/misc/outwater.wav", 1, ATTN_NORM);	// play leave water sound
+			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_AUTO, "bloodrailz/misc/br_outwater.wav", 1, ATTN_NORM);	// play leave water sound
 			self.flags = self.flags - FL_INWATER;
 		}
 		return;
@@ -1361,9 +1373,9 @@ void() WaterMove =
 		// player enter water sound
 		if (!(self.style & ELOHIM_OBSERVER))
 		{
-			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "bloodrailz/player/inlava.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_AUTO, "bloodrailz/player/inh2o.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_AUTO, "bloodrailz/player/slimbrn2.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "bloodrailz/player/br_lava.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_AUTO, "bloodrailz/player/br_water.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_AUTO, "bloodrailz/player/br_slime.wav", 1, ATTN_NORM);
 		}
 
 
@@ -1716,9 +1728,9 @@ void() ClientDisconnect =
 
     // ELOHIM_MOD - play gib sound if client was kicked for suiciding
     if (self.cnt < 0)
-        sound(self, CHAN_BODY, "bloodrailz/player/gib.wav", 1, ATTN_NONE);
+        sound(self, CHAN_BODY, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
     else
-        sound (self, CHAN_BODY, "bloodrailz/player/tornoff2.wav", 1, ATTN_NONE);
+        sound (self, CHAN_BODY, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
     // END_MOD
 
 	set_suicide_frame ();

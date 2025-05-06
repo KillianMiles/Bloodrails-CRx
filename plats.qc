@@ -156,20 +156,13 @@ void() func_plat =
 		self.sounds = 2;
 // FIX THIS TO LOAD A GENERIC PLAT SOUND
 
-		if (self.sounds == 1)
-	{
-		precache_sound ("bloodrailz/plats/plat1.wav");
-		precache_sound ("bloodrailz/plats/plat2.wav");
-		self.noise = "bloodrailz/plats/plat1.wav";
-		self.noise1 = "bloodrailz/plats/plat2.wav";
-	}
 
-	if (self.sounds == 2)
+	if (self.sounds == 1 || self.sounds == 2)
 	{
-		precache_sound ("bloodrailz/plats/medplat1.wav");
-		precache_sound ("bloodrailz/plats/medplat2.wav");
-		self.noise = "bloodrailz/plats/medplat1.wav";
-		self.noise1 = "bloodrailz/plats/medplat2.wav";
+		precache_sound ("bloodrailz/triggers/br_medplat1.wav");
+		precache_sound ("bloodrailz/triggers/br_medplat2.wav");
+		self.noise = "bloodrailz/triggers/br_medplat1.wav";
+		self.noise1 = "bloodrailz/triggers/br_medplat2.wav";
 	}
 
 
@@ -296,18 +289,14 @@ void() func_train =
 
 	if (self.sounds == 0)
 	{
-		self.noise = ("bloodrailz/misc/null.wav");
-		precache_sound ("bloodrailz/misc/null.wav");
-		self.noise1 = ("bloodrailz/misc/null.wav");
-		precache_sound ("bloodrailz/misc/null.wav");
+		self.noise = ("bloodrailz/triggers/br_null.wav");
+		precache_sound ("bloodrailz/triggers/br_null.wav");
+		self.noise1 = ("bloodrailz/triggers/br_null.wav");
 	}
 
 	if (self.sounds == 1)
 	{
-		self.noise = ("plats/train2.wav");
-		precache_sound ("plats/train2.wav");
-		self.noise1 = ("plats/train1.wav");
-		precache_sound ("plats/train1.wav");
+
 	}
 
 	self.cnt = 1;
@@ -344,14 +333,10 @@ void() misc_teleporttrain =
 	self.use = train_use;
 	self.avelocity = '100 200 300';
 
-	self.noise = ("bloodrailz/misc/null.wav");
-	precache_sound ("bloodrailz/misc/null.wav");
-	self.noise1 = ("bloodrailz/misc/null.wav");
-	precache_sound ("bloodrailz/misc/null.wav");
+	self.noise = ("bloodrailz/triggers/br_null.wav");
+	precache_sound ("bloodrailz/triggers/br_null.wav");
+	self.noise1 = ("bloodrailz/triggers/br_null.wav");
 
-	precache_model2 ("progs/teleport.mdl");
-	setmodel (self, "progs/teleport.mdl");
-	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
 
 // start trains on the second frame, to make sure their targets have had

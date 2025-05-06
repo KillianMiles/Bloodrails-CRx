@@ -305,7 +305,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			{
 				if(attacker.weapon == IT_AXE || attacker.weapon == IT_HOOK)
 				{
-					sound (targ, CHAN_VOICE, "bloodrailz/player/axhit_flesh.wav", 0.59, ATTN_NORM);
+					sound (targ, CHAN_VOICE, "bloodrailz/player/br_axhit_flesh.wav", 0.59, ATTN_NORM);
 					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //axe and Hook TEAM  momentum adds
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*300;
@@ -314,9 +314,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				if(attacker.weapon == IT_RAILGUN && damage == 9000)
 				{
 					
-					//localsound(attacker, "bloodrailz/misc/sameteam.wav");  // on your team sound
-					ex_localsound(attacker, "bloodrailz/misc/sameteam.wav");  // on your team sound
-					//sound (attacker, CHAN_AUTO, "bloodrailz/misc/sameteam.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
+					//localsound(attacker, "bloodrailz/ctf/sameteam.wav");  // on your team sound
+					ex_localsound(attacker, "bloodrailz/ctf/sameteam.wav");  // on your team sound
+					//sound (attacker, CHAN_AUTO, "bloodrailz/ctf/sameteam.wav", 1, ATTN_NONE, 100, 256);       //SOUNDFLAG_UNICAST is just 256
 					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //rail momentum add
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*300;
@@ -338,14 +338,14 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		dir = normalize(dir);
 		targ.velocity = targ.velocity + dir*250; 
 		
-		if (attacker.weapon == IT_HOOK || attacker.weapon == IT_AXE) sound (self, CHAN_AUTO, "bloodrailz/player/axhit_flesh.wav", 0.59, ATTN_NORM); 
-		else if (attacker.weapon == IT_RAILGUN) sound (self, CHAN_AUTO, "bloodrailz/weapons/br_exp1.wav", 1, ATTN_NORM);
+		if (attacker.weapon == IT_HOOK || attacker.weapon == IT_AXE) sound (self, CHAN_AUTO, "bloodrailz/player/br_axhit_flesh.wav", 0.59, ATTN_NORM); 
+		else if (attacker.weapon == IT_RAILGUN) sound (self, CHAN_AUTO, "bloodrailz/weapons/br_explosion.wav", 1, ATTN_NORM);
 
 		return;   
 	}
           
          
-	if (attacker.weapon == IT_AXE) 	sound (self, CHAN_AUTO, "bloodrailz/player/axhit_flesh.wav", 0.59, ATTN_NORM);	  //sound axehit_flesh when hitting with axe
+	if (attacker.weapon == IT_AXE) 	sound (self, CHAN_AUTO, "bloodrailz/player/br_axhit_flesh.wav", 0.59, ATTN_NORM);	  //sound axehit_flesh when hitting with axe
 	
 	if (damage == 403 && vlen(attacker.origin - targ.origin) > 85) return;  //NOVEM backstop for long axe bug
 

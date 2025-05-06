@@ -116,12 +116,12 @@ void() trigger_multiple =
 	}
 	else if (self.sounds == 2)
 	{
-		self.noise = "bloodrailz/misc/talk.wav";
+		//self.noise = "bloodrailz/misc/talk.wav";
 	}
 	else if (self.sounds == 3)
 	{
-		precache_sound ("bloodrailz/misc/trigger1.wav");
-		self.noise = "bloodrailz/misc/trigger1.wav";
+		precache_sound ("bloodrailz/ctf/br_flag_returned.wav");
+		self.noise = "bloodrailz/ctf/br_flag_returned.wav";
 	}
 	
 	if (!self.wait)
@@ -191,27 +191,7 @@ sounds
 4)
 set "message" to text string
 */
-void() trigger_secret =
-{
-	total_secrets = total_secrets + 1;
-	self.wait = -1;
-	if (!self.message)
-		self.message = "SUCCESS!";
-	if (!self.sounds)
-		self.sounds = 1;
-	
-	if (self.sounds == 1)
-	{
-
-	}
-	else if (self.sounds == 2)
-	{
-		precache_sound ("bloodrailz/misc/talk.wav");
-		self.noise = "bloodrailz/misc/talk.wav";
-	}
-
-	trigger_multiple ();
-};
+void() trigger_secret ={      };
 
 //=============================================================================
 
@@ -282,15 +262,15 @@ void() play_teleport =
 
 	v = random() * 5;
 	if (v < 1)
-		tmpstr = "bloodrailz/misc/r_tele1.wav";
+		tmpstr = "bloodrailz/triggers/r_tele1.wav";
 	else if (v < 2)
-		tmpstr = "bloodrailz/misc/r_tele2.wav";
+		tmpstr = "bloodrailz/triggers/r_tele2.wav";
 	else if (v < 3)
-		tmpstr = "bloodrailz/misc/r_tele3.wav";
+		tmpstr = "bloodrailz/triggers/r_tele3.wav";
 	else if (v < 4)
-		tmpstr = "bloodrailz/misc/r_tele4.wav";
+		tmpstr = "bloodrailz/triggers/r_tele4.wav";
 	else
-		tmpstr = "bloodrailz/misc/r_tele5.wav";
+		tmpstr = "bloodrailz/triggers/r_tele5.wav";
 
 	sound (self, CHAN_VOICE, tmpstr, 1, ATTN_NORM);
 	remove (self);
@@ -422,9 +402,9 @@ void() teleport_touch =
 		other.teleport_time = time + 0.7;
 		
 		
-		if(other.frags == top_score_global && crown_out ==1 && other.hascrown == 1 && crown)
+		if(other.frags == top_score_global && crown_out ==1 && other.hascrown == 1 && crown_ent.classname == "crown")
 		{
-			remove(crown);
+			remove(crown_ent);
 			other.hascrown = 0;
 			crown_out = 0;
 		}
@@ -527,39 +507,12 @@ ONLY REGISTERED TRIGGERS
 ==============================================================================
 */
 
-void() trigger_onlyregistered_touch =
-{
-	if (other.classname != "player")
-		return;
-	if (self.attack_finished > time)
-		return;
-
-	self.attack_finished = time + 2;
-	if (cvar("registered"))
-	{
-		self.message = "";
-		SUB_UseTargets ();
-		remove (self);
-	}
-	else
-	{
-		if (self.message != "")
-		{
-			centerprint (other, self.message);
-			sound (other, CHAN_BODY, "bloodrailz/misc/talk.wav", 1, ATTN_NORM);
-		}
-	}
-};
+void() trigger_onlyregistered_touch ={    };
 
 /*QUAKED trigger_onlyregistered (.5 .5 .5) ?
 Only fires if playing the registered version, otherwise prints the message
 */
-void() trigger_onlyregistered =
-{
-	precache_sound ("bloodrailz/misc/talk.wav");
-	InitTrigger ();
-	self.touch = trigger_onlyregistered_touch;
-};
+void() trigger_onlyregistered ={      };
 
 //============================================================================
 
@@ -571,10 +524,17 @@ void() hurt_on =
 
 void() hurt_touch =
 {
+	if(other.classname == "item_rune")   //Respawn rune if it is in Hurt trigger Hurt_trigger
+	{			
+                   other.think = rune_respawn;
+	}
+	
+	
+	
 	if (other.takedamage && other.bounce_on ==0)
 	{
 			
-		
+		other.nogib_death = 2;
 		self.solid = SOLID_NOT;
 		T_Damage (other, self, self, self.dmg);
 		
@@ -724,11 +684,11 @@ void() trigger_push_touch =
 				
 				 rand = random()*2;
     
-				if (rand <= 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly3.wav",1,ATTN_NORM);
-				else if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "bloodrailz/ambience/windfly2.wav",1,ATTN_NORM);
+				if (rand <= 1) sound (self, CHAN_AUTO, "bloodrailz/triggers/br_jump_pad3.wav",1,ATTN_NORM);
+				else if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "bloodrailz/triggers/br_jump_pad2.wav",1,ATTN_NORM);
    
 			
-				sound (other, CHAN_AUTO, "bloodrailz/ambience/windfly.wav", 0.8, ATTN_NORM);
+				sound (other, CHAN_AUTO, "bloodrailz/triggers/br_jump_pad1.wav", 0.8, ATTN_NORM);
 				
 			}
 		}
@@ -746,9 +706,9 @@ void() trigger_push =
 	
 	
 	InitTrigger ();
-	precache_sound ("bloodrailz/ambience/windfly.wav");
-	precache_sound ("bloodrailz/ambience/windfly2.wav");
-	precache_sound ("bloodrailz/ambience/windfly3.wav");
+	precache_sound ("bloodrailz/triggers/br_jump_pad1.wav");
+	precache_sound ("bloodrailz/triggers/br_jump_pad2.wav");
+	precache_sound ("bloodrailz/triggers/br_jump_pad3.wav");
 	self.touch = trigger_push_touch;
 	
 	

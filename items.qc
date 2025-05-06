@@ -32,7 +32,7 @@ void() SUB_regen =
 {
 	self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
-	sound (self, CHAN_VOICE, "bloodrailz/items/itembk2.wav", 1, ATTN_NORM);	// Christian Ice play respawn sound
+	sound (self, CHAN_VOICE, "bloodrailz/items/br_item_respawn.wav", 1, ATTN_NORM);	// Christian Ice play respawn sound
 	setorigin (self, self.origin);
 };
 
@@ -156,7 +156,7 @@ void() armor_touch =
 	
 	self.think = SUB_regen;
 
-	sound(other, CHAN_ITEM, "bloodrailz/items/br_armor1.wav", 0.8, ATTN_NORM);
+	sound(other, CHAN_ITEM, "bloodrailz/items/br_armor.wav", 0.8, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	
 	activator = other;
@@ -340,7 +340,7 @@ void() item_artifact_invisibility =
 	}
 	else 
 	{
-		self.noise = "bloodrailz/misc/ding2.wav";
+		self.noise = "bloodrailz/misc/br_ding2.wav";
 		setmodel (self, "progs/bloodrailz/br_pent2.mdl");
 		self.netname = "Cloaking matrix";
 		setsize (self, '-59 -59 -24', '59 59 80');

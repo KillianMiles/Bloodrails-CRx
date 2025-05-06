@@ -98,7 +98,6 @@ void() Axe_Charge_Logic=
 		if (time - self.axe_power_time > 0.59 && self.axe_power_time != 0 && self.axe_powered == 0)
 		{
 			
-			
 			if(time - self.shield_recharge_time > RECHARGE || self.shield_recharge_time == 0)
 			{
 				self.axe_powered = 1;
@@ -116,7 +115,7 @@ void() Axe_Charge_Logic=
 			else if (time - self.shield_recharge_time <= 13 && self.shield_recharge_time != 0)	
 			{
 				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 0.62 && self.axe_power_time != 0 && self.axe_powered == 0) sprint(self, "shield depleted\n");
-				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "bloodrailz/misc/menu3.wav", 0.9, ATTN_NORM);
+				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "bloodrailz/misc/br_depleted.wav", 0.9, ATTN_NORM);
 			}
 		}
 	
@@ -186,11 +185,90 @@ antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
 	}
    
    
+   
+   	if ((self.player_flag & PF_ITEM_RUNE2_FLAG) && v_forward_z < -0.67 && self.airborn_pos > 150) 
+	{
+		self.velocity_z =self.velocity_z/3;
+		
+		
+		if(v_forward_z < -0.91)
+		{
+			if(self.is_over_sky !=1)
+			{
+				self.velocity = self.velocity + v_forward*1500; //THOR STRIKE POWER RUNE
+				self.velocity = self.velocity + v_up*(-900); //
+				//bprint("not over sky  ");
+			}
+			else
+			{
+				self.velocity = self.velocity + v_forward*1500; //
+				//bprint("yes over sky  ");
+			}
+		}
+		else if(v_forward_z < -0.81)
+		{
+			if(self.is_over_sky !=1)
+			{
+				self.velocity = self.velocity + v_forward*1400; //
+				self.velocity = self.velocity + v_up*(-950); //
+				//bprint("not over sky  ");
+			}
+			else
+			{
+				self.velocity = self.velocity + v_forward*1350; //
+				//bprint("yes over sky  ");
+			}
+		}
+		else if(v_forward_z < -0.75)
+		{
+			if(self.is_over_sky !=1)
+			{
+				self.velocity = self.velocity + v_forward*1300; //
+				self.velocity = self.velocity + v_up*(-1000); //
+				//bprint("not over sky  ");
+			}
+			else
+			{
+				self.velocity = self.velocity + v_forward*1100; //
+				//bprint("yes over sky  ");
+			}
+		}
+		else
+		{
+			if(self.is_over_sky !=1)
+			{
+				self.velocity = self.velocity + v_forward*1250; //
+				self.velocity = self.velocity + v_up*(-1050); //
+				//bprint("not over sky  ");
+			}
+			else
+			{
+				self.velocity = self.velocity + v_forward*900; //
+				//self.velocity = self.velocity + v_up*(-900); //
+				//bprint("yes over sky  ");
+			}
+		}
+		
+		thor_strike_time =time;
+	
+		//bprint(ftos(v_forward_z));
+		//bprint("\n");
+	}
+   
+   
+   
+   
 	//traceline (source, source + v_forward*64, FALSE, self);
 	traceline (source, source + v_forward*99, FALSE, self);
 	if (trace_fraction == 1.0) return;
 
 	org = trace_endpos - v_forward*4;
+	
+	
+	
+	
+	
+	
 
 	if (trace_ent.takedamage)
 	{
@@ -201,7 +279,7 @@ antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
 		if(time - self.axe_time < 0.42) return;    //make sure, the axe clinks only once per hit
 		sound (self, CHAN_AUTO, "bloodrailz/weapons/br_clink.wav",1,ATTN_NORM);
 		
-	//ADD VERTICAL BUMP IF AXING GROUND WHILE SKIING, RESET SOUND COUNTER
+		//ADD VERTICAL BUMP IF AXING GROUND WHILE SKIING, RESET SOUND COUNTER
 		if(self.skiing_on ==1 && v_forward_z < -0.77) 
 		{
 			if(self.movement_x == 400) self.velocity = self.velocity + '0 0 740';
@@ -218,6 +296,12 @@ antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
 		WriteCoord (MSG_BROADCAST, org_z);
 	}
     
+    
+    
+    
+	
+
+	
 };
 
 
@@ -339,7 +423,7 @@ void() update_shield_EXTERNAL =
 							dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 							dir5 = normalize(dir5);
 							head.velocity = head.velocity + 240*dir5 + v_up*75;
-							if(self.weapon == 29 || random() < 0.05) sound(self, CHAN_AUTO, "bloodrailz/weapons/quasar_push.wav", 1, ATTN_NORM);	
+							if(self.weapon == 29 || random() < 0.05) sound(self, CHAN_AUTO, "bloodrailz/weapons/br_quasar_push.wav", 1, ATTN_NORM);	
 							self.weapon +=1;
 							if(self.weapon ==30) self.weapon =0;
 				}

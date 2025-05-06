@@ -1241,7 +1241,7 @@ void () observer_confirm =
 //
 //  C O N F I R M  L E A V E  R E S P O N S E
 //
-//  They entered yes or know in response to the above prompt.
+//  They entered yes or no
 //
 void (float response) observer_confirm_leave_response =
 {

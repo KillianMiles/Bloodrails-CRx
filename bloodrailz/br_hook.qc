@@ -22,7 +22,7 @@ void() Plasma_Charge_Logic=
 		{
 			self.plasma_powered =1;
 			//bprint("charged!\n");
-			//sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 0.8, ATTN_NORM);
+			//sound (self, CHAN_AUTO, "bloodrailz/weapons/br_lockon.wav", 0.8, ATTN_NORM);
 			
 		}
 		else if(time - self.hook_time2 > 2.4 && self.hook_time2 != 0 && self.plasma_powered == 1)
@@ -33,8 +33,8 @@ void() Plasma_Charge_Logic=
 		
 		if(self.hook_is_anchored == 0)
 		{
-			if(time - self.hook_time2 > 1.3 && time - self.hook_time2 < 1.3 + my_ticrate) sound (self, CHAN_WEAPON, "bloodrailz/weapons/lockon.wav", 0.7, ATTN_NORM);
-			else if(time - self.hook_time2 > 1.7 && time - self.hook_time2 < 1.7 + my_ticrate) sound (self, CHAN_WEAPON, "bloodrailz/weapons/lockon.wav", 0.59, ATTN_NORM);
+			if(time - self.hook_time2 > 1.3 && time - self.hook_time2 < 1.3 + my_ticrate) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_lockon.wav", 0.7, ATTN_NORM);
+			else if(time - self.hook_time2 > 1.7 && time - self.hook_time2 < 1.7 + my_ticrate) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_lockon.wav", 0.59, ATTN_NORM);
 		}
 		
 		if(self.weapon != IT_HOOK) self.plasma_powered =0;
@@ -52,7 +52,7 @@ void() update_plasma =
 		{
 			//if(vlen(self.owner.origin-self.origin) > 1000)
 			//{
-				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 1, ATTN_NORM);
+				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/br_lockon.wav", 1, ATTN_NORM);
 				//bprint("1000\n");
 			//}
 			if (self.owner.height == elohim_team1) self.skin = 1;   //red
@@ -63,7 +63,7 @@ void() update_plasma =
 		{
 			if(vlen(self.owner.origin-self.origin) > 800)
 			{
-				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 0.8, ATTN_NORM);
+				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/br_lockon.wav", 0.8, ATTN_NORM);
 			}
 			if (self.owner.height == elohim_team1) self.skin = 1;   //red
 			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
@@ -73,7 +73,7 @@ void() update_plasma =
 		{
 			if(vlen(self.owner.origin-self.origin) > 800)
 			{
-				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/lockon.wav", 0.7, ATTN_NORM);
+				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "bloodrailz/weapons/br_lockon.wav", 0.7, ATTN_NORM);
 			}
 			if (self.owner.height == elohim_team1) self.skin = 1;   //red
 			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
@@ -99,7 +99,7 @@ void() update_plasma =
 				
 	
 		make_impact('0 0 18', 0);
-		if(vlen(self.owner.origin-self.origin) > 700) sound (self.owner, CHAN_WEAPON, "bloodrailz/weapons/br_exp1.wav", 0.4, ATTN_NORM);
+		if(vlen(self.owner.origin-self.origin) > 700) sound (self.owner, CHAN_WEAPON, "bloodrailz/weapons/br_explosion.wav", 0.4, ATTN_NORM);
 		
 		self.owner.plasma_powered =0;
 		self.hook_time2 =0;
@@ -212,7 +212,7 @@ void() update_plasma =
 						
 						
 							make_aura();
-							sound(self, CHAN_AUTO, "bloodrailz/items/zap.wav", 1, ATTN_NORM);
+							sound(self, CHAN_AUTO, "bloodrailz/items/br_zap.wav", 1, ATTN_NORM);
 						
 							if(time - self.plasma_time < 0.5) self.plasma_time = self.plasma_time - 1.3;
 							else if(time - self.plasma_time < 0.7) self.plasma_time = self.plasma_time - 1.1;
@@ -248,7 +248,7 @@ void() update_plasma =
 					{	
 						T_DamageOrg (head, self, self.owner, 485, self.origin);     //changed damage value for armor damage logic
 						make_aura();
-						sound(self, CHAN_AUTO, "bloodrailz/items/zap.wav", 1, ATTN_NORM);
+						sound(self, CHAN_AUTO, "bloodrailz/items/br_zap.wav", 1, ATTN_NORM);
 						
 						if(time - self.plasma_time < 0.5) self.plasma_time = self.plasma_time - 1.3;
 						else if(time - self.plasma_time < 0.7) self.plasma_time = self.plasma_time - 1.1;
@@ -302,7 +302,7 @@ void() update_plasma =
 						head.bounce_time = time;
 						self.bounce_time = time;
 						
-					sound (self, CHAN_AUTO, "bloodrailz/weapons/plasma_bounce.wav", 0.7, ATTN_NORM);	
+					sound (self, CHAN_AUTO, "bloodrailz/weapons/br_plasma_bounce.wav", 0.7, ATTN_NORM);	
 					sound (self, CHAN_AUTO, "bloodrailz/weapons/plasma1.wav", 0.7, ATTN_NORM);
 					
 					
@@ -326,7 +326,7 @@ void() update_plasma =
 					{	
 						T_DamageOrg (head, self, self.owner, 485, self.origin);    //changed damage value for armor damage logic
 						make_aura();
-						sound(self, CHAN_AUTO, "bloodrailz/items/zap.wav", 1, ATTN_NORM);						
+						sound(self, CHAN_AUTO, "bloodrailz/items/br_zap.wav", 1, ATTN_NORM);						
 						if(time - self.plasma_time < 0.5) self.plasma_time = self.plasma_time - 1.3;
 						else if(time - self.plasma_time < 0.7) self.plasma_time = self.plasma_time - 1.1;
 						else if(time - self.plasma_time < 0.9) self.plasma_time = self.plasma_time - 0.9;
@@ -527,7 +527,6 @@ void () LinkPos =
 	local float pctAlongChain = self.up_count;
 	
 	local float chainLength = 38.5;
-	
 
 	makevectors (player.angles);
 
@@ -544,8 +543,11 @@ void () LinkPos =
 	
 	
 	chainVector =  hook.origin - chainStart;
+	
+	
+	
 
-	if(vlen(chainVector) >= 2000) chainVector = normalize(chainVector) * 2000;
+	if(vlen(chainVector) >= 2550) chainVector = normalize(chainVector) * 2550;
 	
 	self.angles = vectoangles(chainVector);	
 	
@@ -557,15 +559,41 @@ void () LinkPos =
 	self.alpha = 0.65;
 	
 	
-	if (vlen(self.origin - hook.origin) <125) 
+	//if (vlen(self.origin - hook.origin) <125) 
+	if (vlen(self.origin - hook.origin) <150) 
 	{
+		
 		setmodel (self, "progs/bloodrailz/null.mdl");
 		self.alpha = 0.005;
 	}
 	
 	else 
 	{
+		//bprint("******  ");
 		setmodel (self, "progs/bloodrailz/br_chain.mdl");
+		//chainVector = chainVector - normalize(chainVector)* 240;
+		/*
+		if(self.up_count == 0/7) self.alpha =0.65;
+		else if(self.up_count == 1/7) self.alpha =0.65;
+		else if(self.up_count == 2/7) self.alpha =0.65;
+		else if(self.up_count == 3/7) self.alpha =0.55;
+		else if(self.up_count == 4/7) self.alpha =0.45;
+		else if(self.up_count == 5/7) self.alpha =0.40;
+		else if(self.up_count == 6/7) self.alpha =0.35;
+		else if(self.up_count == 7/7) self.alpha =0.65;
+		*/
+		
+		self.alpha = 0.65;
+	}
+	
+	
+	if (vlen(player.origin - hook.origin) >1200) 
+	{
+		//bprint("chain2  ");
+		
+		chainVector = chainVector - normalize(chainVector)* 240;
+		setorigin(self, chainStart + chainVector * pctAlongChain );
+		setmodel (self, "progs/bloodrailz/br_chain2.mdl");
 		self.alpha = 0.65;
 	}
 	
@@ -788,6 +816,8 @@ void () HookVanish =
 		self.hook_lookaway = 0;
 		self.hook_is_anchored = 0;
 		
+		if(self.chain_too_short ==1) self.chain_too_short=0;
+		
 		
 		self.hookhead = 0;		
 		
@@ -851,6 +881,22 @@ void () HookPull =
 	
 	if((self.owner.teleport_time > time ) || self.owner.deadflag || (gameover))
 	{
+		HookVanish();
+		return;
+	} 
+	
+	if(vlen(self.owner.origin-self.origin) < 75 && self.owner.button2 && self.owner.chain_too_short==0)   //hook dash slingshot
+	{
+
+		
+		
+		if(self.owner.airborn_pos < 50) self.owner.velocity = self.owner.velocity + normalize(self.owner.velocity)*375 + '0 0 240';
+		else if(self.owner.airborn_pos >= 50) self.owner.velocity = self.owner.velocity + normalize(self.owner.velocity)*375 + '0 0 175';
+		
+		if(vlen(self.owner.velocity) > 1050) self.owner.velocity = normalize(self.owner.velocity)*(1025+random()*150);
+		
+		
+		
 		HookVanish();
 		return;
 	} 
@@ -1071,12 +1117,12 @@ void () HookPull =
 	start = self.owner.origin;
 	old_start = start_z;
 	
-	 
-	v_forward_z = 0;
-	normalize(v_forward);
+	local vector zfor = v_forward;
+	zfor_z = 0;
+	normalize(zfor);
 	
 	start_z = self.owner.absmin_z;
-	end = start + v_forward*59;
+	end = start + zfor*59;
 	traceline (start, end, TRUE, self.owner);
 	
 	dist = (self.owner.origin - self.origin);
@@ -1090,10 +1136,8 @@ void () HookPull =
 	
 		if (trace_fraction < 1)
 		{
-			v_forward_z = 0;
-			normalize(v_forward);
-			start_z = self.owner.absmin_z + 0.2;
-			end = start + v_forward*59;
+			start_z = self.owner.absmin_z + 2.0;
+			end = start + zfor*59;
 			traceline (start, end, TRUE, self.owner);
 			//sprint(self.owner, ftos(vlen(dist)));
 			//sprint(self.owner, "\n");
@@ -1104,10 +1148,17 @@ void () HookPull =
 				{
 					if (!(self.owner.flags & FL_ONGROUND) &&  self.owner.origin_z - self.origin_z < 75 && self.owner.bounce_switch == 0)              // don't hook bounce if ON GROUND / ONGROUND
 					{
-							self.owner.velocity_z = self.owner.velocity_z + 200;
-							if (self.owner.velocity_z >= 300) self.owner.velocity_z = 330;
+							
+							
+							
+							//if(self.owner.origin_z-self.origin_z < 24)
+							//{
+								//bprint("hook bounce yes\n");
+								self.owner.velocity_z = self.owner.velocity_z + 200;
+								if (self.owner.velocity_z >= 300) self.owner.velocity_z = 330;
+							//}
 						
-							if(vlen(self.owner.velocity) > 925) self.owner.velocity = 925*normalize(self.owner.velocity);
+							if(vlen(self.owner.velocity) > 1050) self.owner.velocity = 1050*normalize(self.owner.velocity);  //hook dash
 						
 							self.owner.bounce_yes = 1;
 						
@@ -1169,9 +1220,10 @@ void () HookPull =
 						self.dest = self.owner.origin;
 						
 						self.nextthink = time + 0.01;  //HOOK_THINK_
-						//sprint(self.owner, "hook bounce\n");
-						//sprint(self.owner, ftos(self.owner.bounce_switch));
-						//sprint(self.owner, "\n");
+						
+							//sprint(self.owner, "hook bounce\n");
+							//sprint(self.owner, ftos(self.owner.bounce_switch));
+							//sprint(self.owner, "\n");
 		
 						return;
 					}
@@ -1191,6 +1243,8 @@ void () HookPull =
 				self.owner.old_hook_vel = self.owner.velocity;
 				self.owner.spring_chain_on =1;
 			}
+			
+			//if(v < 100) self.owner.spring_chain_on =0;
 					
 					
 			//sprint(self.owner, ftos(vlen(self.owner.velocity)));
@@ -1203,39 +1257,64 @@ void () HookPull =
 						
 					
 		}
-		
 		else 
 		{	
 			if (hookspeedpull < 600) hookspeedpull = 850;   
-
+			
+			if(vlen(self.owner.origin-self.origin) < 500) hookspeedpull = 1100;
+			else if(vlen(self.owner.origin-self.origin) < 625) hookspeedpull = 1025;      //Hook dash -- accelerates linear hook as you get closer to attachment point
+			else if(vlen(self.owner.origin-self.origin) < 750) hookspeedpull = 950;
+			else hookspeedpull = 850;
+			
+			
 			if (v <= 100) self.owner.velocity = normalize(vel) * v * 10;  
 			else if ( v > 100) self.owner.velocity = normalize(vel) * hookspeedpull;
 			
-			vel = normalize(vel);
-			if(vel_z < -0.22)
-			{
-				self.owner.velocity = self.owner.velocity + '0 0 -130';
-				//bprint(ftos(vel_z));
-				//bprint(" ");
-			}
 			
-			if(vel_z > -1 && vel_z < -0.45) 
+			//  attempt to straighten the pull
+			/*
+			local vector straight_vel;
+			straight_vel = vel;
+			
+			local vector vel_vert = normalize(vel);
+			bprint (ftos(vel_vert_z));
+			bprint(" \n");
+			
+			straight_vel_z=0;
+			straight_vel = normalize(straight_vel);
+			if(v < 200 && self.owner.origin_z-self.origin_z < 90 && vel_vert_z > -0.55)
 			{
-				self.owner.velocity = self.owner.velocity + '0 0 -55';
-				//bprint(ftos(vel_z));
-				//bprint(" ");
+				self.owner.velocity = straight_vel * hookspeedpull;
 			}
-			if(vel_z > -1 && vel_z < -0.55) 
-			{
-				self.owner.velocity = self.owner.velocity + '0 0 -10';
-				//bprint(ftos(vel_z));
-				//bprint(" ");
-			}
-			if(vel_z > -1 && vel_z < -0.70) 
-			{
-				self.owner.velocity = self.owner.velocity + '0 0 -10';
-				//bprint(ftos(vel_z));
-				//bprint(" ");
+			*/
+			
+			
+			//bprint(ftos(self.owner.origin_z-self.origin_z));
+			//bprint("\n");
+			
+			vel = normalize(vel);
+			//bprint(ftos(vlen(self.owner.velocity)));
+			//bprint(" ");
+			
+			if(v > 42)			//This makes you hook faster when looking down. 
+			{				//first checking if we are super close to hook head, so it doesnt twitch when looking down
+				if(vel_z < -0.22)	
+				{
+					self.owner.velocity = self.owner.velocity + '0 0 -130';
+				}
+			
+				if(vel_z > -1 && vel_z < -0.45) 
+				{
+					self.owner.velocity = self.owner.velocity + '0 0 -55';
+				}
+				if(vel_z > -1 && vel_z < -0.55) 
+				{
+					self.owner.velocity = self.owner.velocity + '0 0 -10';
+				}
+				if(vel_z > -1 && vel_z < -0.70) 
+				{
+					self.owner.velocity = self.owner.velocity + '0 0 -10';
+				}
 			}
 	
 			self.owner.spring_chain_on = 0;
@@ -1353,9 +1432,16 @@ void() T_ChainTouch =
 			}
 			self.weapon = other.nextthink - time;
 			
-
+			
+			
 			self.style = 3;
 			self.enemy = other;
+			
+			if(vlen(self.origin-self.owner.origin) < 250) self.owner.chain_too_short =1;
+			
+			//bprint(ftos(self.owner.chain_too_short));
+			//bprint("\n");
+			
 			self.owner.ltime = (time + 0.5);
 			self.nextthink = time + 0.01;   //HOOK_THINK_
 			
@@ -1431,6 +1517,9 @@ void() Hook_Check =
 		}
 		
 		
+		
+			//self.frame +=1;
+			//if(self.frame == 6) self.frame = 0;
 		
 		
 		self.nextthink = time + 0.01; // //HOOK_THINK_
@@ -1804,7 +1893,7 @@ void() W_FireChain =
 
 	local entity link, prevlink;
 	local float currentLinkNum = 0;
-        local float linkCount = 12;		// <---------------number of links to draw starting from hookhead and back towards the player
+        local float linkCount = 7;		// <---------------number of links to draw starting from hookhead and back towards the player
 	prevlink = world;
 	
 	local entity oldSelf = self;
@@ -1824,7 +1913,7 @@ void() W_FireChain =
 		if(currentLinkNum == 0)
 		
 		
-		setmodel (link, "progs/bloodrailz/br_chain.mdl"); 
+		setmodel (link, "progs/bloodrailz/null.spr"); 
 		
 		//temporarily set 'self' so we can call our 'think' method 
 		self = link;
@@ -1833,7 +1922,7 @@ void() W_FireChain =
 		link.alpha = 0.005;     //HOOK FIX
 		
 		setsize (link, '0 0 0', '0 0 0');		
-		self.nextthink = time + 0.01;          //HOOK_THINK_
+		self.nextthink = time;          //HOOK_THINK_
 		link.think      = LinkPos;
 		currentLinkNum  = currentLinkNum +1;
 	}

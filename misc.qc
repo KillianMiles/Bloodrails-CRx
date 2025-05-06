@@ -55,7 +55,7 @@ void() info_null =
      
         self.deadflag = DEAD_NO;
      
-        setmodel (self, "progs/bloodrailz/player.mdl");
+        setmodel (self, "progs/bloodrailz/player.md3");
         setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 
         player_stand1();
@@ -181,17 +181,7 @@ void() light_fluorospark =
 	//ambientsound (self.origin, "ambience/buzz1.wav", 0.5, ATTN_STATIC);
 };
 
-/*QUAKED light_globe (0 1 0) (-8 -8 -8) (8 8 8)
-Sphere globe light.
-Default light value is 300
-Default style is 0
-*/
-void() light_globe =
-{
-	precache_model ("progs/s_light.spr");
-	setmodel (self, "progs/s_light.spr");
-	makestatic (self);
-};
+
 
 void() FireAmbient =
 {
@@ -305,7 +295,7 @@ void() barrel_explode =
 	self.takedamage = DAMAGE_NO;
 	self.classname = "explo_box";
 	// did say self.owner
-	sound (self, CHAN_VOICE, "bloodrailz/weapons/br_exp1.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "bloodrailz/weapons/br_explosion.wav", 1, ATTN_NORM);
 	particle (self.origin, '0 0 0', 75, 255);
 
 	self.origin_z = self.origin_z + 32;
@@ -541,22 +531,7 @@ local float		rnd1, rnd2, rnd3;
 	self.think = bubble_bob;
 };
 
-/*~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>
-~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~*/
 
-/*QUAKED viewthing (0 .5 .8) (-8 -8 -8) (8 8 8)
-
-Just for the debugging level.  Don't use
-*/
-
-void() viewthing =
-
-{
-	self.movetype = MOVETYPE_NONE;
-	self.solid = SOLID_NOT;
-	precache_model ("progs/bloodrailz/player.mdl");
-	setmodel (self, "progs/bloodrailz/player.mdl");
-};
 
 
 /*

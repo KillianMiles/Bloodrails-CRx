@@ -80,7 +80,6 @@
 // Console variables used:
 //
 // samelevel    = elohim_playmode - server flags
-// v_kickroll   = elohim_level    - level number in user level sequence
 // v_kicktime   = elohim_overtime - length of overtime
 // temp1                          - console commands
 // v_kickpitch                    - used non-destructively for utils_stof
@@ -182,14 +181,15 @@ void () elohim_init_world =
 	world.style = ELOHIM_ADMINISTRATOR;
 
   // Precache sound used when players connect
-  precache_sound("bloodrailz/legacy/wizard_wsight.wav");
+  precache_sound("bloodrailz/misc/br_init.wav");   //soniss free libraries
 
   // Get/set console variables
   
   
   
   elohim_playmode = cvar("samelevel");
-  
+
+
 
 		local float RACE_YES=0;
 		if (mapname == "race24") RACE_YES=1;
@@ -277,7 +277,7 @@ void () elohim_init_world =
         		if (!(elohim_playmode & CLANRING_RUNES)) elohim_playmode = elohim_playmode | CLANRING_RUNES;
         		if (elohim_playmode & ELOHIM_NOAMMO) elohim_playmode = elohim_playmode - ELOHIM_NOAMMO;
         		
-        		localcmd("scr_matchclock 1\n");
+        		localcmd("scr_matchclock 3\n");
         		
      			   utils_set_cvar("timelimit", elohim_timelimit);
         		cvar_set("hostname", ADMIN_CTF_PUBLIC_MODE_STRING);
@@ -331,7 +331,6 @@ void () elohim_init_world =
   // Initialize global variables
   if (elohim_playmode & ELOHIM_DEDICATED_SERVER)
   {
-    cvar_set("v_kickroll", "0");  // elohim_level
     cvar_set("v_kicktime", "0");  // elohim_overtime
   }
   serverflags = 0;
@@ -354,8 +353,7 @@ void () elohim_init_world =
 
   if (elohim_playmode & ELOHIM_DEDICATED_SERVER)
   {
-  elohim_level = cvar("v_kickroll");
-  elohim_overtime = cvar("v_kicktime");
+	elohim_overtime = cvar("v_kicktime");
   }
 
 	hookspeedfire = 1200;
@@ -367,7 +365,6 @@ void () elohim_init_world =
   elohim_nextcheck = time;
   elohim_nextcheck2 = time;
   elohim_request = world;
-  elohim_levelcount = 0;
   elohim_lastcount = 0;
   elohim_state = 0;
   //elohim_num_spawns = 0;  //moved to worldspawn
@@ -671,7 +668,7 @@ void () elohim_init_think =
   temp = self;
   self = self.owner;
   if (!(elohim_playmode & ELOHIM_MATCH_MODE) ||	!(elohim_state & ELOHIM_MATCH_STARTED))
-		sound(self, CHAN_AUTO, "bloodrailz/legacy/wizard_wsight.wav", 1, ATTN_NONE);
+		sound(self, CHAN_AUTO, "bloodrailz/misc/br_init.wav", 1, ATTN_NONE);
 	if (utils_illegal_name(self.netname))
 		stuffcmd(self, "name player\n");
 	
@@ -1129,53 +1126,7 @@ void () elohim_commands =
   elohim_help_change();
 };
 
-//
-//  L E V E L S
-//
-//  List all levels recognized by the server.
-//
-void () elohim_levels =
-{
-  local float index;
-  local string name;
 
-  elohim_help_change();
-  sprint(self, "\n");
-
-  // standard levels
-  sprint(self, " start, start0, start1, end\n");
-  sprint(self, " e1m1-e1m8\n");
-  sprint(self, " e2m1-e2m7\n");
-  sprint(self, " e3m1-e3m7\n");
-  sprint(self, " e4m1-e4m8\n");
-  sprint(self, " dm1-dm8\n");
-  //ctf
-  sprint(self, " ctfstart, ctf1-ctf9, ctf2m1-ctf2m8, ctf3m1-ctf3m9\n");
-  //dm
-  sprint(self, " aerowalk, ztndm3, ztndm4, ultrav, aggressr, q3dm6qw\n");
-  sprint(self, " cmt3, cmt4, skull, schloss, rock, bravado, dm3again\n");
-  sprint(self, " longest_yard, baldm6, efdm9, q1_q3tourney2, battery\n");
-  sprint(self, " obsidian, timeless, spine\n");
-  //ra
-  sprint(self, " 23ar-a, 2pyramid, 2towers, arenarg2, arenarg4, arenarg5\n");
-  sprint(self, " arenarg6, arenax, arenazap, arendm1a, arenrg3a, arma4\n");	
-  sprint(self, " barena1, basarena, bbarena2, bunmoo3, bunski, chamber1\n");
-  sprint(self, " crandome, dm2arena, dom2_1ra, egyptra, football, gear8\n");
-  sprint(self, " gnurena, hill20, iarena2, id3, lowgrav, marena2, marena3\n");
-  sprint(self, " marena4, mayan1, nilsrar3, pen2, pitarena, ptucket\n");
-  sprint(self, " ra_funkf, rarena3, rgarden, soyarena, terrain2, uarena1\n");
-  sprint(self, " unholy, xarena3, yard1, boom, midair, endif\n");
-
-  // user defined levels
-  index = 0;
-  while (index < 10)
-  {
-		name = array_get_user_map(index);
-		if (name != "")
-			sprint3(self, " ", name, "\n");
-		index = index + 1;
-  }
-};
 
 //
 //  P I N G  R E P L Y
@@ -1300,7 +1251,7 @@ void () elohim_impulse =
   else if (self.impulse == 106) // list commands and impulses
 		elohim_commands();
   else if (self.impulse == 107) // list valid levels
-		elohim_levels();
+		{}
   else if (self.impulse == 108) // start entering the admin code
 		admin_start_code();
   else if (self.impulse == 109) // show the MOTD
@@ -1490,20 +1441,7 @@ void () elohim_start_frame =
 		elohim_nextcheck2 = time + 1;
 	}
 
-  if (elohim_levelcount)
-  {
-		// Check for end of file in levels.cfg.  We assume end of file
-		// if it's been 1 second since the last update to levelcount.
-		// When end of file is detected, levelcount is reset to 0 to
-		// allow players to exit the intermission.
-		if (time >= elohim_nextcheck)
-		{
-			if (elohim_levelcount == elohim_lastcount)
-			  elohim_levelcount = 0;
-			elohim_lastcount = elohim_levelcount;
-			elohim_nextcheck = time + 1;
-		}
-  }
+
 
   my_ticrate = cvar("sys_ticrate");
   if (!my_ticrate)	 my_ticrate = .016666667;

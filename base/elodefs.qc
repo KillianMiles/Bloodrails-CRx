@@ -130,8 +130,9 @@ float elohim_overtime;      // length of auto-overtime; 0 if none
 float elohim_nextcheck;     // used for periodic checks
 float elohim_nextcheck2;	// used for frequent periodic checks
 entity elohim_request;      // used to control voting
-float elohim_level;         // number of current level in user level order
-float elohim_levelcount;    // used to scan through list in levels.cfg
+float maplist;         // number of current level in user level order
+//float maplist2;
+float current_map;
 float elohim_lastcount;     // used to detect end-of-file in levels.cfg
 float elohim_num_spawns;    // number of deathmatch spawn points
 float elohim_num_redspawns;    // number of red spawn points

@@ -88,23 +88,14 @@ void() func_button =
 {
 	if (self.sounds == 0)
 	{
-		precache_sound ("bloodrailz/buttons/airbut1.wav");
-		self.noise = "bloodrailz/buttons/airbut1.wav";
+		precache_sound ("bloodrailz/triggers/br_airbut1.wav");
+		self.noise = "bloodrailz/triggers/br_airbut1.wav";
 	}
-	if (self.sounds == 1)
+
+	if (self.sounds == 1 || self.sounds == 2 || self.sounds == 3)
 	{
-		precache_sound ("buttons/switch21.wav");
-		self.noise = "buttons/switch21.wav";
-	}
-	if (self.sounds == 2)
-	{
-		precache_sound ("buttons/switch02.wav");
-		self.noise = "buttons/switch02.wav";
-	}
-	if (self.sounds == 3)
-	{
-		precache_sound ("buttons/switch04.wav");
-		self.noise = "buttons/switch04.wav";
+		precache_sound ("bloodrailz/triggers/br_switch04.wav");
+		self.noise = "bloodrailz/triggers/br_switch04.wav";
 	}
 	
 	SetMovedir ();

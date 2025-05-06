@@ -655,7 +655,7 @@ void() Exit_HorrorScope =
 	self.angles = self.hr_oldangles;
 	//self.movetype = MOVETYPE_WALK;
 	self.view_ofs = '0 0 25';
-	setmodel (self, "progs/bloodrailz/player.mdl");
+	setmodel (self, "progs/bloodrailz/player.md3");
 	self.classname = "player";
 	//setsize (self, '-16 -16 -24', '-16 -16 -24');
 	setorigin (self, self.hr_oldorigin);
