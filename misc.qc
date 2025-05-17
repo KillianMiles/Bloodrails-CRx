@@ -55,7 +55,7 @@ void() info_null =
      
         self.deadflag = DEAD_NO;
      
-        setmodel (self, "progs/bloodrailz/player.md3");
+        setmodel (self, "mdl/player.md3");
         setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 
         player_stand1();
@@ -177,17 +177,13 @@ void() light_fluorospark =
 	if (!self.style)
 		self.style = 10;
 
-	//precache_sound ("ambience/buzz1.wav");
-	//ambientsound (self.origin, "ambience/buzz1.wav", 0.5, ATTN_STATIC);
 };
 
 
 
 void() FireAmbient =
 {
-	//precache_sound ("ambience/fire1.wav");
-// attenuate fast
-	//ambientsound (self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
+
 };
 
 /*QUAKED light_torch_small_walltorch (0 .5 0) (-10 -10 -20) (10 10 20)
@@ -295,7 +291,7 @@ void() barrel_explode =
 	self.takedamage = DAMAGE_NO;
 	self.classname = "explo_box";
 	// did say self.owner
-	sound (self, CHAN_VOICE, "bloodrailz/weapons/br_explosion.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "weap/br_explo.wav", 1, ATTN_NORM);
 	particle (self.origin, '0 0 0', 75, 255);
 
 	self.origin_z = self.origin_z + 32;
@@ -436,7 +432,7 @@ void() air_bubbles =
 		remove (self);
 		return;
 	}
-	precache_model ("progs/s_bubble.spr");
+	precache_model ("progs/s_bubbl.spr");
 	self.nextthink = time + 1;
 	self.think = make_bubbles;
 };
@@ -446,7 +442,7 @@ void() make_bubbles =
 local entity	bubble;
 
 	bubble = spawn();
-	setmodel (bubble, "progs/s_bubble.spr");
+	setmodel (bubble, "progs/s_bubbl.spr");
 	setorigin (bubble, self.origin);
 	bubble.movetype = MOVETYPE_NOCLIP;
 	bubble.solid = SOLID_NOT;
@@ -466,7 +462,7 @@ void() bubble_split =
 {
 local entity	bubble;
 	bubble = spawn();
-	setmodel (bubble, "progs/s_bubble.spr");
+	setmodel (bubble, "progs/s_bubbl.spr");
 	setorigin (bubble, self.origin);
 	bubble.movetype = MOVETYPE_NOCLIP;
 	bubble.solid = SOLID_NOT;
@@ -617,16 +613,12 @@ void() ambient_suck_wind =
 */
 void() ambient_drone =
 {
-	precache_sound ("ambience/drone6.wav");
-	ambientsound (self.origin, "ambience/drone6.wav", 0.5, ATTN_STATIC);
 };
 
 /*QUAKED ambient_flouro_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 */
 void() ambient_flouro_buzz =
 {
-	precache_sound ("ambience/buzz1.wav");
-	ambientsound (self.origin, "ambience/buzz1.wav", 1, ATTN_STATIC);
 };
 /*QUAKED ambient_drip (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 */

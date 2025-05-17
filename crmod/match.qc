@@ -21,8 +21,7 @@ void () GibPlayer;
 void () match_timer_think2;
 void () match_enter_ghost_code;
 void (entity ghostent) match_restore_ghost;
-//void () admin_disable_item; //move to ctf
-void () console_show_score;
+
 
 //
 //  S H O W  T I M E L I M I T
@@ -159,12 +158,9 @@ void () match_gib_player =
         self.nextthink = time + 1;
         if (elohim_state & ELOHIM_MATCH_STARTED)
         {
-            //eh, is this even possible anymore?
-            if (!(elohim_playmode & CLAN_ARENA_MODE) || (elohim_playmode & CLAN_ARENA_MODE && boss.round == 1))
             //start of match
             self.frags = 0;
             self.dmg_tally = 0;
-            stats_reset();
         }
         else
         {
@@ -326,15 +322,12 @@ void () match_end =
     // remember teams so that 'score' will continue to work
     elohim_lastteam1 = elohim_team1;
     elohim_lastteam2 = elohim_team2;
-    console_show_score();
 
     elohim_match_timer.think = match_reset;
     elohim_match_timer.nextthink = time + 5;
 
 	score_update_time();
 
-    if (!aborted)
-        utils_do_players(stats_show_all);
 };
 
 //
@@ -535,11 +528,11 @@ void () match_timer_think1 =
     }
     else if (self.count == 15)
     {
-        sound (world, CHAN_AUTO, "bloodrailz/items/br_protect2.wav", 1, ATTN_NONE);
+        sound (world, CHAN_AUTO, "item/br_protec2.wav", 1, ATTN_NONE);
     }
     else if (self.count <= 3)
     {
-        sound (world, CHAN_AUTO, "bloodrailz/triggers/br_switch04.wav", 1, ATTN_NONE);
+        sound (world, CHAN_AUTO, "trig/br_switch.wav", 1, ATTN_NONE);
         if (self.count < 2)
         {
             self.nextthink = time + 1;
@@ -866,8 +859,7 @@ void () match_ready =
         return;
     }
 
-    if (!(mode_is_arena()))
-    {
+
         // Try to add the player; color him white if unsuccessful
         if (!match_put_player_in_team())
         {
@@ -891,11 +883,8 @@ void () match_ready =
 
         if (self.style & ELOHIM_OBSERVER)
             observer_end();
-    }
-    else if (!(elohim_playmode & AIR_ARENA_MODE))
-    {
-        //arena_put_player_in_team();
-    }
+    
+
 };
 
 //
@@ -1387,10 +1376,7 @@ void (entity player) match_disconnect_notify =
         }
         return;
     }
-    else if (mode_is_arena())
-    {
-        //don't remember what goes here
-    }
+
 
     if (player.style & ELOHIM_READY)
     {

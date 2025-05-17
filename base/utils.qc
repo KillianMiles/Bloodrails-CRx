@@ -865,12 +865,6 @@ entity findPlayerSpawn(entity start,float findTeam) {
 }
 
 
-float () mode_is_arena
-{
-	if ((elohim_playmode & CLAN_ARENA_MODE) || (elohim_playmode & ROCKET_ARENA_MODE))
-		return TRUE;
-	return FALSE;
-}
 
 void (string s1) announce =
 {

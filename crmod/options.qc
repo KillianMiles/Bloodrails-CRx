@@ -24,9 +24,6 @@
 
 
 // constants
-float OPTIONS_NO_GIBS = 0;
-float OPTIONS_LOW_GIBS = 1;
-float OPTIONS_HIGH_GIBS = 2;
 float OPTIONS_PAUSABLE = 1;
 
 
@@ -51,28 +48,10 @@ float () options_get_mode =
         return ADMIN_CTF_MATCH_MODE;
     if (elohim_playmode & CLANRING_CTF_MODE)
         return ADMIN_CTF_PUBLIC_MODE;
-    if (elohim_playmode & AIR_ARENA_MODE)
-        return ADMIN_AIR_MODE;
-    if (elohim_playmode & CLAN_ARENA_MODE)
-        return ADMIN_CA_MODE;
-    if (elohim_playmode & ROCKET_ARENA_MODE)
-        return ADMIN_RA_MODE;
     return ADMIN_NORMAL_MODE;
 };
 
-//
-//  G E T  G I B S
-//
-//  Returns the current gib mode.
-//
-float () options_get_gibs =
-{
-    if (elohim_playmode & ELOHIM_NO_GIBS)
-        return OPTIONS_NO_GIBS;
-    if (elohim_playmode & ELOHIM_LOW_GIBS)
-        return OPTIONS_LOW_GIBS;
-    return OPTIONS_HIGH_GIBS;
-};
+
 
 //
 //  S T A R T  S E T T I N G
@@ -107,7 +86,6 @@ void () options_start_setting =
     }
 
     self.pos1_z = options_get_mode();
-    self.pos2_x = options_get_gibs();
 
     self.pos2_y = teamplay;
     if (!(teamplay == 0 || teamplay == 1 || teamplay == 2))
@@ -206,11 +184,7 @@ void () options_change =
     }
     else if (self.t_length == 3)
     {
-        // change gibs
-        if (self.pos2_x == OPTIONS_HIGH_GIBS)
-            self.pos2_x = OPTIONS_NO_GIBS;
-        else
-            self.pos2_x = self.pos2_x + 1;
+	//used to be low gibs stuff
     }
     else if (self.t_length == 4)
     {
@@ -287,8 +261,10 @@ void () options_change =
     }
 
     // play sound
-    stuffcmd(self, "play bloodrailz/misc/br_depleted.wav\n");
+    stuffcmd(self, "play bloodrailz/misc/br_deplete.wav\n");
 };
+
+
 
 //
 //  F I N I S H  S E T T I N G
@@ -334,11 +310,7 @@ void () options_finish_setting =
         if (self.pos2_z != cvar("noexit"))
             utils_set_cvar("noexit", self.pos2_z);
     }
-    if (self.pos2_x != options_get_gibs())
-    {
-        // gibs has changed
-        admin_request_set_gibs(self.pos2_x);
-    }
+
     if ((self.aflag & OPTIONS_PAUSABLE) != cvar("pausable"))
     {
         // pausable has changed

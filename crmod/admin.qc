@@ -24,104 +24,10 @@ float () options_get_mode;
 // global variables
 string request_mapname;     // Used for requesting a new level
 float request_timelimit;    // Used for requesting a new time limit
-float request_gibs;         // Used to set gib level
 //float request_mode;         // Used to request a new mode
 entity kick_target;         // Player to kick
 
-void () stuff_aliases1 =
-{
-	
 
-	stuffcmd(self, "alias +rail \"impulse 3; +attack\"\n");  
-	stuffcmd(self, "alias -rail -attack\n");
-    
-	stuffcmd(self, "alias +axe \"impulse 1; +attack\"\n");  
-	stuffcmd(self, "alias -axe -attack\n");
-	
-	stuffcmd(self, "alias +dash \"impulse 43; wait; wait; impulse 1; +jump; wait; wait; +attack\"\n");  
-	stuffcmd(self, "alias -dash \"impulse 44; -jump; -attack\"\n");  
-  
-	stuffcmd(self, "alias +hook \"impulse 22; +attack\"\n");       //+hook alias
-	stuffcmd(self, "alias -hook -attack\n");
-    
-	stuffcmd(self, "alias droprune impulse 40\n");
-
-
-    
-    // toggle extended obits
-	//stuffcmd(self, "alias obits impulse 211\n");
-
-    // timelimit aliases
-    //stuffcmd(self, "alias timelimit5 impulse 215\n");
-    stuffcmd(self, "alias timelimit10 impulse 216\n");
-    stuffcmd(self, "alias timelimit15 impulse 217\n");
-    stuffcmd(self, "alias timelimit20 impulse 218\n");
-    stuffcmd(self, "alias timelimit25 impulse 219\n");
-    stuffcmd(self, "alias timelimit30 impulse 220\n");
-
-    // fraglimit aliases
-    stuffcmd(self, "alias fraglimit50 impulse 252\n");
-    stuffcmd(self, "alias fraglimit120 impulse 253\n");
-    stuffcmd(self, "alias fraglimit15 impulse 254\n");
-
-    // Rocket Arena max wins
-  //  stuffcmd(self, "alias setrounds impulse 251\n");
-
-    // Quad, Pent, Ring, Rune aliases
-    stuffcmd(self, "alias setpowerups impulse 221\n");
-    stuffcmd(self, "alias setatx impulse 222\n");
-    
-    stuffcmd(self, "alias setarmor impulse 224\n");      //no armor setting
-    stuffcmd(self, "alias setrunes impulse 255\n");
-    stuffcmd(self, "alias sethook impulse 209\n");
-    stuffcmd(self, "alias setrail impulse 227\n");       //no railgun setting
-    
-    stuffcmd(self, "alias shuffle impulse 223\n");
-    stuffcmd(self, "alias rebalance impulse 226\n");       //spawn with 100 armor
-    
-    stuffcmd(self, "alias set200 impulse 225\n");       //spawn with 200 armor
-  
-  
-
-    // playmode aliases
-    stuffcmd(self, "alias force impulse 130\n");
-
-    // number aliases
-    stuffcmd(self, "alias 0 impulse 230\n");
-    stuffcmd(self, "alias 1 impulse 231\n");
-    stuffcmd(self, "alias 2 impulse 232\n");
-    stuffcmd(self, "alias 3 impulse 233\n");
-    stuffcmd(self, "alias 4 impulse 234\n");
-    stuffcmd(self, "alias 5 impulse 235\n");
-    stuffcmd(self, "alias 6 impulse 236\n");
-    stuffcmd(self, "alias 7 impulse 237\n");
-    stuffcmd(self, "alias 8 impulse 238\n");
-    stuffcmd(self, "alias 9 impulse 239\n");
-    stuffcmd(self, "alias 10 impulse 240\n");
-    stuffcmd(self, "alias 11 impulse 241\n");
-    stuffcmd(self, "alias 12 impulse 242\n");
-    stuffcmd(self, "alias 13 impulse 243\n");
-    stuffcmd(self, "alias 14 impulse 244\n");
-    stuffcmd(self, "alias 15 impulse 245\n");
-};
-
-//
-//  S E N D  A L I A S E S 1
-//
-//  Stuffs aliases for votable commands and numbers.
-//
-void () admin_send_aliases1 =
-{
-    local entity temp;
-
-    temp = self;
-    self = self.owner;
-
-    stuff_aliases1();
-
-    self = temp;
-    remove(self);
-};
 
 //
 //  S E N D  A L I A S E S 2
@@ -131,7 +37,7 @@ void () admin_send_aliases1 =
 //
 void () admin_send_aliases2 =
 {
-	// Qsmack commands
+		// Qsmack commands
 	stuffcmd(self, "alias qsmack impulse 37\n");
 
     // kick a player
@@ -149,9 +55,6 @@ void () admin_send_aliases2 =
 
     // enable/disable mode voting
     stuffcmd(self, "alias modevote impulse 228\n");
-
-    // set options
-    //stuffcmd(self, "alias options impulse 229\n");
 
     // spawn point editing
     stuffcmd(self, "alias nextspawn impulse 246\n");
@@ -575,74 +478,74 @@ void(float episode) admin_show_maps3 =
 {
     if (episode == 1)
     {
-        sprint(self, "1: 23ar-a\n");
-        sprint(self, "2: 2pyramid\n");
-        sprint(self, "3: 2towers\n");
-        sprint(self, "4: arenarg2\n");
-        sprint(self, "5: arenarg4\n");
-        sprint(self, "6: arenarg5\n");
-        sprint(self, "7: arenarg6\n");
-        sprint(self, "8: arenax\n");
-        sprint(self, "9: arenazap\n");
+	sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 2)
     {
-        sprint(self, "1: arendm1a\n");
-        sprint(self, "2: arenrg3a\n");
-        sprint(self, "3: arma4\n");
-        sprint(self, "4: barena1\n");
-        sprint(self, "5: basarena\n");
-        sprint(self, "6: bbarena2\n");
-        sprint(self, "7: bunmoo3\n");
-        sprint(self, "8: bunski\n");
-        sprint(self, "9: chamber1\n");
+	sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 3)
     {
-        sprint(self, "1: crandome\n");
-        sprint(self, "2: dm2arena\n");
-        sprint(self, "3: dom2_1ra\n");
-        sprint(self, "4: egyptra\n");
-        sprint(self, "5: football\n");
-        sprint(self, "6: gear8\n");
-        sprint(self, "7: gnurena\n");
-        sprint(self, "8: hill20\n");
-        sprint(self, "9: iarena2\n");
+	sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 4)
     {
-        sprint(self, "1: id3\n");
-        sprint(self, "2: lowgrav\n");
-        sprint(self, "3: marena2\n");
-        sprint(self, "4: marena3\n");
-        sprint(self, "5: marena4\n");
-        sprint(self, "6: mayan1\n");
-        sprint(self, "7: nilsrar3\n");
-        sprint(self, "8: pen2\n");
-        sprint(self, "9: pitarena\n");
+	sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 5)
     {
-        sprint(self, "1: ptucket\n");
-        sprint(self, "2: ra_funkf\n");
-        sprint(self, "3: rarena3\n");
-        sprint(self, "4: rgarden\n");
-        sprint(self, "5: soyarena\n");
-        sprint(self, "6: terrain2\n");
-        sprint(self, "7: uarena1\n");
-        sprint(self, "8: unholy\n");
-        sprint(self, "9: xarena3\n");
+	sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
+        sprint(self, "9: \n");
     }
     else if (episode == 6)
     {
-        sprint(self, "1: yard1\n");
-        sprint(self, "2: amphi\n");
-        sprint(self, "3: povdmm4\n");
-        sprint(self, "4: endif\n");
-        sprint(self, "5: midair\n");
-        sprint(self, "6: midair2\n");
-        sprint(self, "7: midair3\n");
-        sprint(self, "8: 420bowl_b2\n");
+	sprint(self, "1: \n");
+        sprint(self, "2: \n");
+        sprint(self, "3: \n");
+        sprint(self, "4: \n");
+        sprint(self, "5: \n");
+        sprint(self, "6: \n");
+        sprint(self, "7: \n");
+        sprint(self, "8: \n");
         sprint(self, "9: \n");
     }
     else if (episode == 7)
@@ -820,8 +723,8 @@ void () admin_set_mode =
     utils_do_item(SUB_Remove, "item_rune");
 
     elohim_playmode = elohim_playmode - (elohim_playmode & 
-        (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | AIR_ARENA_MODE
-            | CLAN_ARENA_MODE | ROCKET_ARENA_MODE | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE));
+        (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | UNUSED1
+            | UNUSED3 | UNUSED2 | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE));
    
     if (request_mode == ADMIN_RACE_MODE)
     {
@@ -983,99 +886,9 @@ void (float overtime) admin_request_set_overtime =
     utils_set_cvar("v_kicktime", overtime);
 };
 
-//
-//  S E T  G I B S
-//
-//  Called when a request to set gibs passes.  The new setting for gibs
-//  is specified by the global variable request_gibs.
-//
-void () admin_set_gibs =
-{
-    elohim_playmode = elohim_playmode -
-	(elohim_playmode & (ELOHIM_NO_GIBS | ELOHIM_LOW_GIBS));
-    if (request_gibs == 0)
-    {
-        elohim_playmode = elohim_playmode | ELOHIM_NO_GIBS;
-        bprint("Gibs disabled\n");
-        cprint("Gibs disabled\n");
-    }
-    else if (request_gibs == 1)
-    {
-        elohim_playmode = elohim_playmode | ELOHIM_LOW_GIBS;
-        bprint("Gibs set to 'low'\n");
-        cprint("\"Gibs set to 'low'\"\n");
-    }
-    else
-	{
-		bprint("Gibs set to 'high'\n");
-		cprint("\"Gibs set to 'high'\"\n");
-	}
-    utils_set_cvar("samelevel", elohim_playmode);
-};
 
-//
-//  R E Q U E S T  S E T  G I B S
-//
-//  Called when a player requests a new setting for gibs.
-//
-void (float gibs) admin_request_set_gibs =
-{
-    if (elohim_playmode & ELOHIM_NO_GIBS)
-    {
-        if (gibs == 0)
-        {
-			if (self == world)
-				cprint("Gibs already disabled\n");
-			else
-				sprint(self, "Gibs already disabled\n");
-            return;
-        }
-    }
-    else if (elohim_playmode & ELOHIM_LOW_GIBS)
-    {
-        if (gibs == 1)
-        {
-			if (self == world)
-				cprint("\"Gibs already set to 'low'\"\n");
-			else
-				sprint(self, "Gibs already set to 'low'\n");
-            return;
-        }
-    }
-    else
-    {
-        if (gibs == 2)
-        {
-			if (self == world)
-		        cprint("\"Gibs already set to 'high'\"\n");
-			else
-	            sprint(self, "Gibs already set to 'high'\n");
-            return;
-        }
-    }
-
-    // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
-    {
-        request_gibs = gibs;
-        admin_set_gibs();
-    }
-    else
-    {
-        local string gibmode;
-        if (gibs == 0)
-            gibmode = "'disabled'";
-        else if (gibs == 1)
-            gibmode = "'low'";
-        else
-            gibmode = "'high'";
-        if (vote_init("change gibs to ", gibmode, admin_set_gibs))
-        {
-            request_gibs = gibs;
-            vote_yes();
-        }
-    }
-};
+void () admin_set_gibs ={};
+void (float gibs) admin_request_set_gibs ={};
 
 //
 //  D I S A B L E  I T E M
@@ -1613,7 +1426,7 @@ void () admin_impulse =
     }
     else if (self.impulse == 199)
     {
-        stuff_aliases1();
+      //used to be stuff aliases
     }
     else if (self.impulse == 208)
         admin_init_set_mode();

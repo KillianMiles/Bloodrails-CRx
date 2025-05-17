@@ -25,25 +25,8 @@
 // .owner           - players's ghost entity
 // .enemy           - stores last spawn point/camera location for admins
 //
-// Statistics:
-//
-// .dest1_x         - damage fired from bullets
-// .dest2_x         - damage done from bullets
-// .dest1_y         - damage fired from nails
-// .dest2_y         - damage done from nails
-// .dest1_z         - damage fired from lightning gun
-// .dest2_z         - damage done from lightning gun
-// .dest_x          - damage fired from rockets
-// .dest_y          - damage done from rockets
-// .mangle_x        - number of times killed self
-// .mangle_y        - number of times killed teammate
-// .mangle_z        - number of times was killed
-// .crmod_qdwep_x   - damage done with quad        // CRMOD
-// .crmod_qdwep_y   - damage fired with quad       // CRMOD
-// .crmod_qdwep_z   - number times quad pickedup   // CRMOD
-// .crmod_qdkill_x  - number of enemies killed     // CRMOD
-// .crmod_qdkill_y  - number of teammates killed   // CRMOD
-// .crmod_qdkill_z  - number of self kills         // CRMOD
+
+
 //
 // Observer mode:
 //
@@ -89,10 +72,7 @@
 void () elohim_load_entities;
 void (float vlaue) elohim_set_teamplay;
 void (float vlaue) elohim_set_fraglimit;
-void () stats_reset;
-void () stats_show_killstats;
-void () stats_show_efficiency;
-void () stats_show_summary;
+
 void () motd_init_world;
 void () motd_create;
 void () score_init_world;
@@ -101,7 +81,6 @@ void () score_client_disconnect;
 void (float command) console_command;
 void () console_set_aliases;
 void (entity client) observer_disconnect_notify;
-void () admin_send_aliases1;
 void () admin_impulse;
 void () admin_start_code;
 void (float fDoKick) admin_confirm_kick_response;
@@ -126,11 +105,9 @@ void() ClientDisconnect;
 void (vector org) spawn_tfog;
 void () rune_drop;
 
-float () mode_is_arena;
 entity () SelectFishSpawnPoint;
 
 void () elohim_init_set_hud;
-void () stuff_aliases1;
 void () crx_connect_event;     //Buckshot NQ compat
 
 
@@ -168,9 +145,9 @@ void () elohim_init_world =
   
 
 
-  elohim_version = "BR v1.0"; 
+  elohim_version = "BR v1.1"; 
   elohim_version_info = "Bloodrailz CRx";
-  bloodrailz_version_number = "v1.0";
+  bloodrailz_version_number = "v1.1";
 
 	// Initialize user map names, MOTD, and hotspots, etc..
 	userdefs_init_world();
@@ -181,7 +158,7 @@ void () elohim_init_world =
 	world.style = ELOHIM_ADMINISTRATOR;
 
   // Precache sound used when players connect
-  precache_sound("bloodrailz/misc/br_init.wav");   //soniss free libraries
+  precache_sound("misc/br_init.wav");   //soniss free libraries
 
   // Get/set console variables
   
@@ -475,16 +452,6 @@ void (float value) elohim_set_fraglimit =
       localcmd2("fraglimit \"", temp);
     }
     else
-    if (elohim_playmode & CLAN_ARENA_MODE)
-    {
-      utils_set_cvar("fraglimit", value);
-      fraglimit = cvar("fraglimit");
-      temp = ftos(fraglimit);
-      localcmd2("fraglimit \"", temp);
-
-      cvar_set("fraglimit", "0");
-    }
-    else
     {
       if (value != -1)
         utils_set_cvar("fraglimit", value);
@@ -507,10 +474,7 @@ void (float value) elohim_set_fraglimit =
       else 
         localcmd("Practice\"\n");
     }
-    else if (elohim_playmode & CLAN_ARENA_MODE)
-      localcmd("ClanArena\"\n");
-    else if (elohim_playmode & ROCKET_ARENA_MODE)
-      localcmd("RocketArena\"\n");
+
     else if (elohim_playmode & DM_PUBLIC_MODE)
       localcmd("TDMPublic\"\n");
     else
@@ -522,94 +486,6 @@ void (float value) elohim_set_fraglimit =
     }
 };
 
-void () stuff_aliases =
-{
-  stuffcmd(self, "seta scr_usekfont 0;\n");
-
-  // Set aliases
-
-  
-  stuffcmd(self, "alias dbinfo impulse 40\n");    // undocumented debug command
-  stuffcmd(self, "alias dbflags impulse 41\n");   // undocumented debug command
-  stuffcmd(self, "alias dbvars impulse 42\n");    // undocumented debug command
-  stuffcmd(self, "alias dbcvar impulse 43\n");    // undocumented debug command
-  stuffcmd(self, "alias dbclient impulse 44\n");  // undocumented debug command
-  stuffcmd(self, "alias dbcflags impulse 45\n");  // undocumented debug command
-  stuffcmd(self, "alias dbparm1 impulse 46\n");   // undocumented debug command
-  stuffcmd(self, "alias dbparm2 impulse 47\n");   // undocumented debug command
-  stuffcmd(self, "alias dbparm3 impulse 48\n");   // undocumented debug command
-  stuffcmd(self, "alias dbparm4 impulse 49\n");   // undocumented debug command
-  stuffcmd(self, "alias dbparms impulse 50\n");   // undocumented debug command
-  stuffcmd(self, "alias dbhelp impulse 59\n");	// undocumented debug command
-  stuffcmd(self, "alias chase_act1ve say chase_active has been disabled on this server.\n");  // CRMOD cheat fix
-  stuffcmd(self, "alias sethud impulse 70\n");
-  stuffcmd(self, "alias help-observer impulse 101\n");
-  stuffcmd(self, "alias help-ctf impulse 102\n");
-  stuffcmd(self, "alias help-misc impulse 105\n");
-  stuffcmd(self, "alias commands impulse 106\n");
-  stuffcmd(self, "alias levels impulse 107\n");
-  stuffcmd(self, "alias warp impulse 190\n");
-  stuffcmd(self, "alias warp2 impulse 191\n");
-  stuffcmd(self, "alias warp3 impulse 192\n");
-  stuffcmd(self, "alias admin impulse 108\n");
-  stuffcmd(self, "alias motd impulse 109\n");
-  stuffcmd(self, "alias killstats impulse 110\n");
-  stuffcmd(self, "alias efficiency impulse 111\n");
-  stuffcmd(self, "alias eff impulse 111\n");                  // CRMOD - so people don't have to spell out efficiency
-  stuffcmd(self, "alias stats impulse 112\n");
-  stuffcmd(self, "alias quadstats impulse 113\n");    // CRMOD - new impulse
-  stuffcmd(self, "alias autoweapon impulse 114\n");
-  stuffcmd(self, "alias aw impulse 114\n");
-  stuffcmd(self, "alias help-info impulse 117\n");
-  stuffcmd(self, "alias ticrate impulse 118\n");
-  stuffcmd(self, "alias yes impulse 115\n");
-  stuffcmd(self, "alias no impulse 116\n");
-  stuffcmd(self, "alias ready impulse 120\n");
-  stuffcmd(self, "alias green color 3\n");
-  stuffcmd(self, "alias red color 4\n");
-  stuffcmd(self, "alias yellow color 12\n");
-  stuffcmd(self, "alias blue color 13\n");
-  stuffcmd(self, "alias notready impulse 121\n");
-  stuffcmd(self, "alias unlock impulse 122\n");
-  stuffcmd(self, "alias ready? impulse 123\n");
-  stuffcmd(self, "alias timerstop impulse 124\n");
-  stuffcmd(self, "alias timerstart impulse 125\n");
-  stuffcmd(self, "alias ghostcode impulse 126\n");
-  stuffcmd(self, "alias ghost impulse 127\n");
-  stuffcmd(self, "alias score impulse 128\n");
-  stuffcmd(self, "alias help-match impulse 129\n");
-  stuffcmd(self, "alias lock impulse 130\n");
-  stuffcmd(self, "alias +teamscores impulse 131\n");
-  stuffcmd(self, "alias -teamscores impulse 132\n");
-  stuffcmd(self, "alias observer impulse 140\n");
-  stuffcmd(self, "alias walk impulse 141\n");
-  stuffcmd(self, "alias flyme impulse 142\n");
-  stuffcmd(self, "alias chase impulse 143\n");
-  stuffcmd(self, "alias chasecam impulse 143\n");
-  //stuffcmd(self, "alias headsup impulse 148\n");
-  stuffcmd(self, "alias help-walk impulse 144\n");
-  stuffcmd(self, "alias help-fly impulse 145\n");
-  stuffcmd(self, "alias help-chase impulse 146\n");
-  stuffcmd(self, "alias tourney impulse 151\n");              // CRMOD - enables tournament mode chasecam
-  stuffcmd(self, "alias camera impulse 153\n");               // CRMOD - sets camera mode
-  stuffcmd(self, "alias autocam impulse 154\n");              // CRMOD - autocam
-  stuffcmd(self, "alias autocamera impulse 154\n");   // CRMOD - autocam
-  stuffcmd(self, "alias quaketv impulse 154\n");              // CRMOD - autocam
-  stuffcmd(self, "alias autochase impulse 155\n");    // CRMOD - autochase
-  stuffcmd(self, "alias help-camera impulse 156\n");  // CRMOD - camera help
-  stuffcmd(self, "alias setmode impulse 208\n");
-  stuffcmd(self, "alias setmode2 impulse 210\n");
-  
-
-  
-  
-  
-  
-  //stuffcmd(self, "alias sm1 \"echo Smoothing ON ; cl_nolerp 1 ; alias smooth sm0\"\n");       // CRMOD - smooth now uses aliases
-  //stuffcmd(self, "alias sm0 \"echo Smoothing OFF ; cl_nolerp 0 ; alias smooth sm1\"\n");  // CRMOD
-  //stuffcmd(self, "alias smooth sm1\n");                                                                                                   // CRMOD
-  stuffcmd(self, "alias init echo\n");                            // CRMOD - So clients only see 'init' once
-};
 
 //
 //  S E T  A L I A S E S
@@ -632,15 +508,12 @@ void () elohim_set_aliases =
 		return;
 	}
 
-  stuff_aliases();
-
 	self.style = self.style | ELOHIM_FOUND_BINDINGS;
 
   // remove the temporary entity
   self = temp;
 
 	self.nextthink = time + 0.5;
-	self.think = admin_send_aliases1;
 };
 
 //
@@ -668,7 +541,7 @@ void () elohim_init_think =
   temp = self;
   self = self.owner;
   if (!(elohim_playmode & ELOHIM_MATCH_MODE) ||	!(elohim_state & ELOHIM_MATCH_STARTED))
-		sound(self, CHAN_AUTO, "bloodrailz/misc/br_init.wav", 1, ATTN_NONE);
+		sound(self, CHAN_AUTO, "misc/br_init.wav", 1, ATTN_NONE);
 	if (utils_illegal_name(self.netname))
 		stuffcmd(self, "name player\n");
 	
@@ -759,7 +632,6 @@ void () elohim_client_connect =
 		// Show the status for people who log the console
 		localcmd("status\n");
 
-		stats_reset();
   }
 
 	// Check to see if there is a scoreboard conflict
@@ -812,11 +684,7 @@ void () elohim_client_connect =
         elohim_teamsize2 = elohim_teamsize2 + 1;
     }
   }
-  else if (mode_is_arena())
-  {
-    if (!((boss.state == CA_MATCH_PLAYING) && (self.arena_flag == AF_CA_READY)))
-      parm10 = parm10 | ELOHIM_OBSERVER;
-  }
+  
 };
 
 //
@@ -834,7 +702,7 @@ void () elohim_client_disconnect =
     observer_disconnect_notify(self);
 
     // If we're in match mode, then inform match and score modules
-    if (elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_public()) || (mode_is_arena()))
+    if (elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_public()))
     {
       match_disconnect_notify(self);
       score_client_disconnect();
@@ -913,12 +781,7 @@ void () elohim_put_client_in_server =
   
   utils_make_scheduled_event(elohim_bf_think, 0.1);
 
-  if ((mode_is_arena() == TRUE) && ((self.arena_flag == AF_CA_DEAD) || (self.arena_flag == AF_CA_WAITING)) || ((boss.state == CA_MATCH_WAITING)))
-  {
-    observer_start();
-    utils_make_scheduled_event(elohim_observer_start_think, 0.6);
-  }
-  else if ((self.style & ELOHIM_OBSERVER) || (self.style & CRMOD_QSMACK) ||	((elohim_playmode & ELOHIM_MATCH_MODE) && (!(self.style & ELOHIM_READY))))
+ if ((self.style & ELOHIM_OBSERVER) || (self.style & CRMOD_QSMACK) ||	((elohim_playmode & ELOHIM_MATCH_MODE) && (!(self.style & ELOHIM_READY))))
   {
     observer_start();
     utils_make_scheduled_event(elohim_observer_start_think, 0.6);
@@ -1027,7 +890,6 @@ void () elohim_help_misc =
     sprint(self, " rebalance   - re-balance teams\n");
     sprint(self, " set200   - enable/disable spawning with 200 armor\n");
     
-    sprint(self, " setrounds - set wins needed in rocket arena\n");
     if (elohim_playmode & ELOHIM_MODE_VOTE)
     {
       sprint(self, " setmode  - request mode change\n");
@@ -1257,13 +1119,13 @@ void () elohim_impulse =
   else if (self.impulse == 109) // show the MOTD
 		motd_create();
   else if (self.impulse == 110) 
-		stats_show_killstats();
+		{/*call function to show killstats*/}
   else if (self.impulse == 111)
-		stats_show_efficiency();
+		{/*call function to show eff stats*/}
   else if (self.impulse == 112) // show summary statistics
-		stats_show_summary();
-  else if (self.impulse == 113) // CRMOD - show quad statistics
-		return;
+		{/*call function to show stats*/}
+  else if (self.impulse == 113) 
+		{}
 	else if (self.impulse == 114)
 		utils_toggle_flag(CRMOD_SMART_WEAPON, "Smart weapon switching");
   else if (self.impulse == 117) // show version info
@@ -1272,8 +1134,7 @@ void () elohim_impulse =
 		elohim_ticrate();
   else if (self.impulse == 119)
   {
-		stuff_aliases();
-		stuff_aliases1();
+		//used to be stuff aliases
   }
   else if (self.impulse >= 115 && self.impulse <= 116) // yes/no
   {
@@ -1460,24 +1321,14 @@ void () show_rules_prematch =
 	local float temp, timervar;
 	local string s0="", s1="", s2="", s3="", s4="", s5="", s6="";
 
-  if (elohim_playmode & AIR_ARENA_MODE)
-  {
-    if (boss.state != CA_MATCH_ROUNDSTART)
-    {
-      centerprint(self, "\n");
-      return;
-    }
-    timervar = boss.count;
-  }
-  else
-  {
+
     if (elohim_state & ELOHIM_MATCH_STARTED || elohim_match_timer.count < 0)
     {
       centerprint(self, "\n");
       return;
     }
     timervar = elohim_match_timer.count;
-  }
+  
 
   if (timervar > 15)	s0 = "\n\n";   //021824
   else

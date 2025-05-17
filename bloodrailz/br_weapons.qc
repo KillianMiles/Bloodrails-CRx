@@ -180,7 +180,7 @@ void() BecomeExplosion =
 	self.movetype = MOVETYPE_NONE;
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
-	setmodel (self, "progs/bloodrailz/s_explod.spr");
+	setmodel (self, "mdl/s_explo.spr");
 	self.solid = SOLID_NOT;
 	s_explode1 ();
 };
@@ -196,8 +196,8 @@ void() W_SetCurrentAmmo =
 	
 	if (self.weapon == IT_AXE)
 	{
-		self.weaponmodel = "progs/bloodrailz/v_br_axe_red1.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_axe_blu1.mdl";
+		self.weaponmodel = "mdl/v_axe_r.mdl";
+		if (self.height == elohim_team2) self.weaponmodel = "mdl/v_axe_b.mdl";
 		self.weaponframe = 0;
 	}
 
@@ -209,8 +209,8 @@ void() W_SetCurrentAmmo =
 
 	else if (self.weapon == IT_RAILGUN)
 	{
-		self.weaponmodel = "progs/bloodrailz/v_br_rail_red1.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_blu1.mdl";
+		self.weaponmodel = "mdl/v_rail_r.mdl";
+		if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
 		//self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
@@ -270,7 +270,7 @@ void() W_Attack =
 			self.dash_counter = 0;
 			self.dash_timer = time;
 		}
-		sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_axe_swing.wav", 1, ATTN_NORM);
+		sound (self, CHAN_WEAPON, "weap/br_axe.wav", 1, ATTN_NORM);
 		
 		local float boostspeed2 = vlen(self.velocity);
 		local float AxLunge1 = 30;
@@ -384,20 +384,26 @@ void() W_Attack =
 		
 		if(self.ammo_slugs <=0)                // RAIL SLUGS RAIL AMMO
 		{
-			sound (self, CHAN_AUTO, "bloodrailz/weapons/br_empty.wav", 0.87, ATTN_NORM);
+			sound (self, CHAN_AUTO, "weap/br_empty.wav", 0.87, ATTN_NORM);
 		}
 		
 		
 		if(self.ammo_slugs >0)	
 		{
-			randrail = random()*3;
-			if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
+			randrail = random()*4;
+    
+			if (randrail <=1) sound (self, CHAN_AUTO, "weap/br_rail1.wav",1,ATTN_NORM);
 			else
-			if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
+			if (randrail <=2) sound (self, CHAN_AUTO, "weap/br_rail2.wav",1,ATTN_NORM);
 			else
-			if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun2.wav",1,ATTN_NORM);
+			if (randrail <=3) sound (self, CHAN_AUTO, "weap/br_rail3.wav",1,ATTN_NORM);
+			else
+			if (randrail <=4) sound (self, CHAN_AUTO, "weap/br_rail4.wav",1,ATTN_NORM);
+			
+			//bprint(ftos(randrail));
+					//bprint("\n");
 		}
-		//else sound (self, CHAN_AUTO, "bloodrailz/weapons/empty1.wav",1,ATTN_NORM);
+		//else sound (self, CHAN_AUTO, "weap/empty1.wav",1,ATTN_NORM);
 		
 	        
 	        if (elohim_playmode & PROJECTILES) W_FireProjectile();

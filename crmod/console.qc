@@ -218,63 +218,7 @@ void () console_show_debug_info =
     }
 };
 
-//
-//  S H O W  S C O R E
-//
-//  Print the time remaining and the score.
-//
-void () console_show_score =
-{
-    local float team1, team2;
 
-    if (elohim_state & ELOHIM_MATCH_STARTED)
-    {
-        team1 = elohim_team1;
-        team2 = elohim_team2;
-    }
-    else
-    {
-        if (elohim_state & ELOHIM_MATCH_OVER)
-        {
-            team1 = elohim_lastteam1;
-            team2 = elohim_lastteam2;
-        }
-        else
-        {
-            cprint("Match has not started yet\n");
-            return;
-        }
-    }
-
-    cprint("\n");
-    if (elohim_state & ELOHIM_MATCH_OVER)
-        cprint("Match over\n");
-    else
-    {
-        local string temp;
-    
-        temp = ftos(elohim_match_timer.lip);
-        cprint3("\"Time remaining:  ", temp, ":");
-        temp = ftos(elohim_match_timer.count);
-        if (elohim_match_timer.count < 10)
-            localcmd("0");
-        localcmd2(temp, "\"\n");
-    }
-
-    local string score;
-    local string teamname;
-    local string temp2;
-
-    teamname = strings_get_teamname(team1);
-    score = ftos(elohim_teamfrags1);
-    temp2 = strings_szplural(elohim_teamfrags1);
-    cprint6("The ", teamname, " has ", score, " frag", temp2);
-    teamname = strings_get_teamname(team2);
-    score = ftos(elohim_teamfrags2);
-    temp2 = strings_szplural(elohim_teamfrags2);
-    cprint6("The ", teamname, " has ", score, " frag", temp2);
-    cprint("\n");
-};
 
 //
 //  L I S T  G H O S T S
@@ -328,204 +272,6 @@ void () console_list_ghosts =
 
 
 
-//
-//  S H O W  K I L L S T A T S
-//
-void () console_show_killstats =
-{
-    local entity player;
-
-    cprint("\n");                    
-    cprint("\" frags | enemies | self | teammates | killed |      name\"\n");
-    cprint("-------+---------+------+-----------+--------+-----------------\n");
-
-    player = find(world, classname, "player");
-    while (player)
-    {
-        if ((player.style & ELOHIM_CONNECTED) &&
-            !(player.style & ELOHIM_OBSERVER))
-        {
-            cprint("\"  ");
-            utils_cprint_int3(player.frags);
-            localcmd("  |   ");
-            utils_cprint_int3(player.frags + player.mangle_x + player.mangle_y);
-            localcmd("   | ");
-            utils_cprint_int3(player.mangle_x);
-            localcmd("  |    ");
-            utils_cprint_int3(player.mangle_y);
-            localcmd("    |  ");
-            utils_cprint_int3(player.mangle_z);
-            localcmd3("   | ", player.netname, "\"\n");
-        }
-        player = find(player, classname, "player");
-    }
-    cprint("\n");
-};
-
-//
-//  P R I N T  P E R C E N T 4
-//
-//  Helper function for console_show_efficiency.  Prints the percentage
-//  100 * (frac / tot) as a 4 character integer, or N/A if tot = 0.
-//
-void (float frac, float tot) console_print_percent4 =
-{
-    if (tot)
-    {
-        local float n;
-        local string temp;
-
-        n = floor(100 * frac / tot);
-        if (n < 100)
-            localcmd(" ");
-        if (n < 10)
-            localcmd(" ");
-        temp = ftos(n);
-        localcmd2(temp, "%");
-    }
-    else
-        localcmd("N/A ");
-};
-
-
-//
-// CRMOD
-//  S H O W  Q U A D S T A T S
-//		by Paul Baker
-//
-void () console_show_quadstats =
-{
-	local entity player;
-	cprint("\n");
-	cprint("\" quads | efficiency | enemy | self  | teammates |      name\"\n");
-	cprint  ("-------+------------+-------+-------+-----------+-----------------\n");
-	
-	player = find(world, classname, "player");
-    while (player)
-    {
-        if ((player.style & ELOHIM_CONNECTED) &&
-            !(player.style & ELOHIM_OBSERVER))
-        {
-            cprint("\"  ");
-            utils_cprint_int3(player.crmod_qdwep_z);
-            localcmd("  |    ");
-            console_print_percent4(player.crmod_qdwep_x, player.crmod_qdwep_y);
-            localcmd("    |  ");
-            utils_cprint_int3(player.crmod_qdkill_x);
-            localcmd("  |  ");
-            utils_cprint_int3(player.crmod_qdkill_z);
-            localcmd("  |    ");
-            utils_cprint_int3(player.crmod_qdkill_y);
-            localcmd3("    | ", player.netname, "\"\n");
-        }
-        player = find(player, classname, "player");
-    }
-    cprint("\n");
-};
-
-//
-//  S H O W  E F F I C I E N C Y
-//
-void () console_show_efficiency =
-{
-    local entity player;
-    local float tot_fired, tot_done;
-
-    cprint("\n");
-    cprint("\" bullets | nails | rockets | lightning | total |      name\"\n");
-    cprint("---------+-------+---------+-----------+-------+-----------------\n");
-
-    player = find(world, classname, "player");
-    while (player)
-    {
-        if ((player.style & ELOHIM_CONNECTED) &&
-            !(player.style & ELOHIM_OBSERVER))
-        {
-            cprint("\"   ");
-            console_print_percent4(player.dest2_x, player.dest1_x);
-            localcmd("  |  ");
-            console_print_percent4(player.dest2_y, player.dest1_y);
-            localcmd(" |   ");
-            console_print_percent4(player.dest_y, player.dest_x);
-            localcmd("  |    ");
-            console_print_percent4(player.dest2_z, player.dest1_z);
-            localcmd("   |  ");
-
-            tot_fired = player.dest1_x + player.dest1_y + player.dest1_z +
-                        player.dest_x;
-            tot_done = player.dest2_x + player.dest2_y + player.dest2_z +
-                       player.dest_y;
-            console_print_percent4(tot_done, tot_fired);
-            localcmd3(" | ", player.netname, "\"\n");
-        }
-        player = find(player, classname, "player");
-    }
-    cprint("\n");
-};
-
-//
-//  S H O W  S T A T S
-//
-//  Summary: show kill and weapon efficiency for each player.
-//
-void () console_show_stats =
-{
-    local entity player;
-    local float wfrac, wtot, kfrac, ktot, doit, currteam;
-    local string teamname;
-
-    cprint("\n");
-    if (elohim_state & ELOHIM_MATCH_STARTED)
-    {
-        cprint("\"    team    | kill | weapon |      name\"\n");
-        cprint("------------+------+--------+-----------------\n");
-        currteam = elohim_team1;
-        doit = 2;
-    }
-    else
-    {
-        cprint("\" kill | weapon |      name\"\n");
-        cprint("------+--------+-----------------\n");
-        currteam = 0;
-        doit = 1;
-    }
-
-    while (doit)
-    {
-        teamname = strings_get_teamname2(currteam);
-        player = find(world, classname, "player");
-        while (player)
-        {
-            if ((player.style & ELOHIM_CONNECTED) &&
-                !(player.style & ELOHIM_OBSERVER) &&
-                (!currteam || player.height == currteam))
-            {
-                if (currteam)
-                    cprint3("\" ", teamname, " |");
-
-                kfrac = player.frags + player.mangle_x + player.mangle_y;
-                ktot = kfrac + player.mangle_x + player.mangle_y +
-                       player.mangle_z;
-                wtot = player.dest1_x + player.dest1_y + player.dest1_z +
-                       player.dest_x;
-                wfrac = player.dest2_x + player.dest2_y + player.dest2_z +
-                        player.dest_y;
-                if (currteam)
-                    localcmd(" ");
-                else
-                    cprint("\" ");
-                console_print_percent4(kfrac, ktot);
-                localcmd(" |  ");
-                console_print_percent4(wfrac, wtot);
-                localcmd3("  | ", player.netname, "\"\n");
-            }
-            player = find(player, classname, "player");
-        }
-        currteam = elohim_team2;
-        doit = doit - 1;
-    }
-    cprint("\n");
-};
 
 //
 //  C O M M A N D S
@@ -544,20 +290,12 @@ void () console_commands =
     cprint("\"score - view score and time remaining in match\"\n");
     cprint("\"setmode    - set playmode\"\n");
     cprint("\"setmode2   - set gametype\"\n");
- 	cprint("\"setcharge  - enable/disable discharging in practice mode\"\n");		// CRMOD - spooge -> charge
-	cprint("\"nogibs     - disable gibs\"\n");
-	cprint("\"lowgibs    - set gibs to 'low'\"\n");
-	cprint("\"highggibs  - set gibs to 'high'\"\n");
 	cprint("\"setquad    - enable/disable power-ups\"\n");
 	cprint("\"setpent    - enable/disable ATX mode\"\n");
 	cprint("\"setring    - enable/disable XTA mode\"\n");
 	cprint("\"obits      - enable/disable extended obituaries\n");
 	cprint("\"modevote   - enable/disable mode voting\"\n");
     cprint("\"ghostlist  - view all ghosts in database\"\n");
-    cprint("\"killstats  - view kill statistics for each player\"\n");
-    cprint("\"efficiency - view weapon efficiency statistics for each player\"\n");
-    cprint("\"quadstats  - view quad damage statistics for each player\"\n");		// CRMOD - quadstats
-    cprint("\"stats      - view summary statistics for each player\"\n");
     cprint("\n");
 };
 
@@ -720,14 +458,8 @@ void () console_server_flags =
 		cprint("ELOHIM_MATCH_MODE\n");
 	if (elohim_playmode & RACE_MODE)
 		cprint("RACE_MODE\n");
-	if (elohim_playmode & AIR_ARENA_MODE)
-		cprint("AIR_ARENA_MODE\n");
         if (elohim_playmode & ELOHIM_SERVER_INITIALIZED)
 		cprint("ELOHIM_SERVER_INITIALIZED\n");
-	if (elohim_playmode & ELOHIM_NO_GIBS)
-		cprint("ELOHIM_NO_GIBS\n");
-	if (elohim_playmode & ELOHIM_LOW_GIBS)
-		cprint("ELOHIM_LOW_GIBS\n");
 	if (elohim_playmode & ELOHIM_NO_QUAD)
 		cprint("ELOHIM_NO_QUAD\n");
 	if (elohim_playmode & ELOHIM_NO_PENT)
@@ -897,15 +629,15 @@ void (float command) console_command =
     else if (command == 4)
         console_show_debug_info();
     else if (command == 5)
-        console_show_score();
+        {}
     else if (command == 6)
         console_list_ghosts();
     else if (command == 7)
-        console_show_killstats();
+        {}
     else if (command == 8)
-        console_show_efficiency();
+        {}
     else if (command == 9)
-        console_show_stats();
+        {}
     else if (command == 10)
         console_commands();
     else if (command == 11)
@@ -924,8 +656,8 @@ void (float command) console_command =
 		admin_set_airwalk();
 	else if (command == 22)
 		admin_set_mode_vote(); //TODO: reassign this
-	else if (command == 23)			// CRMOD - quadstats
-		console_show_quadstats();	// CRMOD - quadstats
+	else if (command == 23)			
+		{}
 	else if (command == 24)
 		admin_set_obits();
     else if (command == 40)

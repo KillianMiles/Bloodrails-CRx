@@ -14,46 +14,40 @@ __accumulate void() worldspawn =
 	}
 	else 
 	{
-	localcmd("timelimit 10\n");
-	localcmd("scr_matchclock 3\n");
-	localcmd("scr_matchclockscale 3.5\n");
 	
-	if (elohim_playmode & CLANRING_CTF_MODE) localcmd("fraglimit 120\n");
-	else localcmd("fraglimit 40\n");
+		localcmd("timelimit 8\n");// changing default from 10 to 8
+		localcmd("scr_matchclock 3\n");
+		localcmd("scr_matchclockscale 3.5\n");
+	
+		if (elohim_playmode & CLANRING_CTF_MODE) localcmd("fraglimit 120\n");
+		else localcmd("fraglimit 40\n");
 	
 	}
     
-    localcmd("sv_defaultmap ctf_dissocia_r1\n");   //default map
-    localcmd("sys_ticrate 0.0166667\n");
+	localcmd("sv_defaultmap ctf_dissocia_r1\n");   //default map
+	localcmd("sys_ticrate 0.0166667\n");
     
+    /*
+	localcmd("bind F1 impulse 100\n");
 	localcmd("fov_adapt 1\n");
 	localcmd("viewsize 110\n");
-	
-
-	
 	localcmd("cl_gun_fovscale 0.84\n");
 	localcmd("gl_polyblend 1\n");
 	localcmd("gl_cshiftpercent_damage 21\n");
-	
-	
 	localcmd("cl_rollangle 0\n");
 	localcmd("alias cl_rollangle bf\n");
-	
 	localcmd("cl_screenangle 0\n");
-	
 	localcmd("scr_conscale 3.2\n");
-	localcmd("alias scr_conscale bf\n");
-	
 	localcmd("scr_sbarscale 1.5\n");
-	localcmd("alias scr_sbarscale bf\n");
-	
 	localcmd("scr_sbar 3\n");
 	localcmd("alias scr_sbar bf\n");
-	
 	localcmd("if vid_width == 2560 scr_matchclock_x 70.35; if vid_width == 1920 scr_matchclock_x 70.4\n");
 	localcmd("if vid_width == 2560 scr_matchclock_y 87; if vid_width == 1920 scr_matchclock_y 87\n");
-	
-	
+	localcmd("if vid_width == 2560 scr_matchclockscale 4.6; if vid_width == 1920 scr_matchclockscale 3.5\n");
+	localcmd("if vid_width == 2560 scr_sbarscale 2.1; if vid_width == 1920 scr_sbarscale 1.5\n");
+	localcmd("if vid_width == 2560 scr_conscale 3.7; if vid_width == 1920 scr_conscale 3.2\n");
+	localcmd("if vid_width == 2560 scr_menuscale 2.1; if vid_width == 1920 scr_menuscale 1.6\n");
+	*/
 	
 
 	

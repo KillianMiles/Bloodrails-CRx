@@ -256,7 +256,7 @@ void() PainSound =
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 
@@ -265,7 +265,7 @@ void() PainSound =
 	{
 		//DeathBubbles(1);
 
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "body/br_lava.wav", 1, ATTN_NORM);
 		return;
 	}
 
@@ -274,8 +274,8 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/br_slime.wav", 0.95, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 0.95, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "body/br_slime.wav", 0.95, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "body/br_lava.wav", 0.95, ATTN_NORM);
 			return;
 		}
 	}
@@ -284,8 +284,8 @@ void() PainSound =
 	{
 		if(random() < 0.5)
 		{
-			if (random() > 0.5) sound (self, CHAN_VOICE, "bloodrailz/player/br_slime.wav", 0.95, ATTN_NORM);
-			else sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 0.95, ATTN_NORM);
+			if (random() > 0.5) sound (self, CHAN_VOICE, "body/br_slime.wav", 0.95, ATTN_NORM);
+			else sound (self, CHAN_VOICE, "body/br_lava.wav", 0.95, ATTN_NORM);
 			return;
 		}
 	}
@@ -303,7 +303,7 @@ void() PainSound =
 	if (self.axhitme == 1)
 	{
 		self.axhitme = 0;
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_axhit_flesh.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "body/br_meathit.wav", 1, ATTN_NORM);
 		return;
 	}
 	
@@ -349,7 +349,7 @@ void() DeathBubblesSpawn =
 	local entity	bubble;
 	if (self.owner.waterlevel != 3)		return;
 	bubble = spawn();
-	setmodel (bubble, "progs/s_bubble.spr");
+	setmodel (bubble, "mdl/s_bubbl.spr");
 	setorigin (bubble, self.owner.origin + '0 0 24');
 	bubble.movetype = MOVETYPE_NOCLIP;
 	bubble.solid = SOLID_NOT;
@@ -386,7 +386,7 @@ void() DeathSound =
 {
 	if (self.waterlevel == 3)   // water death sounds
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_lava.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_lava.wav", 1, ATTN_NONE);
 		return;
 	}
 	
@@ -398,7 +398,7 @@ void() ObserverForce =
 	
 	if (!gameover)
 	{
-		sound (world, CHAN_VOICE, "bloodrailz/weapons/plasma1.wav", 1, ATTN_NORM);
+		sound (world, CHAN_VOICE, "weap/br_plasm1.wav", 1, ATTN_NORM);
 		bprint(self.netname);
 		bprint(" was forced \bobserver\b because of inactivity.\n");
 		respawn();//required?

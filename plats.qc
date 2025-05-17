@@ -159,10 +159,10 @@ void() func_plat =
 
 	if (self.sounds == 1 || self.sounds == 2)
 	{
-		precache_sound ("bloodrailz/triggers/br_medplat1.wav");
-		precache_sound ("bloodrailz/triggers/br_medplat2.wav");
-		self.noise = "bloodrailz/triggers/br_medplat1.wav";
-		self.noise1 = "bloodrailz/triggers/br_medplat2.wav";
+		precache_sound ("trig/br_plat1.wav");
+		precache_sound ("trig/br_plat2.wav");
+		self.noise = "trig/br_plat1.wav";
+		self.noise1 = "trig/br_plat2.wav";
 	}
 
 
@@ -289,9 +289,8 @@ void() func_train =
 
 	if (self.sounds == 0)
 	{
-		self.noise = ("bloodrailz/triggers/br_null.wav");
-		precache_sound ("bloodrailz/triggers/br_null.wav");
-		self.noise1 = ("bloodrailz/triggers/br_null.wav");
+		self.noise = ("trig/br_null.wav");
+		self.noise1 = ("trig/br_null.wav");
 	}
 
 	if (self.sounds == 1)
@@ -333,9 +332,8 @@ void() misc_teleporttrain =
 	self.use = train_use;
 	self.avelocity = '100 200 300';
 
-	self.noise = ("bloodrailz/triggers/br_null.wav");
-	precache_sound ("bloodrailz/triggers/br_null.wav");
-	self.noise1 = ("bloodrailz/triggers/br_null.wav");
+	self.noise = ("trig/br_null.wav");
+	self.noise1 = ("trig/br_null.wav");
 
 	setorigin (self, self.origin);
 

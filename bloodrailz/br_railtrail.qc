@@ -111,7 +111,7 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			prj.classname = "railtrail";
 			
 			prj.skin = railcolor;
-			setmodel (prj, "progs/bloodrailz/rail_long4600.mdl");  //  uncomment when engaging
+			setmodel (prj, "mdl/rail_4600.mdl");  //  uncomment when engaging
 		
 			setorigin (prj, drawsrc + vec * spacing_long * (segments-1));
 			prj.velocity = '0 0 0';	
@@ -165,17 +165,17 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			{
 				if(segments == 1)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long2400.mdl");
+					setmodel (prj, "mdl/rail_2400.mdl");
 					setorigin (prj, drawsrc + vec * 20);
 				}
 				else if(segments == 2)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long2400.mdl");
+					setmodel (prj, "mdl/rail_2400.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-2400)*0.5);
 				}
 				else if(segments == 3)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long2400.mdl");
+					setmodel (prj, "mdl/rail_2400.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-2400));
 				}
 			}
@@ -183,17 +183,17 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			{
 				if(segments == 1)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long1200.mdl");
+					setmodel (prj, "mdl/rail_1200.mdl");
 					setorigin (prj, drawsrc + vec * 20);
 				}
 				else if(segments == 2)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long1200.mdl");
+					setmodel (prj, "mdl/rail_1200.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-1200)*0.5);
 				}
 				else if(segments == 3)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long1200.mdl");
+					setmodel (prj, "mdl/rail_1200.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-1200));
 				}
 			}
@@ -201,17 +201,17 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			{
 				if(segments == 1)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long600.mdl");
+					setmodel (prj, "mdl/rail_600.mdl");
 					setorigin (prj, drawsrc + vec * 20);
 				}
 				else if(segments == 2)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long600.mdl");
+					setmodel (prj, "mdl/rail_600.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-600)*0.5);
 				}
 				else if(segments == 3)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long600.mdl");
+					setmodel (prj, "mdl/rail_600.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-600));
 					//prj.skin = 1;
 				}
@@ -221,25 +221,25 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 				
 				if(segments == 1)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long300.mdl");
+					setmodel (prj, "mdl/rail_300.mdl");
 					setorigin (prj, drawsrc + vec * 20);
 				}
 				else if(segments == 2)
 				{
 					if(traillen > 700) 
 					{
-						setmodel (prj, "progs/bloodrailz/rail_long600.mdl");
+						setmodel (prj, "mdl/rail_600.mdl");
 						setorigin (prj, drawsrc + vec * (traillen-600)*0.5);
 					}
 					else 
 					{
-						setmodel (prj, "progs/bloodrailz/rail_long300.mdl");
+						setmodel (prj, "mdl/rail_300.mdl");
 						setorigin (prj, drawsrc + vec * (traillen-300)*0.5);
 					}
 				}
 				else if(segments == 3)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long300.mdl");
+					setmodel (prj, "mdl/rail_300.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-300));
 					//prj.skin = 1;
 				}
@@ -248,26 +248,26 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			{
 				if(segments == 1)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long150.mdl");
+					setmodel (prj, "mdl/rail_150.mdl");
 					setorigin (prj, drawsrc + vec * 20);
 				}
 				else if(segments == 2)
 				{
 					if(traillen > 700) 
 					{
-						setmodel (prj, "progs/bloodrailz/rail_long300.mdl");
+						setmodel (prj, "mdl/rail_300.mdl");
 						setorigin (prj, drawsrc + vec * (traillen-300)*0.5);
 					}
 					else 
 					{
-						setmodel (prj, "progs/bloodrailz/rail_long150.mdl");
+						setmodel (prj, "mdl/rail_150.mdl");
 						setorigin (prj, drawsrc + vec * (traillen-150)*0.5);
 					}
 
 				}
 				else if(segments == 3)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long150.mdl");
+					setmodel (prj, "mdl/rail_150.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-150));
 					//prj.skin = 1;
 				}
@@ -277,20 +277,20 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			{
 				if(segments == 1)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long60.mdl");
+					setmodel (prj, "mdl/rail_60.mdl");
 					setorigin (prj, drawsrc + vec * 20);
 				}
 				else if(segments == 2)
 				{
 
-					setmodel (prj, "progs/bloodrailz/rail_long60.mdl");
+					setmodel (prj, "mdl/rail_60.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-60)*0.5);
 
 
 				}
 				else if(segments == 3)
 				{
-					setmodel (prj, "progs/bloodrailz/rail_long60.mdl");
+					setmodel (prj, "mdl/rail_60.mdl");
 					setorigin (prj, drawsrc + vec * (traillen-150));
 					//prj.skin = 1;
 				}
@@ -299,12 +299,12 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 				
 			else 
 			{
-				if(traillen < 80) setmodel (prj, "progs/bloodrailz/rail_long60.mdl");
+				if(traillen < 80) setmodel (prj, "mdl/rail_60.mdl");
 				setorigin (prj, drawsrc + vec * 2);
 			}
 			
 			setsize (prj, 0, 0);
-			//setmodel (prj, "progs/bloodrailz/s_blood_1024.spr");
+			//setmodel (prj, "mdl/blood2.spr");
 			
 			prj.velocity = '0 0 0';	
 
@@ -348,7 +348,7 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			prj.angles = vectoangles(shootDir);
 			prj.touch = SUB_Null;
 			prj.classname = "railtrail";
-			setmodel (prj, "progs/bloodrailz/rail2_1.mdl");
+			setmodel (prj, "mdl/rail2_1.mdl");
 				
 			setsize (prj, 0, 0);	
 		
@@ -381,7 +381,7 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			else if(segments == 2) 
 			{
 				setorigin (prj, drawsrc + vec * 120);
-				setmodel (prj, "progs/bloodrailz/rail3_1.mdl");
+				setmodel (prj, "mdl/rail3_1.mdl");
 			}
 		
 			prj.velocity = '0 0 0';	
@@ -533,13 +533,13 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedR
 				prj.classname = "railtrail";
 		
 			
-				if(seg == 0) setmodel (prj, "progs/bloodrailz/rail_a.mdl");
-				else if(seg == 1) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
-				else if(seg == 2) setmodel (prj, "progs/bloodrailz/rail_c.mdl");
-				else if(seg == 3) setmodel (prj, "progs/bloodrailz/rail_d.mdl");
-				else if(seg == 4) setmodel (prj, "progs/bloodrailz/rail_e.mdl");
-				else if(seg == 5) setmodel (prj, "progs/bloodrailz/rail_f.mdl");
-				else if(seg == 6) setmodel (prj, "progs/bloodrailz/rail_g.mdl");
+				if(seg == 0) setmodel (prj, "mdl/rail_a.mdl");
+				else if(seg == 1) setmodel (prj, "mdl/rail_b.mdl");
+				else if(seg == 2) setmodel (prj, "mdl/rail_c.mdl");
+				else if(seg == 3) setmodel (prj, "mdl/rail_d.mdl");
+				else if(seg == 4) setmodel (prj, "mdl/rail_e.mdl");
+				else if(seg == 5) setmodel (prj, "mdl/rail_f.mdl");
+				else if(seg == 6) setmodel (prj, "mdl/rail_g.mdl");
 			
 			
 				
@@ -616,37 +616,37 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedR
 			
 				if(count!=pointCount+1)
 				{
-					if(vlen(dir) < 20) setmodel (prj, "progs/bloodrailz/rail_a.mdl");
-					else if (vlen(dir) < 33) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
-					else if (vlen(dir) < 45) setmodel (prj, "progs/bloodrailz/rail_b1.mdl");
-					else if (vlen(dir) < 60) setmodel (prj, "progs/bloodrailz/rail_c.mdl");
-					else if (vlen(dir) < 120) setmodel (prj, "progs/bloodrailz/rail_d.mdl");  //120 length	
-					else if (vlen(dir) < 240) setmodel (prj, "progs/bloodrailz/rail_e.mdl");  //232 length
-					else if (vlen(dir) < 295) setmodel (prj, "progs/bloodrailz/rail_f.mdl");  //289 length
-					else if (vlen(dir) < 400) setmodel (prj, "progs/bloodrailz/rail_g.mdl");  //376 length
+					if(vlen(dir) < 20) setmodel (prj, "mdl/rail_a.mdl");
+					else if (vlen(dir) < 33) setmodel (prj, "mdl/rail_b.mdl");
+					else if (vlen(dir) < 45) setmodel (prj, "mdl/rail_b1.mdl");
+					else if (vlen(dir) < 60) setmodel (prj, "mdl/rail_c.mdl");
+					else if (vlen(dir) < 120) setmodel (prj, "mdl/rail_d.mdl");  //120 length	
+					else if (vlen(dir) < 240) setmodel (prj, "mdl/rail_e.mdl");  //232 length
+					else if (vlen(dir) < 295) setmodel (prj, "mdl/rail_f.mdl");  //289 length
+					else if (vlen(dir) < 400) setmodel (prj, "mdl/rail_g.mdl");  //376 length
 				}
 				
 				
 				else if(count==pointCount+1)
 				{
 					
-					if(vlen(dir) < 20) setmodel (prj, "progs/bloodrailz/rail_a.mdl");
-					else if (vlen(dir) < 33) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
-					else if (vlen(dir) < 45) setmodel (prj, "progs/bloodrailz/rail_b1.mdl");
-					else if (vlen(dir) < 60) setmodel (prj, "progs/bloodrailz/rail_c.mdl");
-					else if (vlen(dir) < 120 && vlen(result-p0) >= 70) setmodel (prj, "progs/bloodrailz/rail_d.mdl");  //120 length	
-					else if (vlen(dir) < 240 && vlen(result-p0) >= 110) setmodel (prj, "progs/bloodrailz/rail_e.mdl");  //232 length
-					else if (vlen(dir) < 295 && vlen(result-p0) >= 135) setmodel (prj, "progs/bloodrailz/rail_f.mdl");  //289 length
-					else if (vlen(dir) < 400 && vlen(result-p0) >= 160) setmodel (prj, "progs/bloodrailz/rail_g.mdl");  //376 length
-					else if (vlen(dir) < 120 && vlen(result-p0) < 70) setmodel (prj, "progs/bloodrailz/rail_d_half.mdl");  //120 length	
-					else if (vlen(dir) < 240 && vlen(result-p0) < 110) setmodel (prj, "progs/bloodrailz/rail_e_half.mdl");  //232 length
-					else if (vlen(dir) < 295 && vlen(result-p0) < 135) setmodel (prj, "progs/bloodrailz/rail_f_half.mdl");  //289 length
-					else if (vlen(dir) < 400 && vlen(result-p0) < 160) setmodel (prj, "progs/bloodrailz/rail_g_half.mdl");  //376 length
+					if(vlen(dir) < 20) setmodel (prj, "mdl/rail_a.mdl");
+					else if (vlen(dir) < 33) setmodel (prj, "mdl/rail_b.mdl");
+					else if (vlen(dir) < 45) setmodel (prj, "mdl/rail_b1.mdl");
+					else if (vlen(dir) < 60) setmodel (prj, "mdl/rail_c.mdl");
+					else if (vlen(dir) < 120 && vlen(result-p0) >= 70) setmodel (prj, "mdl/rail_d.mdl");  //120 length	
+					else if (vlen(dir) < 240 && vlen(result-p0) >= 110) setmodel (prj, "mdl/rail_e.mdl");  //232 length
+					else if (vlen(dir) < 295 && vlen(result-p0) >= 135) setmodel (prj, "mdl/rail_f.mdl");  //289 length
+					else if (vlen(dir) < 400 && vlen(result-p0) >= 160) setmodel (prj, "mdl/rail_g.mdl");  //376 length
+					else if (vlen(dir) < 120 && vlen(result-p0) < 70) setmodel (prj, "mdl/rail_d_half.mdl");  //120 length	
+					else if (vlen(dir) < 240 && vlen(result-p0) < 110) setmodel (prj, "mdl/rail_e_half.mdl");  //232 length
+					else if (vlen(dir) < 295 && vlen(result-p0) < 135) setmodel (prj, "mdl/rail_f_half.mdl");  //289 length
+					else if (vlen(dir) < 400 && vlen(result-p0) < 160) setmodel (prj, "mdl/rail_g_half.mdl");  //376 length
 					
-					//if (prj.model == "progs/bloodrailz/rail_g_half.mdl") bprint("rail_G_half\n");
-					//else if (prj.model == "progs/bloodrailz/rail_f_half.mdl") bprint("rail_F_half\n");
-					//else if (prj.model == "progs/bloodrailz/rail_e_half.mdl") bprint("rail_E_half\n");
-					//else if (prj.model == "progs/bloodrailz/rail_d_half.mdl") bprint("rail_D_half\n");
+					//if (prj.model == "mdl/rail_g_half.mdl") bprint("rail_G_half\n");
+					//else if (prj.model == "mdl/rail_f_half.mdl") bprint("rail_F_half\n");
+					//else if (prj.model == "mdl/rail_e_half.mdl") bprint("rail_E_half\n");
+					//else if (prj.model == "mdl/rail_d_half.mdl") bprint("rail_D_half\n");
 					
 					//prj.skin = 3;
 				}

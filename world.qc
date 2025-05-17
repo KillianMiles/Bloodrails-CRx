@@ -124,7 +124,7 @@ void() worldspawn =
 	elohim_num_bluespawns = 0;
 
 	cvar_set("scr_usekfont", "0");
-	if (elohim_playmode & CLANRING_CTF_MODE || elohim_playmode & CLAN_ARENA_MODE)
+	if (elohim_playmode & CLANRING_CTF_MODE)
 		cvar_set("teamplay", "4");
 	else if (elohim_playmode & ELOHIM_MATCH_MODE)
 		cvar_set("teamplay","2");
@@ -136,27 +136,24 @@ void() worldspawn =
 
 
 
-	//precache_sound ("bloodrailz/misc/talk.wav");		// talk
-	precache_sound ("bloodrailz/triggers/r_tele1.wav");		// teleport sounds
-	precache_sound ("bloodrailz/triggers/r_tele2.wav");
-	precache_sound ("bloodrailz/triggers/r_tele3.wav");
-	precache_sound ("bloodrailz/triggers/r_tele4.wav");
-	precache_sound ("bloodrailz/triggers/r_tele5.wav");
-
-	precache_model ("progs/bloodrailz/player.md3");
-	precache_model ("progs/bloodrailz/br_gib1.mdl");         // LibreQuake //gibs
-	precache_model ("progs/bloodrailz/br_gib2.mdl");	 // LibreQuake //gibs
-	precache_model ("progs/bloodrailz/br_gib3.mdl");	 // LibreQuake //gibs
+	precache_sound ("trig/br_tp1.wav");		// teleport sounds
+	precache_sound ("trig/br_tp2.wav");
+	precache_sound ("trig/br_tp3.wav");
+	precache_sound ("trig/br_tp4.wav");
+	precache_model ("mdl/player.md3");
+	precache_model ("mdl/br_gib1.mdl");         // LibreQuake //gibs
+	precache_model ("mdl/br_gib2.mdl");	 // LibreQuake //gibs
+	precache_model ("mdl/br_gib3.mdl");	 // LibreQuake //gibs
 
 
 	
-	precache_model ("progs/bloodrailz/s_bubble.spr");	// LibreQuake //drowning bubbles
-	precache_model ("progs/bloodrailz/s_explod.spr");	// LibreQuake //sprite explosion
+	precache_model ("mdl/s_bubbl.spr");	// LibreQuake //drowning bubbles
+	precache_model ("mdl/s_explo.spr");	// LibreQuake //sprite explosion
 
-	precache_model ("progs/bloodrailz/s_blood_512xv.spr");   //Kebby's blood animation sprite   old 128x sprite scaled up to 512 (needs to be scaled x0.25 in qc)
-	precache_model ("progs/bloodrailz/s_blood_1024.spr");   //Kebby's blood animation sprite
+	precache_model ("mdl/blood1.spr");   //Kebby's blood animation sprite   //512 old 128x sprite scaled up to 512 (needs to be scaled x0.25 in qc)
+	precache_model ("mdl/blood2.spr");   //Kebby's blood animation sprite //1024
 
-	precache_model ("progs/bloodrailz/null.spr");		 // empty sprite
+	precache_model ("mdl/null.spr");		 // empty sprite
 	
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.

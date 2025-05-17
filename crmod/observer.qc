@@ -158,7 +158,7 @@ void () observer_check_demo_end =
 {
     if (self.oflags & OBSERVER_DEMO)
     {
-        setmodel (self, "progs/bloodrailz/null.mdl");
+        setmodel (self, "mdl/null.mdl");
         self.model = string_null;
         msg_entity = self;
         WriteByte(MSG_ONE, SVC_SETVIEWPORT);
@@ -412,15 +412,8 @@ void () observer_start =
             if (self.deadflag >= DEAD_DEAD)
             {
                 dprint("Observer dead\n");
-                if (elohim_playmode & CLAN_ARENA_MODE)
-                {
-                    PutClientInServer();
-                    return;
-                }
-                else
-                {
+
                     respawn();
-                }
             }
             return; 
         }
@@ -449,8 +442,7 @@ void () observer_start =
     self.ammo_rockets = 0;
     self.ammo_cells = 0;
     self.currentammo = 0;
-    if (!(mode_is_arena()))
-        self.frags = -99;
+    self.frags = -99;
     //self.team = 0;
     self.show_hostile = 0;
 
@@ -533,13 +525,12 @@ void () observer_end =
     stuffcmd(self, "v_centerspeed 500\n");
     if (self.style & ELOHIM_HEADS_UP)
 	    stuffcmd(self, "viewsize 100\n");
-    if (!(elohim_playmode & ELOHIM_MATCH_MODE) && !(mode_is_public()) && !(mode_is_arena()))
+    if (!(elohim_playmode & ELOHIM_MATCH_MODE) && !(mode_is_public()))
 
 	// This is to prevent a condition where one player is another player's
 	// movetarget, which can confuse the auto module.
 	self.movetarget = world;	
 
-    stats_reset();
     SetNewParms2();
 
 
@@ -1117,7 +1108,7 @@ void () observer_impulse_commands =
 
     if (self.impulse >= 20 && self.impulse != 22)
         elohim_impulse();
-    else if (!(self.oflags & (OBSERVER_CHASE | OBSERVER_DEMO)) && !(mode_is_arena()))
+    else if (!(self.oflags & (OBSERVER_CHASE | OBSERVER_DEMO)))
     {
     /*
         if (self.impulse == 1)
@@ -1354,19 +1345,13 @@ void () observer_impulse =
 			
             if ((elohim_playmode & ELOHIM_MATCH_MODE) && (elohim_state & ELOHIM_MATCH_STARTED))
                 observer_confirm();
-            else if ((mode_is_arena()) && (boss.state == CA_MATCH_PLAYING))
-            {
-                //TODO:Can't leave right now
-                //TODO:RA leave queue
-            }
-            else
-            {
+
                 if (mode_is_public()) {
                     public_notready();
                 }
                 rune_toss();
                 observer_start();
-            }
+            
         }
         else if (self.impulse >= 147 && self.impulse != 156)
             sprint(self, "You must be an observer first\n");

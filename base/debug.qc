@@ -56,14 +56,8 @@ void () debug_flags =
 		sprint(self, "ELOHIM_MATCH_MODE\n");
 	if (elohim_playmode & RACE_MODE)
 		sprint(self, "RACE_MODE\n");
-	if (elohim_playmode & AIR_ARENA_MODE)
-		sprint(self, "AIR_ARENA_MODE\n");
 	if (elohim_playmode & ELOHIM_SERVER_INITIALIZED)
 		sprint(self, "ELOHIM_SERVER_INITIALIZED\n");
-	if (elohim_playmode & ELOHIM_NO_GIBS)
-		sprint(self, "ELOHIM_NO_GIBS\n");
-	if (elohim_playmode & ELOHIM_LOW_GIBS)
-		sprint(self, "ELOHIM_LOW_GIBS\n");
 	if (elohim_playmode & ELOHIM_NO_QUAD)
 		sprint(self, "ELOHIM_NO_QUAD\n");
 	if (elohim_playmode & ELOHIM_NO_PENT)

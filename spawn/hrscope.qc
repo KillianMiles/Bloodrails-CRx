@@ -655,7 +655,7 @@ void() Exit_HorrorScope =
 	self.angles = self.hr_oldangles;
 	//self.movetype = MOVETYPE_WALK;
 	self.view_ofs = '0 0 25';
-	setmodel (self, "progs/bloodrailz/player.md3");
+	setmodel (self, "mdl/player.md3");
 	self.classname = "player";
 	//setsize (self, '-16 -16 -24', '-16 -16 -24');
 	setorigin (self, self.hr_oldorigin);
@@ -691,7 +691,7 @@ void (void() run_cam) HorrorScope =
 	self.cam.movetype = MOVETYPE_NOCLIP;
 	self.cam.classname = "camera";
 	self.cam.origin = self.origin;
-	setmodel (self.cam, "progs/bloodrailz/null.spr");
+	setmodel (self.cam, "mdl/null.spr");
 	self.frags = -99;
 	setcolor2(self, 0, 0);
 

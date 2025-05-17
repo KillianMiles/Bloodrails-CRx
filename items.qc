@@ -32,7 +32,7 @@ void() SUB_regen =
 {
 	self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
-	sound (self, CHAN_VOICE, "bloodrailz/items/br_item_respawn.wav", 1, ATTN_NORM);	// Christian Ice play respawn sound
+	sound (self, CHAN_VOICE, "item/br_it_resp.wav", 1, ATTN_NORM);	// Christian Ice play respawn sound
 	setorigin (self, self.origin);
 };
 
@@ -94,7 +94,7 @@ StartItem  --  Sets the clipping size and plants the object on the floor
 */
 void() StartItem =
 {
-    if (elohim_playmode & RACE_MODE || mode_is_arena())
+    if (elohim_playmode & RACE_MODE)
     {
         if (self.touch == weapon_touch || self.touch == ammo_touch)
         {
@@ -156,7 +156,7 @@ void() armor_touch =
 	
 	self.think = SUB_regen;
 
-	sound(other, CHAN_ITEM, "bloodrailz/items/br_armor.wav", 0.8, ATTN_NORM);
+	sound(other, CHAN_ITEM, "item/br_armor.wav", 0.8, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	
 	activator = other;
@@ -168,11 +168,11 @@ void() armor_touch =
 
 void() item_armor1 =
 {
-	if(Maps_ShouldRemoveDefaultEntity(self) || (mode_is_arena())) return remove(self);
+	if(Maps_ShouldRemoveDefaultEntity(self)) return remove(self);
 
 	self.touch = armor_touch;
-	precache_model ("progs/bloodrailz/br_armor.mdl");
-	setmodel (self, "progs/bloodrailz/br_armor.mdl");
+	precache_model ("mdl/br_armor.mdl");
+	setmodel (self, "mdl/br_armor.mdl");
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -182,11 +182,11 @@ void() item_armor1 =
 
 void() item_armor2 =
 {
-	if(Maps_ShouldRemoveDefaultEntity(self) || (mode_is_arena())) return remove(self);
+	if(Maps_ShouldRemoveDefaultEntity(self)) return remove(self);
 
 	self.touch = armor_touch;
-	precache_model ("progs/bloodrailz/br_armor.mdl");
-	setmodel (self, "progs/bloodrailz/br_armor.mdl");
+	precache_model ("mdl/br_armor.mdl");
+	setmodel (self, "mdl/br_armor.mdl");
 	self.skin = 0;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -196,12 +196,12 @@ void() item_armor2 =
 
 void() item_armorInv =
 {
-	if(Maps_ShouldRemoveDefaultEntity(self) || (mode_is_arena()))
+	if(Maps_ShouldRemoveDefaultEntity(self))
 		return remove(self);
 
 	self.touch = armor_touch;
-	precache_model ("progs/bloodrailz/br_armor.mdl");
-	setmodel (self, "progs/bloodrailz/br_armor.mdl");
+	precache_model ("mdl/br_armor.mdl");
+	setmodel (self, "mdl/br_armor.mdl");
 	self.skin = 2;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
@@ -293,7 +293,6 @@ void() powerup_touch =
 	{
 		other.super_time = 1;
 		other.super_damage_finished = time + 30;
-		other.crmod_qdwep_z = other.crmod_qdwep_z + 1;  //CRMOD - stats
 	}	
 
 	activator = other;
@@ -303,20 +302,20 @@ void() powerup_touch =
 
 void() item_artifact_invulnerability =
 {
-	if(Maps_ShouldRemoveDefaultEntity(self) || (mode_is_arena())) return remove(self);
+	if(Maps_ShouldRemoveDefaultEntity(self)) return remove(self);
 
 	self.touch = powerup_touch;
 	if (!(elohim_playmode & RACE_MODE)) 
 	{
-		self.noise = "bloodrailz/items/br_protect.wav";
-		setmodel (self, "progs/bloodrailz/br_pent.mdl");
+		self.noise = "items/br_protec.wav";
+		setmodel (self, "mdl/br_pent.mdl");
 		self.netname = "Shield Amplifier";
 		setsize (self, '-16 -16 -24', '16 16 32');
 	}
 	else
 	{
-		self.noise = "bloodrailz/items/br_protect.wav";
-		setmodel (self, "progs/bloodrailz/br_pent.mdl");
+		self.noise = "items/br_protec.wav";
+		setmodel (self, "mdl/br_pent.mdl");
 		self.netname = "Shield Amplifier";
 		setsize (self, '-32 -32 -24', '32 32 75');
 	}
@@ -333,15 +332,15 @@ void() item_artifact_invisibility =
 	self.touch = powerup_touch;
 	if (!(elohim_playmode & RACE_MODE)) 
 	{
-		self.noise = "bloodrailz/items/br_inv1.wav";
-		setmodel (self, "progs/bloodrailz/br_ring1.mdl");
+		self.noise = "items/br_inv1.wav";
+		setmodel (self, "mdl/br_ring1.mdl");
 		self.netname = "Cloaking matrix";
 		setsize (self, '-16 -16 -24', '16 16 32');
 	}
 	else 
 	{
-		self.noise = "bloodrailz/misc/br_ding2.wav";
-		setmodel (self, "progs/bloodrailz/br_pent2.mdl");
+		self.noise = "misc/br_ding2.wav";
+		setmodel (self, "mdl/br_pent2.mdl");
 		self.netname = "Cloaking matrix";
 		setsize (self, '-59 -59 -24', '59 59 80');
 	}

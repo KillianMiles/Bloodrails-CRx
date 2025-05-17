@@ -116,12 +116,12 @@ void() trigger_multiple =
 	}
 	else if (self.sounds == 2)
 	{
-		//self.noise = "bloodrailz/misc/talk.wav";
+		//self.noise = "misc/talk.wav";
 	}
 	else if (self.sounds == 3)
 	{
-		precache_sound ("bloodrailz/ctf/br_flag_returned.wav");
-		self.noise = "bloodrailz/ctf/br_flag_returned.wav";
+		precache_sound ("ctf/br_flag_return.wav");
+		self.noise = "ctf/br_flag_return.wav";
 	}
 	
 	if (!self.wait)
@@ -260,17 +260,15 @@ void() play_teleport =
 	local	float v;
 	local	string tmpstr;
 
-	v = random() * 5;
-	if (v < 1)
-		tmpstr = "bloodrailz/triggers/r_tele1.wav";
-	else if (v < 2)
-		tmpstr = "bloodrailz/triggers/r_tele2.wav";
-	else if (v < 3)
-		tmpstr = "bloodrailz/triggers/r_tele3.wav";
-	else if (v < 4)
-		tmpstr = "bloodrailz/triggers/r_tele4.wav";
-	else
-		tmpstr = "bloodrailz/triggers/r_tele5.wav";
+	v = random() * 4;
+	if (v <= 1)
+		tmpstr = "trig/br_tp1.wav";
+	else if (v <= 2)
+		tmpstr = "trig/br_tp2.wav";
+	else if (v <= 3)
+		tmpstr = "trig/br_tp3.wav";
+	else if (v <= 4)
+		tmpstr = "trig/br_tp4.wav";
 
 	sound (self, CHAN_VOICE, tmpstr, 1, ATTN_NORM);
 	remove (self);
@@ -394,8 +392,8 @@ void() teleport_touch =
 	{	
 		if(other.flag_carrier ==1)
 		{
-			if(other.height == elohim_team1) 		setmodel (blue_flag_ent, "progs/bloodrailz/flag_blu_notrail.mdl"); 
-			else if(other.height == elohim_team2) 		setmodel (red_flag_ent, "progs/bloodrailz/flag_red_notrail.mdl");
+			if(other.height == elohim_team1) 		setmodel (blue_flag_ent, "mdl/flag_b_notr.mdl"); 
+			else if(other.height == elohim_team2) 		setmodel (red_flag_ent, "mdl/flag_r_notr.mdl");
 		}
 		
 		other.fixangle = 1;		// turn this way immediately
@@ -684,11 +682,11 @@ void() trigger_push_touch =
 				
 				 rand = random()*2;
     
-				if (rand <= 1) sound (self, CHAN_AUTO, "bloodrailz/triggers/br_jump_pad3.wav",1,ATTN_NORM);
-				else if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "bloodrailz/triggers/br_jump_pad2.wav",1,ATTN_NORM);
+				if (rand <= 1) sound (self, CHAN_AUTO, "trig/br_jpad3.wav",1,ATTN_NORM);
+				else if (rand <= 2 && rand > 1) sound (self, CHAN_AUTO, "trig/br_jpad2.wav",1,ATTN_NORM);
    
 			
-				sound (other, CHAN_AUTO, "bloodrailz/triggers/br_jump_pad1.wav", 0.8, ATTN_NORM);
+				sound (other, CHAN_AUTO, "trig/br_jpad1.wav", 0.8, ATTN_NORM);
 				
 			}
 		}
@@ -706,9 +704,6 @@ void() trigger_push =
 	
 	
 	InitTrigger ();
-	precache_sound ("bloodrailz/triggers/br_jump_pad1.wav");
-	precache_sound ("bloodrailz/triggers/br_jump_pad2.wav");
-	precache_sound ("bloodrailz/triggers/br_jump_pad3.wav");
 	self.touch = trigger_push_touch;
 	
 	

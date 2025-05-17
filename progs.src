@@ -17,7 +17,6 @@ base/qsmack.qc
 base/auto.qc
 base/debug.qc
 base/elohim.qc
-base/stats.qc
 base/angles.qc
 base/score.qc
 base/time.qc

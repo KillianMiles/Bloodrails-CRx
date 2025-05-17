@@ -61,15 +61,11 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			if ( (teamplay == 2) && (targ.team > 0) && (targ.team == attacker.owner.team) )
 			{
 				// attacker.owner killed teammate
-				attacker.owner.mangle_y = attacker.owner.mangle_y + 1;
-				if (attacker.super_damage_finished > time)     // CRMOD - stats
-					attacker.crmod_qdkill_y = attacker.crmod_qdkill_y + 1;
 				client_frag(attacker.owner, -1);
 			}
 			else
 			{
 				// targ was killed by enemy
-				targ.mangle_z = targ.mangle_z + 1;
 				client_frag(attacker.owner, 1);
 			}
 			return;
@@ -82,8 +78,6 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			if (targ == attacker)
 			{
 				// killed self
-				attacker.mangle_x = attacker.mangle_x + 1;
-				if (attacker.super_damage_finished > time) attacker.crmod_qdkill_z = attacker.crmod_qdkill_z + 1;   // CRMOD - stats
 
 				client_frag(attacker, -1);
 				bprint (targ.netname);
@@ -127,8 +121,6 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			else if ( (teamplay == 2) && (targ.team > 0)&&(targ.team == attacker.team) )
 			{
 				// killed teammate
-				attacker.mangle_y = attacker.mangle_y + 1;
-				if (attacker.super_damage_finished > time) attacker.crmod_qdkill_y = attacker.crmod_qdkill_y + 1;  // CRMOD - stats
 				
 				bprint (attacker.netname);
 				if (damage == 9)
@@ -366,9 +358,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
                
                
                
-			if (attacker.super_damage_finished > time) attacker.crmod_qdkill_x = attacker.crmod_qdkill_x + 1;   // CRMOD - stats
-			targ.mangle_z = targ.mangle_z + 1;
-			if (!(elohim_playmode & CLAN_ARENA_MODE))  client_frag(attacker, 1);
+			client_frag(attacker, 1);
 
 			if(attacker.death_aura_frag == 1)
 			{
@@ -770,14 +760,14 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				self.total_deaths = self.total_deaths +1;
 			
 					
-				//localsound(attacker, "bloodrailz/misc/br_ding1.wav");  // rail ding sound
+				//localsound(attacker, "misc/br_ding1.wav");  // rail ding sound
 				if(random() < 0.5) 
 				{
-					ex_localsound(attacker, "bloodrailz/misc/br_ding1.wav");  // rail ding sound
+					ex_localsound(attacker, "misc/br_ding1.wav");  // rail ding sound
 				}
 				else if (random() <= 1.0) 
 				{
-					ex_localsound(attacker, "bloodrailz/misc/br_ding2.wav");  // rail ding sound     
+					ex_localsound(attacker, "misc/br_ding2.wav");  // rail ding sound     
 				}
 					
 				/*
@@ -935,7 +925,6 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 	else
 	{
             // targ got himself killed
-            targ.mangle_x = targ.mangle_x + 1;
             client_frag(targ, -1);
 			bprint (targ.netname);
 

@@ -13,27 +13,27 @@ void(entity player, float regenflag) ctf_player_drop_flag;
 
 //TODO: clean this up if (elohim_playmode & ELOHIM_MATCH_MODE)
 
-const string SOUND_WIN = 		"bloodrailz/ctf/br_flag_capture1.wav"; //br custom
-const string SOUND_GRABFLAG = 		"bloodrailz/ctf/br_grab_flag.wav";  //LQ shambler_ssight
-const string SOUND_DROPFLAG = 		"bloodrailz/ctf/br_flag_drop.wav";   //free sound Eagle by u_jfkxueyart via Pixabay
+const string SOUND_WIN = 		"ctf/br_flag_cap1.wav"; //br custom
+const string SOUND_GRABFLAG = 		"ctf/br_grab_flag.wav";  //LQ shambler_ssight
+const string SOUND_DROPFLAG = 		"ctf/br_flag_drop.wav";   //free sound Eagle by u_jfkxueyart via Pixabay
 
-const string SOUND_GRABDROPPEDFLAG = 	"bloodrailz/ctf/br_grab_dropped.wav";  //LQ
-const string SOUND_PICKUP_OWN = 	"bloodrailz/ctf/br_grab_dropped.wav";  //LQ
-const string SOUND_PICKUP_ENEMY = 	"bloodrailz/ctf/br_grab_dropped.wav";  //LQ
+const string SOUND_GRABDROPPEDFLAG = 	"ctf/br_grab_dropped.wav";  //LQ
+const string SOUND_PICKUP_OWN = 	"ctf/br_grab_dropped.wav";  //LQ
+const string SOUND_PICKUP_ENEMY = 	"ctf/br_grab_dropped.wav";  //LQ
 
-const string SOUND_RETURNED = 		"bloodrailz/ctf/br_flag_returned.wav";	//Christian Ice
-const string SOUND_PLAYER_RETURNED = 	"bloodrailz/ctf/br_flag_returned.wav";	//Christian Ice
+const string SOUND_RETURNED = 		"ctf/br_flag_return.wav";	//Christian Ice
+const string SOUND_PLAYER_RETURNED = 	"ctf/br_flag_return.wav";	//Christian Ice
 
-const string SOUND_RESPAWN = 		"bloodrailz/items/br_item_respawn.wav";	//Christian Ice
-const string SOUND_HOOK_TEAR = 		"bloodrailz/items/br_protect2.wav";	//br
+const string SOUND_RESPAWN = 		"item/br_it_resp.wav";	//Christian Ice
+const string SOUND_HOOK_TEAR = 		"item/br_protec2.wav";	//br
 
-const string SOUND_HOOK_LAND = 		"bloodrailz/player/br_axhit_flesh.wav";    //xon
-const string SOUND_HOOK_ATTACK = 	"bloodrailz/weapons/br_hook_fire.wav";   //LQ
+const string SOUND_HOOK_LAND = 		"body/br_meathit.wav";    //xon
+const string SOUND_HOOK_ATTACK = 	"weap/br_hook.wav";   //LQ
 
-const string MODEL_HOOK_HEAD = 		"progs/bloodrailz/star_color.mdl"; //br custom
-const string MODEL_WEAPON_HOOK = 	"progs/bloodrailz/v_axe_null.mdl"; //br custom
-const string MODEL_FLAG_BLUE = 		"progs/bloodrailz/flag_blu_notrail.mdl";
-const string MODEL_FLAG_RED = 		"progs/bloodrailz/flag_red_notrail.mdl";
+const string MODEL_HOOK_HEAD = 		"mdl/star.mdl"; //br custom
+const string MODEL_WEAPON_HOOK = 	"mdl/v_axe_null.mdl"; //br custom
+const string MODEL_FLAG_BLUE = 		"mdl/flag_b_notr.mdl";
+const string MODEL_FLAG_RED = 		"mdl/flag_r_notr.mdl";
 
 
 
@@ -152,7 +152,7 @@ void () public_verify_team =
             return;
         }
         GibPlayerChangeTeams ();
-        setmodel (self, "progs/bloodrailz/null.spr"); 
+        setmodel (self, "mdl/null.spr"); 
         //self.alpha = 0.001;
         
         self.frame = 0;
@@ -264,7 +264,7 @@ void(entity flg) ctf_regen_flag =
 	flg = self;
 	self = oself;
 
-	sound(flg, CHAN_AUTO, "bloodrailz/items/br_item_respawn.wav", 1, ATTN_NORM);
+	sound(flg, CHAN_AUTO, "item/br_it_resp.wav", 1, ATTN_NORM);
 	flg.angles    	= flg.mangle;
 	flg.cnt       	= CTF_FLAG_AT_BASE; 
 	
@@ -431,7 +431,7 @@ void(float dropped) ctf_flag_taken =
 		sprint4(p, other.netname, " has taken the ", self.netname, "\n");
 		centerprint(p,"Your flag has been taken\n");
 		sound (p, CHAN_VOICE, SOUND_PICKUP_ENEMY, 1, ATTN_NORM);
-		sound (self, CHAN_AUTO, "bloodrailz/ctf/flag_taken.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "ctf/br_flag_taken.wav", 1, ATTN_NORM);
 	}
     
 	p = world;
@@ -448,12 +448,12 @@ void(float dropped) ctf_flag_taken =
         if (dropped)
         { 
 		sound (p, CHAN_AUTO, SOUND_GRABDROPPEDFLAG, 1, ATTN_NONE);
-		sound (self, CHAN_AUTO, "bloodrailz/ctf/flag_taken.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "ctf/br_flag_taken.wav", 1, ATTN_NORM);
         }
         else
         {
 		sound (p, CHAN_AUTO, SOUND_GRABFLAG, 0.8, ATTN_NONE);
-		sound (self, CHAN_AUTO, "bloodrailz/ctf/flag_taken.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "ctf/br_flag_taken.wav", 1, ATTN_NORM);
         }
 
 
@@ -480,8 +480,8 @@ void() ctf_flag_capture =
 	local string otherTeam;
 	otherTeam = self.team == TEAM_BLUE ? "Red" : "Blue";
     
-	if (otherTeam == "Red") 	sound(world,CHAN_AUTO,"bloodrailz/ctf/blue.wav", 1, ATTN_NONE);
-	else if (otherTeam == "Blue")	sound(world,CHAN_AUTO,"bloodrailz/ctf/red.wav", 1, ATTN_NONE);
+	if (otherTeam == "Red") 	sound(world,CHAN_AUTO,"ctf/br_score_blue.wav", 1, ATTN_NONE);
+	else if (otherTeam == "Blue")	sound(world,CHAN_AUTO,"ctf/br_score_red.wav", 1, ATTN_NONE);
 		
 	BLUE_FLAG_TAKEN = 0;
 	RED_FLAG_TAKEN = 0;
@@ -925,11 +925,11 @@ void() flag_carry =
 	if(self.team == TEAM_BLUE) 		
 	{
 		setorigin(red_flag_ent, temp_flag.origin);
-		setmodel (red_flag_ent, "progs/bloodrailz/flag_red.mdl"); 
+		setmodel (red_flag_ent, "mdl/flag_r.mdl"); 
 	}
 	else if(self.team == TEAM_RED) 		
 	{
 		setorigin(blue_flag_ent, temp_flag.origin);
-		setmodel (blue_flag_ent, "progs/bloodrailz/flag_blu.mdl"); 
+		setmodel (blue_flag_ent, "mdl/flag_b.mdl"); 
 	}
 }

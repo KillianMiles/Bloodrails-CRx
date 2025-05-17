@@ -7,18 +7,18 @@ void() update_rhud =
 	makevectors(self.owner.owner.v_angle);
     
 	self.viewmodelforclient = self.owner;
-	setorigin(self, '0 0.59 0');
+	setorigin(self, '0 8.75 -22.05');
 	
 	if(self.owner.rail_HUD ==2)
 	{
-		setmodel (self, "progs/bloodrailz/hud_r1.mdl");
+		setmodel (self, "mdl/hud_r1.mdl");
 		self.rail_HUD = time;
 		self.owner.rail_HUD =1;
 	}
 	
 	if(time - self.rail_HUD > 0.13)
 	{
-			setmodel (self, "progs/bloodrailz/hud_r.mdl");
+			setmodel (self, "mdl/hud_r.mdl");
 	}
 	
 			
@@ -77,23 +77,6 @@ void() update_rhud =
 	self.nextthink = time + my_ticrate*25;  //DECEM
 }
 
-void() update_bolt_sym =
-{
-	self.viewmodelforclient = self.owner;
-	setorigin(self, '0 1.58 0');
-	self.alpha = 0.75;
-	
-	if(intermission_running)
-	{
-		self.alpha =0.02;
-	}
-	
-	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
-	if (self.owner.style & ELOHIM_OBSERVER) self.alpha =0.001;   
-	 
-	//self.nextthink = time + 0.2;
-	self.nextthink = time + my_ticrate*49;  //DECEM
-}
 
 void() Rail_HUD =  
 {
@@ -103,7 +86,7 @@ void() Rail_HUD =
 		self.rail_HUD = 1;
 		local entity r_hud;
 		r_hud = spawn();
-		setmodel (r_hud, "progs/bloodrailz/hud_r.mdl");
+		setmodel (r_hud, "mdl/hud_r.mdl");
 		r_hud.skin = 0;
 
 		setorigin(r_hud, '0 0 0');
@@ -111,24 +94,12 @@ void() Rail_HUD =
 		r_hud.solid = SOLID_NOT;
 		r_hud.classname = "r_hud";
 		setsize (r_hud, 0,0);
+		
+		//r_hud.effects = r_hud.effects | EF_NODEPTHTEST;
+		
 		r_hud.owner = self;
 		r_hud.nextthink = time + 0.05;
 		r_hud.think = update_rhud;
-		
-		
-		local entity r_hud1;
-		r_hud1 = spawn();
-		setmodel (r_hud1, "progs/bloodrailz/hud_bolt_sym.mdl");
-		r_hud1.skin = 0;
-
-		setorigin(r_hud1, '0 0 0');
-		r_hud1.movetype = MOVETYPE_NOCLIP;
-		r_hud1.solid = SOLID_NOT;
-		r_hud1.classname = "r_hud1";
-		setsize (r_hud1, 0,0);
-		r_hud1.owner = self;
-		r_hud1.nextthink = time + 0.05;
-		r_hud1.think = update_bolt_sym;
 	}
     
 }
@@ -137,21 +108,22 @@ void() Rail_HUD =
 
 void() update_shud =
 {
+	self.effects = self.effects | EF_NODEPTHTEST;
 	makevectors(self.owner.owner.v_angle);
     
 	self.viewmodelforclient = self.owner;
-	setorigin(self, '0 0.59 0');
+	setorigin(self, '0 8.75 -25.55');
 	
 	if(self.owner.shield_HUD ==2)
 	{
-		setmodel (self, "progs/bloodrailz/hud_s1.mdl");
+		setmodel (self, "mdl/hud_s1.mdl");
 		self.shield_HUD = time;
 		self.owner.shield_HUD =1;
 	}
 	
 	if(time - self.shield_HUD > 0.13)
 	{
-			setmodel (self, "progs/bloodrailz/hud_s.mdl");
+			setmodel (self, "mdl/hud_s.mdl");
 	}
 	
 	
@@ -217,7 +189,7 @@ void() Shield_HUD =
 		self.shield_HUD = 1;
 		local entity s_hud;
 		s_hud = spawn();
-		setmodel (s_hud, "progs/bloodrailz/hud_s.mdl");
+		setmodel (s_hud, "mdl/hud_s.mdl");
 		s_hud.skin = 0;
 
 		setorigin(s_hud, '0 0 0');
@@ -225,6 +197,9 @@ void() Shield_HUD =
 		s_hud.solid = SOLID_NOT;
 		s_hud.classname = "s_hud";
 		setsize (s_hud, 0,0);
+		
+		//s_hud.effects = s_hud.effects | EF_NODEPTHTEST;
+		
 		s_hud.owner = self;
 		s_hud.nextthink = time + 0.05;
 		s_hud.think = update_shud;
@@ -296,7 +271,7 @@ void() Flag_Status =
 		self.ctfhud = 1;
 		local entity flagstatus;
 		flagstatus = spawn(); 
-		setmodel (flagstatus, "progs/bloodrailz/flag_status1.mdl");
+		setmodel (flagstatus, "mdl/flag_status.mdl");
 
 		setorigin(flagstatus, '0 0 10');
 		flagstatus.movetype = MOVETYPE_NOCLIP;
@@ -350,7 +325,7 @@ void() You_Have_Flag =
 		self.flag_displayed = 1;
 		local entity haveflag;
 		haveflag = spawn();
-		setmodel (haveflag, "progs/bloodrailz/flag_hud.mdl");
+		setmodel (haveflag, "mdl/flag_hud.mdl");
 		
 		haveflag.skin = 1;
 		//self.effects = EF_RED;
@@ -431,7 +406,7 @@ void(float what_type) make_tut_icon =
 		local entity tut;
 		tut = spawn();
 		
-		setmodel (tut, "progs/bloodrailz/tut_icons.mdl");
+		setmodel (tut, "mdl/tut_icons.mdl");
 		
 		//if 	((self.player_flag & PF_ITEM_tut_MASK) && (self.player_flag & PF_ITEM_tut1_FLAG)) tut.skin =1;
 		//else if ((self.player_flag & PF_ITEM_tut_MASK) && (self.player_flag & PF_ITEM_tut2_FLAG)) tut.skin =2;
@@ -505,7 +480,7 @@ void() You_Have_Rune =
 		local entity haverune;
 		haverune = spawn();
 		
-		setmodel (haverune, "progs/bloodrailz/rune_icons1.mdl");
+		setmodel (haverune, "mdl/rune_icon.mdl");
 		
 		if 	((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE1_FLAG)) haverune.skin =1;
 		else if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE2_FLAG)) haverune.skin =2;
@@ -643,7 +618,7 @@ void() make_jumbo_blue =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "digit_blue";
-		setmodel (prj, "progs/bloodrailz/hud_digits_blue1.mdl");		
+		setmodel (prj, "mdl/hud_digi_b.mdl");		
 		setsize (prj, 0, 0);	
 		setorigin (prj, '0 0 0');
 		prj.velocity = '0 0 0';	
@@ -762,7 +737,7 @@ void() make_jumbo_red =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "digit_red";
-		setmodel (prj, "progs/bloodrailz/hud_digits_red1.mdl");		
+		setmodel (prj, "mdl/hud_digi_r.mdl");		
 		setsize (prj, 0, 0);	
 		setorigin (prj, '0 0 0');
 		prj.velocity = '0 0 0';	
@@ -915,7 +890,7 @@ void() make_press_move =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "press_arrows";
-		setmodel (prj, "progs/bloodrailz/input_press.mdl");		
+		setmodel (prj, "mdl/inputs.mdl");		
 		setsize (prj, 0, 0);	
 		setorigin (prj, '0 0 0');
 		prj.velocity = '0 0 0';	
@@ -949,12 +924,12 @@ void() update_flick_marker =
 	self.angles = vectoangles(dir);
 	
 	
-	if(vlen(self.owner.origin - self.owner.flickEnt.origin) < 1000) setmodel (self, "progs/bloodrailz/marker.mdl");
-	else if(vlen(self.owner.origin - self.owner.flickEnt.origin) < 3000) setmodel (self, "progs/bloodrailz/marker150.mdl");
+	if(vlen(self.owner.origin - self.owner.flickEnt.origin) < 1000) setmodel (self, "mdl/marker.mdl");
+	else if(vlen(self.owner.origin - self.owner.flickEnt.origin) < 3000) setmodel (self, "mdl/marker1.mdl");
 	
 	else if(vlen(self.owner.origin - self.owner.flickEnt.origin) < 9000) 
 	{
-		setmodel (self, "progs/bloodrailz/marker250.mdl");
+		setmodel (self, "mdl/marker2.mdl");
 		setorigin(self, self.owner.flickEnt.origin + dir*(200));
 	}
 		
@@ -1007,13 +982,13 @@ void() make_flick_marker =
 	if(self.marker_up == 0)
 	{
 		
-		sound (self, CHAN_AUTO, "bloodrailz/weapons/br_lockon.wav", 1, ATTN_NORM);
+		sound (self, CHAN_AUTO, "weap/br_lockon.wav", 1, ATTN_NORM);
 
 		
 		self.marker_up =1;
 		local entity marker;
 		marker = spawn();
-		setmodel (marker, "progs/bloodrailz/marker.mdl");
+		setmodel (marker, "mdl/marker.mdl");
 		setorigin(marker, self.flickEnt.origin + '0 0 7');
 		
 		makevectors(self.v_angle);
@@ -1162,7 +1137,7 @@ void() make_rail_ammo =
 		
 		railammo.touch = SUB_Null;
 		railammo.classname = "railammo";
-		setmodel (railammo, "progs/bloodrailz/ammo_slugs1.mdl");		
+		setmodel (railammo, "mdl/ammo.mdl");		
 		setsize (railammo, 0, 0);	
 		setorigin (railammo, '0 0 0');
 		railammo.velocity = '0 0 0';	
@@ -1181,7 +1156,7 @@ void() make_rail_ammo =
 		
 		noammo.touch = SUB_Null;
 		noammo.classname = "railammo";
-		setmodel (noammo, "progs/bloodrailz/ammo_slugs1.mdl");		
+		setmodel (noammo, "mdl/ammo.mdl");		
 		setsize (noammo, 0, 0);	
 		setorigin (noammo, '0 0 0');
 		noammo.velocity = '0 0 0';	
@@ -1492,7 +1467,7 @@ void(entity scorer, float msg, float dmg) make_icon =
 		
 			icon.touch = SUB_Null;
 			icon.classname = "icon";
-			setmodel (icon, "progs/bloodrailz/score_icons.mdl");		
+			setmodel (icon, "mdl/score_icon.mdl");		
 			setsize (icon, 0, 0);	
 			
 			icon.icon_display = scorer.icon_display;
@@ -1545,7 +1520,7 @@ void(entity scorer, float msg, float dmg) make_icon =
 		
 				icon2.touch = SUB_Null;
 				icon2.classname = "icon";
-				setmodel (icon2, "progs/bloodrailz/score_icons.mdl");		
+				setmodel (icon2, "mdl/score_icon.mdl");		
 				setsize (icon2, 0, 0);	
 			
 				icon2.icon_display = scorer.icon_display;
@@ -1639,12 +1614,12 @@ void() update_armoricon =
 		if(self.owner.armorvalue >= 200) //2x hit
 		{
 			self.skin = 1;
-			self.alpha = 0.8;
+			self.alpha = 0.7;
 		}
 		else if(self.owner.armorvalue >= 100) //1x hit
 		{
 			self.skin = 0;
-			self.alpha = 0.8;
+			self.alpha = 0.7;
 		}
 		else if(self.owner.armorvalue < 100)
 		{
@@ -1689,7 +1664,7 @@ void() make_armoricon =
 		
 				icon.touch = SUB_Null;
 				icon.classname = "armoricon";
-				setmodel (icon, "progs/bloodrailz/armor_icons.mdl");		
+				setmodel (icon, "mdl/armor_icon.mdl");		
 				setsize (icon, 0, 0);	
 			
 			
@@ -1699,7 +1674,7 @@ void() make_armoricon =
 			
 	
 				icon.frame = 0;	
-				icon.alpha = 0.8;
+				icon.alpha = 0.7;
 			
 				icon.think = update_armoricon;
 				icon.nextthink = time;
@@ -1771,7 +1746,7 @@ void() make_reticule =
 		
 				icon.touch = SUB_Null;
 				icon.classname = "reticule";
-				setmodel (icon, "progs/bloodrailz/reticule.mdl");		
+				setmodel (icon, "mdl/reticule.mdl");		
 				setsize (icon, 0, 0);	
 			
 				local vector a = '0 0 0';

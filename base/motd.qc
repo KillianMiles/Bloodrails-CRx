@@ -77,6 +77,4 @@ void () motd_create =
     intro = utils_make_scheduled_event(motd_think, 1.2);
     intro.count = 0;
     intro.cnt = 0;
-    
-    //stuffcmd(self, "download menu.dat\n");
 };

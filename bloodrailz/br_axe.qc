@@ -37,7 +37,7 @@ void(entity inflictor, vector org, entity attacker, float radius, float throw_hi
 						else if(head.skin == 5) head.skin = 6;  
 						
 						head.owner = attacker;
-						sound (attacker, CHAN_AUTO, "bloodrailz/weapons/plasma2.wav",1,ATTN_NORM);
+						sound (attacker, CHAN_AUTO, "weap/br_plasm2.wav",1,ATTN_NORM);
 						
 						if (self.height == elohim_team1) head.skin = 6;   //red
 						else if (self.height == elohim_team2) head.skin = 5;   //blue
@@ -104,18 +104,18 @@ void() Axe_Charge_Logic=
 				
 				self.old_vel = vlen(self.velocity);    //store velocity at shield powerup for glide
 				
-				sound (self, CHAN_WEAPON, "bloodrailz/weapons/axe_charge.wav", 1, ATTN_NORM);
+				sound (self, CHAN_WEAPON, "weap/br_charged.wav", 1, ATTN_NORM);
 				//sprint(self, "shield powered-up\n");
 			
-				self.weaponmodel = "progs/bloodrailz/v_br_axe_redzz.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_axe_bluzz.mdl";
+				self.weaponmodel = "mdl/v_axe_rr.mdl";
+				if (self.height == elohim_team2) self.weaponmodel = "mdl/v_axe_bb.mdl";
 				self.weaponframe = 0;
 			}
 			
 			else if (time - self.shield_recharge_time <= 13 && self.shield_recharge_time != 0)	
 			{
 				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 0.62 && self.axe_power_time != 0 && self.axe_powered == 0) sprint(self, "shield depleted\n");
-				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "bloodrailz/misc/br_depleted.wav", 0.9, ATTN_NORM);
+				if (time - self.axe_power_time > 0.59 && time - self.axe_power_time < 1.58 && self.axe_power_time != 0 && self.axe_powered == 0)sound (self, CHAN_WEAPON, "misc/br_deplete.wav", 0.9, ATTN_NORM);
 			}
 		}
 	
@@ -181,7 +181,9 @@ antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
 
 	if(!(elohim_playmode & RACE_MODE)) 
 	{
-		if(boostspeed > 1275) sound (self, CHAN_AUTO, "bloodrailz/items/br_damage3.wav",0.3,ATTN_NORM);  //sound quad noise when moving over a certain speed
+		if(boostspeed > 1600) sound (self, CHAN_AUTO, "item/br_dmg2.wav",0.25,ATTN_NORM);  //sound quad noise when moving over a certain speed
+		else if(boostspeed > 1450) sound (self, CHAN_AUTO, "item/br_dmg2.wav",0.20,ATTN_NORM);  //sound quad noise when moving over a certain speed
+		else if(boostspeed > 1275) sound (self, CHAN_AUTO, "item/br_dmg2.wav",0.15,ATTN_NORM);  //sound quad noise when moving over a certain speed
 	}
    
    
@@ -277,14 +279,17 @@ antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
 	else
 	{    // hit wall
 		if(time - self.axe_time < 0.42) return;    //make sure, the axe clinks only once per hit
-		sound (self, CHAN_AUTO, "bloodrailz/weapons/br_clink.wav",1,ATTN_NORM);
+		sound (self, CHAN_AUTO, "weap/br_clink.wav",1,ATTN_NORM);
 		
 		//ADD VERTICAL BUMP IF AXING GROUND WHILE SKIING, RESET SOUND COUNTER
 		if(self.skiing_on ==1 && v_forward_z < -0.77) 
 		{
 			if(self.movement_x == 400) self.velocity = self.velocity + '0 0 740';
 			else if(self.movement_x == -400) self.velocity = self.velocity + '0 0 700';
-			self.ski_sound_counter =21;
+			self.ski_sound_counter =55;
+			sound (self, CHAN_VOICE, "trig/br_null.wav", 0.4, ATTN_NORM);
+			//sound (self, CHAN_VOICE, "misc/br_grind5.wav", 0.4, ATTN_NORM); //fade out
+			
 		}
 		//////////////////
 		
@@ -332,7 +337,7 @@ void(entity targ) make_spawnprotect =
 {
 	local entity spawnprotect;
 	spawnprotect = spawn();
-	setmodel (spawnprotect, "progs/bloodrailz/ef_shields.mdl");
+	setmodel (spawnprotect, "mdl/ef_shield.mdl");
 	
 	setorigin(spawnprotect, targ.origin + '0 0 5');
 	
@@ -423,7 +428,7 @@ void() update_shield_EXTERNAL =
 							dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              
 							dir5 = normalize(dir5);
 							head.velocity = head.velocity + 240*dir5 + v_up*75;
-							if(self.weapon == 29 || random() < 0.05) sound(self, CHAN_AUTO, "bloodrailz/weapons/br_quasar_push.wav", 1, ATTN_NORM);	
+							if(self.weapon == 29 || random() < 0.05) sound(self, CHAN_AUTO, "weap/br_quas3.wav", 1, ATTN_NORM);	 //quasar_push noise
 							self.weapon +=1;
 							if(self.weapon ==30) self.weapon =0;
 				}
@@ -452,7 +457,7 @@ void() make_shield =
     
 		local entity shield2;
 		shield2 = spawn();
-		setmodel (shield2, "progs/bloodrailz/ef_shields.mdl");
+		setmodel (shield2, "mdl/ef_shield.mdl");
 		shield2.skin = 0;
 		if (self.height == elohim_team2) shield2.skin = 2;
     
@@ -535,7 +540,7 @@ void() make_speedlines =
 		
 
 		
-			setmodel (speedlines, "progs/bloodrailz/ef_speed.mdl");
+			setmodel (speedlines, "mdl/ef_speed.mdl");
 		
 			setorigin(speedlines, '0 y z');
 			speedlines.movetype = MOVETYPE_NOCLIP;

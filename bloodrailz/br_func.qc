@@ -88,7 +88,7 @@ void() Called_in_PreThink =
 			self.shield_time = 0;
 			self.shield_recharge_time = 1;
 		
-			sound (self, CHAN_VOICE, "bloodrailz/triggers/r_tele1.wav", 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, "trig/br_tp1.wav", 1, ATTN_NORM);
 			setorigin(self, '0 0 2750');
 		}
 		else if(self.impulse == 102 && elohim_playmode & RACE_MODE && mapname =="tut1")
@@ -98,7 +98,7 @@ void() Called_in_PreThink =
 		}
 		else if(self.impulse == 103 && mapname == "tut1")
 		{
-			WriteByte(MSG_BROADCAST, SVC_STUFFTEXT);
+			WriteByte(MSG_BROADCAST, SVC_STUFFTEXT);   //TUTORIAL DEMO IMPULSE
 			WriteString(MSG_BROADCAST, "map tut1\n");
 		}
 		else if(self.impulse == 149)
@@ -193,11 +193,11 @@ void() Called_in_PreThink =
 						trace_ent.velocity = trace_ent.velocity + dir3*270;
 						T_DamageOrg(trace_ent, self, self, 40.4, self.origin);
 						
-						sound (trace_ent, CHAN_AUTO, "bloodrailz/weapons/chain_whip.wav", 0.59, ATTN_NORM);
+						sound (trace_ent, CHAN_AUTO, "weap/br_tension.wav", 0.59, ATTN_NORM);
 						
 						if(vlen(self.origin-trace_ent.origin) > 600) 
 						{
-							sound (self, CHAN_AUTO, "bloodrailz/weapons/chain_whip.wav", 0.4, ATTN_NORM);
+							sound (self, CHAN_AUTO, "weap/br_tension.wav", 0.4, ATTN_NORM);
 							//bprint("chain 600\n");
 						}
 
@@ -285,11 +285,11 @@ void() Called_in_PreThink =
 		if (self.axe_powered == 1 && !self.button0)
 		{
 			self.shield_recharge_time = time;
-			sound (self, CHAN_AUTO, "bloodrailz/weapons/shield_pulse.wav", 1, ATTN_NORM);
+			sound (self, CHAN_AUTO, "weap/br_shield.wav", 1, ATTN_NORM);
 			self.axe_powered = 0; 
 			self.shield_time = time;
-			self.weaponmodel = "progs/bloodrailz/v_br_axe_red1.mdl";
-			if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_axe_blu1.mdl";
+			self.weaponmodel = "mdl/v_axe_r.mdl";
+			if (self.height == elohim_team2) self.weaponmodel = "mdl/v_axe_b.mdl";
 		
 			if (self.shields_up == 0) 
 			{
@@ -435,6 +435,8 @@ void() Called_in_PostThink =
 
 			if(self.ski_sound_counter <16) self.frame = 111;
 			else if(self.ski_sound_counter <=32) self.frame = 112;
+			else if(self.ski_sound_counter <=48) self.frame = 111;
+			else if(self.ski_sound_counter <=64) self.frame = 112;
 			else self.frame = 112;
 			setsize (self, VEC_HULL_MIN, '16 16 20');
 	}
@@ -468,7 +470,7 @@ void() Called_in_PostThink =
 	
 	if(self.deadflag == DEAD_DYING || self.deadflag == DEAD_DEAD)	//JANUARY player model gib bug
 	{
-		if(self.model == "progs/bloodrailz/player.md3")
+		if(self.model == "mdl/player.md3")
 		{
 			self.alpha = 0.001;
 		}
@@ -516,8 +518,8 @@ void() Called_in_PostThink =
 			self.ammo_zero_time = time;   //10/8/23
 			if(self.ammo_slugs < 3)
 			{
-				ex_localsound(self, "bloodrailz/weapons/br_ammo_ding.wav");  // ammo added noise
-				ex_localsound(self, "bloodrailz/items/br_loot.wav");  // ammo added noise
+				ex_localsound(self, "weap/br_ammo.wav");  // ammo added noise
+				ex_localsound(self, "item/br_loot.wav");  // ammo added noise
 			}
 			
 			if(self.ammo_slugs <3) self.ammo_slugs +=1;
@@ -534,8 +536,8 @@ void() Called_in_PostThink =
 			self.ammo_zero_time = time;   //10/8/23
 			if(self.ammo_slugs < 3)
 			{
-				ex_localsound(self, "bloodrailz/weapons/br_ammo_ding.wav");  // ammo added noise
-				ex_localsound(self, "bloodrailz/items/br_loot.wav");  // ammo added noise
+				ex_localsound(self, "weap/br_ammo.wav");  // ammo added noise
+				ex_localsound(self, "item/br_loot.wav");  // ammo added noise
 			}
 			if(self.ammo_slugs <3) self.ammo_slugs +=1;
 		}
@@ -775,8 +777,17 @@ void(entity inflictor, vector org, entity attacker, float radius, float damage, 
 					}
 					if(head.shields_up !=1) 
 					{
-						T_DamageOrg (head, inflictor, attacker, damage, org);
-						head.armorvalue -= damage/2;
+						if(head != attacker)
+						{
+							T_DamageOrg (head, inflictor, attacker, damage, org);
+							head.armorvalue -= damage/2;
+						}
+						else                  //if plasma belongs to attacker, deal half damage
+						{
+							T_DamageOrg (head, inflictor, attacker, damage, org);
+							head.health = head.health + damage/2;
+							head.armorvalue -= damage/4;
+						}
 					}
 				}			
 			}
@@ -977,7 +988,7 @@ void () LandingCheck =
 	
         if (self.health > 0)
         {
-            if (self.watertype == CONTENT_WATER) sound (self, CHAN_BODY, "bloodrailz/player/br_splash.wav", 1, ATTN_NORM);
+            if (self.watertype == CONTENT_WATER) sound (self, CHAN_BODY, "body/br_splash.wav", 1, ATTN_NORM);
             else if ((((self.jump_flag < -900 || vlen(self.velocity) > 1200) && self.weapon == IT_AXE && v_ang_x > 40 && v_ang_x < 120) || ((self.player_flag & PF_ITEM_RUNE2_FLAG) && self.jump_flag < -900 && time - thor_strike_time < 1.5)) )                     // Thor smash //THOR STRIKE only when holding axe - no fall damage, but explosion particle effect at 950 vertical speed, 1200 ->1500
             {
 		
@@ -1008,10 +1019,10 @@ void () LandingCheck =
             }
             else
                 {
-			if(random()<0.33) sound (self, CHAN_AUTO, "bloodrailz/player/br_land1.wav", 0.7, ATTN_NORM);  // 1 -> 0.5      
-			else if(random()<0.62) sound (self, CHAN_AUTO, "bloodrailz/player/br_land2.wav", 0.7, ATTN_NORM);
-			else if(random()<0.8) sound (self, CHAN_AUTO, "bloodrailz/player/br_land3.wav", 0.7, ATTN_NORM);
-			else if(random()<=1) sound (self, CHAN_AUTO, "bloodrailz/player/br_land4.wav", 0.7, ATTN_NORM);
+			if(random()<0.33) sound (self, CHAN_AUTO, "body/br_land1.wav", 0.7, ATTN_NORM);  // 1 -> 0.5      
+			else if(random()<0.62) sound (self, CHAN_AUTO, "body/br_land2.wav", 0.7, ATTN_NORM);
+			else if(random()<0.8) sound (self, CHAN_AUTO, "body/br_land3.wav", 0.7, ATTN_NORM);
+			else if(random()<=1) sound (self, CHAN_AUTO, "body/br_land4.wav", 0.7, ATTN_NORM);
 		}
     
             self.jump_flag = 0;
@@ -1062,8 +1073,8 @@ void() PlayerJump =
 		if (self.swim_flag < time)  // play swiming sound
 		{
 			self.swim_flag = time + 1;
-			if (random() < 0.5) 		sound (self, CHAN_BODY, "bloodrailz/misc/br_water1.wav", 1, ATTN_NORM);
-			else 				sound (self, CHAN_BODY, "bloodrailz/misc/br_water2.wav", 1, ATTN_NORM);
+			if (random() < 0.5) 		sound (self, CHAN_BODY, "misc/br_water1.wav", 1, ATTN_NORM);
+			else 				sound (self, CHAN_BODY, "misc/br_water2.wav", 1, ATTN_NORM);
 		}
 		return;
 	}
@@ -1082,20 +1093,20 @@ void() PlayerJump =
 	
 	if(self.angles_not_zero ==0) // && !self.landed_on_decline)   //dont make jumping noise if wallrunning
 	{
-		if (random() < 0.6) 
+		if (random() < 0.4) 
 		{
-			sound (self, CHAN_BODY, "bloodrailz/player/br_jump1.wav", 0.59, ATTN_NORM);   // 1 -> 0.9
-			//ex_localsound(self, "bloodrailz/player/br_jump1.wav");
+			sound (self, CHAN_BODY, "body/br_jmp1.wav", 0.57, ATTN_NORM);   // 1 -> 0.9
+			//ex_localsound(self, "body/br_jmp1.wav");
 		}
-		else if (random() < 0.8) 
+		else if (random() < 0.7) 
 		{
-			sound (self, CHAN_BODY, "bloodrailz/player/br_jump2.wav", 0.59, ATTN_NORM);  
-			//ex_localsound(self, "bloodrailz/player/br_jump2.wav");
+			sound (self, CHAN_BODY, "body/br_jmp2.wav", 0.57, ATTN_NORM);  
+			//ex_localsound(self, "body/br_jmp2.wav");
 		}
 		else 
 		{
-			sound (self, CHAN_BODY, "bloodrailz/player/br_jump3.wav", 0.59, ATTN_NORM);   // alternative jump noise
-			//ex_localsound(self, "bloodrailz/player/br_jump3.wav");
+			sound (self, CHAN_BODY, "body/br_jmp3.wav", 0.57, ATTN_NORM);   // alternative jump noise
+			//ex_localsound(self, "body/br_jmp3.wav");
 		}
 		
 	}
@@ -1130,7 +1141,7 @@ void(vector origin, float _alpha, float _frame) make_power =
 {
 	local entity power;
 	power = spawn();
-	setmodel (power, "progs/bloodrailz/ef_power.mdl");
+	setmodel (power, "mdl/ef_power.mdl");
 	if (pointcontents(origin + '0 0 5') != CONTENT_SOLID) setorigin(power, origin + '0 0 5');  //added this condition so that the power splash draws when firing at ceiling
 	else setorigin(power, origin + '0 0 0');
 	power.frame = 6;   //6 -> 7
@@ -1181,7 +1192,7 @@ void() make_aura =
 {
 	local entity aura;
 	aura = spawn();
-	setmodel (aura, "progs/bloodrailz/ef_aura1.mdl");
+	setmodel (aura, "mdl/ef_aura1.mdl");
 	setorigin(aura, self.origin + '0 0 8');
 	aura.movetype = MOVETYPE_NOCLIP;
 	aura.solid = SOLID_NOT;
@@ -1231,7 +1242,7 @@ void() DeathAura =              //Death Aura effect
 							{
 								T_DamageOrg (head, self, self, 51, self.origin);     //changed damage value for armor damage logic
 								make_aura();
-								sound(self, CHAN_AUTO, "bloodrailz/items/br_zap.wav", 1, ATTN_NORM);
+								sound(self, CHAN_AUTO, "item/br_zap.wav", 1, ATTN_NORM);
 								//bprint("Death Aura\n");
 							}
 							death_aura_counter+=1;
@@ -1259,7 +1270,7 @@ void() DeathAura =              //Death Aura effect
 							{
 							T_DamageOrg (head, self, self, 51, self.origin);     //changed damage value for armor damage logic
 							make_aura();
-							sound(self, CHAN_AUTO, "bloodrailz/items/br_zap.wav", 1, ATTN_NORM);
+							sound(self, CHAN_AUTO, "item/br_zap.wav", 1, ATTN_NORM);
 							//bprint("Death Aura\n");
 							}
 							death_aura_counter+=1;
@@ -1290,7 +1301,7 @@ void() DeathAura =              //Death Aura effect
 							{
 								T_Damage (head, self, self, 51);     //changed damage value for armor damage logic
 								make_aura();
-								sound(self, CHAN_AUTO, "bloodrailz/items/br_zap.wav", 1, ATTN_NORM);
+								sound(self, CHAN_AUTO, "item/br_zap.wav", 1, ATTN_NORM);
 								//bprint("Death Aura\n");
 							}
 							death_aura_counter+=1;
@@ -1364,20 +1375,20 @@ void() update_crown =
 	
 	
 	/*
-	if(self.owner.teleport_time == time +0.7) setmodel (self, "progs/bloodrailz/null.spr");
+	if(self.owner.teleport_time == time +0.7) setmodel (self, "mdl/null.spr");
 	else if (self.owner.teleport_time > time +0.6)
 	{
 		//bprint("switch up");
-		if(self.owner.height == elohim_team2) setmodel (self, "progs/bloodrailz/null_trail.mdl");
-		else setmodel (self, "progs/bloodrailz/null_trail_gre.mdl");
+		if(self.owner.height == elohim_team2) setmodel (self, "mdl/null_trail.mdl");
+		else setmodel (self, "mdl/null_trail_gre.mdl");
 	}
 	
-	if(self.print_killa == 1 || (self.deadflag == DEAD_DYING) || (self.deadflag == DEAD_DEAD)) setmodel (self, "progs/bloodrailz/null.spr");    
-	else if(self.model == "progs/bloodrailz/null.spr" && (self.print_killa == 0 && (self.deadflag != DEAD_DYING) && (self.deadflag != DEAD_DEAD)))
+	if(self.print_killa == 1 || (self.deadflag == DEAD_DYING) || (self.deadflag == DEAD_DEAD)) setmodel (self, "mdl/null.spr");    
+	else if(self.model == "mdl/null.spr" && (self.print_killa == 0 && (self.deadflag != DEAD_DYING) && (self.deadflag != DEAD_DEAD)))
 	{
 		//bprint("switch up");
-		if(self.owner.height == elohim_team2) setmodel (self, "progs/bloodrailz/null_trail.mdl");
-		else setmodel (self, "progs/bloodrailz/null_trail_gre.mdl");
+		if(self.owner.height == elohim_team2) setmodel (self, "mdl/null_trail.mdl");
+		else setmodel (self, "mdl/null_trail_gre.mdl");
 		
 	}
 	*/
@@ -1422,11 +1433,11 @@ void() make_crown =
 	//local entity crown;
 	crown_ent = spawn();
 	
-	//if(self.height == elohim_team1) setmodel (crown, "progs/bloodrailz/null_trail_gre.mdl");
-	//else setmodel (crown, "progs/bloodrailz/null_trail.mdl");
+	//if(self.height == elohim_team1) setmodel (crown, "mdl/null_trail_gre.mdl");
+	//else setmodel (crown, "mdl/null_trail.mdl");
 	
-	if(self.height == elohim_team2) setmodel (crown_ent, "progs/bloodrailz/null_trail.mdl");
-	else setmodel (crown_ent, "progs/bloodrailz/null_trail_gre.mdl");
+	if(self.height == elohim_team2) setmodel (crown_ent, "mdl/null_trail.mdl");
+	else setmodel (crown_ent, "mdl/null_trail_gre.mdl");
 	
 	setorigin(crown_ent, self.origin + '0 0 40');
 	crown_ent.movetype = MOVETYPE_NOCLIP;
@@ -1474,13 +1485,13 @@ void(vector z_offset, float shockwave) make_impact =
 	WriteCoord (MSG_BROADCAST, exp_org_x);
 	WriteCoord (MSG_BROADCAST, exp_org_y);
 	WriteCoord (MSG_BROADCAST, exp_org_z);
-        sound (self, CHAN_AUTO, "bloodrailz/weapons/br_explosion.wav", 0.75, ATTN_NORM);
+        sound (self, CHAN_AUTO, "weap/br_explo.wav", 0.75, ATTN_NORM);
 	
 	
 	if(shockwave ==1)
 	{
 		impact = spawn();
-		setmodel (impact, "progs/bloodrailz/ef_thor_big.mdl");
+		setmodel (impact, "mdl/ef_thor.mdl");
 		impact.skin = 0;
 		impact.frame = 0;
     
@@ -1778,7 +1789,7 @@ void() CheckPowerups =
 	{
 		if (self.invisible_sound < time)
 		{
-			sound (self, CHAN_AUTO, "bloodrailz/items/br_inv3.wav", 0.5, ATTN_IDLE);
+			sound (self, CHAN_AUTO, "item/br_inv3.wav", 0.5, ATTN_IDLE);
 			self.invisible_sound = time + ((random() * 3) + 1);
 		}
 
@@ -1789,7 +1800,7 @@ void() CheckPowerups =
 			{
 				sprint (self, "Adaptive camouflage is running out\n");
 				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "bloodrailz/items/br_inv2.wav", 1, ATTN_NORM);
+				sound (self, CHAN_AUTO, "item/br_inv2.wav", 1, ATTN_NORM);
 				self.invisible_time = time + 1;
 			}
 			
@@ -1866,7 +1877,7 @@ void() CheckPowerups =
 			if (self.invincible_time == 1)
 			{
 				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "bloodrailz/items/br_protect2.wav", 1, ATTN_NORM);
+				sound (self, CHAN_AUTO, "item/br_protec2.wav", 1, ATTN_NORM);
 				self.invincible_time = time + 1;
 			}
 			
@@ -1897,7 +1908,7 @@ void() CheckPowerups =
 			{
 				sprint (self, "Quad Damage is wearing off\n");
 				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "bloodrailz/items/br_damage2.wav", 1, ATTN_NORM);
+				sound (self, CHAN_AUTO, "item/br_dmg1.wav", 1, ATTN_NORM);
 				self.super_time = time + 1;
 			}	  
 			
@@ -2040,26 +2051,26 @@ void() racing_countdown =
 				if(countdown_ct == 60)
 				{
 					bprint("3\n");
-					sound(self, CHAN_AUTO, "bloodrailz/weapons/axe_charge.wav", 0.5, ATTN_NORM);
+					sound(self, CHAN_AUTO, "weap/br_charged.wav", 0.5, ATTN_NORM);
 
 				}
 				
 				else if(countdown_ct == 120)
 				{
 					bprint("2\n");
-					sound(self, CHAN_AUTO, "bloodrailz/weapons/axe_charge.wav", 0.5, ATTN_NORM);
+					sound(self, CHAN_AUTO, "weap/br_charged.wav", 0.5, ATTN_NORM);
 				}
 				
 				else if(countdown_ct == 180)
 				{
 					bprint("1\n");
-					sound(self, CHAN_AUTO, "bloodrailz/weapons/axe_charge.wav", 0.5, ATTN_NORM);
+					sound(self, CHAN_AUTO, "weap/br_charged.wav", 0.5, ATTN_NORM);
 				}
 				
 				else if(countdown_ct == 240)
 				{
 					bprint("GO!!!\n");
-					sound(self, CHAN_AUTO, "bloodrailz/misc/br_ding1.wav", 1, ATTN_NORM);
+					sound(self, CHAN_AUTO, "misc/br_ding1.wav", 1, ATTN_NORM);
 					chrono_time = time;
 					racing_on_global = 1;
 				}

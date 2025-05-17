@@ -426,16 +426,15 @@ void() func_door =
 	
 	if (self.sounds == 0)
 	{
-		precache_sound ("bloodrailz/triggers/br_null.wav");
-		self.noise1 = "bloodrailz/triggers/br_null.wav";
-		self.noise2 = "bloodrailz/triggers/br_null.wav";
+		self.noise1 = "trig/br_null.wav";
+		self.noise2 = "trig/br_null.wav";
 	}
 	if (self.sounds == 1 || self.sounds == 2 || self.sounds == 3 || self.sounds == 4)
 	{
-		precache_sound ("bloodrailz/triggers/br_door_close.wav");
-		precache_sound ("bloodrailz/triggers/br_door.wav");
-		self.noise1 = "bloodrailz/triggers/br_door_close.wav";
-		self.noise2 = "bloodrailz/triggers/br_door.wav";
+		precache_sound ("trig/br_doorcl.wav");
+		precache_sound ("trig/br_door.wav");
+		self.noise1 = "trig/br_doorcl.wav";
+		self.noise2 = "trig/br_door.wav";
 	}
 
 

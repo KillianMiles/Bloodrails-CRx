@@ -1,17 +1,7 @@
-void () spawn_ctf_entities;
-void () update_ctf_entities;
-
-
-
-void () spawn_pubtdm_entities =
-{
-
-};
-
-void () update_pubtdm_entities =
-{
-
-};
+void () spawn_pubtdm_entities ={};
+void () update_pubtdm_entities ={};
+void () spawn_ctf_entities = {};
+void () update_ctf_entities ={};
 
 void () spawn_race_entities =
 {
@@ -85,57 +75,19 @@ void () spawn_race_entities =
 
 	}
 
-
 };
-
-
 
 
 
 void () spawn_new_entities =
 {
-	if (elohim_playmode & CLANRING_CTF_MODE)
-	{
-		spawn_ctf_entities();
-	}
-	else if (elohim_playmode & DM_PUBLIC_MODE)
-	{
-		spawn_pubtdm_entities();
-	}
-	else if(elohim_playmode & RACE_MODE)
-	{
-		spawn_race_entities();
-	}
-	
-};
-
-void () remove_pent =
-{
-	utils_do_item(SUB_Remove, "item_artifact_invulnerability");
-	remove(self);
+	if (elohim_playmode & CLANRING_CTF_MODE) spawn_ctf_entities();
+	else if (elohim_playmode & DM_PUBLIC_MODE) spawn_pubtdm_entities();
+	else if(elohim_playmode & RACE_MODE) spawn_race_entities();
 };
 
 void () update_old_entities = 
 {
-	if (elohim_playmode & CLANRING_CTF_MODE)
-	{
-		update_ctf_entities();
-	}
-	else if (elohim_playmode & DM_PUBLIC_MODE)
-	{
-		update_pubtdm_entities();
-	}
-};
-
-
-
-void () spawn_ctf_entities =
-{
-
-  
-};
-
-void () update_ctf_entities =
-{
-
+	if (elohim_playmode & CLANRING_CTF_MODE) update_ctf_entities();
+	else if (elohim_playmode & DM_PUBLIC_MODE) update_pubtdm_entities();
 };

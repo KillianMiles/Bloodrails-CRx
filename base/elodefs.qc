@@ -72,10 +72,10 @@ float ELOHIM_NO_ARMOR = 2048;			// disable spooging in practice mode -- replaced
 float ELOHIM_NOAMMO = 4096;			// CRMOD is server using Qsmack?
 float ELOHIM_EXTENDED_OBITS = 8192;
 float CLANRING_CTF_MODE = 16384;
-float AIR_ARENA_MODE = 32768;
+float UNUSED1 = 32768;
 float ELOHIM_AURA = 65536;                //DEATH AURA EFFECT
 float CLANRING_RUNES = 131072;
-float ROCKET_ARENA_MODE = 262144;
+float UNUSED2 = 262144;
 float ELOHIM_NO_HOOK = 524288;
 float ELOHIM_NO_THROWABLES = 1048576;
 float ELOHIM_NO_SPAWN_PROTECT = 2097152;           
@@ -85,7 +85,7 @@ float ELOHIM_LOW_GIBS = 8388608;           //moved down
 float ELOHIM_NO_GIBS = 16777216;          //moved down
 float RACE_MODE = 33554432;      //moved down
 float ELOHIM_GG_MOD = 67108864;              //moved down
-float CLAN_ARENA_MODE = 134217728;            //moved down
+float UNUSED3 = 134217728;            //moved down
 float ELOHIM_NO_RING = 268435456;
 float CRMOD_QSMACK_ON = 536870912;	
 
@@ -105,9 +105,6 @@ float ADMIN_CTF_MATCH_MODE = 3;
 float ADMIN_DM_PUBLIC_MODE = 4;
 float ADMIN_MATCH_MODE = 5;
 
-float ADMIN_RA_MODE = 6;
-float ADMIN_CA_MODE = 7;
-float ADMIN_AIR_MODE = 8;
 
 string ADMIN_NORMAL_MODE_STRING = "Bloodrailz CRx (FFA)";                //host names
 string ADMIN_RACE_MODE_STRING = "Bloodrailz CRx (Race)";
@@ -115,9 +112,6 @@ string ADMIN_MATCH_MODE_STRING = "Bloodrailz CRx (TDM-match)";
 string ADMIN_DM_PUBLIC_MODE_STRING = "Bloodrailz CRx (Pub-TDM)";
 string ADMIN_CTF_MATCH_MODE_STRING = "Bloodrailz CRx (CTF-match)";
 string ADMIN_CTF_PUBLIC_MODE_STRING = "Bloodrailz CRx (Pub-CTF)";
-string ADMIN_RA_MODE_STRING = "Rocket Arena";
-string ADMIN_CA_MODE_STRING = "Clan Arena";
-string ADMIN_AIR_MODE_STRING = "1v1 Air Shot";
 
 // elohim global variables
 float elohim_player_ids;    // used for assigning unique player ID's
@@ -166,7 +160,7 @@ float elohim_teamfrags2;        // team 2 score
 float elohim_matchteams;       // number of teams in match (CAx)
 float elohim_maxsize;           // maximum allowed team size
 entity elohim_match_timer;      // used to time match
-entity boss;
+
 .entity chain_gang;
 
 // score global variables
@@ -195,8 +189,6 @@ entity crmod_best_chase_target; // calculated every second who is the best targe
 entity crmod_best_camera;       // set after each camera's think
 
 // client variables
-.vector crmod_qdwep;  // vector to keep track of quad weapon stats	// CRMOD - stats
-.vector crmod_qdkill; // vector to keep track of quad kill stats	// CRMOD - stats
 .entity crmod_othertarget; // entity to focus on in tourneycam		// CRMOD - tourneycam
 .entity crmod_inflicted;   // stores entity last attacked			// CRMOD - combat
 .float crmod_chase_score;  // same as above, also used by cameras
@@ -364,31 +356,9 @@ void () userdefs_init_world =
 
 
 
-
-
-
-////////////// mostly unused arena stuff
-
-
 .float dmg_tally;
 .float round;
-.float arena_flag;
 .float team2;
 
 
-float arena_max_teams = 4;
-
-float COLOR_YELLOW = 12;
-float COLOR_GREEN = 3;
-
-float AF_CA_READY = 1;
-float AF_CA_PLAYING = 2;
-float AF_CA_DEAD = 3;
-float AF_CA_WAITING = 4;
-
-float CA_MATCH_WAITING = 1;
-float CA_MATCH_ROUNDSTART = 2;
-float CA_MATCH_PLAYING = 3;
-float CA_MATCH_OVER = 4;
-float CA_MATCH_CLEANUP = 5;
 

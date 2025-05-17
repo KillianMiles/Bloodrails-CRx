@@ -47,7 +47,7 @@ void() make_railpop =
 
 	
 	impact = spawn();
-	setmodel (impact, "progs/bloodrailz/ef_rail_pop1.mdl");
+	setmodel (impact, "mdl/ef_railpop.mdl");
 	
 	
 	if (self.height == elohim_team1) impact.skin = 1;   //red
@@ -113,7 +113,7 @@ void(vector org, entity attacker, float radius, entity ignore) Rail_push =      
 						else if(head.skin == 5) head.skin = 6;  
 						
 						head.owner = attacker;
-						sound (attacker, CHAN_AUTO, "bloodrailz/weapons/plasma2.wav",1,ATTN_NORM);
+						sound (attacker, CHAN_AUTO, "weap/br_plasm2.wav",1,ATTN_NORM);
 						
 						if (self.height == elohim_team1) head.skin = 6;   //red
 						else if (self.height == elohim_team2) head.skin = 5;   //blue
@@ -329,15 +329,15 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			
 			else if (traillen < 250) segments = 2;
 			else if (traillen < 300) segments = 2;
-			else if (traillen < 400) segments = 3;
-			else if (traillen < 600) segments = 4;
-			else if (traillen < 800) segments = 5;
-			else if (traillen < 1000) segments = 6;
-			else if (traillen < 1250) segments = 7;
-			else if (traillen < 1750) segments = 9;
-			else if (traillen < 2000) segments = 13; 	 //4,7,10,          13  //5,10,13
-			else if (traillen < 2500) segments = 15;         //4,7,10,13,       15  //5,10,13,15
-			else if (traillen < 3000) segments = 16; //14    //4,7,10,13,       16  //5,10,13,16
+			else if (traillen < 400) segments = 2;
+			else if (traillen < 600) segments = 3;
+			else if (traillen < 800) segments = 4;
+			else if (traillen < 1000) segments = 5;
+			else if (traillen < 1250) segments = 6;
+			else if (traillen < 1750) segments = 8;
+			else if (traillen < 2000) segments = 12; 	 //4,7,10,          13  //5,10,13
+			else if (traillen < 2500) segments = 13;         //4,7,10,13,       15  //5,10,13,15
+			else if (traillen < 3000) segments = 15; //14    //4,7,10,13,       16  //5,10,13,16
 			else if (traillen < 3500) segments = 17; //14    //4,7,10,13,       17  //5,10,13,17
 			else if (traillen < 4000) segments = 19; //16    //4,7,10,13,16,    19  //5,10,13,16,19
 			else if (traillen < 5000) segments = 20; //17    //4,7,10,13,16,    20  //5,10,13,16,20
@@ -348,9 +348,11 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			local float sky_shot =0;
 			if(pointcontents(trace_endpos) == CONTENT_SKY && traillen >= 1000) sky_shot =1;  //rail hits SKY brush so we dont care if rail draws super long
 			
+			//
 			//bprint(ftos(segments));
 			//bprint(" nominal segments\n");
 			//local float count_segs =0;
+			//
 			
 			if((total_players_global > 8 || smoke_ent_number > 8) ) 
 			{
@@ -435,7 +437,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				prj.frame =0;
 		
 			
-				//if(segments == old_seg || segments == 1) setmodel (prj, "progs/bloodrailz/rail1.mdl");   //DRAW THE FIRST AND LAST SEGMENTS AS SHORT MODELS SO STUFF DOESNT POKE THRU WALLS
+				//if(segments == old_seg || segments == 1) setmodel (prj, "mdl/rail1.mdl");   //DRAW THE FIRST AND LAST SEGMENTS AS SHORT MODELS SO STUFF DOESNT POKE THRU WALLS
 			
 
 			
@@ -463,23 +465,23 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				
 				local float low_rotation=0;
 				
-				if (traillen < 200) setmodel (prj, "progs/bloodrailz/rail1.mdl");
-				else if (traillen>=200) setmodel (prj, "progs/bloodrailz/rail1_comp.mdl");
+				if (traillen < 200) setmodel (prj, "mdl/rail1.mdl");
+				else if (traillen>=200) setmodel (prj, "mdl/rail1c.mdl");
 			
 				if(sky_shot==0)
 				{
-					if     (skip==4 && (segments ==5 || segments ==10 || segments==15 || segments==20)) 		{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
-					else if(skip==3 && (segments ==5 || segments ==10 || segments==15)) 				{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
-					else if(skip==2 && (segments ==5 || segments ==10)) 						{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
-					else if(skip==1 && (segments ==5)) 								{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					if     (skip==4 && (segments ==5 || segments ==10 || segments==15 || segments==20)) 		{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
+					else if(skip==3 && (segments ==5 || segments ==10 || segments==15)) 				{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
+					else if(skip==2 && (segments ==5 || segments ==10)) 						{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
+					else if(skip==1 && (segments ==5)) 								{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
 				}
 				else if(sky_shot==1)
 				{
-					if     (sky_skip==5 && (segments ==5 || segments ==10 || segments==13 || segments==16 || segments==19 || segments==old_seg)) 	{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
-					else if(sky_skip==4 && (segments ==5 || segments ==10 || segments==13 || segments==16 || segments==old_seg))  			{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
-					else if(sky_skip==3 && (segments ==5 || segments ==10 || segments==13 ||segments==old_seg)) 					{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
-					else if(sky_skip==2 && (segments ==5 || segments ==10 || segments==old_seg))							{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
-					else if(sky_skip==1 && (segments ==5 || segments==old_seg))									{setmodel (prj, "progs/bloodrailz/rail1_comp_450.mdl"); low_rotation =1;}
+					if     (sky_skip==5 && (segments ==5 || segments ==10 || segments==13 || segments==16 || segments==19 || segments==old_seg)) 	{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
+					else if(sky_skip==4 && (segments ==5 || segments ==10 || segments==13 || segments==16 || segments==old_seg))  			{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
+					else if(sky_skip==3 && (segments ==5 || segments ==10 || segments==13 ||segments==old_seg)) 					{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
+					else if(sky_skip==2 && (segments ==5 || segments ==10 || segments==old_seg))							{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
+					else if(sky_skip==1 && (segments ==5 || segments==old_seg))									{setmodel (prj, "mdl/rail1c450.mdl"); low_rotation =1;}
 				}
 				
 				if(traillen >= 200)
@@ -527,11 +529,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			
 			segments = segments - 1;	
 			
-			//if(segments==0)
-			//{
-			//	bprint(ftos(count_segs));
-			//	bprint(" actual segments\n");
-			//}
+			//if(segments==0) { bprint(ftos(count_segs)); bprint(" actual segments\n");}
 	
 		}
 	}
@@ -562,7 +560,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 		
 		prj.touch = SUB_Null;
 		prj.classname = "railtrail";
-		setmodel (prj, "progs/bloodrailz/rail1_comp.mdl");
+		setmodel (prj, "mdl/rail1c.mdl");
 				
 		setsize (prj, 0, 0);	
 		
@@ -758,11 +756,10 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 				prj.touch = SUB_Null;
 				prj.classname = "railtrail";
 		
-				if((short_seg == 1 && pointCount == 14) || (short_seg == 1 && pointCount >= 6 && count <(pointCount-4)))        setmodel (prj, "progs/bloodrailz/rail1.mdl");
-				else if(short_seg == 1 && pointCount != 14) 									setmodel (prj, "progs/bloodrailz/rail0.mdl");
-				else					   									setmodel (prj, "progs/bloodrailz/rail1_comp.mdl");  //blahnew
+				if((short_seg == 1 && pointCount == 14) || (short_seg == 1 && pointCount >= 6 && count <(pointCount-4)))        setmodel (prj, "mdl/rail1.mdl");
+				else if(short_seg == 1 && pointCount != 14) 									setmodel (prj, "mdl/rail0.mdl");
+				else					   									setmodel (prj, "mdl/rail1c.mdl");  //blahnew
 			
-				//if(short_seg == 1) setmodel (prj, "progs/bloodrailz/rail1_comp_fifth.mdl");
 					
 				setsize (prj, 0, 0);	
 		
@@ -843,14 +840,14 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 				prj.velocity = '0 0 0';	
 		
 		
-				if(vlen(dir) < 20) setmodel (prj, "progs/bloodrailz/rail_a.mdl");
-				else if (vlen(dir) < 33) setmodel (prj, "progs/bloodrailz/rail_b.mdl");
-				else if (vlen(dir) < 45) setmodel (prj, "progs/bloodrailz/rail_b1.mdl");
-				else if (vlen(dir) < 75) setmodel (prj, "progs/bloodrailz/rail_c.mdl");
-				else if (vlen(dir) < 120) setmodel (prj, "progs/bloodrailz/rail1_comp120.mdl");  //120 length	
-				//else if (vlen(dir) < 240) setmodel (prj, "progs/bloodrailz/rail_e.mdl");  //232 length
-				//else if (vlen(dir) < 295) setmodel (prj, "progs/bloodrailz/rail_f.mdl");  //289 length
-				//else if (vlen(dir) < 400) setmodel (prj, "progs/bloodrailz/rail_g.mdl");  //376 length
+				if(vlen(dir) < 20) setmodel (prj, "mdl/rail_a.mdl");
+				else if (vlen(dir) < 33) setmodel (prj, "mdl/rail_b.mdl");
+				else if (vlen(dir) < 45) setmodel (prj, "mdl/rail_b1.mdl");
+				else if (vlen(dir) < 75) setmodel (prj, "mdl/rail_c.mdl");
+				else if (vlen(dir) < 120) setmodel (prj, "mdl/rail1c120.mdl");  //120 length	
+				//else if (vlen(dir) < 240) setmodel (prj, "mdl/rail_e.mdl");  //232 length
+				//else if (vlen(dir) < 295) setmodel (prj, "mdl/rail_f.mdl");  //289 length
+				//else if (vlen(dir) < 400) setmodel (prj, "mdl/rail_g.mdl");  //376 length
 		
 		
 		
@@ -948,8 +945,8 @@ void() FlickCurves=
 		self.rail_powered = 0;
 		self.shot_time = time; //start regular railgun recharge timer
 		
-		self.weaponmodel = "progs/bloodrailz/v_br_rail_red1.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_blu1.mdl";
+		self.weaponmodel = "mdl/v_rail_r.mdl";
+		if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
 		
 		//END // THIS HAPPENS IF NO TARGET IS FOUND
 		if(self.lastButton0)
@@ -1100,13 +1097,16 @@ void() FlickCurves=
 					
 					self.ammo_slugs = self.ammo_slugs -1;
 				
-					local float randrail = random()*3;
+					local float randrail = random()*4;
     
-					if (randrail < 1 || randrail == 1 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
+					if (randrail <=1) sound (self, CHAN_AUTO, "weap/br_rail1.wav",1,ATTN_NORM);
 					else
-					if (randrail > 1 && randrail < 2) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun1.wav",1,ATTN_NORM);
+					if (randrail <=2) sound (self, CHAN_AUTO, "weap/br_rail2.wav",1,ATTN_NORM);
 					else
-					if (randrail < 3 || randrail == 2 || randrail ==3 ) sound (self, CHAN_AUTO, "bloodrailz/weapons/railgun2.wav",1,ATTN_NORM);
+					if (randrail <=3) sound (self, CHAN_AUTO, "weap/br_rail3.wav",1,ATTN_NORM);
+					else
+					if (randrail <=4) sound (self, CHAN_AUTO, "weap/br_rail4.wav",1,ATTN_NORM);
+					
 				}
 			}
 		}//end button up
@@ -1187,10 +1187,11 @@ void() W_FireRailgun =
 	makevectors(self.v_angle);             
 	
 
-	local float n = random()*3;
-	if (n <= 1) 	sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.3,ATTN_NORM);
-	else if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.3,ATTN_NORM);
-	else if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.3,ATTN_NORM);
+	local float n = random()*4;
+	if (n <= 1) 	sound (self, CHAN_WEAPON, "weap/br_ric1.wav",0.5,ATTN_NORM);
+	else if (n <=2) sound (self, CHAN_WEAPON, "weap/br_ric2.wav",0.5,ATTN_NORM);
+	else if (n <=3) sound (self, CHAN_WEAPON, "weap/br_ric3.wav",0.5,ATTN_NORM);
+	else if (n <=4) sound (self, CHAN_AUTO, "weap/br_rail5.wav",0.75,ATTN_NORM);
     
     
 
@@ -1231,7 +1232,7 @@ void() W_FireRailgun =
 					end_found_z = 0;
 					
 					
-					if(fabs(end_ent_x - end_found_x) < 8 && fabs(end_ent_y - end_found_y) < 8) ex_localsound(self, "bloodrailz/misc/headshot.wav");  // headshot announcement
+					if(fabs(end_ent_x - end_found_x) < 8 && fabs(end_ent_y - end_found_y) < 8) ex_localsound(self, "misc/headshot.wav");  // headshot announcement
 					
 				}
 				*/
@@ -1276,7 +1277,7 @@ void() W_FireRailgun =
 			{
 				if (self.player_flag & PF_ITEM_RUNE2_FLAG)
 				{
-					if(random() > 0.5) 	sound(self, CHAN_AUTO, "bloodrailz/items/br_damage3.wav", 0.5, ATTN_NORM);
+					if(random() > 0.5) 	sound(self, CHAN_AUTO, "item/br_dmg2.wav", 0.5, ATTN_NORM);
 					make_power(trace_endpos, 0.7, 6);
 				
 					local entity head;
@@ -1474,7 +1475,7 @@ void() T_MissileTouch =
 
 
 
-//	sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_explosion.wav", 1, ATTN_NORM);
+//	sound (self, CHAN_WEAPON, "weap/br_explo.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
 
 	if(other.classname == "player")
@@ -1558,13 +1559,11 @@ void() W_FireProjectile =
 	
 	
 	
-	local float n = random()*3;
-    
-	if (n <= 1) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric1.wav",0.3,ATTN_NORM);
-	else
-	if (n <=2) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric2.wav",0.3,ATTN_NORM);
-	else
-	if (n <=3) sound (self, CHAN_WEAPON, "bloodrailz/weapons/br_ric3.wav",0.3,ATTN_NORM);
+	local float n = random()*4;
+	if (n <= 1) 	sound (self, CHAN_WEAPON, "weap/br_ric1.wav",0.5,ATTN_NORM);
+	else if (n <=2) sound (self, CHAN_WEAPON, "weap/br_ric2.wav",0.5,ATTN_NORM);
+	else if (n <=3) sound (self, CHAN_WEAPON, "weap/br_ric3.wav",0.5,ATTN_NORM);
+	else if (n <=4) sound (self, CHAN_AUTO, "weap/br_rail5.wav",0.75,ATTN_NORM);
 
 	//self.punchangle_x = -2;
 	makevectors(self.v_angle);   
@@ -1602,7 +1601,7 @@ void() W_FireProjectile =
 	missile.nextthink = time + my_ticrate*1;
 	missile.think = update_projectile;
 
-	setmodel (missile, "progs/bloodrailz/null_trail.mdl");
+	setmodel (missile, "mdl/null_trail.mdl");
 	setsize (missile, '0 0 0', '0 0 0');		
 	setorigin (missile, self.origin + v_forward*8 + '0 0 16');
 	
@@ -1868,18 +1867,17 @@ void() Rail_Charge_Logic=
 				self.rail_powered = 1;
 				self.rail_power_time = time;
 				
-				sound (self, CHAN_WEAPON, "bloodrailz/weapons/axe_charge.wav", 1, ATTN_NORM);
-				//sound (self, CHAN_AUTO, "bloodrailz/weapons/charge_up.wav", 1, ATTN_NORM);
+				sound (self, CHAN_WEAPON, "weap/br_charged.wav", 1, ATTN_NORM);
 				//sprint(self, "mag-field energized\n");
 			
-				self.weaponmodel = "progs/bloodrailz/v_br_rail_redzz.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_bluzz.mdl";
+				self.weaponmodel = "mdl/v_rail_rr.mdl";
+				if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_bb.mdl";
 				self.weaponframe = 0;
 			}
 			
 			else if (time - self.mag_recharge_time <= RECHARGE && self.mag_recharge_time != 0)	
 			{
-				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+1) && self.rail_power_time != 0 && self.rail_powered == 0) sound (self, CHAN_WEAPON, "bloodrailz/misc/br_depleted.wav", 0.9, ATTN_NORM);
+				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+1) && self.rail_power_time != 0 && self.rail_powered == 0) sound (self, CHAN_WEAPON, "misc/br_deplete.wav", 0.9, ATTN_NORM);
 				if (time - self.rail_power_time > CHARGE_DUR && time - self.rail_power_time < (CHARGE_DUR+0.024) && self.rail_power_time != 0 && self.rail_powered == 0) sprint(self, "mag-field depleted\n");
 			
 			}
@@ -1892,11 +1890,11 @@ void() Rail_Charge_Logic=
 			self.mag_recharge_time = time;
 				
 				
-				sound (self, CHAN_AUTO, "bloodrailz/weapons/slowdn.wav", 0.7, ATTN_NORM);
+				sound (self, CHAN_AUTO, "weap/br_slowdn.wav", 0.7, ATTN_NORM);
 				sprint(self, "mag-field depleted\n");
 			
-				self.weaponmodel = "progs/bloodrailz/v_br_rail_red1.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "progs/bloodrailz/v_br_rail_blu1.mdl";
+				self.weaponmodel = "mdl/v_rail_r.mdl";
+				if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
 				self.weaponframe = 0;
 		}
 	

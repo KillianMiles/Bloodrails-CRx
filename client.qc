@@ -99,20 +99,6 @@ void() SetPracticeParms =
     parm9 = 80;
 };
 
-void() SetClanArenaParms =
-{
-	parm1 = IT_SHOTGUN | IT_AXE | IT_ROCKET_LAUNCHER | IT_ARMOR3 |
-			IT_RAILGUN | IT_NAILGUN | IT_GRENADE_LAUNCHER |
-			IT_LIGHTNING | IT_SUPER_NAILGUN;
-	parm2 = (elohim_playmode & AIR_ARENA_MODE) ? 250 : 100;
-	parm3 = 200;
-    parm4 = (elohim_playmode & AIR_ARENA_MODE) ? 0 : 100;
-    parm5 = (elohim_playmode & AIR_ARENA_MODE) ? 0 : 200;
-    parm6 = 100;
-    parm7 = (elohim_playmode & AIR_ARENA_MODE) ? 0 : 100;
-    parm8 = 2;
-    parm9 = 80;
-};
 
 //
 //  Called by Quake server when a new client connects
@@ -121,8 +107,6 @@ void() SetNewParms =
 {
     if (elohim_playmode & RACE_MODE)
         SetPracticeParms();
-	else if (mode_is_arena())
-		SetClanArenaParms();
 	else
 	{
 		parm1 = IT_RAILGUN | IT_AXE | IT_HOOK;
@@ -876,7 +860,7 @@ void() PutDummyInServer =
 	setorigin(dummy, spot.origin + '0 0 80');	//R00k: change our origin and relink our edict.
 	dummy.oldorigin = dummy.origin;			//R00k: update oldorigin so we dont respawn where we died.
 
-	setmodel(dummy, "progs/bloodrailz/player.md3");
+	setmodel(dummy, "mdl/player.md3");
 	dummy.skin = 0;
 	dummy.frame = 18;
 
@@ -1023,7 +1007,7 @@ void() PutClientInServer =
 // oh, this is a hack!
 
 
-	setmodel(self, "progs/bloodrailz/player.md3");
+	setmodel(self, "mdl/player.md3");
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
 	self.view_ofs = '0 0 22';
@@ -1077,7 +1061,7 @@ void() PutClientInServer =
 	stuffcmd(self,"r_particledesc particles\n");  //exec particles config
 	
 	stuffcmd(self, "cl_web_download_url q1tools.github.io\n");
-	//stuffcmd(self, "cl_web_download_url2 http://files.crxquake.com/bloodrails/\n");
+	stuffcmd(self, "cl_web_download_url2 crxquake.com/files/br\n");
 	
 	
 	
@@ -1344,7 +1328,7 @@ void() WaterMove =
 	{
 		if (self.flags & FL_INWATER)
 		{
-			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_AUTO, "bloodrailz/misc/br_outwater.wav", 1, ATTN_NORM);	// play leave water sound
+			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_AUTO, "misc/br_outwatr.wav", 1, ATTN_NORM);	// play leave water sound
 			self.flags = self.flags - FL_INWATER;
 		}
 		return;
@@ -1373,9 +1357,9 @@ void() WaterMove =
 		// player enter water sound
 		if (!(self.style & ELOHIM_OBSERVER))
 		{
-			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "bloodrailz/player/br_lava.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_AUTO, "bloodrailz/player/br_water.wav", 1, ATTN_NORM);
-			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_AUTO, "bloodrailz/player/br_slime.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "body/br_lava.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_AUTO, "body/br_water.wav", 1, ATTN_NORM);
+			if (self.watertype == CONTENT_SLIME)				sound (self, CHAN_AUTO, "body/br_slime.wav", 1, ATTN_NORM);
 		}
 
 
@@ -1439,14 +1423,6 @@ void() PlayerPreThink =
 		if (self.view_ofs == '0 0 0')	return;		// intermission or finale
 	}
 
-	if (mode_is_arena() == TRUE)
-	{
-		if (boss.state == CA_MATCH_PLAYING && self.arena_flag == AF_CA_READY)
-		{
-			self.arena_flag = AF_CA_PLAYING;
-			self.style = self.style - (self.style & ELOHIM_OBSERVER);
-		}
- 	}
 
 	public_verify_team();
 
@@ -1539,8 +1515,6 @@ void() PlayerPostThink =
 
 	
 
-	if ((mode_is_arena()) && self.arena_flag == AF_CA_DEAD)
-		return;
 		
 		
 	
@@ -1570,17 +1544,6 @@ void() PlayerPostThink =
 		{
 			self.delay = time + 0.1;
 			show_rules_prematch();
-		}
-	}
-	else if (elohim_playmode & AIR_ARENA_MODE)
-	{
-		if (boss.state == CA_MATCH_ROUNDSTART)
-		{
-			if (time >= self.delay)
-			{
-				self.delay = time + 0.1;
-				show_rules_prematch();
-			}
 		}
 	}
 	else if (!(self.style & ELOHIM_MOTD))
@@ -1728,9 +1691,9 @@ void() ClientDisconnect =
 
     // ELOHIM_MOD - play gib sound if client was kicked for suiciding
     if (self.cnt < 0)
-        sound(self, CHAN_BODY, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+        sound(self, CHAN_BODY, "body/br_gib.wav", 1, ATTN_NONE);
     else
-        sound (self, CHAN_BODY, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+        sound (self, CHAN_BODY, "body/br_gib.wav", 1, ATTN_NONE);
     // END_MOD
 
 	set_suicide_frame ();
@@ -1768,7 +1731,7 @@ void (entity client, float fragval) client_frag =
     
     client.crmod_lastkill = time; // CRMOD got a kill
 
-    if (elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_arena()))
+    if (elohim_playmode & ELOHIM_MATCH_MODE)
 	{
 		score_frag(client.height, fragval);
 	}

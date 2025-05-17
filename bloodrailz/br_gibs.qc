@@ -227,10 +227,10 @@ void()Splat =
 	local vector unit = normalize(self.origin - self.dmg_origin);
 	new.origin = self.origin + '0 0 24' + unit*21;
 	
-		if(random()<0.7) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+		if(random()<0.7) setmodel (new, "mdl/blood2.spr");
 	else 
 	{
-		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		setmodel (new, "mdl/blood1.spr");
 		new.scale = 0.25;
 	}
 
@@ -291,10 +291,10 @@ void()Splat2 =
 	new.origin = self.origin + unit*(45);
 	new.origin = new.origin + vertical;
 	
-	if(random()<0.59) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	if(random()<0.59) setmodel (new, "mdl/blood2.spr");
 	else 
 	{
-		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		setmodel (new, "mdl/blood1.spr");
 		new.scale = 0.25;
 	}
 
@@ -353,10 +353,10 @@ void()Splat3 =
 	new.origin = self.origin + unit*(55);
 	new.origin = new.origin + '0 0 15';
 
-	if(random()<0.55) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	if(random()<0.55) setmodel (new, "mdl/blood2.spr");
 	else
 	{
-		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		setmodel (new, "mdl/blood1.spr");
 		new.scale = 0.25;
 	}
 	
@@ -420,7 +420,7 @@ void()Splat4 =
 	new.origin = new.origin +vertical;
 	
 
-	setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	setmodel (new, "mdl/blood2.spr");
 	
 	
 	new.classname = "splat";
@@ -477,10 +477,10 @@ void()Splat5 =
 	new.origin = self.origin + unit*(70);
 	new.origin = new.origin +vertical;
 
-	if(random()<0.60) setmodel (new, "progs/bloodrailz/s_blood_1024.spr");
+	if(random()<0.60) setmodel (new, "mdl/blood2.spr");
 	else 
 	{
-		setmodel (new, "progs/bloodrailz/s_blood_512xv.spr");
+		setmodel (new, "mdl/blood1.spr");
 		new.scale = 0.25;
 	}
 	
@@ -551,7 +551,7 @@ void() vial_touch =
 
 
 
-	sound (other, CHAN_AUTO, "bloodrailz/items/br_loot.wav", 1, ATTN_NORM);
+	sound (other, CHAN_AUTO, "item/br_loot.wav", 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	remove(self);
 };
@@ -637,7 +637,7 @@ void(float dm, float inair) ThrowVial =
 	else if (random()< 0.75) setorigin(new1, self.origin + '0 0 7');
 	else if (random()<= 1) setorigin(new1, self.origin + '0 0 8');
 	
-	setmodel (new1, "progs/bloodrailz/vial.mdl");
+	setmodel (new1, "mdl/vial.mdl");
 	setsize (new1, '-10 -10 -2', '10 10 16');
 	new1.velocity = VelocityForDamage (dm, inair);
 	new1.movetype = MOVETYPE_TOSS;
@@ -698,29 +698,29 @@ void() GibPlayerChangeTeams =
        
         local float inair;
    	if(self.airborn_pos > 55) inair = 1; //FEBRUARY
-        ThrowGib ("progs/bloodrailz/br_gib1.mdl", self.health, inair);
-        ThrowGib ("progs/bloodrailz/br_gib2.mdl", self.health, inair);
-            ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
-            ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
+        ThrowGib ("mdl/br_gib1.mdl", self.health, inair);
+        ThrowGib ("mdl/br_gib2.mdl", self.health, inair);
+            ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
+            ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
 
 	self.deadflag = DEAD_DYING;
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (damage_attacker.classname == "teledeath2")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 		
 	if (random() < 0.5)
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_gib.wav", 1, ATTN_NONE);
 	else
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_death.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_death.wav", 1, ATTN_NONE);
 };
 
 
@@ -733,11 +733,11 @@ void() GibPlayer =
    	
    	if(self.nogib_death ==0)
    	{
-		ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
-		ThrowGib ("progs/bloodrailz/br_gib1.mdl", self.health, inair);
-		if(total_players_global <= 12 && smoke_ent_number < 8) ThrowGib ("progs/bloodrailz/br_gib2.mdl", self.health, inair);
-		if(total_players_global <= 8 && smoke_ent_number < 8) ThrowGib ("progs/bloodrailz/br_gib3.mdl", self.health, inair);
-		if(total_players_global < 8 && smoke_ent_number < 8) ThrowGib ("progs/bloodrailz/br_gib2.mdl", self.health, inair);
+		ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
+		ThrowGib ("mdl/br_gib1.mdl", self.health, inair);
+		if(total_players_global <= 12 && smoke_ent_number < 8) ThrowGib ("mdl/br_gib2.mdl", self.health, inair);
+		if(total_players_global <= 8 && smoke_ent_number < 8) ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
+		if(total_players_global < 8 && smoke_ent_number < 8) ThrowGib ("mdl/br_gib2.mdl", self.health, inair);
 	}
 	
 	Splat();
@@ -762,18 +762,18 @@ void() GibPlayer =
 
 	if (damage_attacker.classname == "teledeath")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (damage_attacker.classname == "teledeath2")
 	{
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_gib.wav", 1, ATTN_NONE);
 		return;
 	}
 		
 	if (random() < 0.5)
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_gib.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_gib.wav", 1, ATTN_NONE);
 	else
-		sound (self, CHAN_VOICE, "bloodrailz/player/br_death.wav", 1, ATTN_NONE);
+		sound (self, CHAN_VOICE, "body/br_death.wav", 1, ATTN_NONE);
 };
