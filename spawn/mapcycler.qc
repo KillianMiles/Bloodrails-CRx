@@ -1,11 +1,10 @@
-//
-// Addon code
-//
+
+
 #pragma warning disable F321
 __accumulate void() worldspawn =
 {
-    localcmd("bind F1 impulse 100\n");
-    localcmd("sv_maxvelocity 25000\n");
+	localcmd("bind F1 impulse 100\n");
+	localcmd("sv_maxvelocity 25000\n");
     
 	if(mapname =="tut1" || mapname =="tut2") 
 	{
@@ -26,39 +25,17 @@ __accumulate void() worldspawn =
     
 	localcmd("sv_defaultmap ctf_dissocia_r1\n");   //default map
 	localcmd("sys_ticrate 0.0166667\n");
-    
-    /*
-	localcmd("bind F1 impulse 100\n");
-	localcmd("fov_adapt 1\n");
-	localcmd("viewsize 110\n");
-	localcmd("cl_gun_fovscale 0.84\n");
-	localcmd("gl_polyblend 1\n");
-	localcmd("gl_cshiftpercent_damage 21\n");
-	localcmd("cl_rollangle 0\n");
-	localcmd("alias cl_rollangle bf\n");
-	localcmd("cl_screenangle 0\n");
-	localcmd("scr_conscale 3.2\n");
-	localcmd("scr_sbarscale 1.5\n");
-	localcmd("scr_sbar 3\n");
-	localcmd("alias scr_sbar bf\n");
-	localcmd("if vid_width == 2560 scr_matchclock_x 70.35; if vid_width == 1920 scr_matchclock_x 70.4\n");
-	localcmd("if vid_width == 2560 scr_matchclock_y 87; if vid_width == 1920 scr_matchclock_y 87\n");
-	localcmd("if vid_width == 2560 scr_matchclockscale 4.6; if vid_width == 1920 scr_matchclockscale 3.5\n");
-	localcmd("if vid_width == 2560 scr_sbarscale 2.1; if vid_width == 1920 scr_sbarscale 1.5\n");
-	localcmd("if vid_width == 2560 scr_conscale 3.7; if vid_width == 1920 scr_conscale 3.2\n");
-	localcmd("if vid_width == 2560 scr_menuscale 2.1; if vid_width == 1920 scr_menuscale 1.6\n");
-	*/
 	
 
 	
 }
 #pragma warning enable F321
 
+
 float changingMap;
 __wrap void() GotoNextMap =
 {
-    if(changingMap)
-        return;
+	if(changingMap) return;
 	
 	
 	maplist = cvar("saved4");
@@ -156,16 +133,6 @@ __wrap void() GotoNextMap =
 	else if(b ==2097152) c =33;
 	else if(b ==4194304) c =34;
 	
-	//bprint("\nb = ");
-	//bprint(ftos(b));
-	//bprint("  ");
-	
-
-	//bprint("\nmaplist = ");
-	//bprint(ftos(maplist));
-	//bprint("  ");
-	
-	//if(maplist & (1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048 + 4096 + 8192 + 16384 + 32768 + 65536 + 131072 + 262144 + 524288 + 1048576 + 2097152 + 4194304)) 
 	
 	if(maplist >= 8388607)
 	{
@@ -191,3 +158,103 @@ __wrap void() GotoNextMap =
     ent.think = prior;
     ent.nextthink = time + 0.25;
 }
+
+
+
+
+
+//MAP_ENTS
+
+void () spawn_pubtdm_entities ={};
+void () update_pubtdm_entities ={};
+void () spawn_ctf_entities = {};
+void () update_ctf_entities ={};
+
+void () spawn_race_entities =
+{
+	if (mapname == "race19")
+	{
+		Maps_SpawnPent ('1664 -4740 24');
+		Maps_SpawnRing ('5783 4210 -1895');
+	}
+	else if (mapname == "race18")
+	{
+		Maps_SpawnPent ('-3407 -3095 1064');
+		Maps_SpawnRing ('802 978 48');
+	}
+	else if (mapname == "race16")
+	{
+		Maps_SpawnPent ('150 3622 2136');
+		Maps_SpawnRing ('125 -2784 -2440');
+	}
+	else if (mapname == "race15")
+	{
+		Maps_SpawnPent ('-261 96 24');
+		Maps_SpawnRing ('452 -2725 -2823');
+	}
+	else if (mapname == "race14")
+	{
+		Maps_SpawnPent ('-5267 -595 2696');
+		Maps_SpawnRing ('-2486 -2751 -4000');
+	}
+	else if (mapname == "race11")
+	{
+		Maps_SpawnPent ('-1138 3151 2752');
+		Maps_SpawnRing ('-3347 3781 -2184');
+	}
+	else if (mapname == "race_valley_b2")
+	{
+		Maps_SpawnPent ('-2313 -2595 740');
+		Maps_SpawnRing ('550 500 330');
+	}
+	else if (mapname == "race_valley_b2")
+	{
+		Maps_SpawnPent ('-2313 -2595 740');
+		Maps_SpawnRing ('550 500 250');
+	}
+	else if (mapname == "race_orange_b1")
+	{
+		Maps_SpawnPent ('-71 -102 40');
+		Maps_SpawnRing ('433 -241 2328');
+	}
+	else if (mapname == "slide2")
+	{
+		Maps_SpawnPent ('-1596 2426 2736');
+		Maps_SpawnRing ('1824 -699 920');
+	}
+	else if (mapname == "slide5")
+	{
+		Maps_SpawnPent ('2367 3305 3224');
+		Maps_SpawnRing ('1523 192 -1255');
+	}
+	else if (mapname == "slide7")
+	{
+		Maps_SpawnPent ('285 -8 2072');
+		Maps_SpawnRing ('2844 2242 -3287');
+	}
+	else if (mapname == "petra")
+	{
+		Maps_SpawnPent ('-3436 -2686 3832');
+		Maps_SpawnRing ('1250 3481 -711');
+	}
+	else if (mapname == "tut1")
+	{
+
+	}
+
+};
+
+
+
+void () spawn_new_entities =
+{
+	if (elohim_playmode & CLANRING_CTF_MODE) spawn_ctf_entities();
+	else if (elohim_playmode & DM_PUBLIC_MODE) spawn_pubtdm_entities();
+	else if(elohim_playmode & RACE_MODE) spawn_race_entities();
+};
+
+void () update_old_entities = 
+{
+	if (elohim_playmode & CLANRING_CTF_MODE) update_ctf_entities();
+	else if (elohim_playmode & DM_PUBLIC_MODE) update_pubtdm_entities();
+};

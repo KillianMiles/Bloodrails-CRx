@@ -711,7 +711,6 @@ void (void() run_cam) HorrorScope =
 
 	//console settings
 	stuffcmd (self, "v_centerspeed 0\nv_centermove 0\ncl_bob 0\ncl_rollangle 0\n");		// kill camera wobble when player presses movement keys
-	//stuffcmd (self, "unalias fov\n"); 							// decouple "fov" from "bf" to allow for setting fov value
 
 	//no cam specified - run default
 	if (!run_cam)

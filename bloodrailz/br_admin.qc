@@ -1,13 +1,4 @@
 
-
-
-
-
-//CSQC took all of this out of admin.qc
-
-
-
-
 //  R E Q U E S T  S E T  M O D E
 //
 //  Request to change to the mode indicated by 'newmode':
@@ -92,19 +83,6 @@ void () admin_set_dm3 =
 
 
 
-void () admin_toggle_ggmod =
-{
-	if (!(elohim_playmode & ELOHIM_GG_MOD))
-	{
-		announce("gg mod enabled");
-		elohim_playmode = elohim_playmode | ELOHIM_GG_MOD;
-	}
-	else
-	{
-		announce("gg mod disabled");
-		elohim_playmode = elohim_playmode - ELOHIM_GG_MOD;
-	}
-};
 
 
 

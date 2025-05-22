@@ -105,7 +105,6 @@ void() ClientDisconnect;
 void (vector org) spawn_tfog;
 void () rune_drop;
 
-entity () SelectFishSpawnPoint;
 
 void () elohim_init_set_hud;
 void () crx_connect_event;     //Buckshot NQ compat
@@ -145,8 +144,8 @@ void () elohim_init_world =
   
 
 
-  elohim_version = "BR v1.1"; 
-  elohim_version_info = "Bloodrailz CRx";
+  br_version = "BR v1.1"; 
+  br_version_info = "Bloodrailz CRx";
   bloodrailz_version_number = "v1.1";
 
 	// Initialize user map names, MOTD, and hotspots, etc..
@@ -319,10 +318,8 @@ void () elohim_init_world =
         utils_set_cvar("timelimit", elohim_timelimit);
         cvar_set("hostname", ADMIN_CTF_PUBLIC_MODE_STRING);
         
- // elohim_playmode = elohim_playmode | ELOHIM_NO_SPOOGE;
-//  //test
-//  elohim_playmode |= ELOHIM_MATCH_MODE;
-  elohim_playmode = elohim_playmode | ELOHIM_EXTENDED_OBITS;
+
+
   elohim_playmode = elohim_playmode | ELOHIM_NO_SPAWN_PROTECT;
   
   utils_set_cvar("samelevel", elohim_playmode);
@@ -532,7 +529,7 @@ void () elohim_pre_set_aliases =
 //
 //  I N I T  T H I N K
 //
-//  Called 0.2 seconds after a client connects.  Plays the wizard sound
+//  Called 0.2 seconds after a client connects.  Plays the init sound
 //  and schedules the aliases to be sent.
 //
 void () elohim_init_think =
@@ -544,9 +541,6 @@ void () elohim_init_think =
 		sound(self, CHAN_AUTO, "misc/br_init.wav", 1, ATTN_NONE);
 	if (utils_illegal_name(self.netname))
 		stuffcmd(self, "name player\n");
-	
-	// test for binds 
-  stuffcmd(self, "ignorethis\n");                     // CRMOD
 
   self = temp;
   self.think = elohim_pre_set_aliases;
@@ -562,7 +556,7 @@ void () elohim_show_mode =
 {
     if(self.owner.classname == "dummy") return;
      
-    sprint2(self.owner, elohim_version, "\n");
+    sprint2(self.owner, br_version, "\n");
     if (elohim_playmode & ELOHIM_MATCH_MODE)
     {
 		if (elohim_playmode & CLANRING_CTF_MODE)	sprint(self.owner, "ctf match mode - help-match for help\n");
@@ -612,8 +606,6 @@ void () elohim_client_connect =
 		// Show the MOTD
 		motd_create();
 		utils_make_scheduled_event(elohim_init_think, 0.5);
-		if (elohim_playmode & CRMOD_QSMACK_ON)
-			utils_make_scheduled_event(qsmack_detect, 1.5);
 
 		// Give the player a unique ID
 		parm11 = elohim_player_ids;
@@ -715,11 +707,6 @@ void () elohim_client_disconnect =
     if (elohim_debug_client == self)
 		elohim_debug_client = world;
 	
-    // CRMOD Qsmack Reset
-    self.qsmack_level = 0;
-    self.qsmack_trylevel = 0;
-    qsmack_statusokay = 0;
-    // CRMOD END
 };
 
 //
@@ -840,7 +827,7 @@ void () elohim_help =
   // local string numsuicides;
   // numsuicides = strings_ftos_gold(ELOHIM_MAX_SUICIDES);
 
-  sprint2(self, elohim_version, "\n");
+  sprint2(self, br_version, "\n");
   sprint(self, "Help commands (type in console):\n");
   sprint(self, " help-info     - server info\n");
   sprint(self, " help-misc     - misc commands\n");
@@ -1014,16 +1001,7 @@ void () elohim_bad_impulse =
     sprint(self, "reconnecting to the server.\n");
 };
 
-//
-//  V E R S I O N  I N F O
-//
-void () elohim_vinfo =
-{
-    sprint2(self, elohim_version_info, "\n");
-    sprint(self, "Adapted from the Elohim/Clan Ring Team Deathmatch Server\n");
-};
 
-//
 //  T I C R A T E
 //
 void () elohim_ticrate = 
@@ -1055,9 +1033,6 @@ void () elohim_impulse =
 		cprint3("elohim impulse ", temp, "\n");
   }
 
-	// CRMOD Qsmack
-	if (self.style & CRMOD_DETECTING_QSMACK)
-		qsmack_detecting();
 	
 	
 		
@@ -1088,12 +1063,8 @@ void () elohim_impulse =
         
      
     }
-		else if ((self.impulse > 40) && (self.impulse <= 59))
-			debug_impulse();
-    else if (self.impulse == 70)
-      elohim_init_set_hud();
-		else
-			qsmack_impulse();
+    else if (self.impulse == 70) elohim_init_set_hud();
+
 	}
   // CRMOD END
   else if ((self.impulse >= 120 && self.impulse <= 139))
@@ -1129,7 +1100,7 @@ void () elohim_impulse =
 	else if (self.impulse == 114)
 		utils_toggle_flag(CRMOD_SMART_WEAPON, "Smart weapon switching");
   else if (self.impulse == 117) // show version info
-		elohim_vinfo();
+		{}
 	else if (self.impulse == 118)
 		elohim_ticrate();
   else if (self.impulse == 119)
@@ -1266,7 +1237,7 @@ void () elohim_start_frame =
 		// send out ping to test for disconnected players
     /*
 		WriteByte(MSG_ALL, SVC_STUFFCMD);
-		WriteString(MSG_ALL, "impulse 39\n");           // CRMOD changed from 104 to 39
+		WriteString(MSG_ALL, "impulse 39\n");      
     */
 		player = find(world, classname, "player");
 		while (player)
@@ -1318,6 +1289,7 @@ void () elohim_start_frame =
 
 void () show_rules_prematch =
 {
+	/*
 	local float temp, timervar;
 	local string s0="", s1="", s2="", s3="", s4="", s5="", s6="";
 
@@ -1351,12 +1323,9 @@ void () show_rules_prematch =
 		else
 			s4 = "               \n";
 
-		if (elohim_playmode & ELOHIM_NO_THROWABLES)
-		{
-			if (elohim_playmode & ELOHIM_GG_MOD)	s5 = "                                        \n";
-			else					s5 = "                                        \n";
-		}
- 
+
+		s5 = "                                        \n";
+		
 
 		if (elohim_playmode & CLANRING_RUNES)
 		{
@@ -1375,22 +1344,10 @@ void () show_rules_prematch =
 	{
 		centerprint(self, s0, "\n\n\n\n\n\n\n\n\n\n\n\n\n");
 	}
+	*/
 };
 
-entity() SelectFishSpawnPoint =
-{
-	local	entity spot;
-  local float pcount = floor(random() * 5);
-  spot = find(world, classname, "fish_spot");
-  while (spot != world && pcount > 0)
-  {
-    spot = find(spot, classname, "fish_spot");
-    pcount = pcount - 1;
-  }
 
-
-	return spot;
-};
 
 void () elohim_set_hud =
 {

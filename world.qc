@@ -109,6 +109,9 @@ World Types:
 //=======================
 void() worldspawn =
 {
+
+	checkextension("DP_SV_ROTATINGBMODEL");
+	
 	lastspawn = world;
 	lastspawn_blue = world;
 	lastspawn_red = world;

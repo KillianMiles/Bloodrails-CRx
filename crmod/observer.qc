@@ -178,7 +178,6 @@ void () observer_walk_start =
     self.flags = self.flags - self.flags & FL_ONGROUND;
     self.view_ofs = '0 0 22';
     stuffcmd(self, "cl_nolerp 0\n");
-    stuffcmd(self, "cl_predict 1\n");
     stuffcmd(self, "v_centerspeed 500\n");
     self.alpha = 0.001;  //9-17-23  observer transparent
 
@@ -325,7 +324,6 @@ void () observer_chase_start =
         //sprint(self, "type 'headsup' for fullscreen display\n");
 	//sprint(self, "enabling 'smooth' mode to eliminate choppines\n");
     stuffcmd(self, "cl_nolerp 1\n");
-    stuffcmd(self, "cl_predict 0\n");
 };
 
 //
@@ -521,7 +519,6 @@ void () observer_end =
 
     observer_check_demo_end();
     stuffcmd(self, "cl_nolerp 0\n");
-    stuffcmd(self, "cl_predict 1\n");
     stuffcmd(self, "v_centerspeed 500\n");
     if (self.style & ELOHIM_HEADS_UP)
 	    stuffcmd(self, "viewsize 100\n");

@@ -250,7 +250,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				if(attacker.weapon == IT_HOOK)
 				{
 					sound (targ, CHAN_VOICE, "weap/br_armorhit.wav", 1, ATTN_NORM);
-					//stuffcmd(targ,"bf\n"); 
 					dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;                  //axe and Hook TEAM  momentum adds
 					dir = normalize(dir);
 					targ.velocity = targ.velocity + dir*400;

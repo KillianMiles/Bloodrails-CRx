@@ -451,14 +451,6 @@ void(string nextLevel) Maps_SetNextLevel =
 	setorigin(ent,'-9999 9999 -9999');
 }
 
-entity(vector entityOrigin) Maps_CreateFishSpot =
-{
-	local entity ent = Maps_CreateEntityAtPosition(entityOrigin);
-	ent.impulse = 1;
-	ent.classname = "fish_spot";
-	return ent;
-}
-
 
 
 

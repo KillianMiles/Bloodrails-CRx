@@ -890,7 +890,7 @@ void() PutClientInServer =
 	
 	if(self.classname == "dummy") return;
 	
-	checkextension("DP_SV_ROTATINGBMODEL");
+	//checkextension("DP_SV_ROTATINGBMODEL");
 	
 	local	entity spot, teamSpot;
         self.modelindex = 0;    
@@ -1054,20 +1054,16 @@ void() PutClientInServer =
 	self.alpha = 1; //JANUARY player model gib bug
 	if(self.nogib_death ==1 || self.nogib_death ==2) self.nogib_death =0;
 	
-	stuffcmd(self, "cl_forwardspeed 200\n");     //make sure the maxspeed gets reset 9-17-23
-	stuffcmd(self, "cl_sidespeed 350\n");
-	stuffcmd(self, "gl_polyblend 1\n");
-	stuffcmd(self, "gl_cshiftpercent_damage 25\n");
-	stuffcmd(self,"r_particledesc particles\n");  //exec particles config
+	/*
+	stuffcm(self, "cl_forwardspeed 200\n");     //make sure the maxspeed gets reset 9-17-23
+	stuffcm(self, "cl_sidespeed 350\n");
+	stuffcm(self,"r_particledesc particles\n");
+	stuffcm(self, "cl_bob 0.0032\n");
+	stuffcm(self, "an0\n");
+	*/
+	stuffcmd(self, "pcis01\n");
 	
-	stuffcmd(self, "cl_web_download_url q1tools.github.io\n");
-	stuffcmd(self, "cl_web_download_url2 crxquake.com/files/br\n");
-	
-	
-	
-	
-	stuffcmd(self, "cl_bob 0.0032\n");
-	stuffcmd(self, "cl_bobcycle 2.5\n");
+	self.tilted =0;
 
 
     // Add elohim specific stuff
@@ -1075,37 +1071,19 @@ void() PutClientInServer =
 };
 
 
-/*
-=============================================================================
-
-				QUAKED FUNCTIONS
-
-=============================================================================
-*/
-
-
-/*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 24)
-The normal starting point for a level.
-*/
-void() info_player_start =
-{
-};
+void() info_tfgoal ={};
+void() info_player_teamspawn ={};
+void() info_player_start ={};
+void() monster_army ={};
+void() monster_zombie ={};
+void() monster_enforcer ={};
+void() i_t_g ={};
+void() func_explobox ={};
 
 
-/*QUAKED info_player_start2 (1 0 0) (-16 -16 -24) (16 16 24)
-Only used on start map for the return point from an episode.
-*/
-void() info_player_start2 =
-{
-};
 
-
-/*
-saved out by quaked in region mode
-*/
-void() testplayerstart =
-{
-};
+void() info_player_start2 ={};
+void() testplayerstart ={};
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for deathmatch games
@@ -1485,10 +1463,6 @@ Called every frame after physics are run
 */
 void() PlayerPostThink =
 {
-	local string qdp = "", ggp = "", wsp = "";
-	local float temp;
-	
-	
 	// HorrorScope
 	hr_frame();
 
@@ -1513,12 +1487,7 @@ void() PlayerPostThink =
     // - redirect impulses in [20, 254]
     // - changed gameover test from (self.view_ofs == '0 0 0') to (gameover)
 
-	
 
-		
-		
-	
-		
 
 	if (self.deadflag == DEAD_DYING)
 	{
@@ -1554,14 +1523,8 @@ void() PlayerPostThink =
 			self.delay = time + 0.1;
 			if ((mode_is_public() == TRUE) && self.joinmsgtime >= time)
 			{
-				temp = cvar("deathmatch");
-				wsp = (temp == 1) ? "      \n" : "      \n";
-				//qdp = (elohim_playmode & ELOHIM_QUAD_DROP) ? "       \n" : "        \n";
-				ggp = (elohim_playmode & ELOHIM_GG_MOD) ? "      \n" : "     \n";
-
-				if (self.height == COLOR_RED)	centerprint(self, "You are on the RED team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
-				else if (self.height == COLOR_BLUE)
-					centerprint(self, "You are on the BLUE team\n\n      \bpress \b'F10'\b for quick-help\b", wsp, qdp, ggp);
+				if (self.height == COLOR_RED)	centerprint(self, "You are on the RED team\n\n\bpress \b'F10'\b for quick-help\b"); //, wsp, qdp, ggp);
+				else if (self.height == COLOR_BLUE) centerprint(self, "You are on the BLUE team\n\n\bpress \b'F10'\b for quick-help\b"); //, wsp, qdp, ggp);
 			}
 			else	hud_update();
 		}

@@ -261,7 +261,7 @@ void () options_change =
     }
 
     // play sound
-    stuffcmd(self, "play bloodrailz/misc/br_deplete.wav\n");
+    stuffcmd(self, "play misc/br_deplete.wav\n");
 };
 
 

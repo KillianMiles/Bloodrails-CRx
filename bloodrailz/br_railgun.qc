@@ -129,14 +129,7 @@ void(vector org, entity attacker, float radius, entity ignore) Rail_push =      
 								//if(head.flags & FL_ONGROUND) head.flags = head.flags - FL_ONGROUND;
 								dir = head.origin - (self.absmin + self.absmax) * 0.5;     
 								
-								/*
-								if(head.classname == "player") 			//NOVEM no disabled steering
-								{
-									head.blast_time =time;         //disable steering
-									stuffcmd(head, "cl_forwardspeed 0\n");
-									stuffcmd(head, "cl_sidespeed 0\n");
-								}
-								*/
+
 								
 								head.velocity = head.velocity + 750*(normalize(dir));
 								head.velocity_z = head.velocity_z + 200;
@@ -221,7 +214,7 @@ void() rail_fade = {
 	}	
 	else if (self.cnt == 4)
 	{
-		self.frame = 1;
+			self.frame = 1;
 			if (rand < 0.07)          //randomly deleting segments
 			{
 				self.cnt = self.cnt - 1;
@@ -1702,8 +1695,12 @@ void() rail_jump =
 			
 			self.punchang =0;
 			
-			stuffcmd(self, "cl_screenangle_speed 3\n");
-			stuffcmd(self, "cl_screenangle 0\n");
+			if(self.tilted ==1)
+			{
+				stuffcmd(self, "as30\n");
+				stuffcmd(self, "an0\n");
+				self.tilted=0;
+			}
 			
 			self.grind_completed = 0;
 			self.punchang = 0;
@@ -1711,8 +1708,7 @@ void() rail_jump =
 			self.angles_not_zero = 0;
 			
 
-			stuffcmd(self, "cl_forwardspeed 0\n");
-			stuffcmd(self, "cl_sidespeed 0\n");
+			stuffcmd(self, "spd00\n");
 			self.blast_time = time;
 			
 			

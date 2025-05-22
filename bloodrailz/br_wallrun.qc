@@ -297,8 +297,6 @@ void() WallRun =
 			make_sparks();
 			self.grind_side_is = 1;                              //grind on left
 		
-			stuffcmd(self, "cl_screenangle_speed 2.5\n");
-			stuffcmd(self, "cl_screenangle 18\n");
 			
 			if (self.punchang < 4) self.punchang = self.punchang + 0.6;           //gradual lean for left-side (1) grind
 			else if (self.punchang < 9) self.punchang = self.punchang + 0.8;
@@ -309,18 +307,21 @@ void() WallRun =
 			
 			if(self.punchang < 6) //staged tilt
 			{
-				stuffcmd(self, "cl_screenangle_speed 2.0\n");
-				stuffcmd(self, "cl_screenangle 6\n");
+				stuffcmd(self, "as20p6\n");
+				//bprint("tilting 1 yes!\n");
+				self.tilted =1;
 			}
 			else if(self.punchang < 12)
 			{
-				stuffcmd(self, "cl_screenangle_speed 2.5\n");
-				stuffcmd(self, "cl_screenangle 12\n");
+				stuffcmd(self, "as25p12\n");
+				//bprint("tilting 1 yes!\n");
+				self.tilted =1;
 			}
 			else if(self.punchang >= 12)
 			{
-				stuffcmd(self, "cl_screenangle_speed 2.7\n");
-				stuffcmd(self, "cl_screenangle 18\n");
+				stuffcmd(self, "as27p18\n");
+				//bprint("tilting 1 yes!\n");
+				self.tilted =1;
 			}
 			
 			if (self.punchang >= 18)      self.angles_z = 20;
@@ -393,8 +394,6 @@ void() WallRun =
 			make_sparks();
 			self.grind_side_is = 2;                                 //grind on right
 		
-			//stuffcmd(self, "cl_screenangle_speed 2.5\n");
-			//stuffcmd(self, "cl_screenangle -18\n");
 			
 			if (self.punchang > -4) self.punchang = self.punchang - 0.6;            //gradual lean for right-side (2) grind
 			else if (self.punchang > -9) self.punchang = self.punchang - 0.8;
@@ -405,18 +404,21 @@ void() WallRun =
 			
 			if(self.punchang > -6) //staged tilt
 			{
-				stuffcmd(self, "cl_screenangle_speed 2.0\n");
-				stuffcmd(self, "cl_screenangle -6\n");
+				stuffcmd(self, "as20n6\n");
+				//bprint("tilting 1 yes!\n");
+				self.tilted =1;
 			}
 			else if(self.punchang > -12)
 			{
-				stuffcmd(self, "cl_screenangle_speed 2.5\n");
-				stuffcmd(self, "cl_screenangle -12\n");
+				stuffcmd(self, "as25n12\n");
+				//bprint("tilting 1 yes!\n");
+				self.tilted =1;
 			}
 			else if(self.punchang <= -12)
 			{
-				stuffcmd(self, "cl_screenangle_speed 2.7\n");
-				stuffcmd(self, "cl_screenangle -18\n");
+				stuffcmd(self, "as27n18\n");
+				//bprint("tilting 1 yes!\n");
+				self.tilted =1;
 			}
 			
 			if (self.punchang <= -18)      self.angles_z = -20;
@@ -499,8 +501,13 @@ void() WallRun =
 				return;
 			}
 			
-			stuffcmd(self, "cl_screenangle_speed 3\n");
-			stuffcmd(self, "cl_screenangle 0\n");
+			if(self.tilted ==1)
+			{
+				stuffcmd(self, "as30\n");
+				stuffcmd(self, "an0\n");
+				self.tilted =0;
+			}
+
 			
 			if (self.punchang > 0) self.punchang = self.punchang - 1.15;
 			else if (self.punchang < 0) self.punchang = self.punchang + 1.15;
@@ -651,23 +658,47 @@ void() Skiing =
 			self.ski_button =0;
 		}
 		
-					if(self.skiing_on !=0 && self.turn_speed > 8)
+		if(self.swoop_yes==1) return;
+		
+					//bprint(ftos(self.airborn_pos));
+					//bprint("altitude  ");
+					if(self.skiing_on !=0 && self.turn_speed > 8 && self.airborn_pos <3)
 					{
-						stuffcmd(self, "cl_screenangle_speed 2.5\n");
-						stuffcmd(self, "cl_screenangle -5.25\n");
+						if(self.ski_tilt !=-5)
+						{
+							stuffcmd(self, "as25n5\n");
+							//bprint("tilting 2 yes!\n");
+							self.ski_tilt=-5;
+							self.tilted =1;
+						}
 					}
-					else if(self.skiing_on !=0 && self.turn_speed < -8)
+					else if(self.skiing_on !=0 && self.turn_speed < -8 && self.airborn_pos <3)
 					{
-						stuffcmd(self, "cl_screenangle_speed 2.5\n");
-						stuffcmd(self, "cl_screenangle 5.25\n");
+						if(self.ski_tilt !=5)
+						{
+							stuffcmd(self, "as25p5\n");
+							//bprint("tilting 2 yes!\n");
+							self.ski_tilt=5;
+							self.tilted =1;
+						}
 					}
 					
-					if(self.skiing_on !=0 && self.turn_speed >=-8 && self.turn_speed <= 8 && self.ski_button ==1)
+					if(self.skiing_on !=0 && self.turn_speed >=-8 && self.turn_speed <= 8 && self.ski_button ==1 && self.tilted==1)
 					{
-						stuffcmd(self, "cl_screenangle 0\n");
+						stuffcmd(self, "an0\n");
+						self.ski_tilt=0;
+						self.tilted=0;
 					}
-					else if(vlen(self.velocity) < 425) stuffcmd(self, "cl_screenangle 0\n");
-					//else stuffcmd(self, "cl_screenangle 0\n");   //Backstop
+					else if(vlen(self.velocity) < 425 && self.skiing_on !=0) 
+					{
+						if(self.tilted ==1)
+						{
+							stuffcmd(self, "an0\n");
+							self.ski_tilt=0;
+							self.tilted=0;
+							//bprint("badspam YES!\n"); 
+						}
+					}
 			
 		
 		//if(v_forward_z < 0 && self.movement_x ==400) bprint(ftos(self.velocity_z)); 
@@ -743,7 +774,11 @@ void() Skiing =
 		if(self.impulse == 42 || (self.skiing_on ==0 && self.view_ofs_z < 22))
 		{
 			self.skiing_on =0;
-			stuffcmd(self, "cl_screenangle 0\n");
+			if(self.tilted==1)
+			{
+				stuffcmd(self, "an0\n");
+				self.tilted=0;
+			}
 			sound (self, CHAN_VOICE, "trig/br_null.wav", 0.4, ATTN_NORM);
 			self.view_ofs_z += 1;
 			if(self.view_ofs_z >= 22) self.view_ofs_z = 22;
@@ -759,6 +794,8 @@ void() Skiing =
 			if (random() < 0.6) sound (self, CHAN_BODY, "body/br_jmp1.wav", 0.57, ATTN_NORM);   // 1 -> 0.9
 			else if (random() < 0.8) sound (self, CHAN_BODY, "body/br_jmp2.wav", 0.57, ATTN_NORM);  
 			else sound (self, CHAN_BODY, "body/br_jmp3.wav", 0.57, ATTN_NORM);   // alternative jump noise
+			
+			if(self.ski_tilt !=0) self.ski_tilt =0;
 			
 			if(self.velocity_z > 0) 
 			{
@@ -933,6 +970,7 @@ void() Skiing =
 		if(vlen(self.velocity) < 450 && self.velocity_z > -40) 
 		{
 			self.skiing_on =0;   //SKIING OFF
+			self.ski_tilt=0;
 			self.ski_button =0;
 			sound (self, CHAN_VOICE, "trig/br_null.wav", 0.4, ATTN_NORM);
 			//sound (self, CHAN_VOICE, "misc/br_grind5.wav", 0.4, ATTN_NORM); //fade out

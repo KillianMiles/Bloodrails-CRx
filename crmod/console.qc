@@ -31,23 +31,17 @@ void () console_set_aliases =
     localcmd("alias debug temp1 4\n");
     localcmd("alias score temp1 5\n");
     localcmd("alias ghostlist temp1 6\n");
-    localcmd("alias killstats temp1 7\n");
-    localcmd("alias efficiency temp1 8\n");
     localcmd("alias stats temp1 9\n");
     localcmd("alias commands temp1 10\n");
     localcmd("alias vinfo temp1 11\n");
     localcmd("alias normal temp1 12\n");
     localcmd("alias practice temp1 13\n");
     localcmd("alias match temp1 14\n");
-	localcmd("alias setcharge temp1 15\n");		// CRMOD - spooge -> charge
-	localcmd("alias nogibs temp1 16\n");
-	localcmd("alias lowgibs temp1 17\n");
-	localcmd("alias highgibs temp1 18\n");
+	localcmd("alias setcharge temp1 15\n");		
 	localcmd("alias setpowerups temp1 19\n");
 	localcmd("alias setatx temp1 20\n");
 	localcmd("alias shuffle temp1 21\n");
 	localcmd("alias modevote temp1 22\n");
-	localcmd("alias quadstats temp1 23\n");		// CRMOD - quadstats console alias
 	localcmd("alias obits temp1 24\n");
 
 	// undocumented debug commands
@@ -131,10 +125,6 @@ void () console_ping =
     //local entity client;
     local entity ping;
 
-    /*
-    WriteByte(MSG_BROADCAST, SVC_STUFFCMD);
-    WriteString(MSG_BROADCAST, "impulse 38\n");  // CRMOD was 103
-    */
 
     ping = spawn();
     ping.classname = "elohim_ping";
@@ -324,51 +314,8 @@ void () console_debug_client =
     cprint("client not found\n");
 };
 
-//
-//  S T U F F  I M P U L S E
-//
-//  Stuff an impulse into the console of the debug client.
-//
-void () console_stuff_impulse =
-{
-    local float temp;
-    local string s;
 
-    if (!elohim_debug_client)
-    {
-        cprint("No debug client\n");
-        return;
-    }
-    temp = cvar("skill");
-    s = ftos(temp);
-    stuffcmd(elohim_debug_client, "impulse ");
-    stuffcmd(elohim_debug_client, s);
-    stuffcmd(elohim_debug_client, "\n");
-    cprint3("stuffing impulse ", s, "\n");
-};
 
-//
-//  S T U F F  C O L O U R
-//
-//  Stuff a colour into the console of the debug client.
-//
-void () console_stuff_colour =
-{
-    local float temp;
-    local string s;
-
-    if (!elohim_debug_client)
-    {
-        cprint("No debug client\n");
-        return;
-    }
-    temp = cvar("skill");
-    s = ftos(temp);
-    stuffcmd(elohim_debug_client, "color ");
-    stuffcmd(elohim_debug_client, s);
-    stuffcmd(elohim_debug_client, "\n");
-    cprint3("stuffing color ", s, "\n");
-};
 
 //
 //  C L I E N T  F L A G S
@@ -415,8 +362,7 @@ void () console_client_flags =
 		cprint("CRMOD_SMART_WEAPON\n");
     if (elohim_debug_client.style & ELOHIM_OBSERVER)
         cprint("ELOHIM_OBSERVER\n");
-    if (elohim_debug_client.style & CRMOD_QSMACK)
-        cprint("CRMOD_QSMACK\n");
+
 
 	// CRMOD - change to oflags
     cprint("\n");
@@ -472,10 +418,8 @@ void () console_server_flags =
 		cprint("ELOHIM_DEDICATED_SERVER\n");
 	if (elohim_playmode & ELOHIM_NO_ARMOR)
 		cprint("ELOHIM_NO_ARMOR\n");
-	if (elohim_playmode & CRMOD_QSMACK_ON)
-		cprint("CRMOD_QSMACK_ON\n");
-	if (elohim_playmode & ELOHIM_EXTENDED_OBITS)
-		cprint("ELOHIM_EXTENDED_OBITS\n");
+	if (elohim_playmode & UNUSED5)
+		cprint("UNUSED5\n");
     if (elohim_playmode & CLANRING_CTF_MODE)
         cprint("CLANRING_CTF_MODE\n");
 
@@ -498,19 +442,7 @@ void () console_server_flags =
     cprint("\n");
 };
 
-//
-//  V E R S I O N  I N F O
-//
-void () console_version_info =
-{
-    cprint("\n");
-    cprint3("\"", elohim_version_info, "\"\n");
-    cprint("\n");
-};
 
-
-
-//
 //  G E T  O R I G I N
 //
 //  Return the vector 'scr_ofsx scr_ofsy scr_ofsz'
@@ -641,7 +573,7 @@ void (float command) console_command =
     else if (command == 10)
         console_commands();
     else if (command == 11)
-        console_version_info();
+        {}
     else if (command >= 12 && command <= 14)
         admin_init_set_mode();
 	else if (command == 15)
@@ -659,18 +591,15 @@ void (float command) console_command =
 	else if (command == 23)			
 		{}
 	else if (command == 24)
-		admin_set_obits();
+		{}
     else if (command == 40)
         console_debug_client();
     else if (command == 41)
-    {
-        cprint("debugging off\n");
-        elohim_debug_client = world;
-    }
+    {}
     else if (command == 42)
-        console_stuff_impulse();
+        {}
     else if (command == 43)
-        console_stuff_colour();
+        {}
     else if (command == 44)
         console_client_flags();
     else if (command == 45)

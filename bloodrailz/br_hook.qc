@@ -821,8 +821,15 @@ void () HookVanish =
 		
 		self.hookhead = 0;		
 		
-		stuffcmd(self, "cl_bob 0.0032\n");
-		stuffcmd(self, "cl_bobcycle 2.5\n");
+		/*
+		stuffcm(self, "cl_bob 0.0032\n");
+		stuffcm(self, "as23\n");
+		stuffcm(self, "an0\n");
+		*/
+		stuffcmd(self, "hkv01\n");
+		
+		self.tilted=0;
+		self.hook_tilt=0;
 };
 
 
@@ -1020,29 +1027,54 @@ void () HookPull =
 			
 			if(self.owner.turn_speed > 10)
 			{
-				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
-				stuffcmd(self.owner, "cl_screenangle -6\n");
+				if(self.owner.hook_tilt != -6)
+				{
+					stuffcmd(self.owner, "as30n6\n");
+					//bprint("tilting 0 yes!\n");
+					self.owner.hook_tilt =-6;
+					self.owner.tilted =1;
+				}
 			}
 			else if(self.owner.turn_speed > 5)
 			{
-				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
-				stuffcmd(self.owner, "cl_screenangle -3\n");
+				if(self.owner.hook_tilt != -3)
+				{
+					stuffcmd(self.owner, "as30n3\n");
+					//bprint("tilting 0 yes!\n");
+					self.owner.hook_tilt =-3;
+					self.owner.tilted =1;
+				}
 			}
-			//////////////////////////////////////////////////////////////
 			else if(self.owner.turn_speed < -10)
 			{
-				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
-				stuffcmd(self.owner, "cl_screenangle 6\n");
+				if(self.owner.hook_tilt != 6)
+				{
+					stuffcmd(self.owner, "as30p6\n");
+					//bprint("tilting 0 yes!\n");
+					self.owner.hook_tilt =6;
+					self.owner.tilted =1;
+				}
 			}
 			else if(self.owner.turn_speed < -5)
 			{
-				stuffcmd(self.owner, "cl_screenangle_speed 3\n");
-				stuffcmd(self.owner, "cl_screenangle 3.0\n");
+				if(self.owner.hook_tilt != 3)
+				{
+					stuffcmd(self.owner, "as30p3\n");
+					//bprint("tilting 0 yes!\n");
+					self.owner.hook_tilt =3;
+					self.owner.tilted =1;
+				}
 			}
 			else
 			{
-				stuffcmd(self.owner, "cl_screenangle_speed 2.25\n");
-				stuffcmd(self.owner, "cl_screenangle 0\n");
+				if(self.owner.tilted ==1)
+				{
+					stuffcmd(self.owner, "as23\n");
+					stuffcmd(self.owner, "an0\n");
+					self.owner.hook_tilt =0;
+					self.owner.tilted =0;
+					//bprint("badspam HOOK!\n");
+				}
 			}
 			
 			

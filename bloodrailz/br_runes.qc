@@ -470,7 +470,7 @@ void(vector origin1, float radius, float steam) make_smoke =
 	}
 	
 	
-	if(smoke_ent_number < 70 && time - smoke_time < 40)
+	if(smoke_ent_number < 60 && time - smoke_time < 40)
 	{
 		smoke_generated +=1;
 		//bprint(ftos(smoke_generated));
@@ -497,7 +497,11 @@ void(vector origin1, float radius, float steam) make_smoke =
 		smoke.movetype = MOVETYPE_FLY;
 		smoke.solid = SOLID_TRIGGER;
 		setsize (smoke, 0,0);
-		smoke.avelocity = '-50 -50 -325'; //500 -> 300
+		
+		if(random()<0.4) smoke.avelocity = '-50 -50 -325'; //500 -> 300
+		else smoke.avelocity = 0;
+		//smoke.avelocity = smoke.avelocity*2;
+		
 		smoke.tarzan_time = 0;
 		smoke.speed = 0;
 		smoke.velocity = '0 0 0';
@@ -544,7 +548,10 @@ void(vector origin1, float radius, float steam) make_smoke =
 		self.frame = frand;
 		self.movetype = MOVETYPE_FLY;
 		self.solid = SOLID_TRIGGER;
-		self.avelocity = '-50 -50 -325'; //500 -> 300
+		
+		if(random()<0.4) self.avelocity = '-50 -50 -325'; //500 -> 300
+		else self.avelocity = 0;
+		
 		self.tarzan_time = 0;
 		self.speed = 0;
 		self.velocity = self.velocity/4;
@@ -733,7 +740,7 @@ void() bangs =
 			if(time - smoke_time < 40 && !(self.is_over_sky ==1 )) //&& self.flags & FL_ONGROUND))  //DECEM
 			{
 			
-				if(smoke_ent_number < 70)
+				if(smoke_ent_number < 60)   //70 ->60
 				{
 					self.smoke_counter +=1;
 					if(self.smoke_counter%4 || random() < 0.1)
@@ -960,8 +967,9 @@ void() bangs =
 								if(head.classname == "player") 
 								{
 									head.blast_time =time;         //disable steering
-									stuffcmd(head, "cl_forwardspeed 0\n");
-									stuffcmd(head, "cl_sidespeed 0\n");
+									//stuffcm(head, "cl_forwardspeed 0\n");
+									//stuffcm(head, "cl_sidespeed 0\n");
+									stuffcmd(head, "spd00\n");
 								}
 							
 								dir5 = head.origin - (self.absmin + self.absmax) * 0.5;              

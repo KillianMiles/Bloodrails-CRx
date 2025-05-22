@@ -585,6 +585,22 @@ void() func_episodegate =
 	setmodel (self, self.model);
 };
 
+void() func_breakable =
+{
+	return;
+};
+
+void() func_movewall =
+{
+	return;
+};
+
+void() func_grab =
+{
+	return;
+};
+
+
 /*QUAKED func_bossgate (0 .5 .8) ?
 This bmodel appears unless players have all of the episode sigils.
 */

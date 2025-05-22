@@ -84,7 +84,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				
 				if (damage == 9)
 				{
-					if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS)) bprint (" fans the flames\n");
+					if (rnum < 0.5) bprint (" fans the flames\n");
 					else if (rnum <= 1) bprint(" learns not to play with matches\n");
 				}
 				else if (damage == 20)
@@ -125,7 +125,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				bprint (attacker.netname);
 				if (damage == 9)
 				{
-					if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS)) bprint (" gets a teammate burned");
+					if (rnum < 0.5) bprint (" gets a teammate burned");
 					else if (rnum <= 1) bprint(" loses a friend in a fire");
 					smoke_teammate_frags +=1;
 					
@@ -362,7 +362,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 
 			if(attacker.death_aura_frag == 1)
 			{
-					if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
+					if (rnum < 0.5)
 					{
 						bprint (targ.netname);
 						bprint (" was zapped by ");
@@ -394,7 +394,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 		
 			else if(attacker.plasma_frag >0)
 			{
-					if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
+					if (rnum < 0.5)
 					{
 						bprint (targ.netname);
 						bprint (" was melted by ");
@@ -442,7 +442,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			else if(damage ==35)
 			{
 				attacker.plasma_frag = attacker.plasma_frag +1;
-				if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
+				if (rnum < 0.5)
 					{
 						bprint (targ.netname);
 						bprint (" was torn apart ");
@@ -476,14 +476,14 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				} 
 				*/
 					
-				if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
+				if (rnum < 0.5)
 				{
 					bprint (targ.netname);
 					bprint(" catches ");
 					bprint (attacker.netname);
 					bprint("'s comet");
 				}
-				else if (rnum <= 1 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
+				else if (rnum <= 1)
 				{
 					bprint (attacker.netname);
 					bprint(" smites ");
@@ -561,7 +561,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				}
 					
 					
-				if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
+				if (rnum < 0.5)
 				{
 					bprint (targ.netname);
 					bprint (" was axe-murdered by ");
@@ -924,71 +924,39 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 	}
 	else
 	{
-            // targ got himself killed
-            client_frag(targ, -1);
+			// targ got himself killed
+			client_frag(targ, -1);
 			bprint (targ.netname);
 
 			// tricks and traps
 			if (attacker.classname == "explo_box")
 			{
-                if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
-                    bprint (" blew up\n");
-                else
-                    bprint (" exploded\n");
-
+				if (rnum < 0.5)bprint(" blew up\n");
+				else bprint (" exploded\n");
 				return;
 			}
 			if (attacker.solid == SOLID_BSP && attacker != world)
 			{
-                if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
-	                bprint (" was squished\n");
-				else
-					bprint (" was flattened\n");
+				if (rnum < 0.5) bprint (" was squished\n");
+				else bprint (" was flattened\n");
 				return;
 			}
-			if (attacker.classname == "trap_shooter" || attacker.classname == "trap_spikeshooter")
-			{
-                if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
-                    bprint (" was spiked\n");
-                else
-                    bprint (" was skewered\n");
-				return;
-			}
-			if (attacker.classname == "fireball")
-			{
-                bprint (" ate a lavaball\n");
-				return;
-			}
-			if (attacker.classname == "trigger_changelevel")
-			{
-				bprint (" tried to leave\n");
-				return;
-			}
+			
 
 			// in-water deaths
-            if (targ.watertype == -3)
+			if (targ.watertype == -3)
 			{
-				if (!(elohim_playmode & ELOHIM_EXTENDED_OBITS))
-					rnum = rnum * 0.66;
-                if (rnum < 0.33)
-					bprint (" sleeps with the fishes\n");
-                else if (rnum < 0.66)
-					bprint (" sucks it down\n");
-                else
-                    bprint (" realizes he doesn't have gills\n");
+				if (rnum < 0.33) bprint (" sleeps with the fishes\n");
+				else if (rnum < 0.66) bprint (" drowns\n");
 				return;
 			}
-            else if (targ.watertype == -4)
+			else if (targ.watertype == -4)
 			{
-                if (rnum < 0.33 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
-					bprint (" gulped a load of slime\n");
-                else if (rnum < 0.66)
-                    bprint (" discovers the hazards of toxic waste\n");
-                else
-                    bprint (" picked a bad place to swim\n");
+				if (rnum < 0.60) bprint (" gulped down some slime\n");
+				else bprint (" picked a bad place to swim\n");
 				return;
 			}
-            else if (targ.watertype == -5)
+			else if (targ.watertype == -5)
 			{
 				targ.total_deaths = targ.total_deaths +1;
 				if (targ.health < -15)
@@ -997,17 +965,6 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 					return;
 				}
 				if (rnum < 0.5) bprint (" turned into hot slag\n");
-				return;
-			}
-
-			// fell to their death?
-			if (targ.deathtype == "falling")
-			{
-				targ.deathtype = "";
-                if (rnum < 0.5 || !(elohim_playmode & ELOHIM_EXTENDED_OBITS))
-                    bprint (" fell to his death\n");
-                else
-                    bprint (" discovers gravity\n");
 				return;
 			}
 
@@ -1020,22 +977,5 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			}
 		}
 	}
-	else if (targ.classname == "p_fish")
-	{
-		bprint (attacker.netname);
-		bprint (" killed a fish.\n");
-		attacker.frags = attacker.frags + 1;
-	}
-	else if (targ.classname == "p_head")
-	{
-		bprint (attacker.netname);
-		bprint (" killed a head.\n");
-		attacker.frags = attacker.frags + 5;
-	}
-	else if (targ.classname == "p_tbaby")
-	{
-		bprint (attacker.netname);
-		bprint (" killed a spawn!\n");
-		attacker.frags = attacker.frags + 3;
-	}
+
 };

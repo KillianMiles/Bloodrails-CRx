@@ -37,8 +37,6 @@ entity kick_target;         // Player to kick
 //
 void () admin_send_aliases2 =
 {
-		// Qsmack commands
-	stuffcmd(self, "alias qsmack impulse 37\n");
 
     // kick a player
     stuffcmd(self, "alias kick! impulse 213\n");
@@ -734,7 +732,6 @@ void () admin_set_mode =
         //mapname = "race15";
         utils_set_cvar("timelimit", 0);
         cvar_set("hostname", ADMIN_RACE_MODE_STRING);
-        //stuffcmd(self,"impulse 120; wait;wait;wait;wait;wait;impulse 120\n");
     }
 
 
@@ -905,51 +902,9 @@ void () admin_disable_item =
 
 
 
-//
-//  S E T  O B I T S
-//
-//  Enable/disable extended obituaries.
-//
-void () admin_set_obits =
-{
-    if (elohim_playmode & ELOHIM_EXTENDED_OBITS)
-    {
-        bprint("Extended obituaries disabled\n");
-        cprint("Extended obituaries disabled\n");
-        elohim_playmode = elohim_playmode - ELOHIM_EXTENDED_OBITS;
-    }
-    else
-    {
-        bprint("Extended obituaries enabled\n");
-        cprint("Extended obituaries enabled\n");
-        elohim_playmode = elohim_playmode | ELOHIM_EXTENDED_OBITS;
-    }
-    utils_set_cvar("samelevel", elohim_playmode);
-};
 
-//
-//  R E Q U E S T  S E T  O B I T S
-//
-//  Request to enable/disable extended obituaries.
-//
-void () admin_request_set_obits =
-{
-    // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
-        admin_set_obits();
-    else
-    {
-        local string newstate;
-    
-        if (elohim_playmode & ELOHIM_EXTENDED_OBITS)
-            newstate = "disable";
-        else
-            newstate = "enable";
-    
-        if (vote_init(newstate, " extended obituaries", admin_set_obits))
-            vote_yes();
-    }
-};
+
+
 
 //
 //  S E T  M O D E  V O T E
@@ -1451,8 +1406,7 @@ void () admin_impulse =
     	
     else if (self.impulse == 255)
 		admin_request_set_runes();
-    else if (self.impulse == 211)
-		admin_request_set_obits();
+    else if (self.impulse == 211) {}
     else if (self.impulse >= 215 && self.impulse <= 220)
         admin_request_set_timelimit(5 * (self.impulse - 214));
     else if (self.impulse == 221)

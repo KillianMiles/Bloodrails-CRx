@@ -1,18 +1,4 @@
-//
-// Strings.qc
-//
-// A bunch of routines for returning various strings.
-// Several routines were inspired by the clanring server mod.
-//
-// Written by J.P. Grossman, modified by bucksh0t.
-//
 
-//
-//  F T O S
-//
-//  Some numbers have been hard-coded to avoid the problems associated with
-//  a single ftos buffer.
-//
 string (float n) strings_ftos =
 {
     if (n == 1)
@@ -60,31 +46,23 @@ string (float n) strings_countdown ={return"";}
 
 string () strings_mode_countdown =
 {
-    if (elohim_playmode & ELOHIM_MATCH_MODE)
-    {
-      if (elohim_playmode & CLANRING_CTF_MODE)
-        return"-\bctf match mode\b-\n\n";
-      else 
-        return"-\btdm match mode\b-\n\n";
-    }
-    //don't need these now but just in case
-    else if (elohim_playmode & RACE_MODE)
-    {
-      if (elohim_playmode & CLANRING_CTF_MODE)
-        return"-\bctf practice mode\b-\n\n";
-      else
-        return"-\b practice mode \b-\n\n";
-    }
-    else if (elohim_playmode & DM_PUBLIC_MODE)
-      return"-\bpublic tdm mode\b-\n\n";
-    else
-    {
-      if (elohim_playmode & CLANRING_CTF_MODE)
-        return"-\bpublic ctf mode\b-\n\n";
-      else
-		return"-\b  ffa mode  \b-\n\n";
-    }
-    return"\n\n";
+	if (elohim_playmode & ELOHIM_MATCH_MODE)
+	{
+		if (elohim_playmode & CLANRING_CTF_MODE) return"-\bctf match mode\b-\n\n";
+		else return"-\btdm match mode\b-\n\n";
+	}
+	else if (elohim_playmode & RACE_MODE)
+	{
+		if (elohim_playmode & CLANRING_CTF_MODE) return"-\bctf practice mode\b-\n\n";
+		else return"-\b practice mode \b-\n\n";
+	}
+	else if (elohim_playmode & DM_PUBLIC_MODE) return"-\bpublic tdm mode\b-\n\n";
+	else
+	{
+		if (elohim_playmode & CLANRING_CTF_MODE) return"-\bpublic ctf mode\b-\n\n";
+		else return"-\b  ffa mode  \b-\n\n";
+	}
+	return"\n\n";
 };
 
 string (float n) strings_fraglimit_countdown ={return"";};
@@ -101,11 +79,7 @@ string (float num) strings_get_teamname_up_by ={return "";}
 string (float num) strings_get_teamname_up_by_short ={return "";}
 string (float num) strings_get_teamname_needs ={return "";}
 
-//
-//  G E T  M A P N A M E
-//
-//  Return the nth map name.
-//
+
 string (float mapnum) strings_get_mapname =
 {
     if (mapnum < 10){return "";}
@@ -243,11 +217,7 @@ string (float mapnum) strings_get_mapname =
     return "";
 };
 
-//
-//  G E T  M O D E
-//
-//  Returns mode string 
-//
+
 string (float mode) strings_get_mode =
 {
     // if (mode == 0)
@@ -267,7 +237,7 @@ string (float mode) strings_get_mode =
         return "Normal";
 };
 
-//
+
 //  S Z P L U R A L
 //
 //  Helper string for printing.

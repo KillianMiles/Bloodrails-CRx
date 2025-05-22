@@ -13,9 +13,7 @@ spawn/hrscope.qc
 
 base/motd.qc
 base/strings.qc
-base/qsmack.qc
 base/auto.qc
-base/debug.qc
 base/elohim.qc
 base/angles.qc
 base/score.qc
@@ -59,5 +57,4 @@ plats.qc
 misc.qc
 
 spawn/utils.qc
-spawn/map_ents.qc
 spawn/mapcycler.qc

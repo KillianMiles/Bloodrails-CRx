@@ -592,6 +592,10 @@ float(string) stof = #81;
 .float hook_time;
 .float hook_time2;
 
+.float tilted;
+.float hook_tilt;
+.float ski_tilt;
+
 //AXE CHARGE UP STUFF
 .float axe_button_released;
 .float axe_power_time;

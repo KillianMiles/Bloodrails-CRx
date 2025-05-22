@@ -6,6 +6,11 @@
 // Written by J.P. Grossman, modified by bucksh0t.
 //
 
+void () admin_create;
+void () elohim_bad_impulse;
+void () observer_start;
+void () elohim_observer_start_think;
+
 // constants
 float ELOHIM_SUICIDE_OK = 0;
 float ELOHIM_TOO_MANY_SUICIDES = 1;
@@ -50,11 +55,6 @@ float OBSERVER_GO_AUTO = 128;  // player entering an auto mode
 float OBSERVER_ACTIONCAM = 256;
 
 
-// CRMOD qsmack variables
-.float qsmack_level;
-.float qsmack_trylevel;
-float qsmack_statusokay;				// True if qsmack bot just did a status
-
 
 // server mode - stored in cvar 'samelevel' and preserved across levels
 float ELOHIM_SAME_LEVEL = 1;
@@ -70,7 +70,7 @@ float ELOHIM_MODE_VOTE = 512;
 float ELOHIM_DEDICATED_SERVER = 1024; 
 float ELOHIM_NO_ARMOR = 2048;			// disable spooging in practice mode -- replaced with NO_ARMOR instead
 float ELOHIM_NOAMMO = 4096;			// CRMOD is server using Qsmack?
-float ELOHIM_EXTENDED_OBITS = 8192;
+float UNUSED6 = 8192;
 float CLANRING_CTF_MODE = 16384;
 float UNUSED1 = 32768;
 float ELOHIM_AURA = 65536;                //DEATH AURA EFFECT
@@ -84,10 +84,10 @@ float DM_PUBLIC_MODE = 4194304;
 float ELOHIM_LOW_GIBS = 8388608;           //moved down
 float ELOHIM_NO_GIBS = 16777216;          //moved down
 float RACE_MODE = 33554432;      //moved down
-float ELOHIM_GG_MOD = 67108864;              //moved down
+float UNUSED4 = 67108864;              //moved down
 float UNUSED3 = 134217728;            //moved down
 float ELOHIM_NO_RING = 268435456;
-float CRMOD_QSMACK_ON = 536870912;	
+float UNUSED5 = 536870912;	
 
 // server state - not preserved across level changes
 float ELOHIM_TIMER_STARTED = 1;
@@ -133,8 +133,8 @@ float elohim_num_redspawns;    // number of red spawn points
 float elohim_num_bluespawns;    // number of blue spawn points
 float elohim_num_starts;    // number of match extra start points
 float elohim_num_cameras;   // number of cameras
-string elohim_version;      // used for motd and help-server
-string elohim_version_info; // text info including rev. and compile time
+string br_version;      // used for motd and help-server
+string br_version_info; // text info including rev. and compile time
 string bloodrailz_version_number; // text info storing version number (ie "4.0")
 entity elohim_debug_client; // used for debugging
 float elohim_server_physics;
@@ -285,8 +285,6 @@ string USER_MOTD1_5, USER_MOTD2_5, USER_MOTD3_5, USER_MOTD4_5, USER_MOTD5_5;
 string USER_MOTD1_6, USER_MOTD2_6, USER_MOTD3_6, USER_MOTD4_6, USER_MOTD5_6;
 float NUM_USER_MOTD_LINES;
 
-// QSmack password
-float QSMACK1, QSMACK2, QSMACK3, QSMACK4, QSMACK5;
 
 //
 //  I N I T  W O R L D
@@ -301,9 +299,6 @@ void () userdefs_init_world =
     temp = "3 stag";
     ELOHIM_MAX_SUICIDES = utils_stof(temp);
 
-	// QSMACK
-	temp = "100 14733";
-	QSMACK1 = utils_stof(temp);
 
 
     // Intro message

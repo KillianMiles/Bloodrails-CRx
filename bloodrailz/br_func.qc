@@ -35,15 +35,21 @@ void() Called_in_PreThink =
 		
 		if(timelimit-time <15.9 && timelimit-time > 15.5) 
 		{
-			stuffcmd(self, "scr_matchclock 2\n");
-			stuffcmd(self, "scr_matchclockscale 3.4\n");
-			stuffcmd(self, "scr_matchclock_y 86.5\n");
-			stuffcmd(self, "scr_matchclock_x 72.7\n");
+			//stuffcm(self, "scr_matchclock 2\n");
+			//stuffcm(self, "scr_matchclockscale 3.4\n");
+			//stuffcm(self, "scr_matchclock_y 86.5\n");
+			//stuffcm(self, "scr_matchclock_x 72.7\n");
+			stuffcmd(self, "mclok01\n");
 		}
-
+		
+		if ((self.flags & FL_ONGROUND) && self.skiing_on!=0) 
+		{
+			self.skiing_on =0;
+			self.ski_tilt =0;
+		}
 	
 		rune_regen();
-		WaterMove ();
+		WaterMove();
 		spawn_protection ();
 		make_speedlines();
 		make_hookx();
@@ -56,10 +62,12 @@ void() Called_in_PreThink =
 		//if(mapname == "tut1" && self.tut_displayed2 ==0) make_tut_icon(2);
 		
 
-		if(time - self.grind_time > 1)
+		if(time - self.grind_time > 1 && self.angles_not_zero == 0 && self.tilted ==1 && !self.hook_out && self.skiing_on ==0)
 		{
-			stuffcmd(self, "cl_screenangle_speed 2.25\n");
-			stuffcmd(self, "cl_screenangle 0\n");
+			stuffcmd(self, "as23\n");
+			stuffcmd(self, "an0\n");
+			self.tilted=0;
+			//bprint("stuff scr_angle YES!\n");  //badspam
 		}
 		
 
@@ -159,10 +167,9 @@ void() Called_in_PreThink =
 	
 	
 
-		if(time - self.blast_time > 0.40 && time - self.blast_time < 0.45)   //disable steering after push
+		if(time - self.blast_time > 0.40 && time - self.blast_time < 0.45)   //re-enableable steering after push
 		{
-			stuffcmd(self, "cl_forwardspeed 200\n");
-			stuffcmd(self, "cl_sidespeed 350\n");
+			stuffcmd(self, "spd01\n");
 		}
 		
 		
@@ -400,6 +407,7 @@ void() Called_in_PostThink =
 	//ceiling_ride(); 
 	swoop();
 	
+
 	Skiing();
 	Water_bounce();
 	
@@ -669,10 +677,12 @@ void() Called_in_PostThink =
 	}
 	
 	
-	if(self.hook_out ==0 && self.skiing_on ==0 && self.angles_not_zero ==0 && time%3 < 0.05) 
+	if(self.hook_out ==0 && self.skiing_on ==0 && self.angles_not_zero ==0 && self.tilted ==1) 
 	{
-		stuffcmd(self, "cl_screenangle 0\n");  //backstop
-		//bprint("backstop ");
+		stuffcmd(self, "an0\n");  //backstop scr_nangle
+		self.tilted=0;
+		//bprint("badspam YES!!!\n");
+		
 	}
 
 
@@ -1658,8 +1668,7 @@ void () Shuffle_Teams =
 			local float rnd = random();
 			if((rnd< 0.5 && number_set_blue < total_players_global / 2) || number_set_red >= total_players_global / 2)      
 			{
-				//stuffcmd(player, "color 13\n");                        //BLUE
-				setcolor(player, 221);
+				setcolor(player, 221);  //blue
 				player.team = 14;
 				number_set_blue = number_set_blue +1;
 				bprint(ftos(number_set_blue));
@@ -1668,8 +1677,7 @@ void () Shuffle_Teams =
 			}
 			else if ((rnd>= 0.5 && number_set_red < total_players_global / 2) || number_set_blue >= total_players_global / 2) 
 			{
-				//stuffcmd(player, "color 4\n");                           //RED
-				setcolor(player, 68);
+				setcolor(player, 68);  //red
 				player.team = 5;
 				number_set_red = number_set_red +1;
 				bprint(ftos(number_set_red));
