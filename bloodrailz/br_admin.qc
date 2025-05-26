@@ -99,23 +99,23 @@ void () admin_set_physics =
 	if (elohim_server_physics == 3)
 	{
 		cvar_set("sys_ticrate", ".016666667");
-		announce("qe physics enabled");
+		announce("60Hz tic enabled");
 	}
 	
 	else if (elohim_server_physics == 2)
 	{
-		cvar_set("sys_ticrate", ".016666667");
-		announce("qe physics enabled");
+		cvar_set("sys_ticrate", "0.01388889");
+		announce("72Hz tic enabled");
 	}
 	else if (elohim_server_physics == 1)
 	{
-		cvar_set("sys_ticrate", ".016666667");
-		announce("qe physics enabled");
+		cvar_set("sys_ticrate", ".015625");
+		announce("64Hz tic enabled");
 	}
 	else
 	{
 		cvar_set("sys_ticrate", ".016666667");
-		announce("qe physics enabled");
+		announce("60Hz tic enabled");
 	}
 };
 
@@ -742,14 +742,14 @@ void () admin_request_set_mode2 =
         else if (newmode == 5)
         {
             dofunc = admin_toggle_physics;
-            mode = "enable qe physics";
+            mode = "enable 60Hz tic";    //
             elohim_request_physics = 0;
         }
         else if (newmode == 6)
         {
    
             dofunc = admin_toggle_physics;
-            mode = "enable nq physics";
+            mode = "enable 64Hz tic";
             elohim_request_physics = 1;
         }
         else if (newmode == 7)

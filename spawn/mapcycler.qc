@@ -14,9 +14,11 @@ __accumulate void() worldspawn =
 	else 
 	{
 	
-		localcmd("timelimit 8\n");// changing default from 10 to 8
-		localcmd("scr_matchclock 3\n");
-		localcmd("scr_matchclockscale 3.5\n");
+		localcmd("timelimit 8.05\n");// changing default from 10 to 8
+		localcmd("sys_throttle 0.002\n");
+		localcmd("net_messagetimeout 60\n");
+		
+		
 	
 		if (elohim_playmode & CLANRING_CTF_MODE) localcmd("fraglimit 120\n");
 		else localcmd("fraglimit 40\n");
@@ -24,7 +26,8 @@ __accumulate void() worldspawn =
 	}
     
 	localcmd("sv_defaultmap ctf_dissocia_r1\n");   //default map
-	localcmd("sys_ticrate 0.0166667\n");
+	localcmd("sys_ticrate 0.01666667\n");
+	//localcmd("sys_ticrate 0.015625\n");
 	
 
 	

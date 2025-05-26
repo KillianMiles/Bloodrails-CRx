@@ -369,8 +369,6 @@ void () elohim_init_world =
   szmode = strings_get_mode(mode);
   cprint2(szmode, " mode\n");
 
-  //localcmd("exec crxmod.cfg\n");
-  //localcmd("exec brcrxmod.cfg\n");
 
   if (!(elohim_playmode & ELOHIM_MODE_VOTE))
     elohim_playmode = elohim_playmode | ELOHIM_MODE_VOTE;
@@ -824,8 +822,6 @@ void () elohim_put_client_in_server =
 //
 void () elohim_help =
 {
-  // local string numsuicides;
-  // numsuicides = strings_ftos_gold(ELOHIM_MAX_SUICIDES);
 
   sprint2(self, br_version, "\n");
   sprint(self, "Help commands (type in console):\n");
@@ -843,18 +839,6 @@ void () elohim_help =
   sprint(self, "To fix bind and text issues, set cl_filterstuffcmd 0; and reconnect to the server\n");
 };
 
-//
-//  H E L P  C H A N G E
-//
-//  Show help on how to change levels.
-//
-void () elohim_help_change =
-{
-    sprint(self, "Enter the warp command and select from the menu to change maps\n");
-    sprint(self, "Enter the episode number and then the map number to initiate a vote\n");
-    sprint(self, "--Capture the Flag modes have different item locations in order to balance the bases\n");
-    sprint(self, "--Deathmatch modes may have additional power ups which can be voted off\n");
-};
 
 //
 //  H E L P  M I S C
@@ -899,21 +883,6 @@ void () elohim_help_misc =
 	  sprint(self, " ticrate  - view sys_ticrate\n");
 };
 
-void () ctf_help =
-{
-  sprint(self, "---ClanRing Capture the Flag---\n");
-  sprint(self, "Use impulse 2 or 22 for grappling hook\n");
-  sprint(self, "Runes do not need to be activated to take effect.  Use impulse 40 to drop a rune\n");
-  sprint(self, "Rune types and effects:\n");
-  sprint(self, "Plasma hook (WHITE-RED)- Hook shoots plasma, armor regenerates slowly.\n");
-  sprint(self, "Power (BLACK-RED)- Railgun deals splash damage on impact. Shoot the floor!\n");
-  sprint(self, "Haste (Blue) - fire weapons faster\n");
-  sprint(self, "Death Aura (ORANGE) - Axe deals extra splash damage\n\n");
-  sprint(self, "Beyond the normal frags for killing enemies, you receive bonus frags as follows:\n");
-  sprint(self, "1 - returning the flag\n");
-  sprint(self, "1 - your team captures the flag\n");
-  sprint(self, "3 - capturing the flag\n\n");
-};
 
 //
 //  C O M M A N D S
@@ -971,8 +940,6 @@ void () elohim_commands =
     sprint(self, " qsmack\n");
   }
   sprint(self, "\n");
-
-  elohim_help_change();
 };
 
 
@@ -1308,7 +1275,27 @@ void () show_rules_prematch =
 
 	if (timervar > 3)
 	{
-		s1 = strings_mode_countdown();
+		
+		
+
+		if (elohim_playmode & ELOHIM_MATCH_MODE)
+		{
+			if (elohim_playmode & CLANRING_CTF_MODE) s1 ="-\bctf match mode\b-\n\n";
+			else s1 ="-\btdm match mode\b-\n\n";
+		}
+		else if (elohim_playmode & RACE_MODE)
+		{
+			if (elohim_playmode & CLANRING_CTF_MODE) s1 ="-\bctf practice mode\b-\n\n";
+			else s1 ="-\b practice mode \b-\n\n";
+		}
+		else if (elohim_playmode & DM_PUBLIC_MODE) return"-\bpublic tdm mode\b-\n\n";
+		else
+		{
+			if (elohim_playmode & CLANRING_CTF_MODE) s1 ="-\bpublic ctf mode\b-\n\n";
+			else s1 ="-\b  ffa mode  \b-\n\n";
+		}
+		
+		
 
 		temp = elohim_timelimit;	
 		s2 = strings_timelimit_countdown(temp);

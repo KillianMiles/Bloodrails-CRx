@@ -1055,13 +1055,14 @@ void() PutClientInServer =
 	if(self.nogib_death ==1 || self.nogib_death ==2) self.nogib_death =0;
 	
 	/*
-	stuffcm(self, "cl_forwardspeed 200\n");     //make sure the maxspeed gets reset 9-17-23
+	stuffcm(self, "cl_forwardspeed 200\n");     //make sure the maxspeed gets reset
 	stuffcm(self, "cl_sidespeed 350\n");
 	stuffcm(self,"r_particledesc particles\n");
 	stuffcm(self, "cl_bob 0.0032\n");
 	stuffcm(self, "an0\n");
 	*/
 	stuffcmd(self, "pcis01\n");
+	
 	
 	self.tilted =0;
 

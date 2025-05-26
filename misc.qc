@@ -95,9 +95,7 @@ void func_rotate()
 
 
 
-/*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
-Used as a positional target for lightning.
-*/
+
 void() info_notnull =
 {
 };
@@ -120,12 +118,7 @@ void() light_use =
 	}
 };
 
-/*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
-Non-displayed light.
-Default light value is 300
-Default style is 0
-If targeted, it will toggle between on or off.
-*/
+
 void() light =
 {
 	if (!self.targetname)
@@ -144,13 +137,7 @@ void() light =
 	}
 };
 
-/*QUAKED light_fluoro (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
-Non-displayed light.
-Default light value is 300
-Default style is 0
-If targeted, it will toggle between on or off.
-Makes steady fluorescent humming sound
-*/
+
 void() light_fluoro =
 {
 	if (self.style >= 32)
@@ -161,17 +148,9 @@ void() light_fluoro =
 		else
 			lightstyle(self.style, "m");
 	}
-	
-	//precache_sound ("ambience/fl_hum1.wav");
-	//ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
 };
 
-/*QUAKED light_fluorospark (0 1 0) (-8 -8 -8) (8 8 8)
-Non-displayed light.
-Default light value is 300
-Default style is 10
-Makes sparking, broken fluorescent sound
-*/
+
 void() light_fluorospark =
 {
 	if (!self.style)
@@ -359,60 +338,7 @@ void() misc_explobox2 =
 	}
 };
 
-//============================================================================
 
-float SPAWNFLAG_SUPERSPIKE	= 1;
-float SPAWNFLAG_LASER = 2;
-
-
-void() spikeshooter_use =
-{
-
-};
-
-void() shooter_think =
-{
-	spikeshooter_use ();
-	self.nextthink = time + self.wait;
-	newmis.velocity = self.movedir * 500;
-};
-
-
-/*QUAKED trap_spikeshooter (0 .5 .8) (-8 -8 -8) (8 8 8) superspike laser
-When triggered, fires a spike in the direction set in QuakeEd.
-Laser is only for REGISTERED.
-*/
-
-void() trap_spikeshooter =
-{
-	SetMovedir ();
-	self.use = spikeshooter_use;
-};
-
-
-/*QUAKED trap_shooter (0 .5 .8) (-8 -8 -8) (8 8 8) superspike laser
-Continuously fires spikes.
-"wait" time between spike (1.0 default)
-"nextthink" delay before firing first spike, so multiple shooters can be stagered.
-*/
-void() trap_shooter =
-{
-	trap_spikeshooter ();
-	
-	if (self.wait == 0)
-		self.wait = 1;
-	self.nextthink = self.nextthink + self.wait + self.ltime;
-	self.think = shooter_think;
-};
-
-
-
-/*
-===============================================================================
-
-
-===============================================================================
-*/
 
 
 void() make_bubbles;
@@ -569,22 +495,6 @@ void() func_illusionary =
 	makestatic (self);
 };
 
-/*QUAKED func_episodegate (0 .5 .8) ? E1 E2 E3 E4
-This bmodel will appear if the episode has allready been completed, so players can't reenter it.
-*/
-void() func_episodegate =
-
-{
-	if (!(serverflags & self.spawnflags))
-		return;			// can still enter episode
-
-	self.angles = '0 0 0';
-	self.movetype = MOVETYPE_PUSH;	// so it doesn't get pushed by anything
-	self.solid = SOLID_BSP;
-	self.use = func_wall_use;
-	setmodel (self, self.model);
-};
-
 void() func_breakable =
 {
 	return;
@@ -598,101 +508,4 @@ void() func_movewall =
 void() func_grab =
 {
 	return;
-};
-
-
-/*QUAKED func_bossgate (0 .5 .8) ?
-This bmodel appears unless players have all of the episode sigils.
-*/
-void() func_bossgate =
-
-{
-	if ( (serverflags & 15) == 15)
-		return;		// all episodes completed
-	self.angles = '0 0 0';
-	self.movetype = MOVETYPE_PUSH;	// so it doesn't get pushed by anything
-	self.solid = SOLID_BSP;
-	self.use = func_wall_use;
-	setmodel (self, self.model);
-};
-
-//============================================================================
-/*QUAKED ambient_suck_wind (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_suck_wind =
-{
-	precache_sound ("ambience/suck1.wav");
-	ambientsound (self.origin, "ambience/suck1.wav", 1, ATTN_STATIC);
-};
-
-/*QUAKED ambient_drone (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_drone =
-{
-};
-
-/*QUAKED ambient_flouro_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_flouro_buzz =
-{
-};
-/*QUAKED ambient_drip (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_drip =
-{
-	precache_sound ("ambience/drip1.wav");
-	ambientsound (self.origin, "ambience/drip1.wav", 0.5, ATTN_STATIC);
-};
-/*QUAKED ambient_comp_hum (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_comp_hum =
-{
-	//precache_sound ("ambience/comp1.wav");
-	//ambientsound (self.origin, "ambience/comp1.wav", 1, ATTN_STATIC);
-};
-/*QUAKED ambient_thunder (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_thunder =
-{
-
-};
-/*QUAKED ambient_light_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_light_buzz =
-{
-	//precache_sound ("ambience/fl_hum1.wav");
-	//ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
-};
-/*QUAKED ambient_swamp1 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_swamp1 =
-{
-	precache_sound ("ambience/swamp1.wav");
-	ambientsound (self.origin, "ambience/swamp1.wav", 0.5, ATTN_STATIC);
-};
-/*QUAKED ambient_swamp2 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_swamp2 =
-{
-	precache_sound ("ambience/swamp2.wav");
-	ambientsound (self.origin, "ambience/swamp2.wav", 0.5, ATTN_STATIC);
-};
-
-//============================================================================
-
-void() noise_think =
-{
-	self.nextthink = time + 0.5;
-
-};
-
-/*QUAKED misc_noisemaker (1 0.5 0) (-10 -10 -10) (10 10 10)
-
-For optimzation testing, starts a lot of sounds.
-*/
-
-void() misc_noisemaker =
-{
-	self.nextthink = time + 0.1 + random();
-	self.think = noise_think;
 };

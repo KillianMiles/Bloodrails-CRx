@@ -333,6 +333,8 @@ void() bloodrails_precache =
 	precache_model ("mdl/vial.mdl");
 	precache_model ("mdl/br_chain.mdl");
 	precache_model ("mdl/br_chain2.mdl");
+	precache_model ("mdl/br_chain3.mdl");
+	precache_model ("mdl/br_chain4.mdl");
 	
 	precache_model ("mdl/star.mdl");
 	precache_model ("mdl/hookx.mdl");

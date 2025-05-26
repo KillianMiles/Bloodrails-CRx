@@ -1123,6 +1123,8 @@ void() FlickCurves=
 
 void() W_FireRailgun =
 {
+	//if(cvar("sys_ticrate") == 0.015625) bprint("0.015625\n");
+	
 	
 	if(infokey(self, "rail_cvar") =="1")
 	{

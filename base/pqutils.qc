@@ -25,61 +25,14 @@ float MULTICAST_ONE = 6;
 float MULTICAST_ONE_R = 7;
 void(vector where, float set) multicast = #82;
 
-void (float tm) pqc_erase_team =
-{	
-	local entity oldself;
 
-    oldself = self;
-    self = find(world, classname, "player");
 
-    while (self)
-    {
-        if ((self.style & ELOHIM_CONNECTED) && (self.style & CRX_NQ_COMPAT))
-        {
-			msg_entity = self;
-			WriteByte (MSG_ONE, SVC_STUFFCMD);
-			WriteByte (MSG_ONE, MOD_PROQUAKE);
-			WriteByte (MSG_ONE, PQC_ERASE_TEAM);
-			WriteByte (MSG_ONE, 16 + tm);
-			WriteString (MSG_ONE, string_null);
-		}
-		self = find(self, classname, "player");
-	}
-	self = oldself;
-};
-void (float c) pqc_new_team_self =
-{
-    if ((self.style & ELOHIM_CONNECTED) && (self.style & CRX_NQ_COMPAT))
-    {
-        msg_entity = self;
-		WriteByte (MSG_ONE, SVC_STUFFCMD);
-		WriteByte (MSG_ONE, MOD_PROQUAKE);
-		WriteByte (MSG_ONE, PQC_NEW_TEAM);
-		WriteByte (MSG_ONE, 16 + c & 15); // pants
-		WriteByte (MSG_ONE, 16 + c / 16); // shirt
-		WriteString (MSG_ONE, string_null);
-    }
-};
-void (float c) pqc_new_team =
-{	
-	local entity oldself;
 
-    oldself = self;
-    self = find(world, classname, "player");
-
-    while (self)
-    {
-        pqc_new_team_self(c);
-		self = find(self, classname, "player");
-	}
-	self = oldself;
-};
-void (float tm, float tf) pqc_team_frags_self =
+void (float tm, float tf) pqc_team_frags_self =   //used for QSSM scoreboard
 {
     if (self.style & ELOHIM_CONNECTED)
     {
-		if (tf < 0)
-			tf = tf + 65536;
+		if (tf < 0) tf = tf + 65536;
 		msg_entity = self;				
 		WriteByte (MSG_ONE, SVC_STUFFCMD);
 		WriteByte (MSG_ONE, MOD_PROQUAKE);
@@ -89,11 +42,11 @@ void (float tm, float tf) pqc_team_frags_self =
 		WriteString (MSG_ONE, string_null);
     }
 };
+
+
 void (float tm, float tf) pqc_team_frags =
 {	
-	if (!tm || !tf)
-		return;
-
+	if (!tm || !tf) return;
 	local entity oldself;
 
     oldself = self;
@@ -106,7 +59,9 @@ void (float tm, float tf) pqc_team_frags =
     }
     self = oldself;
 };
-void(float m, float s)pqc_match_time =
+
+
+void(float m, float s)pqc_match_time =     //send match time for QSSM matchclock
 {
 	local entity oldself;
 
@@ -123,35 +78,9 @@ void(float m, float s)pqc_match_time =
             WriteBytePQ(MSG_MULTICAST , m);
             WriteBytePQ(MSG_MULTICAST , s);
             WriteString(MSG_MULTICAST , string_null);
-            multicast('0 0 0', MULTICAST_ONE_R);
+            multicast('0 0 0', MULTICAST_ONE);
 		}
         self = find(self, classname, "player");
     }
     self = oldself;
 };
-void ()pqc_match_reset_self =
-{
-	if (self.style & ELOHIM_CONNECTED)
-	{
-		msg_entity = self;
-		WriteByte(MSG_MULTICAST , SVC_STUFFCMD);
-		WriteByte(MSG_MULTICAST , MOD_PROQUAKE);
-		WriteByte(MSG_MULTICAST , PQC_MATCH_RESET);
-		WriteString(MSG_MULTICAST , string_null);
-		multicast('0 0 0', MULTICAST_ONE_R);
-	}
-};
-void ()pqc_match_reset =
-{	
-	local entity oldself;
-
-    oldself = self;
-    self = find(world, classname, "player");
-    while (self)
-    {
-		pqc_match_reset_self();
-        self = find(self, classname, "player");
-    }
-    self = oldself;
-};
-

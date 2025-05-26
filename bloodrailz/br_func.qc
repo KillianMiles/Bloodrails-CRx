@@ -33,13 +33,18 @@ void() Called_in_PreThink =
 			crown_out = 1;
 		}
 		
-		if(timelimit-time <15.9 && timelimit-time > 15.5) 
+		if(timelimit-time <15.9 && timelimit-time > 15.5)  //switch to large clock in last 15seconds
 		{
 			//stuffcm(self, "scr_matchclock 2\n");
 			//stuffcm(self, "scr_matchclockscale 3.4\n");
 			//stuffcm(self, "scr_matchclock_y 86.5\n");
 			//stuffcm(self, "scr_matchclock_x 72.7\n");
 			stuffcmd(self, "mclok01\n");
+		}
+		else if(timelimit-time <0.2 && timelimit-time > 0) //back to small clock
+		{
+			stuffcmd(self, "scr_matchclock 3\n");
+			stuffcmd(self, "scr_matchclockscale 3.47\n");
 		}
 		
 		if ((self.flags & FL_ONGROUND) && self.skiing_on!=0) 

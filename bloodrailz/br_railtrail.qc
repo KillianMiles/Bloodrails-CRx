@@ -459,13 +459,13 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedR
 	
 	if((total_players_global > 7 || smoke_ent_number > 8)) 
 	{
-		if(total_players_global <= 10)
+		if(total_players_global <= 9)
 		{
 			if(pointCount == 17) pointCount = pointCount - 1;
 			else if(pointCount == 18) pointCount = pointCount - 1;
 			else if(pointCount == 19) pointCount = pointCount - 1;
 		}
-		if(total_players_global > 10)
+		if(total_players_global > 9)
 		{
 			if(pointCount == 17) pointCount = pointCount - 1;
 			else if(pointCount == 18) pointCount = pointCount - 2;

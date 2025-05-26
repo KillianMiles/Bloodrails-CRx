@@ -547,7 +547,10 @@ void () LinkPos =
 	
 	
 
-	if(vlen(chainVector) >= 2550) chainVector = normalize(chainVector) * 2550;
+	if(vlen(chainVector) >= 2800) 
+	{
+		chainVector = normalize(chainVector) * 2800;
+	}
 	
 	self.angles = vectoangles(chainVector);	
 	
@@ -556,7 +559,7 @@ void () LinkPos =
 	setorigin(self, chainStart + chainVector * pctAlongChain );
 	
 
-	self.alpha = 0.65;
+	//self.alpha = 0.65;
 	
 	
 	//if (vlen(self.origin - hook.origin) <125) 
@@ -566,44 +569,68 @@ void () LinkPos =
 		setmodel (self, "mdl/null.mdl");
 		self.alpha = 0.005;
 	}
+	else if (vlen(self.origin - hook.origin) <=1000) 
+	{
+		setmodel (self, "mdl/br_chain.mdl");
+		self.alpha = 0.65;
+
+	}
 	
+	if(vlen(chainVector) < 2900)
+	{
+		if (vlen(player.origin - hook.origin) >1700 && pctAlongChain <1)
+		{
+			//bprint("chain2  ");
+		
+			chainVector = chainVector - normalize(chainVector)* 240;
+			setorigin(self, chainStart + chainVector * pctAlongChain );
+			setmodel (self, "mdl/br_chain3.mdl");
+			self.alpha = 0.65;
+		}
+		else if (vlen(player.origin - hook.origin) >1000 && pctAlongChain <1) 
+		{
+			//bprint("chain2  ");
+		
+			chainVector = chainVector - normalize(chainVector)* 240;
+			setorigin(self, chainStart + chainVector * pctAlongChain );
+			setmodel (self, "mdl/br_chain2.mdl");
+			self.alpha = 0.65;
+		}
+		else if (vlen(player.origin - hook.origin) >1700 && pctAlongChain ==1) 
+		{
+			bprint("chain4 yes!  ");
+		
+			setorigin(self, chainStart + chainVector);
+			setmodel (self, "mdl/br_chain4.mdl");
+			self.alpha = 0.50;
+		}
+	}
 	else 
 	{
-		//bprint("******  ");
-		setmodel (self, "mdl/br_chain.mdl");
-		//chainVector = chainVector - normalize(chainVector)* 240;
-		/*
-		if(self.up_count == 0/7) self.alpha =0.65;
-		else if(self.up_count == 1/7) self.alpha =0.65;
-		else if(self.up_count == 2/7) self.alpha =0.65;
-		else if(self.up_count == 3/7) self.alpha =0.55;
-		else if(self.up_count == 4/7) self.alpha =0.45;
-		else if(self.up_count == 5/7) self.alpha =0.40;
-		else if(self.up_count == 6/7) self.alpha =0.35;
-		else if(self.up_count == 7/7) self.alpha =0.65;
-		*/
+		//self.alpha = self.alpha -.02;
 		
-		self.alpha = 0.65;
+		//if(pctAlongChain ==1) self.alpha = self.alpha -.025;
+		//else if(pctAlongChain ==4/5) self.alpha = self.alpha -.020;
+		//else if(pctAlongChain ==3/5) self.alpha = self.alpha -.015;
+		//else if(pctAlongChain ==2/5) self.alpha = self.alpha -.010;
+		
+		//if(self.alpha <=0) self.alpha =-1;
+
+		
+		//self.alpha = self.alpha - (.01 + pctAlongChain * .11);
 	}
 	
-	
-	if (vlen(player.origin - hook.origin) >1200) 
-	{
-		//bprint("chain2  ");
-		
-		chainVector = chainVector - normalize(chainVector)* 240;
-		setorigin(self, chainStart + chainVector * pctAlongChain );
-		setmodel (self, "mdl/br_chain2.mdl");
-		self.alpha = 0.65;
-	}
 	
 	if ((self.enemy.player_flag & PF_ITEM_RUNE_MASK) && (self.enemy.player_flag & PF_ITEM_RUNE1_FLAG) && self.enemy.hook_is_anchored == 0)
 	{
 			self.alpha = 0.005;
 	}
 	
+
+	
 	//self.nextthink = time + 0.01;   //HOOK_THINK_
-	self.nextthink = time + 0.01;   //NOVEM
+	self.nextthink = time;   //NOVEM
+
 	
 };
 
@@ -1499,6 +1526,8 @@ void() Hook_Check =
 	
 	if(vlen(self.origin - self.owner.origin) > 7800)
 	{
+		
+		//bprint("chain too long YES!\n");
 		HookVanish ();
 		return;
 	}
@@ -1925,7 +1954,7 @@ void() W_FireChain =
 
 	local entity link, prevlink;
 	local float currentLinkNum = 0;
-        local float linkCount = 7;		// <---------------number of links to draw starting from hookhead and back towards the player
+        local float linkCount = 5;		// <---------------number of links to draw starting from hookhead and back towards the player
 	prevlink = world;
 	
 	local entity oldSelf = self;

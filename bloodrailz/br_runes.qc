@@ -296,10 +296,16 @@ void() update_smoke =
 	}
 	
 	
-	
-	self.alpha = self.alpha - (0.0008*2+(.00325*random()));
-	
-	if(self.skin == 28) self.alpha = self.alpha + .00027;
+	if(self.weapon ==1)
+	{
+		self.alpha = self.alpha - (0.0008*2+(.00325*random()));
+		if(self.skin == 28) self.alpha = self.alpha + .00027;
+	}
+	else
+	{
+		self.alpha = self.alpha - (0.0008*2+(.00325*random()))*1.25;
+		if(self.skin == 28) self.alpha = self.alpha + .00027;
+	}
 	
 	self.weapon +=1;
 	
@@ -318,11 +324,14 @@ void() update_smoke =
 	}
 	else if(self.classname == "smoke")
 	{
-		setorigin(self, self.origin + zoffset);
+		
+		if(self.weapon ==1) setorigin(self, self.origin + zoffset);
+		else setorigin(self, self.origin + zoffset*1.5);
 	
 		if(self.speed == 0 && random()< 0.12) 
 		{
-			setorigin(self, self.origin + zoffset2);
+			if(self.weapon ==1) setorigin(self, self.origin + zoffset2);
+			else setorigin(self, self.origin + zoffset2*1.5);
 			self.speed = 1;
 		}
 		//self.alpha =.001;
@@ -379,8 +388,14 @@ void() update_smoke =
 				}
 	}
 
-	
-	self.nextthink = time + my_ticrate*2;
+	if(self.classname =="ground_smoke") 
+	{
+		if(random()<0.5) self.nextthink = time + my_ticrate*23;
+		else self.nextthink = time + my_ticrate*29;
+	}
+		
+	else if(self.weapon ==1) self.nextthink = time + my_ticrate*2;
+	else self.nextthink = time + my_ticrate*3;
 }
 		
 
@@ -470,7 +485,7 @@ void(vector origin1, float radius, float steam) make_smoke =
 	}
 	
 	
-	if(smoke_ent_number < 60 && time - smoke_time < 40)
+	if(smoke_ent_number < 59.75 && time - smoke_time < 40)
 	{
 		smoke_generated +=1;
 		//bprint(ftos(smoke_generated));
@@ -480,16 +495,23 @@ void(vector origin1, float radius, float steam) make_smoke =
 		smoke = spawn();
 		
 		
-		if(random() < 0.33 && ground_smoke_number < 10) 
+		if(random() < 0.33 && ground_smoke_number < 15) 
 		{
 			ground_smoke_number +=1;
 			setmodel (smoke, "mdl/ef_smoke2.mdl");
 			smoke.classname = "ground_smoke";
 		}
+		else if(smoke_ent_number < 22)
+		{
+			setmodel (smoke, "mdl/ef_smoke2.mdl");
+			smoke.classname = "smoke";
+			smoke.weapon =1;
+		}
 		else
 		{
 			setmodel (smoke, "mdl/ef_smoke2.mdl");
 			smoke.classname = "smoke";
+			smoke.weapon =0;
 		}
 			
 		setorigin(smoke, origin1 + randomizer + '0 0 -10');
@@ -498,13 +520,15 @@ void(vector origin1, float radius, float steam) make_smoke =
 		smoke.solid = SOLID_TRIGGER;
 		setsize (smoke, 0,0);
 		
-		if(random()<0.4) smoke.avelocity = '-50 -50 -325'; //500 -> 300
-		else smoke.avelocity = 0;
-		//smoke.avelocity = smoke.avelocity*2;
+		//if(random()<0.4) smoke.avelocity = '-50 -50 -325'; //500 -> 300
+		//else smoke.avelocity = 0;
+		smoke.avelocity = '-50 -50 -325'; //500 -> 300
+		
+		smoke.velocity = '0 0 0';
 		
 		smoke.tarzan_time = 0;
 		smoke.speed = 0;
-		smoke.velocity = '0 0 0';
+		
 		setsize (smoke, '-16 -16 -8', '16 16 8');
 	
 		smoke_ent_number +=1;
@@ -549,12 +573,12 @@ void(vector origin1, float radius, float steam) make_smoke =
 		self.movetype = MOVETYPE_FLY;
 		self.solid = SOLID_TRIGGER;
 		
-		if(random()<0.4) self.avelocity = '-50 -50 -325'; //500 -> 300
-		else self.avelocity = 0;
+		//self.avelocity = '-50 -50 -325'; //500 -> 300
 		
 		self.tarzan_time = 0;
 		self.speed = 0;
-		self.velocity = self.velocity/4;
+		
+		self.velocity = '0 0 0';
 
 	
 	
@@ -740,7 +764,7 @@ void() bangs =
 			if(time - smoke_time < 40 && !(self.is_over_sky ==1 )) //&& self.flags & FL_ONGROUND))  //DECEM
 			{
 			
-				if(smoke_ent_number < 60)   //70 ->60
+				if(smoke_ent_number < 59.75)   //70 ->60
 				{
 					self.smoke_counter +=1;
 					if(self.smoke_counter%4 || random() < 0.1)
