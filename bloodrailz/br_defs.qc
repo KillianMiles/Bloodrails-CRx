@@ -18,7 +18,7 @@ __wrap void(entity client, string s, optional string s1, optional string s2, opt
 };
 */
 
-
+void()get_time;
 void()Splat;
 void()Splat2;
 void()Splat3;

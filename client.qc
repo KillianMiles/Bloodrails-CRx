@@ -1502,10 +1502,10 @@ void() PlayerPostThink =
 
 
 
-
 	if (self.style & ELOHIM_OBSERVER)
 	{
 		observer_post_think();
+		
 		return;
 	}
 	else if ((elohim_state & ELOHIM_TIMER_STARTED) && !(elohim_state & ELOHIM_MATCH_STARTED))
@@ -1521,13 +1521,21 @@ void() PlayerPostThink =
 		
 		if (time >= self.delay)
 		{
-			self.delay = time + 0.1;
+			self.delay = time + my_ticrate*7;
+			get_time();
 			if ((mode_is_public() == TRUE) && self.joinmsgtime >= time)
 			{
-				if (self.height == COLOR_RED)	centerprint(self, "You are on the RED team\n\n\bpress \b'F10'\b for quick-help\b"); //, wsp, qdp, ggp);
-				else if (self.height == COLOR_BLUE) centerprint(self, "You are on the BLUE team\n\n\bpress \b'F10'\b for quick-help\b"); //, wsp, qdp, ggp);
+				if (self.height == COLOR_RED)	centerprint(self, "You are on the RED team\n\n\bpress \b'F10'\b for quick-help\b");
+				else if (self.height == COLOR_BLUE) centerprint(self, "You are on the BLUE team\n\n\bpress \b'F10'\b for quick-help\b");
 			}
 			else	hud_update();
+		}
+	}
+	else 
+	{	if (time >= self.delay)
+		{
+			self.delay = time + my_ticrate*7;
+			get_time();
 		}
 	}
 	

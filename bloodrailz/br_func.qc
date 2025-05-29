@@ -404,7 +404,6 @@ void() Called_in_PostThink =
 	//local string blah = infokey(self,"chat");
 	//if (blah == "1") bprint("chatting");
 	
-	
 	FlickCurves();
 	check_jump (); //checks for long presses for wallrun and also for faster rail reload time when looking down
 	
@@ -2157,4 +2156,30 @@ float() splat_customize =
 	
 	
 	else return TRUE;
+}
+
+
+void() get_time =
+{
+
+				local float cur_sec, cur_min;
+				
+				if (elohim_state & ELOHIM_TIMER_STARTED)
+				{
+					cur_sec = elohim_match_timer.count;
+					cur_min = elohim_match_timer.lip;
+				}
+				else if (timelimit != 0)
+				{
+					cur_sec = floor(timelimit - time) % 60;
+					cur_min = floor(floor(timelimit - time) / 60);
+				}
+				else
+				{
+					cur_sec = floor(time) % 60;
+					cur_min = floor(floor(time) / 60);
+				}
+
+    
+				pqc_match_time(cur_min, cur_sec);
 }

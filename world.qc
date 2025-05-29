@@ -109,8 +109,9 @@ World Types:
 //=======================
 void() worldspawn =
 {
-
+	
 	checkextension("DP_SV_ROTATINGBMODEL");
+	
 	
 	lastspawn = world;
 	lastspawn_blue = world;
@@ -136,6 +137,7 @@ void() worldspawn =
 	cvar_set("noexit", "1");
 
 	cvar_set ("sv_gravity", "800");
+	
 
 
 

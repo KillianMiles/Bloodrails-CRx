@@ -355,14 +355,11 @@ void () elohim_init_world =
   if (mode_is_public())
   {
     elohim_timelimit = cvar("timelimit");
-    if (elohim_timelimit == 0)
-      elohim_timelimit = 10;
-    if (elohim_timelimit < 2)
-      elohim_timelimit = 2;
+    if (elohim_timelimit == 0) elohim_timelimit = 8.05;
+    if (elohim_timelimit < 2) elohim_timelimit = 2;
     match_show_timelimit();
   }
-  else
-    elohim_timelimit = 10;
+  else elohim_timelimit = 8.05;
 
   // show mode
   mode = options_get_mode();
@@ -1179,6 +1176,8 @@ void () elohim_start_frame =
 {
   local float command;
   
+  if(time < 2) timelimit = cvar("timelimit") * 60;   //make sure timelimit is set early on for the match clock
+  
   if (!(elohim_playmode & ELOHIM_MATCH_MODE))
   {
     if (time >= timelimit)
@@ -1187,7 +1186,6 @@ void () elohim_start_frame =
       NextLevel ();
     }
   }
-
 
 
 

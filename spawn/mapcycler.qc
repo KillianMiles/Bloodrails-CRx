@@ -15,6 +15,7 @@ __accumulate void() worldspawn =
 	{
 	
 		localcmd("timelimit 8.05\n");// changing default from 10 to 8
+		
 		localcmd("sys_throttle 0.002\n");
 		localcmd("net_messagetimeout 60\n");
 		

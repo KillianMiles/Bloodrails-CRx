@@ -1176,13 +1176,17 @@ void() make_rail_ammo =
 // Update player HUD with match timer, current score, flag status and rune status
 void hud_update() =
 {  
+
+   local string winning_team = "", flag_status = "", rune_status = "", red_score = "", blue_score = "";
+    
+
+    
     
     if (self.hudspace > 7)
         return;
         
 
-    local float cur_sec;
-    local float cur_min;
+
 
 	local vector xy_velocity;                //speedometer
 	xy_velocity = self.velocity;
@@ -1192,30 +1196,7 @@ void hud_update() =
 
        
 	
-    if (elohim_state & ELOHIM_TIMER_STARTED)
-    {
-        cur_sec = elohim_match_timer.count;
-        cur_min = elohim_match_timer.lip;
-    }
-    else if (timelimit != 0)
-    {
-        cur_sec = floor(timelimit - time) % 60;
-        cur_min = floor(floor(timelimit - time) / 60);
-    }
-    else
-    {
-        cur_sec = floor(time) % 60;
-        cur_min = floor(floor(time) / 60);
-    }
-
-    // Team scores if a match is in progress
-    local string winning_team = "", flag_status = "", rune_status = "", str_time = "", red_score = "", blue_score = "", str_minute = "", str_second = "";
-    
-
-    str_minute = get_minute_string(cur_min);
-    str_second = get_second_string(cur_sec);
-    
-    pqc_match_time(cur_min, cur_sec);
+   
     
     
 

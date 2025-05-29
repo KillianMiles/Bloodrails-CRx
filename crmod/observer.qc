@@ -1446,9 +1446,13 @@ void () observer_update_display =
 		score = pad = "";
 		teamname = "                       ";
 	}
+	
 
 	
     self.delay = time + 0.5;
+    
+
+    
     if ((elohim_state & ELOHIM_MATCH_PAUSED) ||
         (self.style & (ELOHIM_SETTING_OPTIONS | ELOHIM_MOTD)))
         return;
@@ -1464,11 +1468,19 @@ void () observer_update_display =
         //return;
     }
 
-    if ((mode_is_public()) && !(self.style & ELOHIM_MOTD) && !(self.player_flag & PF_HUD))
+	
+
+    if ((mode_is_public()) && !(self.player_flag & PF_HUD))
     {
-        centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPress \bF1\b to join");
-        return;
+       
+        
+        if(!(self.style & ELOHIM_MOTD))
+        {
+		centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPress \bF1\b to join");
+		return;
+	}
     }
+
 	
 
 
