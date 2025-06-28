@@ -80,7 +80,7 @@ void() Called_in_PreThink =
 		//bprint("rune_bang\n");
 		
 		
-		if(self.impulse == 100 && elohim_playmode & RACE_MODE)
+		if(self.impulse == 100 && crx_playmode & RACE_MODE)
 		{
 			self.shield_time = 0;
 			self.shield_recharge_time = 1;
@@ -96,7 +96,7 @@ void() Called_in_PreThink =
 			spawn_race_entities();
 			ClientKill();
 		}
-		else if(self.impulse == 101 && elohim_playmode & RACE_MODE && mapname =="tut1")
+		else if(self.impulse == 101 && crx_playmode & RACE_MODE && mapname =="tut1")
 		{
 			self.shield_time = 0;
 			self.shield_recharge_time = 1;
@@ -104,7 +104,7 @@ void() Called_in_PreThink =
 			sound (self, CHAN_VOICE, "trig/br_tp1.wav", 1, ATTN_NORM);
 			setorigin(self, '0 0 2750');
 		}
-		else if(self.impulse == 102 && elohim_playmode & RACE_MODE && mapname =="tut1")
+		else if(self.impulse == 102 && crx_playmode & RACE_MODE && mapname =="tut1")
 		{
 			stuffcmd(self,"r_particledesc particles_not\n");
 			stuffcmd(self,"playdemo 0_tutorial.dem\n");
@@ -120,7 +120,7 @@ void() Called_in_PreThink =
 			{
 				observer_clear_flags();
 				self.oflags = self.oflags | OBSERVER_ACTIONCAM;
-				//if (self.style & ELOHIM_OBSERVER) self.style = self.style - ELOHIM_OBSERVER;
+				//if (self.style & STYLE_OBSERVER) self.style = self.style - STYLE_OBSERVER;
 				HorrorScope (camera_deathmatch);	
 			}
 			else if(self.oflags & OBSERVER_ACTIONCAM) 
@@ -155,7 +155,7 @@ void() Called_in_PreThink =
 		
 		
 		
-		if((elohim_playmode & ELOHIM_WRAITH) && (self.items & IT_INVISIBILITY) && (self.items & IT_SUIT) && !(self.items & IT_RAILGUN) && self.wraith == 0)
+		if((crx_playmode & MODE_WRAITH) && (self.items & IT_INVISIBILITY) && (self.items & IT_SUIT) && !(self.items & IT_RAILGUN) && self.wraith == 0)
 		{
 			self.items = self.items - IT_INVISIBILITY;
 			self.items = self.items - IT_SUIT;
@@ -163,7 +163,7 @@ void() Called_in_PreThink =
 			self.alpha = 1;
 		}
 
-		else if((elohim_playmode & ELOHIM_WRAITH) && !(self.items & IT_INVISIBILITY) && !(self.items & IT_SUIT) && (self.items & IT_RAILGUN) && self.wraith == 1)
+		else if((crx_playmode & MODE_WRAITH) && !(self.items & IT_INVISIBILITY) && !(self.items & IT_SUIT) && (self.items & IT_RAILGUN) && self.wraith == 1)
 		{
 			self.items = self.items | IT_INVISIBILITY;
 			self.items = self.items | IT_SUIT;
@@ -254,8 +254,8 @@ void() Called_in_PreThink =
 			
 		if(self.hookhead && !(self.player_flag & PF_ITEM_RUNE1_FLAG))                      //HOOK FIX
 		{	
-			if (self.height == elohim_team1) self.hookhead.skin = 1;   //red
-			else if (self.height == elohim_team2) self.hookhead.skin = 2;   //blue
+			if (self.height == crx_team1) self.hookhead.skin = 1;   //red
+			else if (self.height == crx_team2) self.hookhead.skin = 2;   //blue
 			else self.hookhead.skin = 0;   //blue
 			
 			if( vlen(self.origin - self.hookhead.origin) < 75) self.hookhead.alpha = 0.001;
@@ -301,7 +301,7 @@ void() Called_in_PreThink =
 			self.axe_powered = 0; 
 			self.shield_time = time;
 			self.weaponmodel = "mdl/v_axe_r.mdl";
-			if (self.height == elohim_team2) self.weaponmodel = "mdl/v_axe_b.mdl";
+			if (self.height == crx_team2) self.weaponmodel = "mdl/v_axe_b.mdl";
 		
 			if (self.shields_up == 0) 
 			{
@@ -489,8 +489,8 @@ void() Called_in_PostThink =
 	}
 	
 	if(self.frags <0) self.frags =0; //DECEM score
-	if(elohim_teamfrags1 < 0) elohim_teamfrags1 =0;
-	if(elohim_teamfrags2 < 0) elohim_teamfrags2 =0;
+	if(crx_teamfrags1 < 0) crx_teamfrags1 =0;
+	if(crx_teamfrags2 < 0) crx_teamfrags2 =0;
 	
 	
 	if(self.tarzan_time ==0 && self.hook_out ==1 && vlen(self.hookhead.velocity) ==0)
@@ -710,7 +710,7 @@ void() movement_check =                           //when called from post think 
 
 void() spawn_protection =                  // spawn protection
 {
-	if(time - self.spawn_protect_time < 3 && !(elohim_playmode & RACE_MODE) && !(elohim_playmode & ELOHIM_NO_SPAWN_PROTECT))     //ammo_rockets = spawn_protect_time
+	if(time - self.spawn_protect_time < 3 && !(crx_playmode & RACE_MODE) && !(crx_playmode & MODE_NO_SPAWN_PROTECT))     //ammo_rockets = spawn_protect_time
 	{
 
 		if (self.armorvalue > 100 && self.armortype == 40.001)
@@ -1022,7 +1022,7 @@ void () LandingCheck =
 			
 		}
 		
-		if(!(elohim_playmode & RACE_MODE) || (mapname =="tut1" || mapname =="tut2" || mapname =="tut7"))
+		if(!(crx_playmode & RACE_MODE) || (mapname =="tut1" || mapname =="tut2" || mapname =="tut7"))
 		{
 			//self.velocity = self.velocity + '0 0 100';    //THOR BOUNCE for normal thor slam thor jump
 			make_impact('0 0 0', 1);
@@ -1224,16 +1224,16 @@ void() make_aura =
 
 void() DeathAura =              //Death Aura effect
 {
-		if (self.height == elohim_team1) self.skin = 1;
-		else if (self.height == elohim_team2) self.skin =2;
+		if (self.height == crx_team1) self.skin = 1;
+		else if (self.height == crx_team2) self.skin =2;
 
 	if (((self.player_flag & PF_ITEM_RUNE_MASK) && (self.player_flag & PF_ITEM_RUNE4_FLAG) ))
 	{
-		if (self.height == elohim_team1) 
+		if (self.height == crx_team1) 
 		{
 			self.skin = 6;
 		}
-		else if (self.height == elohim_team2) 
+		else if (self.height == crx_team2) 
 		{
 			self.skin = 7;	
 		}
@@ -1393,7 +1393,7 @@ void() update_crown =
 	else if (self.owner.teleport_time > time +0.6)
 	{
 		//bprint("switch up");
-		if(self.owner.height == elohim_team2) setmodel (self, "mdl/null_trail.mdl");
+		if(self.owner.height == crx_team2) setmodel (self, "mdl/null_trail.mdl");
 		else setmodel (self, "mdl/null_trail_gre.mdl");
 	}
 	
@@ -1401,7 +1401,7 @@ void() update_crown =
 	else if(self.model == "mdl/null.spr" && (self.print_killa == 0 && (self.deadflag != DEAD_DYING) && (self.deadflag != DEAD_DEAD)))
 	{
 		//bprint("switch up");
-		if(self.owner.height == elohim_team2) setmodel (self, "mdl/null_trail.mdl");
+		if(self.owner.height == crx_team2) setmodel (self, "mdl/null_trail.mdl");
 		else setmodel (self, "mdl/null_trail_gre.mdl");
 		
 	}
@@ -1428,7 +1428,7 @@ void() update_crown =
 		self.alpha = 0.01;
 	}
 	
-	if (self.owner.frags < top_score_global || elohim_playmode & ELOHIM_CLASSIC || self.owner.hascrown ==0) 
+	if (self.owner.frags < top_score_global || crx_playmode & CLASSIC_MODE || self.owner.hascrown ==0) 
 	{
 		self.owner.hascrown = 0;
 		self.think = SUB_Remove;
@@ -1447,10 +1447,10 @@ void() make_crown =
 	//local entity crown;
 	crown_ent = spawn();
 	
-	//if(self.height == elohim_team1) setmodel (crown, "mdl/null_trail_gre.mdl");
+	//if(self.height == crx_team1) setmodel (crown, "mdl/null_trail_gre.mdl");
 	//else setmodel (crown, "mdl/null_trail.mdl");
 	
-	if(self.height == elohim_team2) setmodel (crown_ent, "mdl/null_trail.mdl");
+	if(self.height == crx_team2) setmodel (crown_ent, "mdl/null_trail.mdl");
 	else setmodel (crown_ent, "mdl/null_trail_gre.mdl");
 	
 	setorigin(crown_ent, self.origin + '0 0 40');
@@ -1564,7 +1564,7 @@ void() top_score =
 	
 	while (player)
 	{
-		if ((player.style & ELOHIM_CONNECTED))
+		if ((player.style & STYLE_CONNECTED))
 		{
 			if(player.total_deaths <= 0) player.KDR = 0;           // TODO FIX KDR CALCULATOR
 			else if (player.total_deaths > 0) player.KDR = player.total_kills/player.total_deaths; 
@@ -1614,7 +1614,7 @@ void() top_score =
     
 	while (player)    //2nd place score calc
 	{
-		if ((player.style & ELOHIM_CONNECTED) && (!(player.style & CRMOD_QSMACK)))
+		if (player.style & STYLE_CONNECTED)
 		{
 			if(new_frag > red_secondscore_global && new_frag < red_topscore_global && player.height == 4) red_secondscore_global = new_frag; 
 			if(new_frag > blue_secondscore_global && new_frag < blue_topscore_global && player.height == 4) blue_secondscore_global = new_frag; 
@@ -1626,7 +1626,7 @@ void() top_score =
 	
 	while (player)   //3rd place score calc
 	{
-		if ((player.style & ELOHIM_CONNECTED) && (!(player.style & CRMOD_QSMACK)))
+		if (player.style & STYLE_CONNECTED)
 		{
 			if(new_frag > red_thirdscore_global && new_frag < red_secondscore_global && player.height == 4) red_thirdscore_global = new_frag; 
 			if(new_frag > blue_thirdscore_global && new_frag < blue_secondscore_global && player.height == 4) blue_thirdscore_global = new_frag; 
@@ -1667,7 +1667,7 @@ void () Shuffle_Teams =
 	
 	while (player)
 	{
-		if ((player.style & ELOHIM_CONNECTED))           // && total_players_global % 2 == 0)
+		if ((player.style & STYLE_CONNECTED))           // && total_players_global % 2 == 0)
 		{
 			local float rnd = random();
 			if((rnd< 0.5 && number_set_blue < total_players_global / 2) || number_set_red >= total_players_global / 2)      
@@ -1718,7 +1718,7 @@ void () Rebalance_Teams =
 	{
 		while (player)
 		{
-			if ((player.style & ELOHIM_CONNECTED) && player.frags != -99)
+			if ((player.style & STYLE_CONNECTED) && player.frags != -99)
 			{
 				//bprint("parse <5 \n");
 				if (winning_team_global == 4 && red_secondscore_global > blue_secondscore_global) 
@@ -1748,7 +1748,7 @@ void () Rebalance_Teams =
 	{
 		while (player)
 		{
-			if ((player.style & ELOHIM_CONNECTED) && player.frags != -99)
+			if ((player.style & STYLE_CONNECTED) && player.frags != -99)
 			{
 				//bprint("parse >5 \n");
 				if (winning_team_global == 4 && (red_secondscore_global > blue_secondscore_global || red_secondscore_global > blue_thirdscore_global)) 
@@ -1786,14 +1786,14 @@ void () Rebalance_Teams =
 
 void() CheckPowerups =
 {
-	if(elohim_playmode & RACE_MODE)
+	if(crx_playmode & RACE_MODE)
 	{
 		if(self.items & IT_INVULNERABILITY) self.items = self.items - IT_INVULNERABILITY;
 		if(self.items & IT_INVISIBILITY) self.items = self.items - IT_INVISIBILITY;
 	}
 	
 	if (self.health <= 0)	return;
-	if(elohim_playmode & RACE_MODE) return;
+	if(crx_playmode & RACE_MODE) return;
 	
 	local float selfalpha;
 	
@@ -1853,7 +1853,7 @@ void() CheckPowerups =
 	
 	else
 	{
-		if(elohim_playmode & ELOHIM_WRAITH && (self.items & IT_INVISIBILITY) && self.wraith == 1)
+		if(crx_playmode & MODE_WRAITH && (self.items & IT_INVISIBILITY) && self.wraith == 1)
 		{
 			if(vlen(self.velocity) < 100) selfalpha = 0.08;
 			else if(vlen(self.velocity) < 300) selfalpha = 0.12;
@@ -1876,7 +1876,7 @@ void() CheckPowerups =
 			
 			
 		}
-		else if (!(self.style & ELOHIM_OBSERVER)) self.alpha = 1;
+		else if (!(self.style & STYLE_OBSERVER)) self.alpha = 1;
 	}
 	
 		
@@ -2164,10 +2164,10 @@ void() get_time =
 
 				local float cur_sec, cur_min;
 				
-				if (elohim_state & ELOHIM_TIMER_STARTED)
+				if (crx_state & STATE_TIMER_STARTED)
 				{
-					cur_sec = elohim_match_timer.count;
-					cur_min = elohim_match_timer.lip;
+					cur_sec = crx_match_timer.count;
+					cur_min = crx_match_timer.lip;
 				}
 				else if (timelimit != 0)
 				{

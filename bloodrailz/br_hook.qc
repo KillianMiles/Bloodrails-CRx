@@ -55,8 +55,8 @@ void() update_plasma =
 				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "weap/br_lockon.wav", 1, ATTN_NORM);
 				//bprint("1000\n");
 			//}
-			if (self.owner.height == elohim_team1) self.skin = 1;   //red
-			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+			if (self.owner.height == crx_team1) self.skin = 1;   //red
+			else if (self.owner.height == crx_team2) self.skin = 4;   //blue
 			else self.skin = 4;   //blue
 		}
 		else if(time - self.owner.hook_time2 > 1.3 && time - self.owner.hook_time2 < 1.3 + 9*my_ticrate) 
@@ -65,8 +65,8 @@ void() update_plasma =
 			{
 				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "weap/br_lockon.wav", 0.8, ATTN_NORM);
 			}
-			if (self.owner.height == elohim_team1) self.skin = 1;   //red
-			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+			if (self.owner.height == crx_team1) self.skin = 1;   //red
+			else if (self.owner.height == crx_team2) self.skin = 4;   //blue
 			else self.skin = 4;   //blue
 		}
 		else if(time - self.owner.hook_time2 > 1.7 && time - self.owner.hook_time2 < 1.7 + 9*my_ticrate) 
@@ -75,14 +75,14 @@ void() update_plasma =
 			{
 				if(time - self.owner.hook_time2 < 0.9 + my_ticrate) sound (self, CHAN_AUTO, "weap/br_lockon.wav", 0.7, ATTN_NORM);
 			}
-			if (self.owner.height == elohim_team1) self.skin = 1;   //red
-			else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+			if (self.owner.height == crx_team1) self.skin = 1;   //red
+			else if (self.owner.height == crx_team2) self.skin = 4;   //blue
 			else self.skin = 4;   //blue
 		}
 		else 
 		{
-			if (self.owner.height == elohim_team1) self.skin = 6;   //red
-			else if (self.owner.height == elohim_team2) self.skin = 5;   //blue
+			if (self.owner.height == crx_team1) self.skin = 6;   //red
+			else if (self.owner.height == crx_team2) self.skin = 5;   //blue
 			else self.skin = 5;   //blue
 		}
 	}
@@ -381,8 +381,8 @@ void(float speed1, float f_offset) make_plasma =
 		
 		setorigin(plasma, src);
 		
-		if (self.height == elohim_team1) plasma.skin = 6;   //red
-		else if (self.height == elohim_team2) plasma.skin = 5;   //blue
+		if (self.height == crx_team1) plasma.skin = 6;   //red
+		else if (self.height == crx_team2) plasma.skin = 5;   //blue
 		else plasma.skin = 5;   //blue
 	
 		
@@ -452,8 +452,8 @@ void() update_hookx =
 		}
 		setorigin(self, '3 0 0.22' +v_forward*(-offset));
 		
-		if (self.owner.height == elohim_team1) self.skin = 6;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+		if (self.owner.height == crx_team1) self.skin = 6;   //red
+		else if (self.owner.height == crx_team2) self.skin = 4;   //blue
 		else self.skin = 4;   //blue
 	}
 	
@@ -859,14 +859,9 @@ void () HookVanish =
 		self.hook_tilt=0;
 };
 
-
-
-
-
 void() UnHookPlayer =
 {
 	local entity oself;
-	
 
 	if (self.hook_out) 
 	{
@@ -876,11 +871,6 @@ void() UnHookPlayer =
 		self = oself;	
 		
 	}
-		
-		
-		
-		
-	
 };
 
 void () HookPull =
@@ -895,7 +885,7 @@ void () HookPull =
 	
 
 
-	if (elohim_state & ELOHIM_MATCH_PAUSED)
+	if (crx_state & STATE_MATCH_PAUSED)
 	{
 		return;
 	}
@@ -946,7 +936,7 @@ void () HookPull =
 	
 	else 
 	{
-		if (self.style & ELOHIM_OBSERVER)
+		if (self.style & STYLE_OBSERVER)
 		{
 			HookVanish();
 			return;
@@ -1394,7 +1384,7 @@ void () HookPull =
 
 void() T_ChainTouch =
 {
-	if (elohim_state & ELOHIM_MATCH_PAUSED) return;
+	if (crx_state & STATE_MATCH_PAUSED) return;
 
 	if (other == self.owner) return;         // don't attach to owner
 
@@ -1454,12 +1444,12 @@ void() T_ChainTouch =
 			setmodel (self, "mdl/ef_aura1.mdl");
 			self.frame = 2;
 			
-			if (self.owner.height == elohim_team1) 
+			if (self.owner.height == crx_team1) 
 			{
 				self.skin = 6;   //red
 				self.alpha = 0.44;
 			}
-			else if (self.owner.height == elohim_team2) 
+			else if (self.owner.height == crx_team2) 
 			{
 				self.skin = 5;   //blue
 				self.alpha = 0.33;
@@ -1606,7 +1596,7 @@ void() W_FireChain =
 		if(!self.button0) return;
 		if (self.hook_button_released == 1) return;
 		self.hook_button_released = 1;
-		if (elohim_state & ELOHIM_MATCH_PAUSED) return;
+		if (crx_state & STATE_MATCH_PAUSED) return;
 	
 		if (!(self.player_flag & PF_ITEM_RUNE1_FLAG)) sound (self, CHAN_WEAPON, SOUND_HOOK_ATTACK, 1, ATTN_NORM);
 	

@@ -447,7 +447,7 @@ entity() find_player =
 	e = find (world, classname, "player");
 	while (e)
 	{
-		if (!(e.style & ELOHIM_OBSERVER))
+		if (!(e.style & STYLE_OBSERVER))
 			if (e.health > 0)		// <-- aiment is a player in observer mode
 				return e;
 

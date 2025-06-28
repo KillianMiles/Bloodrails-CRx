@@ -5,13 +5,12 @@ void() W_SetCurrentAmmo;
 void (entity client, float fragval) client_frag;
 void() hurt_touch;
 
-void() admin_disable_item; //moved from elohim/admin
 void() ctf_flag_set;
 void() ctf_flag_touch;
 void(entity player, entity flag) ctf_drop_flag;
 void(entity player, float regenflag) ctf_player_drop_flag;
 
-//TODO: clean this up if (elohim_playmode & ELOHIM_MATCH_MODE)
+//TODO: clean this up if (crx_playmode & MATCH_MODE)
 
 const string SOUND_WIN = 		"ctf/br_flag_cap1.wav"; //br custom
 const string SOUND_GRABFLAG = 		"ctf/br_grab_flag.wav";  //LQ shambler_ssight
@@ -44,7 +43,6 @@ const string MODEL_FLAG_RED = 		"mdl/flag_r_notr.mdl";
 void () GibPlayer;
 void () observer_end;
 void () respawn;
-entity (entity start) findPlayer;
 
 float () public_put_player_in_team =
 {
@@ -54,27 +52,27 @@ float () public_put_player_in_team =
 
     self.height = self.team - 1;
 
-    if (elohim_team1 == self.height)
+    if (crx_team1 == self.height)
     {
 		// Add to team1 if possible
 		self.player_flag |= PF_TEAM_RED;
-		elohim_teamsize1 = elohim_teamsize1 + 1;
+		crx_teamsize1 = crx_teamsize1 + 1;
     }
-    else if (elohim_team2 == self.height)
+    else if (crx_team2 == self.height)
     {
 		self.player_flag |= PF_TEAM_BLUE;
-		elohim_teamsize2 = elohim_teamsize2 + 1;
+		crx_teamsize2 = crx_teamsize2 + 1;
     }
     else
     {
 		sprint(self, "You must pick a valid pants color:\n");
-		teamname = strings_get_teamname(elohim_team1);
+		teamname = strings_get_teamname(crx_team1);
 		sprint(self, teamname);
-		teamname = ftos(elohim_team1);
+		teamname = ftos(crx_team1);
 		sprint3(self, " (color ", teamname, ") or\n");
-		teamname = strings_get_teamname(elohim_team2);
+		teamname = strings_get_teamname(crx_team2);
 		sprint(self, teamname);
-		teamname = ftos(elohim_team2);
+		teamname = ftos(crx_team2);
 		sprint3(self, " (color ", teamname, ")\n");
 
 		return FALSE;
@@ -96,9 +94,9 @@ void () public_ready =
 		return;
     }
 
-    self.style = self.style | ELOHIM_READY;
+    self.style = self.style | STYLE_READY;
 
-    if (self.style & ELOHIM_OBSERVER)
+    if (self.style & STYLE_OBSERVER)
         observer_end();
 };
 
@@ -106,20 +104,20 @@ void () public_notready =
 {
     local string teamname; 
     
-    self.style = self.style - ELOHIM_READY;
+    self.style = self.style - STYLE_READY;
 
     teamname = strings_get_teamname(self.height);
     bprint4(self.netname, " has left the ", teamname, "\n");
 
     // Remove from team
-    if (self.height == elohim_team1) 		elohim_teamsize1 = elohim_teamsize1 - 1;
-    else 					elohim_teamsize2 = elohim_teamsize2 - 1;
+    if (self.height == crx_team1) 		crx_teamsize1 = crx_teamsize1 - 1;
+    else 					crx_teamsize2 = crx_teamsize2 - 1;
 };
 
 void () public_verify_team =
 {
     if (!(mode_is_public())) return;
-    if (self.style & ELOHIM_OBSERVER) return;
+    if (self.style & STYLE_OBSERVER) return;
     if (gameover) return;
     if (!(self.team > 0 && self.height > -1 && self.player_flag > 0)) return;
     
@@ -130,18 +128,18 @@ void () public_verify_team =
         if (self.player_flag & PF_TEAM_RED)
         {
             self.player_flag = self.player_flag - (self.player_flag & PF_TEAM_RED);
-            elohim_teamsize1 = elohim_teamsize1 - 1;
-            elohim_teamfrags1 = elohim_teamfrags1 - self.frags;  // DECEM SCORE
-            if(elohim_teamfrags1 < 0) elohim_teamfrags1 =0;	// DECEM SCORE
+            crx_teamsize1 = crx_teamsize1 - 1;
+            crx_teamfrags1 = crx_teamfrags1 - self.frags;  // DECEM SCORE
+            if(crx_teamfrags1 < 0) crx_teamfrags1 =0;	// DECEM SCORE
             self.frags = 0;
             
         }
         else if (self.player_flag & PF_TEAM_BLUE)
         {
             self.player_flag = self.player_flag - (self.player_flag & PF_TEAM_BLUE);
-            elohim_teamsize2 = elohim_teamsize2 - 1;
-            elohim_teamfrags2 = elohim_teamfrags2 - self.frags;	// DECEM SCORE
-            if(elohim_teamfrags2 < 0) elohim_teamfrags2 =0;	// DECEM SCORE
+            crx_teamsize2 = crx_teamsize2 - 1;
+            crx_teamfrags2 = crx_teamfrags2 - self.frags;	// DECEM SCORE
+            if(crx_teamfrags2 < 0) crx_teamfrags2 =0;	// DECEM SCORE
             self.frags = 0;
         }
 
@@ -169,8 +167,8 @@ float () public_join =
         local float rcnt = 0, bcnt = 0, rfrags = 0, bfrags = 0;
         local float pickteam;
         local entity p = world;
-        while((p = findPlayer(p))) {
-        if (!(p.style & ELOHIM_OBSERVER) && (p.style & ELOHIM_CONNECTED))          //team assignment fix suggested by buck - message from 5/8/22
+        while((p = find(p,classname,"player"))) {
+        if (!(p.style & STYLE_OBSERVER) && (p.style & STYLE_CONNECTED))          //team assignment fix suggested by buck - message from 5/8/22
             {
                 if(p.team == TEAM_RED)
                 {
@@ -207,7 +205,7 @@ float () public_join =
         self.impulse = 0;
         return TRUE;
     }
-    else if ((mode_is_ffa()) && !(fte_server))
+    else if (mode_is_ffa())
     {
         observer_end();    //allow jump to join game in match browser
         self.impulse = 0;
@@ -216,20 +214,7 @@ float () public_join =
     return FALSE;
 };
 
-
-
-
-
-
-
-
-
-
 /////////  CTF   ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
 
 void() ctf_precache =
 {
@@ -311,34 +296,55 @@ void() ctf_flag_return =
 	local entity returnedby;
 	local entity p = world;
 	//who returned flag?
-	while((p = findPlayerInTeam(self.team,p)))
+	while((p = find(p,classname,"player")))
 	{
-		if (p == other)		returnedby = other;
+		if (p.team == self.team)
+		{
+			if (p == other)	returnedby = other;
+		}
 	}
 
 	p = world;
-	while((p = findPlayerInTeam(self.team,p)))
+	while((p = find(p,classname,"player")))
 	{
-		if (p == other) 
+		if (p.team == self.team)
 		{
-			sprint3(p, returnedby.netname, " returned the ", self.netname);
-			sound (p, CHAN_AUTO, SOUND_PLAYER_RETURNED, 1, ATTN_NONE);
-			
-			if(other.is_over_sky && other.airborn_pos > 100) sprint(other, " [YER A WIZARD, HARRY]");
-			sprint(other, "\n");
-			
-            
-			client_frag(other, 1);
-			other.last_returned_flag = time;
-			make_icon(other, 5, 0);
-			
-
+			if (p == other) 
+			{
+				sprint3(p, returnedby.netname, " returned the ", self.netname);
+				sound (p, CHAN_AUTO, SOUND_PLAYER_RETURNED, 1, ATTN_NONE);
+				
+				if(other.is_over_sky && other.airborn_pos > 100) sprint(other, " [YER A WIZARD, HARRY]");
+				sprint(other, "\n");
+				
+				client_frag(other, 1);
+				other.last_returned_flag = time;
+				make_icon(other, 5, 0);
+			}
+			else 
+			{
+				if (!returnedby) 
+				{
+					centerprint(p,"Your flag has been returned\n");
+					sound (p, CHAN_AUTO, SOUND_RETURNED, 1, ATTN_NONE);
+				}
+				else
+				{
+					sprint4(p, returnedby.netname, " returned the ", self.netname, "\n");
+					sound (p, CHAN_AUTO, SOUND_PLAYER_RETURNED, 1, ATTN_NONE);
+				}
+			}
 		}
-		else 
+	}	
+
+	p = world;
+	while((p = find(p,classname,"player")))
+	{
+		if (p.team == otherTeam)
 		{
 			if (!returnedby) 
 			{
-				centerprint(p,"Your flag has been returned\n");
+				centerprint3(p,"The ", self.netname, " has been returned\n");
 				sound (p, CHAN_AUTO, SOUND_RETURNED, 1, ATTN_NONE);
 			}
 			else
@@ -347,31 +353,12 @@ void() ctf_flag_return =
 				sound (p, CHAN_AUTO, SOUND_PLAYER_RETURNED, 1, ATTN_NONE);
 			}
 		}
-	}	
-
-	p = world;
-	while((p = findPlayerInTeam(otherTeam,p)))
-	{
-		if (!returnedby) 
-		{
-			centerprint3(p,"The ", self.netname, " has been returned\n");
-			sound (p, CHAN_AUTO, SOUND_RETURNED, 1, ATTN_NONE);
-		}
-		else
-		{
-			sprint4(p, returnedby.netname, " returned the ", self.netname, "\n");
-			sound (p, CHAN_AUTO, SOUND_PLAYER_RETURNED, 1, ATTN_NONE);
-		}
 	}
 
 	ctf_regen_flag(self);
 
-	if (returnedby && other.frags >= fraglimit) 	NextLevel();
-		
+	if (returnedby && other.frags >= fraglimit) NextLevel();
 }
-
-
-
 
 //flag think function
 void() ctf_flag_think =
@@ -379,7 +366,7 @@ void() ctf_flag_think =
 	local entity e = self.owner;
 	
 	
-	if (elohim_playmode & RACE_MODE)	return;
+	if (crx_playmode & RACE_MODE)	return;
 
 	self.nextthink = time + 0.05;  
 
@@ -389,7 +376,7 @@ void() ctf_flag_think =
 		return;
 	}  
 
-	if(self.cnt == CTF_FLAG_DROPPED && !(elohim_state & ELOHIM_MATCH_PAUSED))
+	if(self.cnt == CTF_FLAG_DROPPED && !(crx_state & STATE_MATCH_PAUSED))
 	{
 		if (time > self.wait)	ctf_flag_return();
 		return;
@@ -412,7 +399,7 @@ void() ctf_flag_think =
 void(float dropped) ctf_flag_taken =
 {
 	local float otherTeam;
-        local entity p = world;
+    local entity p = world;
 
 	if (self.team == TEAM_BLUE)
 	{
@@ -426,36 +413,41 @@ void(float dropped) ctf_flag_taken =
 	}
 
 
-	while((p = findPlayerInTeam(self.team,p)))
+	while((p = find(p,classname,"player")))
 	{
-		sprint4(p, other.netname, " has taken the ", self.netname, "\n");
-		centerprint(p,"Your flag has been taken\n");
-		sound (p, CHAN_VOICE, SOUND_PICKUP_ENEMY, 1, ATTN_NORM);
-		sound (self, CHAN_AUTO, "ctf/br_flag_taken.wav", 1, ATTN_NORM);
+		if (p.team == self.team)
+		{
+			sprint4(p, other.netname, " has taken the ", self.netname, "\n");
+			centerprint(p,"Your flag has been taken\n");
+			sound (p, CHAN_VOICE, SOUND_PICKUP_ENEMY, 1, ATTN_NORM);
+			sound (self, CHAN_AUTO, "ctf/br_flag_taken.wav", 1, ATTN_NORM);
+		}
 	}
     
 	p = world;
 	
-	while((p = findPlayerInTeam(otherTeam,p)))
+	while((p = find(p,classname,"player")))
 	{
-		if(p != other) 
+		if (p.team == otherTeam)
 		{
-			centerprint(p,"Your team has the flag\n");
-			sound (p, CHAN_VOICE, SOUND_PICKUP_OWN, 1, ATTN_NORM);
+			if(p != other) 
+			{
+				centerprint(p,"Your team has the flag\n");
+				sound (p, CHAN_VOICE, SOUND_PICKUP_OWN, 1, ATTN_NORM);
+			}
 		}
 	}
 
-        if (dropped)
-        { 
+	if (dropped)
+	{ 
 		sound (p, CHAN_AUTO, SOUND_GRABDROPPEDFLAG, 1, ATTN_NONE);
 		sound (self, CHAN_AUTO, "ctf/br_flag_taken.wav", 1, ATTN_NORM);
-        }
-        else
-        {
+	}
+	else
+	{
 		sound (p, CHAN_AUTO, SOUND_GRABFLAG, 0.8, ATTN_NONE);
 		sound (self, CHAN_AUTO, "ctf/br_flag_taken.wav", 1, ATTN_NORM);
-        }
-
+    }
 
 	other.flag_carrier = TRUE;
 	other.flag_since = time;
@@ -468,9 +460,6 @@ void(float dropped) ctf_flag_taken =
 	self.movetype = MOVETYPE_NOCLIP;                     
 	self.cnt = CTF_FLAG_CARRIED;
 }
-
-
-
 
 //flag has been captured
 void() ctf_flag_capture =
@@ -530,7 +519,7 @@ void() ctf_flag_capture =
 	//	bprint(" \b[MIC DROP]\b ");
 	//	other.tier2 +=1;
 	//}
-	else if((!(elohim_playmode & ELOHIM_MATCH_MODE) && timelimit - time < 1.5 && timelimit - time >= 0) || (elohim_playmode & ELOHIM_MATCH_MODE && timelimit - (time - match_start_time) < 1.5))
+	else if((!(crx_playmode & MATCH_MODE) && timelimit - time < 1.5 && timelimit - time >= 0) || (crx_playmode & MATCH_MODE && timelimit - (time - match_start_time) < 1.5))
 	{
 		bprint(" \b[MIC DROP]\b ");
 	}
@@ -540,7 +529,7 @@ void() ctf_flag_capture =
 	sound(world,CHAN_AUTO,SOUND_WIN, 0.59, ATTN_NONE); //added 5/17/22
 
 	local entity p = world;
-	while((p = findPlayer(p))) 
+	while((p = find(p,classname,"player"))) 
 	{
 		if(p != other) 
 		{
@@ -581,26 +570,24 @@ void() ctf_flag_capture =
 	p = world;
 	//TODO: move this
 	
-	while((p = findPlayerInTeam(self.team,p))) 
+	while((p = find(p,classname,"player"))) 
 	{
-		if (p.frags >= fraglimit)	NextLevel();
+		if (p.team == self.team)
+		{
+			if (p.frags >= fraglimit) NextLevel();
+		}
 	}
 }
 
-
-
-
-
-void() hurt_flag_on =                   //Duped from triggers.qc with diff func name
+//Duped from triggers.qc with diff func name
+void() hurt_flag_on =
 {
 	self.solid = SOLID_TRIGGER;
 	self.nextthink = -1;
 };
 
-
-
-
-void() hurt_flag =                       //Duped from triggers.qc with diff func name
+//Duped from triggers.qc with diff func name
+void() hurt_flag =
 {
 	if (other.takedamage)
 	{
@@ -609,12 +596,8 @@ void() hurt_flag =                       //Duped from triggers.qc with diff func
 		self.think = hurt_flag_on;
 		self.nextthink = time + 1;
 	}
-
 	return;
 };
-
-
-
 
 //flag touch function
 void() ctf_flag_touch =
@@ -640,8 +623,6 @@ void() ctf_flag_touch =
 		}
 	}
 	
-
-
     if (other.solid == SOLID_TRIGGER)           //per Buck on 5/23/22 - for flag respawn if in hurt brush
     {
         if (self.cnt == CTF_FLAG_DROPPED) 
@@ -665,12 +646,12 @@ void() ctf_flag_touch =
     
     if(other.classname != "player" || other.health <= 0)	return;
 
-    if (!(elohim_playmode & CLANRING_CTF_MODE) || ((elohim_playmode & CLANRING_CTF_MODE) && (elohim_playmode & RACE_MODE)))
+    if (!(crx_playmode & CTF_MODE) || ((crx_playmode & CTF_MODE) && (crx_playmode & RACE_MODE)))
     {
             centerprint(other,"Flags are not active in this mode\n");
             return;
     }
-    else if ((elohim_playmode & ELOHIM_MATCH_MODE) && !(elohim_state & ELOHIM_MATCH_STARTED))
+    else if ((crx_playmode & MATCH_MODE) && !(crx_state & STATE_MATCH_STARTED))
     {
         centerprint(other,"Flags are not active until match starts\n");
         return;
@@ -729,7 +710,7 @@ void() ctf_flag_set =
 
 void() item_flag_team1 =
 {   
-	if (!(elohim_playmode & CLANRING_CTF_MODE))         //dont show flags unless CTF
+	if (!(crx_playmode & CTF_MODE))         //dont show flags unless CTF
 	{
 		remove(self);
 		return;
@@ -763,7 +744,7 @@ void() item_flag_team1 =
 
 void() item_flag_team2 =
 {
-        if (!(elohim_playmode & CLANRING_CTF_MODE))         //dont show flags unless CTF
+        if (!(crx_playmode & CTF_MODE))         //dont show flags unless CTF
 	{
 		remove(self);
 		return;
@@ -860,7 +841,7 @@ void() flag_carry =
 	
 	if(self.classname != "player") 				return;
 	if(self.team != TEAM_RED && self.team != TEAM_BLUE) 	return;
-	if (!(elohim_playmode & CLANRING_CTF_MODE))   		return;
+	if (!(crx_playmode & CTF_MODE))   		return;
 	
 
 	local entity temp_flag;

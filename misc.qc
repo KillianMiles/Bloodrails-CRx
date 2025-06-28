@@ -1,9 +1,7 @@
-// ELOHIM_MOD - spawn function for event_lightning
 void () event_lightning =
 {
     remove(self);
 };
-
 
 enumflags {
 	FUNC_ROTATE_X_AXIS,
@@ -11,61 +9,13 @@ enumflags {
 	FUNC_ROTATE_Z_AXIS
 };
 
-
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for spotlights, etc.
 */
 void() info_null =
 {
-    // ELOHIM_MOD - this was used for development
-    if (mapname == "eliltest")
-    {
-        self.classname = "player";
-
-        self.health = 100;
-        self.takedamage = DAMAGE_NO;
-        self.solid = SOLID_SLIDEBOX;
-        self.movetype = MOVETYPE_STEP;
-        //self.movetype = MOVETYPE_FLY;
-        //self.velocity = '-30 0 15';
-        self.velocity = '0 0 0';
-        self.angles = self.v_angle = '0 45 0';
-        self.fixangle = TRUE;
-        self.show_hostile = 0;
-        self.max_health = 100;
-        self.air_finished = time + 12;
-        self.dmg = 2;           // initial water damage
-        self.super_damage_finished = 0;
-        self.radsuit_finished = 0;
-        self.invisible_finished = 0;
-        self.invincible_finished = 0;
-        self.effects = 0;
-        self.invincible_time = 0;
-    
-        SetNewParms ();
-        DecodeLevelParms ();
-     
-        W_SetCurrentAmmo ();
-        self.weapon = 16;
-        self.armorvalue = 200;
-        self.armortype = 80.001;
-        self.currentammo = 100;
-    
-        self.attack_finished = time;
-     
-        self.deadflag = DEAD_NO;
-     
-        setmodel (self, "mdl/player.md3");
-        setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
-
-        player_stand1();
-    }
-    else
-    // END_MOD
-        remove(self);
+    remove(self);
 };
-
-
 
 void func_rotate_think()
 {
@@ -92,9 +42,6 @@ void func_rotate()
 	self.think = func_rotate_think;
 	self.nextthink = self.ltime + 0.1;
 }
-
-
-
 
 void() info_notnull =
 {

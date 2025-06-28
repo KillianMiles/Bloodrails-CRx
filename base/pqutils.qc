@@ -30,7 +30,7 @@ void(vector where, float set) multicast = #82;
 
 void (float tm, float tf) pqc_team_frags_self =   //used for QSSM scoreboard
 {
-    if (self.style & ELOHIM_CONNECTED)
+    if (self.style & STYLE_CONNECTED)
     {
 		if (tf < 0) tf = tf + 65536;
 		msg_entity = self;				
@@ -69,7 +69,7 @@ void(float m, float s)pqc_match_time =     //send match time for QSSM matchclock
     self = find(world, classname, "player");
     while (self)
     {
-        if (self.style & ELOHIM_CONNECTED)
+        if (self.style & STYLE_CONNECTED)
         {
             msg_entity = self;
             WriteByte(MSG_MULTICAST , SVC_STUFFCMD);

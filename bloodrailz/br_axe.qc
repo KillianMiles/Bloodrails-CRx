@@ -39,8 +39,8 @@ void(entity inflictor, vector org, entity attacker, float radius, float throw_hi
 						head.owner = attacker;
 						sound (attacker, CHAN_AUTO, "weap/br_plasm2.wav",1,ATTN_NORM);
 						
-						if (self.height == elohim_team1) head.skin = 6;   //red
-						else if (self.height == elohim_team2) head.skin = 5;   //blue
+						if (self.height == crx_team1) head.skin = 6;   //red
+						else if (self.height == crx_team2) head.skin = 5;   //blue
 						else
 						{
 							if(head.skin == 5) head.skin = 6; 
@@ -85,7 +85,7 @@ void() Axe_Splash =
 void() Axe_Charge_Logic=
 {
 	//SHIELD TIMING LOGIC
-		if (elohim_playmode & ELOHIM_NO_SHIELD) return;
+		if (crx_playmode & MODE_NO_SHIELD) return;
 		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL3))
 		{
 			//sprint(self,"shield is unavailable with HASTE RUNE\n");
@@ -108,7 +108,7 @@ void() Axe_Charge_Logic=
 				//sprint(self, "shield powered-up\n");
 			
 				self.weaponmodel = "mdl/v_axe_rr.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "mdl/v_axe_bb.mdl";
+				if (self.height == crx_team2) self.weaponmodel = "mdl/v_axe_bb.mdl";
 				self.weaponframe = 0;
 			}
 			
@@ -179,7 +179,7 @@ antilag_rewind_all(self.responsetime, world);   //MARCH
 
 antilag_restore_all();  // AXE ANTILAG restore Anti-lag MARCH
 
-	if(!(elohim_playmode & RACE_MODE)) 
+	if(!(crx_playmode & RACE_MODE)) 
 	{
 		if(boostspeed > 1600) sound (self, CHAN_AUTO, "item/br_dmg2.wav",0.25,ATTN_NORM);  //sound quad noise when moving over a certain speed
 		else if(boostspeed > 1450) sound (self, CHAN_AUTO, "item/br_dmg2.wav",0.20,ATTN_NORM);  //sound quad noise when moving over a certain speed
@@ -459,7 +459,7 @@ void() make_shield =
 		shield2 = spawn();
 		setmodel (shield2, "mdl/ef_shield.mdl");
 		shield2.skin = 0;
-		if (self.height == elohim_team2) shield2.skin = 2;
+		if (self.height == crx_team2) shield2.skin = 2;
     
 		if (self.invincible_finished > time)
 		{

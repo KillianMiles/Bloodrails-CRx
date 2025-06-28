@@ -1,15 +1,3 @@
-//
-// Admin.qc
-//
-// Administrative functions for the Elohim server mod.
-//
-// Fields used:
-//
-// .count           - used for entering password
-//
-// Written by J.P. Grossman, modified by bucksh0t, modified by kilomiles
-//
-
 // function declarations
 void () admin_cancel_kick;
 void () admin_confirm_kick;
@@ -18,16 +6,27 @@ void (float warpnum) admin_show_episodes;
 void () admin_select_episode;
 void () admin_select_episode2;
 void () admin_select_episode3;
-void () options_start_setting;
-float () options_get_mode;
+void () admin_init_set_mode;
+void () admin_request_rebalance_teams;
+void () admin_request_set_hook;
+void () admin_request_set_runes;
+void () admin_request_set_powerups;
+void () admin_set_powerups;
+void () admin_request_set_atx;
+void () admin_set_atx;
+void () admin_request_shuffle_teams;
+void () admin_request_set_armor;
+void () admin_set_armor;
+void () admin_request_set_airwalk;
+void () admin_set_airwalk;
+void () admin_init_set_mode2;
+void() rune_clear_player_flags;
 
 // global variables
 string request_mapname;     // Used for requesting a new level
 float request_timelimit;    // Used for requesting a new time limit
 //float request_mode;         // Used to request a new mode
 entity kick_target;         // Player to kick
-
-
 
 //
 //  S E N D  A L I A S E S 2
@@ -69,15 +68,15 @@ void () admin_send_aliases2 =
 //
 void () admin_create =
 {
-    self.style = self.style | ELOHIM_ADMINISTRATOR;
+    self.style = self.style | STYLE_ADMINISTRATOR;
     self.use = SUB_Null;
     centerprint(self, "You are now an administrator");
     bprint2(self.netname, " has become an administrator\n");
     cprint3("\"", self.netname, " has become an administrator\"\n");
     admin_send_aliases2();
 
-    if (!(elohim_playmode & ELOHIM_MODE_VOTE))
-        elohim_playmode = elohim_playmode | ELOHIM_MODE_VOTE;
+    if (!(crx_playmode & MODE_VOTE))
+        crx_playmode = crx_playmode | MODE_VOTE;
 };
 
 //
@@ -86,7 +85,7 @@ void () admin_create =
 //  Enter another code digit.
 //  The digit being entered is stored in self.finaldest_z.
 //  The digits that are entered are accumulated by self.count;
-//  when self.count == elohim_password the client is made into an
+//  when self.count == crx_password the client is made into an
 //  administrator.
 //
 void () admin_enter_code = 
@@ -101,7 +100,7 @@ void () admin_enter_code =
         self.use = SUB_Null;
         return;
     }
-    if (self.count == elohim_password)
+    if (self.count == crx_password)
         admin_create();
     else
         sprint(self, "Enter the next code digit:\n");
@@ -114,7 +113,7 @@ void () admin_enter_code =
 //
 void () admin_start_code =
 {
-    if (elohim_password < 1000)
+    if (crx_password < 1000)
 	{
     	sprint(self, "Administrator password disabled\n");
 	    sprint(self, "Type 'exec crxmod.cfg' in server\n");
@@ -122,7 +121,7 @@ void () admin_start_code =
 	    return;
 	}
 
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
     {
         sprint(self, "You are already an administrator\n");
         return;
@@ -141,7 +140,6 @@ void () admin_start_code =
 void () admin_change_level =
 {
 	rune_clear_player_flags();
-	
 	
 	if(request_mapname == "ctf_takayama_r1" && !(maplist & 1)) maplist = maplist | 1;
 	else if(request_mapname == "ctf_dissocia_r1" && !(maplist & 2)) maplist = maplist | 2;
@@ -163,7 +161,7 @@ void (float warpnum) admin_request_change_level =
     local string newmap;
 
     self.use = SUB_Null;
-    if (elohim_state & ELOHIM_MATCH_STARTED)
+    if (crx_state & STATE_MATCH_STARTED)
     {
         sprint(self, "Cannot change level while match is\nin progress.");
         return;
@@ -182,7 +180,7 @@ void (float warpnum) admin_request_change_level =
     }
 
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
     {
         request_mapname = newmap;
         admin_change_level();
@@ -203,7 +201,7 @@ void (float warpnum) admin_request_change_level =
 //
 void (float warpnum) admin_init_warp =
 {
-	if (elohim_state & ELOHIM_MATCH_STARTED)
+	if (crx_state & STATE_MATCH_STARTED)
 	{
 		sprint(self, "Cannot change level while match is in progress.\n");
 		sprint(self,"Canceled\n");
@@ -698,14 +696,14 @@ void () admin_phatten_player =
 //
 void () admin_set_mode =
 {
-    if (elohim_playmode & ELOHIM_MATCH_MODE)
+    if (crx_playmode & MATCH_MODE)
     {
-        if (elohim_state & ELOHIM_TIMER_STARTED)
+        if (crx_state & STATE_TIMER_STARTED)
         {
             sprint(self, "Timer has started; cannot change mode\n");
             return;
         }
-        elohim_playmode = elohim_playmode - (elohim_playmode & ELOHIM_MATCH_MODE);
+        crx_playmode = crx_playmode - (crx_playmode & MATCH_MODE);
     
         // Reset teamplay to 0
         cvar_set("teamplay", "0");
@@ -714,70 +712,65 @@ void () admin_set_mode =
         utils_do_players(observer_end);
     }
 
-
-
     //set new mode
     utils_do_players(rune_drop);
     utils_do_item(SUB_Remove, "item_rune");
 
-    elohim_playmode = elohim_playmode - (elohim_playmode & 
-        (RACE_MODE | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE | UNUSED1
-            | UNUSED3 | UNUSED2 | CLANRING_RUNES | ELOHIM_NO_HOOK | DM_PUBLIC_MODE));
+    crx_playmode = crx_playmode - (crx_playmode & 
+        (RACE_MODE | MATCH_MODE | CTF_MODE | MODE_RUNES | MODE_NO_HOOK | DM_PUBLIC_MODE));
    
     if (request_mode == ADMIN_RACE_MODE)
     {
-        elohim_playmode = elohim_playmode | RACE_MODE;
-        if(!(elohim_playmode & ELOHIM_NO_ARMOR)) elohim_playmode = elohim_playmode | ELOHIM_NO_ARMOR;
+        crx_playmode = crx_playmode | RACE_MODE;
+        if(!(crx_playmode & MODE_NO_ARMOR)) crx_playmode = crx_playmode | MODE_NO_ARMOR;
         utils_do_players(admin_phatten_player);
         //mapname = "race15";
         utils_set_cvar("timelimit", 0);
         cvar_set("hostname", ADMIN_RACE_MODE_STRING);
     }
 
-
     else if (request_mode == ADMIN_DM_PUBLIC_MODE)
     {
-        elohim_maxsize = 16;
-        elohim_teamsize1 = 0;
-        elohim_teamsize2 = 0;
-        elohim_playmode = elohim_playmode | DM_PUBLIC_MODE;
+        crx_maxsize = 16;
+        crx_teamsize1 = 0;
+        crx_teamsize2 = 0;
+        crx_playmode = crx_playmode | DM_PUBLIC_MODE;
         //mapname = "mapname";
-        utils_set_cvar("timelimit", elohim_timelimit);
+        utils_set_cvar("timelimit", crx_timelimit);
         cvar_set("hostname", ADMIN_DM_PUBLIC_MODE_STRING);
     }
-
-   
+  
     else if (request_mode == ADMIN_MATCH_MODE)
     {
-        elohim_playmode = elohim_playmode | ELOHIM_MATCH_MODE;
-         elohim_playmode = elohim_playmode | CLANRING_RUNES;   //021824
+        crx_playmode = crx_playmode | MATCH_MODE;
+         crx_playmode = crx_playmode | MODE_RUNES;   //021824
         //mapname = "mapname";
-        utils_set_cvar("timelimit", elohim_timelimit);
+        utils_set_cvar("timelimit", crx_timelimit);
         cvar_set("hostname", ADMIN_MATCH_MODE_STRING);
     }
     else if (request_mode == ADMIN_CTF_MATCH_MODE)
     {
-        elohim_playmode = elohim_playmode | ELOHIM_MATCH_MODE | CLANRING_CTF_MODE;
-        elohim_playmode = elohim_playmode | CLANRING_RUNES;   //021824
+        crx_playmode = crx_playmode | MATCH_MODE | CTF_MODE;
+        crx_playmode = crx_playmode | MODE_RUNES;   //021824
         //mapname = "mapname";
-        utils_set_cvar("timelimit", elohim_timelimit);
+        utils_set_cvar("timelimit", crx_timelimit);
         cvar_set("hostname", ADMIN_CTF_MATCH_MODE_STRING);
     }
     else if (request_mode == ADMIN_CTF_PUBLIC_MODE)
     {
-        elohim_maxsize = 16;
-        elohim_teamsize1 = 0;
-        elohim_teamsize2 = 0;
-        elohim_playmode = elohim_playmode | CLANRING_CTF_MODE;   
-        if (!(elohim_playmode & CLANRING_RUNES))
-            elohim_playmode = elohim_playmode | CLANRING_RUNES;
+        crx_maxsize = 16;
+        crx_teamsize1 = 0;
+        crx_teamsize2 = 0;
+        crx_playmode = crx_playmode | CTF_MODE;   
+        if (!(crx_playmode & MODE_RUNES))
+            crx_playmode = crx_playmode | MODE_RUNES;
         //mapname = "mapname";
-        utils_set_cvar("timelimit", elohim_timelimit);
+        utils_set_cvar("timelimit", crx_timelimit);
         cvar_set("hostname", ADMIN_CTF_PUBLIC_MODE_STRING);
     }
     else
     {
-        //elohim_playmode = elohim_playmode | ELOHIM_NO_HOOK;
+        //crx_playmode = crx_playmode | MODE_NO_HOOK;
         //mapname = "mapname";
         utils_set_cvar("timelimit", 0);
         cvar_set("hostname", ADMIN_NORMAL_MODE_STRING);
@@ -789,7 +782,7 @@ void () admin_set_mode =
     mode = strings_get_mode(request_mode);
     bprint3("playmode set to '", mode, "'\n");
     cprint3("\"playmode set to '", mode, "'\"\n");
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
     changelevel(mapname);
 };
 
@@ -803,12 +796,12 @@ void () admin_set_mode =
 //
 void (float value) admin_set_teamplay =
 {
-    if (elohim_playmode & ELOHIM_MATCH_MODE)
+    if (crx_playmode & MATCH_MODE)
     {
         sprint(self, "Teamplay cannot be set in match mode.\n");
         return;
     }
-    elohim_set_teamplay(value);
+    crx_set_teamplay(value);
 };
 
 //
@@ -821,10 +814,10 @@ void () admin_set_timelimit =
 {
     local string temp;
 
-    elohim_timelimit = request_timelimit;
-    temp = ftos(elohim_timelimit);
+    crx_timelimit = request_timelimit;
+    temp = ftos(crx_timelimit);
     bprint3("Match length changed to ", temp, " minutes\n");
-    if (elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_public()))
+    if (crx_playmode & MATCH_MODE || (mode_is_public()))
         match_show_timelimit();
 };
 
@@ -837,14 +830,14 @@ void (float newlimit) admin_request_set_timelimit =
 {
     local string temp;
 
-    if (elohim_state & ELOHIM_MATCH_STARTED)
+    if (crx_state & STATE_MATCH_STARTED)
     {
         sprint(self, "Cannot change time limit while match\nis in progress.");
         return;
     }
 
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
     {
         request_timelimit = newlimit;
         admin_set_timelimit();
@@ -867,14 +860,14 @@ void (float newlimit) admin_request_set_timelimit =
 //
 void (float overtime) admin_request_set_overtime =
 {
-    elohim_overtime = overtime;
+    crx_overtime = overtime;
 
     if (overtime)
     {
         local string temp;
         local string szplural;
         temp = ftos(overtime);
-        szplural = strings_szplural(overtime);
+        szplural = strings_plural(overtime);
         bprint4("Overtime changed to ", temp, " minute", szplural);
     }
     else
@@ -913,19 +906,19 @@ void () admin_disable_item =
 //
 void () admin_set_mode_vote =
 {
-    if (elohim_playmode & ELOHIM_MODE_VOTE)
+    if (crx_playmode & MODE_VOTE)
     {
         bprint("Mode voting disabled\n");
         cprint("Mode voting disabled\n");
-        elohim_playmode = elohim_playmode - ELOHIM_MODE_VOTE;
+        crx_playmode = crx_playmode - MODE_VOTE;
     }
     else
     {
         bprint("Mode voting enabled\n");
         cprint("Mode voting enabled\n");
-        elohim_playmode = elohim_playmode | ELOHIM_MODE_VOTE;
+        crx_playmode = crx_playmode | MODE_VOTE;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 
@@ -948,7 +941,7 @@ void () admin_print_kick_choice =
     index = 1;
     while (index <= 15)
     {
-        client = array_get_kick(index);
+        client = array_kick[index];
         if (client)
         {
             num = strings_ftos(index);
@@ -965,7 +958,7 @@ void () admin_print_kick_choice =
 //
 void () admin_start_kick =
 {
-    if (elohim_state & ELOHIM_KICKING)
+    if (crx_state & STATE_KICKING)
     {
         sprint(self, "There is already a kick in progress\n");
         return;
@@ -978,10 +971,10 @@ void () admin_start_kick =
     client = find(world, classname, "player");
     while (client)
     {
-        if (!(client.style & ELOHIM_ADMINISTRATOR) &&
-            (client.style & ELOHIM_CONNECTED))
+        if (!(client.style & STYLE_ADMINISTRATOR) &&
+            (client.style & STYLE_CONNECTED))
         {
-            array_set_kick(index, client);
+            array_kick[index] = client;
             index = index + 1;
         }
         client = find(client, classname, "player");
@@ -993,7 +986,7 @@ void () admin_start_kick =
     }
     while (index <= 15)
     {
-        array_set_kick(index, world);
+        array_kick[index] = world;
         index = index + 1;
     }
 
@@ -1005,10 +998,10 @@ void () admin_start_kick =
     self.use = admin_confirm_kick;
     kick_timeout = spawn();
     kick_timeout.movetarget = self;
-    kick_timeout.classname = "elohim_kick_timeout";
+    kick_timeout.classname = "crx_kick_timeout";
     kick_timeout.think = admin_cancel_kick;
     kick_timeout.nextthink = time + 10;
-    elohim_state = elohim_state | ELOHIM_KICKING;
+    crx_state = crx_state | STATE_KICKING;
 };
 
 //
@@ -1024,13 +1017,13 @@ void () admin_confirm_kick =
         // Cancel the kick
         local entity oself;
         oself = self;
-        self = find(world, classname, "elohim_kick_timeout");
+        self = find(world, classname, "crx_kick_timeout");
         admin_cancel_kick();
         self = oself;
         return;
     }
 
-    kick_target = array_get_kick(self.finaldest_z);
+    kick_target = array_kick[self.finaldest_z];
 
     // sanity checks
     if (!kick_target)
@@ -1039,7 +1032,7 @@ void () admin_confirm_kick =
         admin_print_kick_choice();
         return;
     }
-    if (kick_target.style & ELOHIM_ADMINISTRATOR)
+    if (kick_target.style & STYLE_ADMINISTRATOR)
     {
         sprint2(self, kick_target.netname, " is an administrator\n");
         admin_print_kick_choice();
@@ -1048,7 +1041,7 @@ void () admin_confirm_kick =
 
     // ask for confirmation
     sprint3(self, "kick ", kick_target.netname, "?\n");
-    self.style = self.style | ELOHIM_KICK_CONFIRM;
+    self.style = self.style | STYLE_KICK_CONFIRM;
 };
 
 //
@@ -1066,7 +1059,7 @@ void (float fDoKick) admin_confirm_kick_response =
         // Cancel the kick
         local entity oself;
         oself = self;
-        self = find(world, classname, "elohim_kick_timeout");
+        self = find(world, classname, "crx_kick_timeout");
         admin_cancel_kick();
         self = oself;
     }
@@ -1082,14 +1075,14 @@ void () admin_do_kick =
     //return;
     bprint2(kick_target.netname, " kicked by administrator\n");
     cprint3("\"", kick_target.netname, " kicked by administrator\"\n");
-    elohim_kick_player(kick_target);
+    crx_kick_player(kick_target);
 
     // Clean up
     self.use = SUB_Null;
-    kick_target = find(world, classname, "elohim_kick_timeout");
+    kick_target = find(world, classname, "crx_kick_timeout");
     remove(kick_target);
-    elohim_state = elohim_state - ELOHIM_KICKING;
-    self.style = self.style - ELOHIM_KICK_CONFIRM;
+    crx_state = crx_state - STATE_KICKING;
+    self.style = self.style - STYLE_KICK_CONFIRM;
 };
 
 //
@@ -1102,9 +1095,9 @@ void () admin_cancel_kick =
     sprint(self.movetarget, "Kick cancelled\n");
     self.movetarget.use = SUB_Null;
     remove(self);
-    elohim_state = elohim_state - ELOHIM_KICKING;
+    crx_state = crx_state - STATE_KICKING;
     self.movetarget.style = self.movetarget.style -
-        (self.movetarget.style & ELOHIM_KICK_CONFIRM);
+        (self.movetarget.style & STYLE_KICK_CONFIRM);
 };
 
 //
@@ -1113,7 +1106,7 @@ void () admin_cancel_kick =
 void () admin_list_ghosts =
 {
     local entity e;
-    e = find(world, classname, "elohim_ghost");
+    e = find(world, classname, "crx_ghost");
     if (!e)
     {
         sprint(self, "There are no ghosts\n");
@@ -1151,7 +1144,7 @@ void () admin_list_ghosts =
         else
             sprint4(self, szTeam, pad, num, " | Disconnected\n");
     
-        e = find(e, classname, "elohim_ghost");
+        e = find(e, classname, "crx_ghost");
     }
     sprint(self, "\n");
 };
@@ -1179,13 +1172,13 @@ void () admin_show_spot_info =
 //
 void () admin_next_spawn_point =
 {
-    if (!(self.style & ELOHIM_OBSERVER) ||
+    if (!(self.style & STYLE_OBSERVER) ||
         !(self.oflags & (OBSERVER_WALK | OBSERVER_FLY)))
     {
         sprint(self, "You must be in walk or fly mode\n");
         return;
     }
-    utils_do_item(match_add_spawn, "elohim_start_point");
+    utils_do_item(match_add_spawn, "crx_start_point");
     self.owner = find(self.owner, classname, "info_player_deathmatch");
     if (!self.owner)
     {
@@ -1221,7 +1214,7 @@ void () admin_next_spawn_point =
 //
 void () admin_make_spawn_point =
 {
-    if (!(self.style & ELOHIM_OBSERVER) || !(self.oflags & OBSERVER_WALK))
+    if (!(self.style & STYLE_OBSERVER) || !(self.oflags & OBSERVER_WALK))
     {
         sprint(self, "You must be in walk mode\n");
         return;
@@ -1236,7 +1229,7 @@ void () admin_make_spawn_point =
         sprint(self, "Cannot create underwater spawn point\n");
         return;
     }
-    if (elohim_num_spawns >= 20)
+    if (num_spawns >= 20)
     {
         sprint(self, "Max. number of spawn points reached\n");
         return;
@@ -1254,7 +1247,7 @@ void () admin_make_spawn_point =
     self.fixangle = TRUE;
     self.owner.angles = self.angles;
     self.owner.origin = self.origin;
-    elohim_num_spawns = elohim_num_spawns + 1;
+    num_spawns = num_spawns + 1;
     sprint(self, "Spawn point created\n");
     admin_show_spot_info();
 };
@@ -1266,15 +1259,15 @@ void () admin_make_spawn_point =
 //
 void () admin_next_camera=
 {
-    if (!(self.style & ELOHIM_OBSERVER) || !(self.oflags & OBSERVER_FLY))
+    if (!(self.style & STYLE_OBSERVER) || !(self.oflags & OBSERVER_FLY))
     {
         sprint(self, "You must be in fly mode\n");
         return;
     }
-    self.owner = find(self.owner, classname, "elohim_camera");
+    self.owner = find(self.owner, classname, "crx_camera");
     if (!self.owner)
     {
-        self.owner = find(self.owner, classname, "elohim_camera");
+        self.owner = find(self.owner, classname, "crx_camera");
         if (!self.owner)
         {
             sprint(self, "No cameras found\n");
@@ -1302,12 +1295,12 @@ void () admin_next_camera=
 //
 void () admin_make_camera =
 {
-    if (!(self.style & ELOHIM_OBSERVER) || !(self.oflags & OBSERVER_FLY))
+    if (!(self.style & STYLE_OBSERVER) || !(self.oflags & OBSERVER_FLY))
     {
         sprint(self, "You must be in fly mode\n");
         return;
     }
-    if (elohim_num_cameras >= 20)
+    if (num_cameras >= 20)
     {
         sprint(self, "Max. number of cameras reached\n");
         return;
@@ -1319,13 +1312,13 @@ void () admin_make_camera =
     self.owner.movetype = MOVETYPE_NONE;
     self.owner.takedamage = DAMAGE_NO;
     self.owner.fixangle = TRUE;
-    self.owner.classname = "elohim_camera";
+    self.owner.classname = "crx_camera";
     self.v_angle_z = 0;
     self.angles = self.v_angle;
     self.fixangle = TRUE;
     self.owner.angles = self.v_angle;
     self.owner.origin = self.origin + '0 0 22';
-    elohim_num_cameras = elohim_num_cameras + 1;
+    num_cameras = num_cameras + 1;
     sprint(self, "Camera created\n");
     admin_show_spot_info();
 };
@@ -1336,7 +1329,7 @@ void () admin_make_camera =
 void (float pFraglimit) admin_set_fraglimit =
 {
     if (fraglimit != pFraglimit)
-        elohim_set_fraglimit(pFraglimit);
+        crx_set_fraglimit(pFraglimit);
     else
         sprint3(self, "Fraglimit is already ", ftos(pFraglimit), "\n");
 };
@@ -1363,7 +1356,7 @@ void () admin_help =
 //
 //  I M P U L S E
 //
-//  Called by elohim_impulse in Elohim.qc
+//  Called by crx_impulse
 //
 void () admin_impulse =
 {
@@ -1393,7 +1386,7 @@ void () admin_impulse =
     }
     else if (self.impulse == 214)
     {
-			if (self.style & ELOHIM_ADMINISTRATOR)	
+			if (self.style & STYLE_ADMINISTRATOR)	
 			{
 				match_end();
 			}
@@ -1430,7 +1423,7 @@ void () admin_impulse =
         }
     }
 
-    if (!(self.style & ELOHIM_ADMINISTRATOR))
+    if (!(self.style & STYLE_ADMINISTRATOR))
         return;
 
     // admin only commands
@@ -1447,7 +1440,6 @@ void () admin_impulse =
     {
         sprint(self, "disabled");
         return;
-        //options_start_setting();
     }
     else if (self.impulse == 246)
         admin_next_spawn_point();
@@ -1479,8 +1471,8 @@ void (entity player) admin_disconnect_notify =
     index = 1;
     while (index < 16)
     {
-		if (self == array_get_kick(index))
-			array_set_kick(index, world);
+		if (self == array_kick[index])
+			array_kick[index] = world;
 		index = index + 1;
     }
 };

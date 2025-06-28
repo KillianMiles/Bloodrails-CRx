@@ -73,12 +73,12 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 	thedude = self;
 	
 	
-	if (self.height == elohim_team1) 
+	if (self.height == crx_team1) 
 		{
 			if(random() < 0.2) railcolor = 3;   //Orange
 			else railcolor = 1;    //red
 		}
-		else if (self.height == elohim_team2) 
+		else if (self.height == crx_team2) 
 		{
 			if(random() < 0.3) railcolor = 2;   //LIGHT-blue
 			else railcolor = 0;      //White blue	
@@ -353,14 +353,14 @@ void(vector start, vector end, vector myAngles, entity shooter) clean_rail_make 
 			setsize (prj, 0, 0);	
 		
 		
-			if (self.height == elohim_team1) 
+			if (self.height == crx_team1) 
 			{
 				if(random() < 0.2) prj.skin = 3;   //Orange
 				else prj.skin = 1;    //red
 			
 				if (segments ==1) prj.skin = 2;
 			}
-			else if (self.height == elohim_team2) 
+			else if (self.height == crx_team2) 
 			{
 				if(random() < 0.2) prj.skin = 2;   //light-blue
 				else prj.skin = 0;      //white blue	
@@ -545,14 +545,14 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) clean_DrawCurvedR
 				
 				setsize (prj, 0, 0);	
 		
-				if (self.height == elohim_team1) 
+				if (self.height == crx_team1) 
 				{
 					if(random() < 0.25) prj.skin = 3;   //Orange
 					//else if(random() > 0.87) prj.skin = 4;   //Dark-red
 					else prj.skin = 1;    //red
 			
 				}
-				else if (self.height == elohim_team2) 
+				else if (self.height == crx_team2) 
 				{
 					prj.skin = 0;   //White-blue
 					//if(random() < 0.13) prj.skin = 0;   //White-blue

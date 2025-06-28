@@ -198,13 +198,11 @@ void() door_touch =
 	if (other.classname != "player")
 		return;
 
-    // ELOHIM_MOD - observers go through doors they touch
-    if (other.style & ELOHIM_OBSERVER)
+    if (other.style & STYLE_OBSERVER)
     {
         observer_door_touch();
         return;
     }
-    // END_MOD
 
 	if (self.owner.attack_finished > time)
 		return;
@@ -647,13 +645,11 @@ void() secret_touch =
 	if (other.classname != "player")
 		return;
 
-    // ELOHIM_MOD - observers go through doors they touch
-    if (other.style & ELOHIM_OBSERVER)
+    if (other.style & STYLE_OBSERVER)
     {
         observer_door_touch();
         return;
     }
-    // END_MOD
 
 	if (self.attack_finished > time)
 		return;

@@ -71,18 +71,17 @@ void() PlaceItem =
 		return;
 	}
 
-    // ELOHIM_MOD - check for noquad, nopent, and noring
 	if (self.classname == "item_artifact_super_damage")
 	{
-		if (elohim_playmode & ELOHIM_NO_QUAD) admin_disable_item();
+		if (crx_playmode & MODE_NO_QUAD) admin_disable_item();
 	}
 	if (self.classname == "item_artifact_invulnerability")
 	{
-		if (elohim_playmode & ELOHIM_NO_PENT) admin_disable_item();
+		if (crx_playmode & MODE_NO_PENT) admin_disable_item();
 	}
 	if (self.classname == "item_artifact_invisibility")
 	{
-		if (elohim_playmode & ELOHIM_NO_RING) admin_disable_item();
+		if (crx_playmode & MODE_NO_RING) admin_disable_item();
 	}
 };
 
@@ -94,7 +93,7 @@ StartItem  --  Sets the clipping size and plants the object on the floor
 */
 void() StartItem =
 {
-    if (elohim_playmode & RACE_MODE)
+    if (crx_playmode & RACE_MODE)
     {
         if (self.touch == weapon_touch || self.touch == ammo_touch)
         {
@@ -120,7 +119,7 @@ void() armor_touch =
 	local	float	type, value, bit;
 	
 
-	if (elohim_playmode & ELOHIM_MATCH_MODE && !(elohim_state & ELOHIM_MATCH_STARTED)) return;
+	if (crx_playmode & MATCH_MODE && !(crx_state & STATE_MATCH_STARTED)) return;
 
 	
 	if (other.health <= 0) return;
@@ -221,7 +220,7 @@ POWERUPS
 
 void() powerup_touch =
 {
-	if (elohim_playmode & ELOHIM_MATCH_MODE && !(elohim_state & ELOHIM_MATCH_STARTED)) return;
+	if (crx_playmode & MATCH_MODE && !(crx_state & STATE_MATCH_STARTED)) return;
 	if (other.classname != "player") return;
 	if (other.health <= 0) return;
 
@@ -250,7 +249,7 @@ void() powerup_touch =
 	
 	if (self.classname == "item_artifact_invulnerability")
 	{
-			if(elohim_playmode & RACE_MODE && other.classname == "player")
+			if(crx_playmode & RACE_MODE && other.classname == "player")
 			{
 				if(racing_on_global == 0)
 				{
@@ -275,7 +274,7 @@ void() powerup_touch =
 	
 	if (self.classname == "item_artifact_invisibility")
 	{
-			if(elohim_playmode & RACE_MODE && other.classname == "player")
+			if(crx_playmode & RACE_MODE && other.classname == "player")
 			{
 					racing_finish();
 					other.invincible_finished = time + 500000;
@@ -305,7 +304,7 @@ void() item_artifact_invulnerability =
 	if(Maps_ShouldRemoveDefaultEntity(self)) return remove(self);
 
 	self.touch = powerup_touch;
-	if (!(elohim_playmode & RACE_MODE)) 
+	if (!(crx_playmode & RACE_MODE)) 
 	{
 		self.noise = "items/br_protec.wav";
 		setmodel (self, "mdl/br_pent.mdl");
@@ -327,10 +326,10 @@ void() item_artifact_invulnerability =
 
 void() item_artifact_invisibility =
 {
-	if(Maps_ShouldRemoveDefaultEntity(self) || elohim_playmode & ELOHIM_WRAITH) return remove(self);
+	if(Maps_ShouldRemoveDefaultEntity(self) || crx_playmode & MODE_WRAITH) return remove(self);
 
 	self.touch = powerup_touch;
-	if (!(elohim_playmode & RACE_MODE)) 
+	if (!(crx_playmode & RACE_MODE)) 
 	{
 		self.noise = "items/br_inv1.wav";
 		setmodel (self, "mdl/br_ring1.mdl");

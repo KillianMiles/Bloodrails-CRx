@@ -54,7 +54,7 @@ void() button_touch =
 {
     if (other.classname != "player")		return;
 
-    if (other.style & ELOHIM_OBSERVER)		return;
+    if (other.style & STYLE_OBSERVER)		return;
 
 	self.enemy = other;
 	button_fire ();

@@ -64,28 +64,14 @@ void() SetChangeParms =
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 
-    // ELOHIM_MOD - parms10-13 contains elohim player flags
-    parm10 = self.style;    // player flags
-    parm11 = self.state;    // player ID
-    parm12 = self.oflags;   // CRMOD observer flags
+    //parms10-13 contains player flags
+    parm10 = self.style; // player flags
+    parm11 = self.state; // player ID
+    parm12 = self.oflags; // observer flags
 	parm13 = self.player_flag;
 	parm14 = self.hudspace;
-    // END_MOD
 };
 
-//
-// ELOHIM_MOD
-//
-// Created SetNewParms2 and changed all SetNewParms references to
-// SetNewParms2.  SetNewParms is called by Quake.exe when a client
-// first connects; SetNewParms2 is called thereafter by the QuakeC
-// code every time the client is reinserted into the server (respawn,
-// level change, etc.)
-//
-// Also created SetPracticeParms which is called for practice mode
-//
-
-//TODO: don't need to set hook in these if there is a flag check too
 void() SetPracticeParms =
 {
     parm1 = IT_RAILGUN | IT_AXE |  IT_ARMOR3 | IT_HOOK;
@@ -99,13 +85,12 @@ void() SetPracticeParms =
     parm9 = 80;
 };
 
-
 //
 //  Called by Quake server when a new client connects
 //
 void() SetNewParms =
 {
-    if (elohim_playmode & RACE_MODE)
+    if (crx_playmode & RACE_MODE)
         SetPracticeParms();
 	else
 	{
@@ -120,9 +105,9 @@ void() SetNewParms =
 		parm9 = 0;
 	}
 
-    parm10 = ELOHIM_NEW_CLIENT; // CRMOD observer flags moved | ELOHIM_OBSERVER_WALK; // elohim player flags
-    //parm13 = OBSERVER_WALK; // CRMOD observer flags
-    parm11 = 0; // player ID.. will be set by elohim_client_connect
+    parm10 = STYLE_NEW_CLIENT; // player flags
+    //parm13 = OBSERVER_WALK; // observer flags
+    parm11 = 0; // player ID.. will be set by crx_client_connect
     parm12 = 0; // ID of player being watched in observer mode
 	parm13 = 0;
 	parm14 = 0;
@@ -133,14 +118,14 @@ void() SetNewParms =
 //
 void() SetNewParms2 =
 {
-    if (elohim_playmode & RACE_MODE)
+    if (crx_playmode & RACE_MODE)
         {                               //Practice armor (Full armor)
 		SetPracticeParms();
         }
 
 	else
 	{
-		if ((elohim_playmode & ELOHIM_MATCH_MODE)&&(!(elohim_state & ELOHIM_TIMER_STARTED)))
+		if ((crx_playmode & MATCH_MODE)&&(!(crx_state & STATE_TIMER_STARTED)))
 		{
 			SetPracticeParms ();
 		}
@@ -158,33 +143,24 @@ void() SetNewParms2 =
 		}
 	}
 
-	parm10 = self.style; // elohim player flags
+	parm10 = self.style; // player flags
 	parm11 = self.state; // player ID
-	parm12 = self.oflags; // CRMOD observer flags
+	parm12 = self.oflags; // observer flags
 	parm13 = self.player_flag;
 	parm14 = self.hudspace;
 };
-// END_MOD
 
 void() DecodeLevelParms =
 {
-    //
-    // ELOHIM_MOD
-    //
-    // First restore player elohim flags *then* check to see if level = start.
-    // Also, reset player status at start level even if serverflags = 0.
-    // Changed SetNewParms to SetNewParms2.
     self.style = parm10;
     self.state = parm11;
-    self.oflags = parm12;  // CRMOD observer flags
+    self.oflags = parm12;  // observer flags
 	self.player_flag = parm13;
 	self.hudspace = parm14;
 
     if (world.model == "maps/ctf_dissocia_r1.bsp")
         SetNewParms2 ();   // take away all stuff on starting new episode
 
-    // END_MOD
-	
 	self.items = parm1;
 	self.items2 = 0;
 	self.health = parm2;
@@ -244,15 +220,12 @@ entity() FindIntermission =
 	return spot;
 };
 
-
-//string nextmap; // ELOHIM_MOD - moved this to elohim.qc
 void() GotoNextMap =
 {
     if (cvar("samelevel") & 1)  // if samelevel is set, stay on same level
 		changelevel (mapname);
 	else
     {
-        // ELOHIM_MOD - check for start0/start1
         if (nextmap == "start0")
         {
             serverflags = 0;
@@ -265,7 +238,6 @@ void() GotoNextMap =
         }
         else
             changelevel (nextmap);
-        // END_MOD
     }
 };
 
@@ -330,7 +302,7 @@ void() IntermissionThink =
 	if (!self.button0 && !self.button1 && !self.button2)
 		return;
 		
-	if(elohim_teamfrags1 > 1.25 * elohim_teamfrags2 || elohim_teamfrags2 > 1.25 * elohim_teamfrags1) Rebalance_Teams();  //automatic rebalance after each map
+	if(crx_teamfrags1 > 1.25 * crx_teamfrags2 || crx_teamfrags2 > 1.25 * crx_teamfrags1) Rebalance_Teams();  //automatic rebalance after each map
 
     ExitIntermission ();
 };
@@ -341,10 +313,10 @@ void() execute_changelevel =
 
     intermission_running = 1;
 
-	elohim_teamsize1 = 0;
-	elohim_teamsize2 = 0;
-	//elohim_teamsize3 = 0;
-	//elohim_teamsize4 = 0;
+	crx_teamsize1 = 0;
+	crx_teamsize2 = 0;
+	//crx_teamsize3 = 0;
+	//crx_teamsize4 = 0;
 	
 // enforce a wait time before allowing changelevel
 	if (deathmatch)
@@ -389,7 +361,7 @@ void() execute_changelevel =
 		if (other.player_flag & PF_ITEM_RUNE_MASK)
 			other.player_flag -= PF_ITEM_RUNE_MASK;
 
-		if ((other.player_flag & PF_MIDGAME_JOIN) && !(other.style & ELOHIM_OBSERVER))
+		if ((other.player_flag & PF_MIDGAME_JOIN) && !(other.style & STYLE_OBSERVER))
 		{
 			other.player_flag -= PF_MIDGAME_JOIN;
 		}
@@ -403,10 +375,8 @@ void() execute_changelevel =
 
 void() changelevel_touch =
 {
-    // ELOHIM_MOD - do nothing in match mode
 	if (!coop)
     	return;
-    // END_MOD
  
 	if (other.classname != "player")
 		return;
@@ -417,11 +387,9 @@ void() changelevel_touch =
 		return;
 	}
 
-    // ELOHIM_MOD - flag gameover so that clients can't suicide during intermission
     gameover = TRUE;
-    // END_MOD
 
-    if (deathmatch) // ELOHIM_MODE 'coop || deathmatchp' => 'deathmatch'
+    if (deathmatch) // ('coop || deathmatch')
 	{
 		bprint (other.netname);
 		bprint (" exited the level\n");
@@ -486,7 +454,7 @@ void() respawn =
 	
 				
 	self.spawn_protect_time = time;      //ammo_rockets = spawn_protect_time
-	if (!(elohim_playmode & RACE_MODE) && !(elohim_playmode & ELOHIM_NO_SPAWN_PROTECT))
+	if (!(crx_playmode & RACE_MODE) && !(crx_playmode & MODE_NO_SPAWN_PROTECT))
 	{
 		if(!(self.items & IT_ARMOR1) && !(self.items & IT_ARMOR2) && !(self.items & IT_ARMOR3)) self.items = self.items | IT_ARMOR1;   //SPAWN PROTECT
 		self.armorvalue  	= 125;
@@ -505,25 +473,17 @@ Player entered the suicide command
 
 void() ClientKill =
 {
-        
-    // ELOHIM_MOD
     // if intermission, do nothing
     if (gameover)
         return;
-
-    // observers can't suicide
-    if (self.style & ELOHIM_OBSERVER)
+    if (self.style & STYLE_OBSERVER)
         return;
 
     // check for maximum number of suicides
-    if ((elohim_client_suicide() == ELOHIM_TOO_MANY_SUICIDES)  && !(elohim_playmode & RACE_MODE))
+    if ((crx_client_suicide() == 1)  && !(crx_playmode & RACE_MODE))
         return;
-    // END_MOD
 	
-	
-	
-	
-	if(!(elohim_playmode & RACE_MODE))
+	if(!(crx_playmode & RACE_MODE))
 	{
 		bprint (self.netname);
 		bprint (" suicides\n");
@@ -531,7 +491,7 @@ void() ClientKill =
 	
 	set_suicide_frame ();
 
-	if (elohim_playmode & CLANRING_CTF_MODE)
+	if (crx_playmode & CTF_MODE)
 	{
 		if(self.items & (IT_KEY1))
 		{
@@ -549,50 +509,37 @@ void() ClientKill =
 		if (self.player_flag & PF_ITEM_RUNE_MASK)
 			rune_drop();
 	}
-    // ELOHIM_MOD
-    //
-    // - use client_frag so that penalty will be added to team score
-    // - changed penalty to -1
-    // - no penalty during pre-match
-    // - add suicide to stats
-    //
-    //self.frags = self.frags - 2;    // extra penalty
-    if (!(elohim_playmode & ELOHIM_MATCH_MODE) || elohim_state & ELOHIM_MATCH_STARTED)
+
+    if (!(crx_playmode & MATCH_MODE) || crx_state & STATE_MATCH_STARTED)
     {
         client_frag(self, -1);
         self.mangle_x = self.mangle_x + 1;
     }
-    // END_MOD
-
 	
-
-	// ELOHIM_MOD
 	// check for not-ready non-observers in match mode
-	if (elohim_playmode & ELOHIM_MATCH_MODE)
+	if (crx_playmode & MATCH_MODE)
 	{
-		if (!(self.style & (ELOHIM_READY | ELOHIM_OBSERVER)))
+		if (!(self.style & (STYLE_READY | STYLE_OBSERVER)))
 		{
 			// This is a hack!
-			self.style = self.style | ELOHIM_READY;
+			self.style = self.style | STYLE_READY;
 			respawn();
-			self.style = self.style - ELOHIM_READY;
+			self.style = self.style - STYLE_READY;
 			return;
 		}
 	}
-	// END_MOD
 
 	respawn ();
 };
 
 float(vector v) CheckSpawnPoint =
 {
-		//return FALSE;
 	local entity thing;
-	thing = findradius(v, 64); // ELOHIM_MOD 32 => 128 //TODO: back to  128?
+	thing = findradius(v, 64); // 32
 	while(thing)
 	{
-		if ((thing.classname == "player") && (thing.style & ELOHIM_CONNECTED) &&
-			!(thing.style & ELOHIM_OBSERVER))
+		if ((thing.classname == "player") && (thing.style & STYLE_CONNECTED) &&
+			!(thing.style & STYLE_OBSERVER))
 		{
 			dprint("spawn point is not safe\n");
 			thing = world;
@@ -605,6 +552,18 @@ float(vector v) CheckSpawnPoint =
 };
 
 //for ctf base spawns
+entity findPlayerSpawn(entity start,float findTeam) =
+{
+    local entity ent;
+    if (findTeam == TEAM_RED)
+        ent = find(start,classname,"info_player_team1");
+    else if (findTeam == TEAM_BLUE)
+        ent = find(start,classname,"info_player_team2");
+    else
+        ent = find(start,classname,"info_player_deathmatch");
+    return ent;
+};
+
 entity() SelectTeamSpawnPoint =
 {
 	local	entity spot;
@@ -612,29 +571,30 @@ entity() SelectTeamSpawnPoint =
 	local   float curTeam;
 
 	//if possible, first spawn should be near base
-	if ((elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & RACE_MODE)) 
-		&& !(self.player_flag & PF_FIRST_SPAWN) && (self.style & ELOHIM_READY))
+	if ((crx_playmode & CTF_MODE && !(crx_playmode & RACE_MODE)) 
+		&& !(self.player_flag & PF_FIRST_SPAWN) && (self.style & STYLE_READY))
 	{
 		if (self.player_flag & PF_MIDGAME_JOIN)
 		{
 			//Joining a public ctf game in progress, pick a random spawn near base
 			curTeam = self.player_flag & PF_TEAM_BLUE ? TEAM_BLUE : TEAM_RED;
 
-			if ((curTeam == TEAM_BLUE && elohim_num_bluespawns > 0) ||
-				(curTeam == TEAM_RED && elohim_num_redspawns > 0))
+			if ((curTeam == TEAM_BLUE && num_bluespawns > 0) ||
+				(curTeam == TEAM_RED && num_redspawns > 0))
 			{
 				if (curTeam == TEAM_BLUE)
 				{
-					pcount = random() * (elohim_num_bluespawns - 0.001);
+					pcount = random() * (num_bluespawns - 0.001);
 				}
 				else
 				{
-					pcount = random() * (elohim_num_redspawns - 0.001);
+					pcount = random() * (num_redspawns - 0.001);
 				}
 
 				pcount = floor(pcount);
 
 				spot = findPlayerSpawn(world, curTeam);
+
 				while (spot != world && pcount > 0)
 				{
 					spot = findPlayerSpawn(spot, curTeam);
@@ -738,7 +698,7 @@ entity(float whatkind) SelectSpawnPoint =
 		}
 		else
 		{
-			pcount = random() * (elohim_num_spawns - 0.001);
+			pcount = random() * (num_spawns - 0.001);
 			pcount = floor(pcount);
 
 			spot = find(world, classname, "info_player_deathmatch");
@@ -829,7 +789,7 @@ void() PutDummyInServer =
 	//dummy.classname = "dummy";
 	spot = SelectSpawnPoint (1);
 	dummy = spawn();
-	dummy.trigger_field = spot;  // ELOHIM_MOD
+	dummy.trigger_field = spot;
 
 	dummy.classname = "dummy";
 	dummy.health = 100;
@@ -886,26 +846,15 @@ void() PutDummyInServer =
 
 void() PutClientInServer =
 {
-	
-	
 	if(self.classname == "dummy") return;
 	
 	//checkextension("DP_SV_ROTATINGBMODEL");
 	
-	local	entity spot, teamSpot;
-        self.modelindex = 0;    
-	
-		spot = SelectSpawnPoint (0);
+	local entity spot, teamSpot;
 
-	
-
-    self.trigger_field = spot;  // ELOHIM_MOD
-
-
-
-
-			
-
+	self.modelindex = 0;  
+	spot = SelectSpawnPoint (0);
+    self.trigger_field = spot;
 	self.classname = "player";
 	self.health = 100;
 	self.takedamage = DAMAGE_AIM;
@@ -924,15 +873,8 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 	self.runetime = time;
 	self.velocity = '0 0 0';
-	
-	//if(self.player_flag & PF_ITEM_RUNE1_FLAG) self.player_flag -= PF_ITEM_RUNE1_FLAG;
-	//else if(self.player_flag & PF_ITEM_RUNE2_FLAG) self.player_flag -= PF_ITEM_RUNE2_FLAG;
-	//else if(self.player_flag & PF_ITEM_RUNE3_FLAG) self.player_flag -= PF_ITEM_RUNE3_FLAG;
-	//else if(self.player_flag & PF_ITEM_RUNE4_FLAG) self.player_flag -= PF_ITEM_RUNE4_FLAG;
 
 	DecodeLevelParms ();
-	
-	
 
 	if(infokey(self, "rail_cvar") =="1")
 	{
@@ -943,9 +885,7 @@ void() PutClientInServer =
 		if(self.player_flag & PF_CLEANTRAIL) self.player_flag = self.player_flag - PF_CLEANTRAIL;
 	}
 
-
-
-	if (elohim_playmode & CLANRING_CTF_MODE)
+	if (crx_playmode & CTF_MODE)
 	{
 		if (!(self.player_flag & PF_FIRST_SPAWN))
 		{
@@ -967,7 +907,6 @@ void() PutClientInServer =
 				setcolor2(self, COLOR_RED, COLOR_RED);
 				self.team = TEAM_RED;
 				self.height = self.team - 1;
-				 
 				
 				self.skin = 1;  //skin fullbright red ^^^switch
 			}
@@ -976,7 +915,6 @@ void() PutClientInServer =
 				setcolor2(self, COLOR_BLUE, COLOR_BLUE);
 				self.team = TEAM_BLUE;
 				self.height = self.team - 1;
-				
 				
 				self.skin = 2;  //skin fullbright blue  ^^^switch
 			}
@@ -992,7 +930,7 @@ void() PutClientInServer =
 	self.deadflag = DEAD_NO;
 
 // paustime is set by teleporters to keep the player from moving a while
-//  self.pausetime = 0; // ELOHIM_MOD - unused
+//  self.pausetime = 0;
 	
 	angles_fixangle(spot.angles);
 
@@ -1006,7 +944,6 @@ void() PutClientInServer =
 
 // oh, this is a hack!
 
-
 	setmodel(self, "mdl/player.md3");
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
@@ -1014,29 +951,24 @@ void() PutClientInServer =
 
 	self.state = time;
 
-	                        
-
-	if (elohim_playmode & ELOHIM_WRAITH && self.wraith ==1)       //start player with Axe and Railgun (with 999 ammo)
+	if (crx_playmode & MODE_WRAITH && self.wraith ==1)       //start player with Axe and Railgun (with 999 ammo)
 	{
-	self.items = 0;
-	self.items = self.items | IT_AXE | IT_HOOK | IT_INVISIBILITY | IT_SUIT;
-	self.impulse = 1; 
-        }  
-        else 
-        {
-	self.items = 4098; 
-	self.impulse = 3;
-	if(!(elohim_playmode & ELOHIM_NOAMMO) && !(elohim_playmode & PROJECTILES)) self.ammo_slugs = 7;
-	else if(elohim_playmode & PROJECTILES) self.ammo_slugs = 9;
-	
-	if(elohim_playmode & ELOHIM_NOAMMO) self.ammo_slugs = 999;
-		   
-        }     
-         
+		self.items = 0;
+		self.items = self.items | IT_AXE | IT_HOOK | IT_INVISIBILITY | IT_SUIT;
+		self.impulse = 1; 
+    }  
+    else 
+    {
+		self.items = 4098; 
+		self.impulse = 3;
 
-
+		if(!(crx_playmode & MODE_NOAMMO) && !(crx_playmode & MODE_PROJECTILES)) self.ammo_slugs = 7;
+		else if(crx_playmode & MODE_PROJECTILES) self.ammo_slugs = 9;
 	
-	if (elohim_playmode & RACE_MODE)       //start player with 200 red armor if Practice (Full armor)  this replaces set200
+		if(crx_playmode & MODE_NOAMMO) self.ammo_slugs = 999;
+    }     
+	
+	if (crx_playmode & RACE_MODE)       //start player with 200 red armor if Practice (Full armor)  this replaces set200
 	{
 		self.items = self.items | IT_ARMOR3;
 		self.armorvalue  	= 75;
@@ -1050,25 +982,14 @@ void() PutClientInServer =
 		self.armortype   	= 40.001;
 	}
 	
-	
 	self.alpha = 1; //JANUARY player model gib bug
 	if(self.nogib_death ==1 || self.nogib_death ==2) self.nogib_death =0;
 	
-	/*
-	stuffcm(self, "cl_forwardspeed 200\n");     //make sure the maxspeed gets reset
-	stuffcm(self, "cl_sidespeed 350\n");
-	stuffcm(self,"r_particledesc particles\n");
-	stuffcm(self, "cl_bob 0.0032\n");
-	stuffcm(self, "an0\n");
-	*/
 	stuffcmd(self, "pcis01\n");
-	
 	
 	self.tilted =0;
 
-
-    // Add elohim specific stuff
-    elohim_put_client_in_server();
+    crx_put_client_in_server();
 };
 
 
@@ -1092,21 +1013,21 @@ potential spawning position for deathmatch games
 void() info_player_deathmatch =
 {
 	self.classname = "info_player_deathmatch";
-    elohim_num_spawns = elohim_num_spawns + 1;
+    num_spawns = num_spawns + 1;
 };
 
 void() info_player_team1 =
 {
 	self.classname = "info_player_team1";
 	self.team = TEAM_RED;
-	elohim_num_redspawns = elohim_num_redspawns + 1;
+	num_redspawns = num_redspawns + 1;
 };
 
 void() info_player_team2 =
 {
 	self.classname = "info_player_team2";
 	self.team = TEAM_BLUE;
-	elohim_num_bluespawns = elohim_num_bluespawns + 1;
+	num_bluespawns = num_bluespawns + 1;
 };
 
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
@@ -1114,7 +1035,7 @@ potential spawning position for coop games
 */
 void() info_player_coop =
 {
-    remove(self);   // ELOHIM_MOD - coop not supported
+    remove(self);   // coop not supported
 };
 
 /*
@@ -1125,21 +1046,6 @@ RULES
 ===============================================================================
 */
 
-//
-// ELOHIM_MOD
-//
-// Fixed the bug that causes the start level to loop.  Changed the sequence
-// of levels to:
-//
-// start->episode1->start->episode2->start->episode3->start->episode4->
-// start->end->deathmatch->deathmatch->deathmatch->deathmatch->start
-//
-// (one big loop.. first start = last start).
-// (of course, deathmatch = dm1->dm2->dm3->dm4->dm5->dm6)
-//
-// Included the Underearth in episode 2, but NOT Ziggurat Vertigo in e1.
-//
-
 /*
 go to the next level for deathmatch
 only called if a time or frag limit has expired
@@ -1149,15 +1055,15 @@ void() NextLevel =
 	local entity o;
 	local string teamname;
 
-	if ((mode_is_public()) && elohim_teamsize1 > 0 && elohim_teamsize2 > 0)
+	if ((mode_is_public()) && crx_teamsize1 > 0 && crx_teamsize2 > 0)
 	{
 		bprint("The match is over\n");
 		match_bprint_score();
-		teamname = strings_get_teamname(elohim_winning_team);
+		teamname = strings_get_teamname(crx_winning_team);
 
-		if (elohim_teamfrags1 == elohim_teamfrags2)
+		if (crx_teamfrags1 == crx_teamfrags2)
 			bprint("Tie game!\n");
-		else if (elohim_teamfrags1 > elohim_teamfrags2)
+		else if (crx_teamfrags1 > crx_teamfrags2)
 			bprint("The Red Team has won\n");
 		else
 			bprint("The Blue Team has won\n");
@@ -1247,11 +1153,11 @@ void() PlayerDeathThink =
 	
 	if(self.KDR >= 2.7) delay_VAR = 3.3;   //respawn delay
 	else if(self.KDR >= 2.1 && self.frags == top_score_global) delay_VAR = 3.1;   //respawn delay
-	else if((elohim_playmode & ELOHIM_WRAITH) && self.wraith ==0) delay_VAR = 5.0;   //respawn delay
+	else if((crx_playmode & MODE_WRAITH) && self.wraith ==0) delay_VAR = 5.0;   //respawn delay
 
 	else delay_VAR = 2.3;
 	
-	if((elohim_playmode & ELOHIM_CLASSIC) || (!(elohim_playmode & DM_PUBLIC_MODE) && !(elohim_playmode & CLANRING_CTF_MODE) && !(elohim_playmode & RACE_MODE))) delay_VAR = 0.10;   //respawn delay
+	if((crx_playmode & CLASSIC_MODE) || (!(crx_playmode & DM_PUBLIC_MODE) && !(crx_playmode & CTF_MODE) && !(crx_playmode & RACE_MODE))) delay_VAR = 0.10;   //respawn delay
 	
 	
 	
@@ -1307,7 +1213,7 @@ void() WaterMove =
 	{
 		if (self.flags & FL_INWATER)
 		{
-			if (self.style & ELOHIM_OBSERVER == 0)	sound (self, CHAN_AUTO, "misc/br_outwatr.wav", 1, ATTN_NORM);	// play leave water sound
+			if (self.style & STYLE_OBSERVER == 0)	sound (self, CHAN_AUTO, "misc/br_outwatr.wav", 1, ATTN_NORM);	// play leave water sound
 			self.flags = self.flags - FL_INWATER;
 		}
 		return;
@@ -1334,7 +1240,7 @@ void() WaterMove =
 	if ( !(self.flags & FL_INWATER) )
 	{	
 		// player enter water sound
-		if (!(self.style & ELOHIM_OBSERVER))
+		if (!(self.style & STYLE_OBSERVER))
 		{
 			if (self.watertype == CONTENT_LAVA && self.waterlevel >=2)	sound (self, CHAN_BODY, "body/br_lava.wav", 1, ATTN_NORM);
 			if (self.watertype == CONTENT_WATER)				sound (self, CHAN_AUTO, "body/br_water.wav", 1, ATTN_NORM);
@@ -1407,14 +1313,8 @@ void() PlayerPreThink =
 
 	if (time > self.wait)
 	{
-		elohim_periodic_checks();
+		crx_periodic_checks();
 		self.wait = self.wait + 1;
-	}
-
-	if (self.style & ELOHIM_SETTING_OPTIONS)
-	{
-		options_pre_think();
-		return;
 	}
 
 	if (self.deadflag == DEAD_DYING)
@@ -1422,7 +1322,7 @@ void() PlayerPreThink =
 		return;
 	}
 
-	if (self.style & ELOHIM_OBSERVER)
+	if (self.style & STYLE_OBSERVER)
 	{
 		observer_pre_think();
 		return;
@@ -1434,19 +1334,15 @@ void() PlayerPreThink =
 		return;
 	}
 
-	if (elohim_state & ELOHIM_MATCH_PAUSED)
+	if (crx_state & STATE_MATCH_PAUSED)
 	{
 		self.velocity = '0 0 0';
 		return;
 	}
 
-	if (self.crmod_did_damage + 1 < time)	self.crmod_inflicted = world;  // CRMOD - reset inflicted info 
+	if (self.crmod_did_damage + 1 < time)	self.crmod_inflicted = world;  // reset inflicted info 
 		
-
-
 	Called_in_PreThink();
-
-
 	
 	if (self.button2)						PlayerJump ();
 	else if (!self.button2 || self.waterlevel >2) 			self.flags = self.flags | FL_JUMPRELEASED;
@@ -1469,7 +1365,6 @@ void() PlayerPostThink =
 
 	if (self.cam)
 		return;
-	
 
 	if (self.impulse == 37)
 		client_responsetime_show();
@@ -1478,37 +1373,23 @@ void() PlayerPostThink =
 
 	SetPositions();
 	
-	if (!(self.style & ELOHIM_CONNECTED))
+	if (!(self.style & STYLE_CONNECTED))
 		return;
-
-    // ELOHIM_MOD
-    //
-    // - don't do post think stuff while observing
-    // - don't do post think stuff while setting options
-    // - redirect impulses in [20, 254]
-    // - changed gameover test from (self.view_ofs == '0 0 0') to (gameover)
-
-
 
 	if (self.deadflag == DEAD_DYING)
 	{
 		return;
 	}
 
-
-
 	Called_in_PostThink();			
-	
 
-
-
-	if (self.style & ELOHIM_OBSERVER)
+	if (self.style & STYLE_OBSERVER)
 	{
 		observer_post_think();
 		
 		return;
 	}
-	else if ((elohim_state & ELOHIM_TIMER_STARTED) && !(elohim_state & ELOHIM_MATCH_STARTED))
+	else if ((crx_state & STATE_TIMER_STARTED) && !(crx_state & STATE_MATCH_STARTED))
 	{
 		if (time >= self.delay)
 		{
@@ -1516,7 +1397,7 @@ void() PlayerPostThink =
 			show_rules_prematch();
 		}
 	}
-	else if (!(self.style & ELOHIM_MOTD))
+	else if (!(self.style & STYLE_MOTD))
 	{
 		
 		if (time >= self.delay)
@@ -1555,7 +1436,7 @@ void() PlayerPostThink =
 		}
 
         if (self.impulse != 22 && (self.impulse >= 20) && (self.impulse <= 255))
-            elohim_impulse ();
+            crx_impulse ();
 		else
 			self.delayed_impulse = self.impulse;
     }
@@ -1564,13 +1445,9 @@ void() PlayerPostThink =
         return;     // intermission or finale
     if (self.deadflag)
         return;
-    if (self.style & ELOHIM_SETTING_OPTIONS)
+    if (crx_state & STATE_MATCH_PAUSED)
         return;
-    if (elohim_state & ELOHIM_MATCH_PAUSED)
-        return;
-    // END_MOD
 		
-    // ELOHIM_MOD - Don't let clients change team after committing
     match_verify_team(self);
 
 // do weapon stuff
@@ -1595,9 +1472,6 @@ void() PlayerPostThink =
 	else if(time - self.axe_time <0.1 || self.flags & FL_ONGROUND || self.hook_out) self.ski_time2 -=1;
 	
 	//if(self.grind_sound_counter1 != 18) self.frame = 110;   //head grind
-    // END_MOD
-	
-	
 };
 
 
@@ -1610,10 +1484,7 @@ called when a player connects to a server
 */
 void() ClientConnect =
 {
-    // ELOHIM_MOD - do elohim specific stuff
-    elohim_client_connect();
-    // END_MOD
-	
+    crx_client_connect();
 	
 	bprint (self.netname);
 	bprint (" entered the game\n");
@@ -1638,22 +1509,17 @@ void() ClientDisconnect =
 	// if the level end trigger has been activated, just return
 	// since they aren't *really* leaving
 
-	if (!(elohim_playmode & RACE_MODE))
+	if (!(crx_playmode & RACE_MODE))
 	{
 		if(self.items & (IT_KEY1 | IT_KEY2))
 			ctf_player_drop_flag(self, 0);
 	}
 
-	// ELOHIM_MOD - check to see if we've already done this
-	// (can happen since elohim_kick_player calls ClientDisconnect directly
-	if (!(self.style & ELOHIM_CONNECTED))
+	if (!(self.style & STYLE_CONNECTED))
 		return;
-	// END_MOD
 
-	// ELOHIM_MOD - check for null name
 	if (utils_illegal_name(self.netname))
 		self.netname = "player";
-	// END_MOD
 
 	// let everyone else know
 	bprint (self.netname);
@@ -1661,36 +1527,12 @@ void() ClientDisconnect =
 	bprint (ftos(self.frags));
 	bprint (" frags\n");
 
-    // ELOHIM_MOD - play gib sound if client was kicked for suiciding
-    if (self.cnt < 0)
-        sound(self, CHAN_BODY, "body/br_gib.wav", 1, ATTN_NONE);
-    else
-        sound (self, CHAN_BODY, "body/br_gib.wav", 1, ATTN_NONE);
-    // END_MOD
+    sound (self, CHAN_BODY, "body/br_gib.wav", 1, ATTN_NONE);
 
 	set_suicide_frame ();
 
-	
-
-    // ELOHIM_MOD
-    elohim_client_disconnect();
-    // END_MOD
+    crx_client_disconnect();
 };
-
-//
-// ELOHIM_MOD
-//
-// Added a bunch of new obituaries; got rid of "can't exist on slime alone"
-// (I never much liked that one)
-//
-// Added a same-team check for telefragging.
-//
-// Added code to keep track of team scores
-//
-// Added code to keep track of kill stats
-//
-// Removed check for killed by monster
-//
 
 //
 //  F R A G
@@ -1701,9 +1543,9 @@ void (entity client, float fragval) client_frag =
 {
     client.frags = client.frags + fragval;
     
-    client.crmod_lastkill = time; // CRMOD got a kill
+    client.crmod_lastkill = time;
 
-    if (elohim_playmode & ELOHIM_MATCH_MODE)
+    if (crx_playmode & MATCH_MODE)
 	{
 		score_frag(client.height, fragval);
 	}
@@ -1734,4 +1576,3 @@ void (entity client, float fragval) client_frag =
 		}
 	}
 };
-

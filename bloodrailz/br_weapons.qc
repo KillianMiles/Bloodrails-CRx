@@ -121,7 +121,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	shotcount_dmg = shotcount;
 
 
-	if (!(elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_state & ELOHIM_MATCH_STARTED)) self.dest1_x = self.dest1_x + 4 * shotcount; // ELOHIM_MOD - stats
+	if (!(crx_playmode & MATCH_MODE) || (crx_state & STATE_MATCH_STARTED)) self.dest1_x = self.dest1_x + 4 * shotcount; //stats
 	
 	
 	src = self.origin + v_forward*10;
@@ -197,7 +197,7 @@ void() W_SetCurrentAmmo =
 	if (self.weapon == IT_AXE)
 	{
 		self.weaponmodel = "mdl/v_axe_r.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "mdl/v_axe_b.mdl";
+		if (self.height == crx_team2) self.weaponmodel = "mdl/v_axe_b.mdl";
 		self.weaponframe = 0;
 	}
 
@@ -210,7 +210,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == IT_RAILGUN)
 	{
 		self.weaponmodel = "mdl/v_rail_r.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
+		if (self.height == crx_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
 		//self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
@@ -406,7 +406,7 @@ void() W_Attack =
 		//else sound (self, CHAN_AUTO, "weap/empty1.wav",1,ATTN_NORM);
 		
 	        
-	        if (elohim_playmode & PROJECTILES) W_FireProjectile();
+	        if (crx_playmode & MODE_PROJECTILES) W_FireProjectile();
 	        else W_FireRailgun ();
 	        
 		player_shot1 ();	
@@ -561,12 +561,12 @@ void() W_WeaponFrame =    //Called every frame so impulse events can be handled 
 	
 	if (self.button0)
 	{
-		if (self.style & ELOHIM_OK_TO_SHOOT)
+		if (self.style & STYLE_OK_TO_SHOOT)
 		{
 			W_Attack ();
 		}
 	}
-	else if (time > self.attack_finished) self.style = self.style | ELOHIM_OK_TO_SHOOT;
+	else if (time > self.attack_finished) self.style = self.style | STYLE_OK_TO_SHOOT;
 };
 
 

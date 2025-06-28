@@ -1,21 +1,3 @@
-//
-// vote.qc
-//
-// This file contains code to implement voting.  All votes consist of an
-// initial request followed by a 21 second vote.  elohim_request contains
-// the request strings.
-//
-// For all requests .use points to a function which is called when
-// the vote passes, and .th_die points to a function which is called when
-// the vote dies.  The die function is optional; the pass function must
-// be passed to vote_init.  Sample usage:
-//
-//    vote_init("change level to ", newmap, admin_change_level);
-//    vote_yes();
-//
-// Written by J.P. Grossman, modified by bucksh0t.
-//
-
 // Function declarations
 void () vote_repeat;
 void () vote_accept;
@@ -36,20 +18,20 @@ void () SUB_Null;
 float (string s1, string s2, void () accept) vote_init =
 {
     // Check to see if there's already a vote in progress
-    if (elohim_request)
+    if (crx_request)
     {
         sprint(self, "There is already a vote in progress\n");
         return FALSE;
     }
 
-    elohim_request = spawn();
-    elohim_request.classname = "elohim_request";
-    elohim_request.th_die = SUB_Null;
-    elohim_request.think = vote_repeat;
-    elohim_request.use = accept;
-    elohim_request.wad = s1;
-    elohim_request.map = s2;
-    elohim_request.count = 0;
+    crx_request = spawn();
+    crx_request.classname = "crx_request";
+    crx_request.th_die = SUB_Null;
+    crx_request.think = vote_repeat;
+    crx_request.use = accept;
+    crx_request.wad = s1;
+    crx_request.map = s2;
+    crx_request.count = 0;
     utils_do_players(vote_clear);
 
     // If there's only one voter then it will pass as soon as that
@@ -65,7 +47,7 @@ float (string s1, string s2, void () accept) vote_init =
 //
 void () vote_clear =
 {
-    self.style = self.style - (self.style & ELOHIM_YES);
+    self.style = self.style - (self.style & STYLE_YES);
 };
 
 //
@@ -75,20 +57,20 @@ void () vote_clear =
 //
 void () vote_yes =
 {
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
     {
         // accept immediately
         vote_accept();
         return;
     }
 
-    if (self.style & ELOHIM_YES)
+    if (self.style & STYLE_YES)
     {
         sprint(self, "\nWise man say: \"Vote early, vote often\"\n");
         return;
     }
 
-    self.style = self.style | ELOHIM_YES;
+    self.style = self.style | STYLE_YES;
     if (vote_majority())
         vote_accept();
 };
@@ -100,7 +82,7 @@ void () vote_yes =
 //
 void () vote_no =
 {
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
     {
         // reject immediately
         vote_reject();
@@ -126,7 +108,7 @@ float () vote_majority =
     player = find(world, classname, "player");
     while (player)
     {
-        if ((player.style & ELOHIM_CONNECTED) && (!(player.style & CRMOD_QSMACK)))
+        if (player.style & STYLE_CONNECTED)
         {
             players = players + 1;
         }
@@ -139,9 +121,9 @@ float () vote_majority =
     player = find(world, classname, "player");
     while (player)
     {
-        if ((player.style & ELOHIM_CONNECTED) && (!(player.style & CRMOD_QSMACK)))        // CRMOD don't count qsmack
+        if (player.style & STYLE_CONNECTED)
         {
-            if (player.style & ELOHIM_YES || player == self)
+            if (player.style & STYLE_YES || player == self)
                 vote_count = vote_count + 1;
         }
         player = find(player, classname, "player");
@@ -160,17 +142,17 @@ float () vote_majority =
 //  R E P E A T
 //
 //  Print the request; schedule the next automatic action.
-//  elohim_request.count counts the number of times the request
+//  crx_request.count counts the number of times the request
 //  has been displayed.
 //
 void () vote_repeat =
 {
-    bprint4("Request to ", elohim_request.wad, elohim_request.map, "\n");
+    bprint4("Request to ", crx_request.wad, crx_request.map, "\n");
     bprint("Type 'yes' in console to pass\n");
-    elohim_request.nextthink = time + 7;
-    elohim_request.count = elohim_request.count + 1;
-    if (elohim_request.count == 3)
-        elohim_request.think = vote_reject;
+    crx_request.nextthink = time + 7;
+    crx_request.count = crx_request.count + 1;
+    if (crx_request.count == 3)
+        crx_request.think = vote_reject;
 };
 
 //
@@ -178,9 +160,9 @@ void () vote_repeat =
 //
 void () vote_accept =
 {
-    elohim_request.use();
-    remove(elohim_request);
-    elohim_request = world;
+    crx_request.use();
+    remove(crx_request);
+    crx_request = world;
 };
 
 //
@@ -192,9 +174,9 @@ void () vote_accept =
 void () vote_reject =
 {
     bprint("Vote cancelled\n");
-    elohim_request.th_die();
-    remove(elohim_request);
-    elohim_request = world;
+    crx_request.th_die();
+    remove(crx_request);
+    crx_request = world;
 };
 
 //
@@ -202,7 +184,7 @@ void () vote_reject =
 //
 void () vote_impulse =
 {
-    if (!elohim_request)
+    if (!crx_request)
     {
         sprint(self, "Nothing to vote on\n");
         return;

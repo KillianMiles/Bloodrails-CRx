@@ -3,25 +3,6 @@
 //
 // Functions for doing angle/vector calculations
 //
-// Fields used:
-//
-//
-// All code by Paul Baker unless otherwise commented.
-//
-
-//
-//   P I C K  A N G L E
-//
-//   Given two angles, and a percent, this function returns a new angle
-//   that is some percent closer to angle2 from angle1.
-//
-//   example: angle1 is the current angle, angle2 is where you want to be,
-//            based on the percent, the returned angle will be a new
-//            angle inbetween angle1 and angle2.  The higher the percent,
-//            the closer the returned angle will be to angle2.
-//
-//   JP - removed commented code and optimized slightly
-//
 float (float angle1, float angle2, float percent) angles_pick_angle =
 {
 	local float difference;
@@ -37,18 +18,6 @@ float (float angle1, float angle2, float percent) angles_pick_angle =
 	
 };
 
-//
-//  B E S T A I M
-//     by Paul Baker
-//  Returns desired aim 'from' one position 'to' another
-//
-//  Recommented and Recoded by JP
-//
-//  Dealing with pitch is a bit tricky.  vectoangles returns a pitch in [0, 360] where
-//  0 is looking straight ahead, 45 looks up at 45° and 315 looks down at 45°.
-//  However, the pitch in v_angle is in the range [-68, 78] where positive is *down*
-//  and negative is up.
-//
 vector (vector from, vector to) angles_bestaim =
 {
 	local vector bestaim;
@@ -71,13 +40,6 @@ vector (vector from, vector to) angles_bestaim =
 	return bestaim;
 };
 
-
-// CRMOD
-//  F I X A N G L E
-//    by Paul Baker
-//
-//  Sends new view angle to client and stores the value in .crmod_oldangle for use in angle smoothing
-//
 void (vector v) angles_fixangle =
 {
 	self.crmod_oldangle = v;
@@ -89,7 +51,4 @@ void (vector v) angles_fixangle =
     // Take it up with id.
 	self.v_angle = self.angles = v - '0.1 0.1 0';
 	self.fixangle = TRUE;
-};		
-	
-	
-	
+};

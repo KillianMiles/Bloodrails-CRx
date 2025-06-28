@@ -415,8 +415,7 @@ void() PlayerDead =
 	self.jump_flag = 0;
 	self.modelindex = 0;
 
-	// ELOHIM_MOD - autorespawn after 5 seconds in match mode
-	if (elohim_playmode & ELOHIM_MATCH_MODE)
+	if (crx_playmode & MATCH_MODE)
 	{
 		self.nextthink = time + 5;
 		self.think = respawn;
@@ -443,25 +442,20 @@ void() PlayerDie =
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 
-	// ELOHIM_MOD - need this to get rid of glow
 	self.items = self.items - (self.items & IT_QUAD);
 	self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-	if (!ogEffects)		self.effects = self.effects - (self.effects & EF_FLICKER);
-	// END_MOD
+	self.effects = self.effects - (self.effects & EF_FLICKER);
 
-    // ELOHIM_MOD - no paks or flags in practice mode; '|| coop' removed
-    if (deathmatch && !(elohim_playmode & RACE_MODE))
+    if (deathmatch && !(crx_playmode & RACE_MODE))
 	{
 		if(self.items & (IT_KEY1 | IT_KEY2))
 			ctf_player_drop_flag(self, 0);
 	}
 
-
 	if (self.player_flag & PF_ITEM_RUNE_MASK) rune_drop();
 
-
-	self.crmod_chase_score = ELOHIM_NEGINF; // ELOHIM_MOD - don't want to autochase
-	self.crmod_cam_delay = time + 1;		// ELOHIM_MOD - well maybe for a second :)
+	self.crmod_chase_score = CONST_NEGINF;
+	self.crmod_cam_delay = time + 1;
 	
 	self.weaponmodel="";
 	self.view_ofs = '0 0 -8';
@@ -471,14 +465,12 @@ void() PlayerDie =
 	self.movetype = MOVETYPE_TOSS;
 	if (self.velocity_z < 10) self.velocity_z = self.velocity_z + random()*300;
 
-    // ELOHIM_MOD - check for no gibs
-    if ((self.health < 0 && !(elohim_playmode & ELOHIM_NO_GIBS))) // END_MOD
+    if (self.health < 0)
 	{
 		GibPlayer ();
-		PlayerDead(); // ELOHIM_MOD - check for match mode autorespawn
+		PlayerDead();
 		return;
 	}
-
 
 	DeathSound();
 	

@@ -1,11 +1,3 @@
-//
-// Console.qc
-//
-// This file contains code to implement server console directives.
-//
-// All code by J.P. Grossman unless otherwise commented.
-//
-
 // constants
 float CONSOLE_ENT_YAW = 1;
 float CONSOLE_ENT_PITCH = 2;
@@ -19,7 +11,7 @@ float CONSOLE_ENT_ROLL = 4;
 void () console_set_aliases =
 {
     // console commands valid from dedicated servers only
-    if (!(elohim_playmode & ELOHIM_DEDICATED_SERVER))
+    if (!(crx_playmode & MODE_DEDICATED_SERVER))
         return;
 
     // set local aliases (server console commands)
@@ -97,7 +89,7 @@ void () console_ping_think =
     client = find(world, classname, "player");
     while (client)
     {
-        if (client.style & ELOHIM_CONNECTED)
+        if (client.style & STYLE_CONNECTED)
         {
             if (client.finaldest_y > self.finaldest_x)
                 ping = floor(1000 * (client.finaldest_y - self.finaldest_x));
@@ -127,7 +119,7 @@ void () console_ping =
 
 
     ping = spawn();
-    ping.classname = "elohim_ping";
+    ping.classname = "crx_ping";
     ping.owner = world;
     ping.nextthink = time + 2;
     ping.think = console_ping_think;
@@ -177,7 +169,7 @@ void () console_show_status =
     local string szmode;
 
     cprint("\n");                    
-    mode = options_get_mode();
+    mode = utils_get_mode();
     szmode = strings_get_mode(mode);
     cprint2(szmode, " mode\n");
     console_show_time();
@@ -187,7 +179,7 @@ void () console_show_status =
 //
 //  S H O W  D E B U G  I N F O
 //
-//  Used for development.  Similar to elohim_debug_info, but prints to the
+//  Used for development.  Similar to crx_debug_info, but prints to the
 //  server console.
 //
 void () console_show_debug_info =
@@ -200,7 +192,7 @@ void () console_show_debug_info =
     {
         local string temp;
         temp = ftos(e.colormap);
-        if (e.style & ELOHIM_CONNECTED)
+        if (e.style & STYLE_CONNECTED)
             cprint4(temp, " \"", e.netname, "\" - Connected\n");
         else
             cprint4(temp, " \"", e.netname, "\" - Disconnected\n");
@@ -216,7 +208,7 @@ void () console_show_debug_info =
 void () console_list_ghosts =
 {
     local entity e;
-    e = find(world, classname, "elohim_ghost");
+    e = find(world, classname, "crx_ghost");
     if (!e)
     {
         cprint("There are no ghosts\n");
@@ -255,7 +247,7 @@ void () console_list_ghosts =
         else
             localcmd4(szTeam, pad, num, "  | Disconnected\"\n");
     
-        e = find(e, classname, "elohim_ghost");
+        e = find(e, classname, "crx_ghost");
     }
     cprint("\n");
 };
@@ -290,105 +282,6 @@ void () console_commands =
 };
 
 //
-//  D E B U G  C L I E N T
-//
-//  Enter debug mode for the client indicated by cvar 'skill'.
-//
-void () console_debug_client =
-{
-    local float id;
-    local entity client;
-
-    id = cvar("skill");
-    client = find(world, classname, "player");
-    while (client)
-    {
-        if (client.colormap == id)
-        {
-            elohim_debug_client = client;
-            cprint3("\"debugging ", client.netname, "\"\n");
-            return;
-        }
-        client = find(client, classname, "player");
-    }
-    cprint("client not found\n");
-};
-
-
-
-
-//
-//  C L I E N T  F L A G S
-//
-void () console_client_flags =
-{
-    if (!elohim_debug_client)
-    {
-        cprint("No debug client\n");
-        return;
-    }
-    cprint("\n");
-    cprint3("\"Client flags for ", elohim_debug_client.netname, ":\"\n");
-    cprint("\n");
-    if (elohim_debug_client.style & ELOHIM_NEW_CLIENT)
-        cprint("ELOHIM_NEW_CLIENT\n");
-    if (elohim_debug_client.style & ELOHIM_ADMINISTRATOR)
-        cprint("ELOHIM_ADMINISTRATOR\n");
-   	if (elohim_debug_client.style & CRMOD_DETECTING_QSMACK)	// CRMOD was SMOOTH
-		cprint("CRMOD_DETECTING_QSMACK\n");					// CRMOD was SMOOTH
-	if (elohim_debug_client.style & ELOHIM_POP_FORWARD)
-        cprint("ELOHIM_POP_FORWARD\n");
-    if (elohim_debug_client.style & ELOHIM_READY)
-        cprint("ELOHIM_READY\n");
-    if (elohim_debug_client.style & ELOHIM_YES)
-        cprint("ELOHIM_YES\n");
-    if (elohim_debug_client.style & ELOHIM_HEADS_UP)
-        cprint("ELOHIM_HEADS_UP\n");
-    if (elohim_debug_client.style & ELOHIM_SETTING_OPTIONS)
-        cprint("ELOHIM_SETTING_OPTIONS\n");
-    if (elohim_debug_client.style & ELOHIM_MOTD)
-        cprint("ELOHIM_MOTD\n");
-    if (elohim_debug_client.style & ELOHIM_OK_TO_SHOOT)
-        cprint("ELOHIM_OK_TO_SHOOT\n");
-    if (elohim_debug_client.style & ELOHIM_KICK_CONFIRM)
-        cprint("ELOHIM_KICK_CONFIRM\n");
-    if (elohim_debug_client.style & ELOHIM_CONNECTED)
-        cprint("ELOHIM_CONNECTED\n");
-    if (elohim_debug_client.style & ELOHIM_FOUND_BINDINGS)
-        cprint("ELOHIM_FOUND_BINDINGS\n");
-    if (elohim_debug_client.style & ELOHIM_CONFIRM_LEAVE)
-        cprint("ELOHIM_CONFIRM_LEAVE\n");
-	if (elohim_debug_client.style & CRMOD_SMART_WEAPON)
-		cprint("CRMOD_SMART_WEAPON\n");
-    if (elohim_debug_client.style & ELOHIM_OBSERVER)
-        cprint("ELOHIM_OBSERVER\n");
-
-
-	// CRMOD - change to oflags
-    cprint("\n");
-    cprint3("\"Client Observer Flags for ", elohim_debug_client.netname, ":\"\n");
-    cprint("\n");
-    if (elohim_debug_client.oflags & OBSERVER_WALK)
-        cprint("OBSERVER_WALK\n");
-    if (elohim_debug_client.oflags & OBSERVER_FLY)
-        cprint("OBSERVER_FLY\n");
-    if (elohim_debug_client.oflags & OBSERVER_CHASE)
-        cprint("OBSERVER_CHASE\n");
-    if (elohim_debug_client.oflags & OBSERVER_DEMO)
-        cprint("OBSERVER_DEMO\n");
-    if (elohim_debug_client.oflags & OBSERVER_CAMERA)
-    	cprint("OBSERVER_CAMERA\n");
-	if (elohim_debug_client.oflags & OBSERVER_AUTO)
-		cprint("OBSERVER_AUTO\n");
-	if (elohim_debug_client.oflags & OBSERVER_TOURNEY)
-		cprint("OBSERVER_TOURNEY\n");
-	if (elohim_debug_client.oflags & OBSERVER_GO_AUTO)
-		cprint("OBSERVER_GO_AUTO\n");
-	// CRMOD END
-    cprint("\n");
-};
-
-//
 //  S E R V E R  F L A G S
 //
 void () console_server_flags =
@@ -398,46 +291,44 @@ void () console_server_flags =
     cprint("\n");
 
 	// playmode flags
-	if (elohim_playmode & ELOHIM_SAME_LEVEL)
-		cprint("ELOHIM_SAME_LEVEL\n");
-	if (elohim_playmode & ELOHIM_MATCH_MODE)
-		cprint("ELOHIM_MATCH_MODE\n");
-	if (elohim_playmode & RACE_MODE)
+	if (crx_playmode & MATCH_MODE)
+		cprint("MATCH_MODE\n");
+	if (crx_playmode & RACE_MODE)
 		cprint("RACE_MODE\n");
-        if (elohim_playmode & ELOHIM_SERVER_INITIALIZED)
-		cprint("ELOHIM_SERVER_INITIALIZED\n");
-	if (elohim_playmode & ELOHIM_NO_QUAD)
-		cprint("ELOHIM_NO_QUAD\n");
-	if (elohim_playmode & ELOHIM_NO_PENT)
-		cprint("ELOHIM_NO_PENT\n");
-	if (elohim_playmode & ELOHIM_NO_RING)
-		cprint("ELOHIM_NO_RING\n");
-	if (elohim_playmode & ELOHIM_MODE_VOTE)
-		cprint("ELOHIM_MODE_VOTE\n");
-	if (elohim_playmode & ELOHIM_DEDICATED_SERVER)
-		cprint("ELOHIM_DEDICATED_SERVER\n");
-	if (elohim_playmode & ELOHIM_NO_ARMOR)
-		cprint("ELOHIM_NO_ARMOR\n");
-	if (elohim_playmode & UNUSED5)
-		cprint("UNUSED5\n");
-    if (elohim_playmode & CLANRING_CTF_MODE)
-        cprint("CLANRING_CTF_MODE\n");
+        if (crx_playmode & MODE_SERVER_INITIALIZED)
+		cprint("MODE_SERVER_INITIALIZED\n");
+	if (crx_playmode & MODE_NO_QUAD)
+		cprint("MODE_NO_QUAD\n");
+	if (crx_playmode & MODE_NO_PENT)
+		cprint("MODE_NO_PENT\n");
+	if (crx_playmode & MODE_NO_RING)
+		cprint("MODE_NO_RING\n");
+	if (crx_playmode & MODE_VOTE)
+		cprint("MODE_VOTE\n");
+	if (crx_playmode & MODE_DEDICATED_SERVER)
+		cprint("MODE_DEDICATED_SERVER\n");
+	if (crx_playmode & MODE_NO_ARMOR)
+		cprint("MODE_NO_ARMOR\n");
+	if (crx_playmode & MODE_NOAMMO)
+		cprint("MODE_NOAMMO\n");
+    if (crx_playmode & CTF_MODE)
+        cprint("CTF_MODE\n");
 
     cprint("\n");
 
 	// state flags
-	if (elohim_state & ELOHIM_TIMER_STARTED)
-		cprint("ELOHIM_TIMER_STARTED\n");
-	if (elohim_state & ELOHIM_MATCH_STARTED)
-		cprint("ELOHIM_MATCH_STARTED\n");
-	if (elohim_state & ELOHIM_MATCH_PAUSED)
-		cprint("ELOHIM_MATCH_PAUSED\n");
-	if (elohim_state & ELOHIM_MATCH_OVER)
-		cprint("ELOHIM_MATCH_OVER\n");
-	if (elohim_state & ELOHIM_MATCH_WAIT)
-		cprint("ELOHIM_MATCH_WAIT\n");
-	if (elohim_state & ELOHIM_KICKING)
-		cprint("ELOHIM_KICKING\n");
+	if (crx_state & STATE_TIMER_STARTED)
+		cprint("STATE_TIMER_STARTED\n");
+	if (crx_state & STATE_MATCH_STARTED)
+		cprint("STATE_MATCH_STARTED\n");
+	if (crx_state & STATE_MATCH_PAUSED)
+		cprint("STATE_MATCH_PAUSED\n");
+	if (crx_state & STATE_MATCH_OVER)
+		cprint("STATE_MATCH_OVER\n");
+	if (crx_state & STATE_MATCH_WAIT)
+		cprint("STATE_MATCH_WAIT\n");
+	if (crx_state & STATE_KICKING)
+		cprint("STATE_KICKING\n");
 
     cprint("\n");
 };
@@ -504,7 +395,7 @@ void (string name, float angleflags) console_make_entity =
     cprint4(name, " created at ", temp, ", ");
     temp = vtos(newent.angles);
     localcmd2(temp, "\n");
-    if (name == "elohim_camera")
+    if (name == "crx_camera")
     {
     	newent.nextthink = time + 0.2;
     	newent.think = auto_camera_think;
@@ -548,7 +439,7 @@ void (string name) console_kill_entity =
 //
 //  C O M M A N D
 //
-//  Interpret a console command.  Called from elohim_start_frame.
+//  Interpret a console command.  Called from crx_start_frame.
 //
 void (float command) console_command =
 {
@@ -589,43 +480,43 @@ void (float command) console_command =
 	else if (command == 22)
 		admin_set_mode_vote(); //TODO: reassign this
 	else if (command == 23)			
-		{}
+	{}
 	else if (command == 24)
-		{}
+	{}
     else if (command == 40)
-        console_debug_client();
+    {}
     else if (command == 41)
     {}
     else if (command == 42)
-        {}
+    {}
     else if (command == 43)
-        {}
+    {}
     else if (command == 44)
-        console_client_flags();
+    {}
     else if (command == 45)
         console_server_flags();
     else if (command == 50)
     {
         console_make_entity("info_player_deathmatch", CONSOLE_ENT_YAW);
-        elohim_num_spawns = elohim_num_spawns + 1;
+        num_spawns = num_spawns + 1;
     }
     else if (command == 51)
     {
-        console_make_entity("elohim_start_point", CONSOLE_ENT_YAW);
-        elohim_num_starts = elohim_num_starts + 1;
+        console_make_entity("crx_start_point", CONSOLE_ENT_YAW);
+        num_starts = num_starts + 1;
     }
     else if (command == 52)
         console_kill_entity("info_player_deathmatch");
     else if (command == 53)
     {
-        console_make_entity("elohim_camera", CONSOLE_ENT_PITCH | CONSOLE_ENT_YAW);
-        elohim_num_cameras = elohim_num_cameras + 1;
+        console_make_entity("crx_camera", CONSOLE_ENT_PITCH | CONSOLE_ENT_YAW);
+        num_cameras = num_cameras + 1;
     }
     else if (command >= 100 && command < 170)
        {}
     else if (command >= 1000)
     {
-        elohim_password = command;
+        crx_password = command;
         cprint("password set\n");
     }
     else

@@ -50,8 +50,8 @@ void() make_railpop =
 	setmodel (impact, "mdl/ef_railpop.mdl");
 	
 	
-	if (self.height == elohim_team1) impact.skin = 1;   //red
-	else if (self.height == elohim_team2) impact.skin = 0;   //blue
+	if (self.height == crx_team1) impact.skin = 1;   //red
+	else if (self.height == crx_team2) impact.skin = 0;   //blue
 	else impact.skin = 0;   //blue
 	
 	
@@ -115,8 +115,8 @@ void(vector org, entity attacker, float radius, entity ignore) Rail_push =      
 						head.owner = attacker;
 						sound (attacker, CHAN_AUTO, "weap/br_plasm2.wav",1,ATTN_NORM);
 						
-						if (self.height == elohim_team1) head.skin = 6;   //red
-						else if (self.height == elohim_team2) head.skin = 5;   //blue
+						if (self.height == crx_team1) head.skin = 6;   //red
+						else if (self.height == crx_team2) head.skin = 5;   //blue
 						else
 						{
 							if(head.skin == 5) head.skin = 6; 
@@ -171,7 +171,7 @@ void() rail_fade = {
 	
 		
 	self.think = rail_fade;
-	self.nextthink = time + 0.1;
+	self.nextthink = time + my_ticrate*6;
 	
 	
 	
@@ -192,45 +192,50 @@ void() rail_fade = {
 
 	if (self.cnt == 6)
 	{
-		self.alpha = self.alpha - 0.19;
+		if (rand < 0.20 && self.weapon!=1)          //randomly deleting segments
+			{
+				self.cnt = self.cnt - 1;
+				self.think = SUB_Remove;
+				self.nextthink = time + 0.05;
+				return;
+			}
+		
+		self.alpha = self.alpha - 0.25;
 		if(self.alpha <= 0) self.alpha = 0.01;
 		self.frame = 1;
 	}
 	else if (self.cnt == 5)
 	{
-		self.frame = 1;
-		if (rand < 0.06)          //randomly deleting segments  .02 -> .01
+		if (rand < 0.20 && self.weapon!=1)          //randomly deleting segments
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
 				self.nextthink = time + 0.05;
-				
 				return;
 			}
 		
-		
-		self.alpha = self.alpha - 0.19;
+		self.alpha = self.alpha - 0.25;
 		if(self.alpha <= 0) self.alpha = 0.01;
 	}	
 	else if (self.cnt == 4)
 	{
-			self.frame = 1;
-			if (rand < 0.07)          //randomly deleting segments
+		self.avelocity = 0;   //turn off avelocity when frame changes	
+		self.frame = 2;
+			if (rand < 0.15 && self.weapon!=1)
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
 				self.nextthink = time + 0.05;
-				
+			
 				return;
 			}
 		
-		self.alpha = self.alpha - 0.19;
+		self.alpha = self.alpha - 0.25;
 		if(self.alpha <= 0) self.alpha = 0.01;
 	}
 	else if (self.cnt == 3)
 	{
-		self.frame = 2;
-			if (rand < 0.09)          //randomly deleting segments
+			if (rand < 0.10 && self.weapon!=1)          //randomly deleting segments
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
@@ -238,14 +243,13 @@ void() rail_fade = {
 				
 				return;
 			}
-		if(self.alpha == 0.01) self.alpha = 0.01;
-		else self.alpha = 0.08;
+		if(self.alpha == 0.01) self.alpha = 0.007;
+		else self.alpha = 0.05;
 		
 	}
 	else if (self.cnt == 2)
 	{	
-		self.frame = 2;
-			if (rand < 0.10)          //randomly deleting segments
+			if (rand < 0.10 || self.alpha == 0.007)          //randomly deleting segments
 			{
 				self.cnt = self.cnt - 1;
 				self.think = SUB_Remove;
@@ -253,13 +257,11 @@ void() rail_fade = {
 				
 				return;
 			}
-			if(self.alpha == 0.01) self.alpha = 0.01;
-			else self.alpha = 0.05;
+			//if(self.alpha == 0.005) self.alpha = 0.001;
+			self.alpha = 0.02;
 	}
 	else if (self.cnt == 1) 
 	{
-		self.frame = 2;
-		self.alpha = 0.02;
 		self.think = SUB_Remove;
 		self.nextthink = time + 0.05;
 		return;
@@ -428,7 +430,9 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				prj.classname = "railtrail";
 			
 				prj.frame =0;
-		
+				
+				if(segments==1 || segments ==2 || segments==old_seg) prj.weapon = 1; //tag first two segments and the last segment to use in nextthink
+				
 			
 				//if(segments == old_seg || segments == 1) setmodel (prj, "mdl/rail1.mdl");   //DRAW THE FIRST AND LAST SEGMENTS AS SHORT MODELS SO STUFF DOESNT POKE THRU WALLS
 			
@@ -436,13 +440,13 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			
 				
 				setsize (prj, 0, 0);	
-				if (self.height == elohim_team1) 
+				if (self.height == crx_team1) 
 				{
 					if(random() < 0.13) prj.skin = 3;   //Orange
 					else if(random() > 0.87) prj.skin = 4;   //Dark-red
 					else prj.skin = 1;    //red
 				}
-				else if (self.height == elohim_team2) 
+				else if (self.height == crx_team2) 
 				{
 					if(random() < 0.13) prj.skin = 0;   //White-blue
 					else if(random() > 0.87) prj.skin = 5;   //Dark-blue
@@ -502,7 +506,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 					prj.avelocity_z = random()-0.5;
 		
 					prj.avelocity = normalize(prj.avelocity);
-					rotation_amount = 6.0;
+					rotation_amount = 8.0; // 6->9
 				
 					if(spacing_long >= 125 && sky_shot ==0 && low_rotation ==0) rotation_amount = 15.0;
 					else if(spacing_long >= 100 && sky_shot ==0 && low_rotation ==0) rotation_amount = 15.0;
@@ -517,7 +521,8 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				prj.cnt = 5;
 				prj.frame = 4;	
 				prj.think = rail_fade;
-				prj.nextthink = time + 0.2 + (segments*0.008); //fade delay   //
+				//prj.nextthink = time + 0.2 + (segments*0.008); //fade delay   //
+				prj.nextthink = time + my_ticrate*6 + (segments*0.020); // delay fade time using segment number for neat effect (vf)
 			}
 			
 			segments = segments - 1;	
@@ -557,7 +562,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				
 		setsize (prj, 0, 0);	
 		
-		if (self.height == elohim_team1) 
+		if (self.height == crx_team1) 
 		{
 			if(random() < 0.13) prj.skin = 3;   //Orange
 			else if(random() > 0.87) prj.skin = 4;   //Dark-red
@@ -568,7 +573,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			//else if (segments < ==3) prj.skin = 5;
 			
 		}
-		else if (self.height == elohim_team2) 
+		else if (self.height == crx_team2) 
 		{
 			if(random() < 0.13) prj.skin = 0;   //White-blue
 			else if(random() > 0.87) prj.skin = 5;   //Dark-blue
@@ -627,13 +632,14 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			prj.avelocity_z = random()-0.5;
 		
 			prj.avelocity = normalize(prj.avelocity);
-			rotation_amount = 11.0;
+			rotation_amount = 12.0;  //11->12
 			prj.avelocity = prj.avelocity*rotation_amount;
 
 			
 		prj.frame = 4;	
 		prj.think = rail_fade;
-		prj.nextthink = time + 0.2 + (segments*0.020); // delay fade time using segment number for neat effect (vf)
+		//prj.nextthink = time + 0.2 + (segments*0.020); // delay fade time using segment number for neat effect (vf)
+		prj.nextthink = time + my_ticrate*6 + (segments*0.020); // delay fade time using segment number for neat effect (vf)
 		segments = segments - 1;
 		
 		prj.cnt = 5;	
@@ -756,14 +762,14 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 					
 				setsize (prj, 0, 0);	
 		
-				if (self.height == elohim_team1) 
+				if (self.height == crx_team1) 
 				{
 					if(random() < 0.13) prj.skin = 3;   //Orange
 					else if(random() > 0.87) prj.skin = 4;   //Dark-red
 					else prj.skin = 1;    //red
 			
 				}
-				else if (self.height == elohim_team2) 
+				else if (self.height == crx_team2) 
 				{
 					if(random() < 0.13) prj.skin = 0;   //White-blue
 					else if(random() > 0.87) prj.skin = 5;   //Dark-blue
@@ -939,7 +945,7 @@ void() FlickCurves=
 		self.shot_time = time; //start regular railgun recharge timer
 		
 		self.weaponmodel = "mdl/v_rail_r.mdl";
-		if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
+		if (self.height == crx_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
 		
 		//END // THIS HAPPENS IF NO TARGET IS FOUND
 		if(self.lastButton0)
@@ -1435,28 +1441,26 @@ void() T_MissileTouch =
 	}
 
 	damg = 100;  
-	
-	self.dmg = FALSE;  // ELOHIM_MOD - used to flag 0 damage rockets
 
-		local	entity	head;
-		head = findradius(self.origin, 130);
-		while (head)
-		{
-			if (head.classname == "smoke")
-					{				
-			
-						local vector dir4 = head.origin - self.origin;     
-						local float accel = 440*random() + 440;         
-						head.velocity = head.velocity + accel*(normalize(dir4));
-					}
-			
-			head = head.chain;
-		}
+	self.dmg = FALSE;
 
+	local	entity	head;
+	head = findradius(self.origin, 130);
+	while (head)
+	{
+		if (head.classname == "smoke")
+				{				
+		
+					local vector dir4 = head.origin - self.origin;     
+					local float accel = 440*random() + 440;         
+					head.velocity = head.velocity + accel*(normalize(dir4));
+				}
+		
+		head = head.chain;
+	}
 
 	if (other.health)
 	{
-  
 		if (other == self.owner) damg = damg * 0.5;  // mostly immune
 
 		T_DamageOrg (other, self, self.owner, damg, self.origin);
@@ -1465,10 +1469,6 @@ void() T_MissileTouch =
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
 	T_RadiusDamage (self, self.owner, 100, other, self.origin);
-
-	
-
-
 
 //	sound (self, CHAN_WEAPON, "weap/br_explo.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -1816,7 +1816,7 @@ void() rail_jump =
 void() Rail_Charge_Logic=
 {
 	//RAIL TIMING LOGIC
-		if(elohim_playmode & ELOHIM_CLASSIC || self.ammo_slugs <= 0) return;
+		if(crx_playmode & CLASSIC_MODE || self.ammo_slugs <= 0) return;
 		
 		
 		if ((self.player_flag & PF_ITEM_RUNE_MASK) && (self.items2 & IT2_SIGIL2)) 
@@ -1869,7 +1869,7 @@ void() Rail_Charge_Logic=
 				//sprint(self, "mag-field energized\n");
 			
 				self.weaponmodel = "mdl/v_rail_rr.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_bb.mdl";
+				if (self.height == crx_team2) self.weaponmodel = "mdl/v_rail_bb.mdl";
 				self.weaponframe = 0;
 			}
 			
@@ -1892,7 +1892,7 @@ void() Rail_Charge_Logic=
 				sprint(self, "mag-field depleted\n");
 			
 				self.weaponmodel = "mdl/v_rail_r.mdl";
-				if (self.height == elohim_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
+				if (self.height == crx_team2) self.weaponmodel = "mdl/v_rail_b.mdl";
 				self.weaponframe = 0;
 		}
 	

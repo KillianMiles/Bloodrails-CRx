@@ -35,7 +35,7 @@ void (float pingtime, entity ignore) antilag_rewind_all =
 
 	while (player)
 	{
-		if ((player.deadflag == DEAD_NO) && (player.style & ELOHIM_CONNECTED) && !(player.style & ELOHIM_OBSERVER))
+		if ((player.deadflag == DEAD_NO) && (player.style & STYLE_CONNECTED) && !(player.style & STYLE_OBSERVER))
 		{
 			player.hold_origin = player.origin;
 			if (player != ignore)
@@ -55,7 +55,7 @@ void () antilag_restore_all =
 
 	while (player)
 	{
-		if ((player.deadflag == DEAD_NO) && (player.style & ELOHIM_CONNECTED) && !(player.style & ELOHIM_OBSERVER))
+		if ((player.deadflag == DEAD_NO) && (player.style & STYLE_CONNECTED) && !(player.style & STYLE_OBSERVER))
 		{
 			setorigin(player, player.hold_origin);
 		}

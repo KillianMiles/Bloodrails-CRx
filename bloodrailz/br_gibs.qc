@@ -28,26 +28,26 @@ void(entity targ, entity attacker, vector damage_origin, float damage) Killed =
 	
 	
 	
-	if((elohim_playmode & ELOHIM_WRAITH) && self.wraith == 0 && total_players_global >= 4)
+	if((crx_playmode & MODE_WRAITH) && self.wraith == 0 && total_players_global >= 4)
 	{
-		if(self.height == elohim_team1 && ghost_red == 0)
+		if(self.height == crx_team1 && ghost_red == 0)
 		{
 			self.wraith =1;
 			ghost_red=1;
 		}
-		else if(self.height == elohim_team2 && ghost_blue == 0)
+		else if(self.height == crx_team2 && ghost_blue == 0)
 		{
 			self.wraith =1;
 			ghost_blue=1;
 		}
 	}
-	else if((elohim_playmode & ELOHIM_WRAITH) && self.wraith == 1 && total_players_global >= 4) 
+	else if((crx_playmode & MODE_WRAITH) && self.wraith == 1 && total_players_global >= 4) 
 	{
 		self.wraith =0;
-		if(self.height == elohim_team1) ghost_red =0;
-		else if(self.height == elohim_team2) ghost_blue =0;
+		if(self.height == crx_team1) ghost_red =0;
+		else if(self.height == crx_team2) ghost_blue =0;
 	}
-	else if((elohim_playmode & ELOHIM_WRAITH) && total_players_global < 4) 
+	else if((crx_playmode & MODE_WRAITH) && total_players_global < 4) 
 	{
 		if(self.wraith == 0) self.wraith =1;
 		else if(self.wraith == 1) self.wraith =0;
@@ -509,7 +509,7 @@ void() vial_touch =
    	if (other.classname != "player") return;
 	if (other.health <= 0) return;
 
-	if ((self.style & ELOHIM_OBSERVER) || (other.style & ELOHIM_OBSERVER) ||
+	if ((self.style & STYLE_OBSERVER) || (other.style & STYLE_OBSERVER) ||
         (other.deadflag == DEAD_DEAD) || (other.deadflag == DEAD_DYING) )  
         return;
 
@@ -657,12 +657,12 @@ void(float dm, float inair) ThrowVial =
 	new1.velocity_x = new1.velocity_x + random()*80 + 40;
 	new1.velocity_y = new1.velocity_y + random()*80 + 40;
 	
-	if(random()<= 0.5 && !(elohim_playmode & ELOHIM_CLASSIC)) 
+	if(random()<= 0.5 && !(crx_playmode & CLASSIC_MODE)) 
 	{
 		new1.skin = 1;   //blue
 		new1.frame = 1;
 	}
-	else if(random()<= 1.0 && !(elohim_playmode & ELOHIM_CLASSIC)) 
+	else if(random()<= 1.0 && !(crx_playmode & CLASSIC_MODE)) 
 	{
 		new1.skin = 4;   //red
 		new1.frame = 2;

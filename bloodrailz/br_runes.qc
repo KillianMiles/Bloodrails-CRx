@@ -61,7 +61,7 @@ void () rune_regen =
 
 entity () rune_select_spawn_point =
 {
-	if(elohim_playmode & RACE_MODE && mapname == "tut1")
+	if(crx_playmode & RACE_MODE && mapname == "tut1")
 	{
 	
 		runespawn = find(runespawn, classname, "info_player_start");
@@ -116,7 +116,7 @@ void() rune_touch =
 		}
 	}
 
-	if (elohim_playmode & ELOHIM_MATCH_MODE && !(elohim_state & ELOHIM_MATCH_STARTED))
+	if (crx_playmode & MATCH_MODE && !(crx_state & STATE_MATCH_STARTED))
 	{
 		return;
 	}
@@ -132,7 +132,7 @@ void() rune_touch =
 
 	if (other.health <= 0) return;
 
-	if ((self.style & ELOHIM_OBSERVER) || (other.style & ELOHIM_OBSERVER) || (other.deadflag == DEAD_DEAD) || (other.deadflag == DEAD_DYING) )  return;
+	if ((self.style & STYLE_OBSERVER) || (other.style & STYLE_OBSERVER) || (other.deadflag == DEAD_DEAD) || (other.deadflag == DEAD_DYING) )  return;
 
 	if ((other == self.owner) && (self.nextthink > time + 119)) return;
 	
@@ -1459,8 +1459,8 @@ void() rune_bang_think =
 		//self.owner.rune_bang =0;
 	}
 	
-	//if(self.owner.rune_bang == 11 && self.weapon ==1 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(elohim_playmode & ELOHIM_NO_THROWABLES) && self.solid == SOLID_NOT)
-	if((self.owner.rune_bang == 11 || self.shot_time ==1) && self.weapon ==1 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(elohim_playmode & ELOHIM_NO_THROWABLES) && self.solid == SOLID_NOT)
+	//if(self.owner.rune_bang == 11 && self.weapon ==1 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(crx_playmode & MODE_NO_THROWABLES) && self.solid == SOLID_NOT)
+	if((self.owner.rune_bang == 11 || self.shot_time ==1) && self.weapon ==1 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(crx_playmode & MODE_NO_THROWABLES) && self.solid == SOLID_NOT)
 	{	
 		self.alpha = 1;
 		self.owner.rune_bang =0;
@@ -1477,7 +1477,7 @@ void() rune_bang_think =
 		self.think = bangs;
 	}
 	
-	else if((self.owner.rune_bang == 22 || self.shot_time ==2) && self.weapon == 2 && time - self.ltime >0.5 && time - self.ltime <1.5 && !(elohim_playmode & ELOHIM_NO_THROWABLES) && self.solid == SOLID_NOT)
+	else if((self.owner.rune_bang == 22 || self.shot_time ==2) && self.weapon == 2 && time - self.ltime >0.5 && time - self.ltime <1.5 && !(crx_playmode & MODE_NO_THROWABLES) && self.solid == SOLID_NOT)
 	{	
 		self.alpha = 1;
 		self.owner.rune_bang =0;
@@ -1491,7 +1491,7 @@ void() rune_bang_think =
 	
 	}
 	
-	else if((self.owner.rune_bang == 33 || self.shot_time ==3) && self.weapon ==3 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(elohim_playmode & ELOHIM_NO_THROWABLES) && self.solid == SOLID_NOT)
+	else if((self.owner.rune_bang == 33 || self.shot_time ==3) && self.weapon ==3 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(crx_playmode & MODE_NO_THROWABLES) && self.solid == SOLID_NOT)
 	{	
 		self.alpha = 1;
 		self.owner.rune_bang =0;
@@ -1513,7 +1513,7 @@ void() rune_bang_think =
 		self.think = bangs;
 	}
 	
-	else if((self.owner.rune_bang == 44 || self.shot_time ==4) && self.weapon ==4 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(elohim_playmode & ELOHIM_NO_THROWABLES) && self.solid == SOLID_NOT)
+	else if((self.owner.rune_bang == 44 || self.shot_time ==4) && self.weapon ==4 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(crx_playmode & MODE_NO_THROWABLES) && self.solid == SOLID_NOT)
 	{	
 		self.alpha = 1;
 		self.owner.rune_bang =0;
@@ -1770,7 +1770,7 @@ void() rune_toss =
 	local entity item;
 //	local entity e;
 
-	if (self.style & ELOHIM_OBSERVER)
+	if (self.style & STYLE_OBSERVER)
 		return;
 	
 	if ((self.player_flag & PF_ITEM_RUNE_MASK) == FALSE)

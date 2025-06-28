@@ -1,27 +1,10 @@
-//
-// match.qc
-//
-// This file contains code for the elohim server match (tournament) mode.
-//
-// Fields used:
-//
-// .height          - used to store player team
-//
-// In elohim_match_timer:
-//
-// lip - minutes left
-// count - seconds left
-//
-// Written by J.P. Grossman, modified by bucksh0t.
-//
-
 // Function declarations
 void () SUB_regen;
 void () GibPlayer;
 void () match_timer_think2;
 void () match_enter_ghost_code;
 void (entity ghostent) match_restore_ghost;
-
+void() admin_disable_item;
 
 //
 //  S H O W  T I M E L I M I T
@@ -34,40 +17,40 @@ void () match_show_timelimit =
     local string temp;
 
     localcmd("timelimit \"");
-    if (!(elohim_state & ELOHIM_TIMER_STARTED))
+    if (!(crx_state & STATE_TIMER_STARTED))
     {
-        if (elohim_state & ELOHIM_MATCH_OVER)
+        if (crx_state & STATE_MATCH_OVER)
         {
             localcmd("Final Score is ");
-            temp = ftos(elohim_teamfrags1);
-            if (elohim_teamfrags1 < 0)
+            temp = ftos(crx_teamfrags1);
+            if (crx_teamfrags1 < 0)
                 localcmd("<");
             localcmd(temp);
-            if (elohim_teamfrags1 < 0)
+            if (crx_teamfrags1 < 0)
                 localcmd(">");
             localcmd(" - ");
-            temp = ftos(elohim_teamfrags2);
-            if (elohim_teamfrags2 < 0)
+            temp = ftos(crx_teamfrags2);
+            if (crx_teamfrags2 < 0)
                 localcmd("<");
             localcmd(temp);
-            if (elohim_teamfrags2 < 0)
+            if (crx_teamfrags2 < 0)
                 localcmd(">");
             localcmd("\"\n");
         }
         else
         {
-            temp = ftos(elohim_timelimit);
+            temp = ftos(crx_timelimit);
             localcmd2(temp, " : Waiting for teams\"\n");
         }
     }
-    else if (!(elohim_state & ELOHIM_MATCH_STARTED))
+    else if (!(crx_state & STATE_MATCH_STARTED))
     {
-        temp = ftos(elohim_timelimit);
+        temp = ftos(crx_timelimit);
         localcmd2(temp, " : Match Starting\"\n");
     }
     else
     {
-        temp = ftos(elohim_match_timer.lip);
+        temp = ftos(crx_match_timer.lip);
         localcmd2(temp, "\"\n");
     }
 };
@@ -89,7 +72,7 @@ void () match_item_reset =
 //
 void () match_init_player =
 {
-    self.style = self.style - (self.style & ELOHIM_READY);
+    self.style = self.style - (self.style & STYLE_READY);
     self.finaldest_x = time; // So we don't get autokickedd!!
     observer_start();
 };
@@ -99,7 +82,7 @@ void () match_init_player =
 //
 void () match_unready_player =
 {
-    self.style = self.style - (self.style & ELOHIM_READY);
+    self.style = self.style - (self.style & STYLE_READY);
 };
 
 //
@@ -107,17 +90,17 @@ void () match_unready_player =
 //
 void () match_reset =
 {
-    // elohim_team1 = 4;
-    // elohim_team2 = 13;
-    // elohim_team3 = 12;
-    // elohim_team4 = 3;
-    elohim_teamsize1 = 0;
-    elohim_teamsize2 = 0;
-    // elohim_teamsize3 = 0;
-    // elohim_teamsize4 = 0;
-    elohim_matchteams = 0;
+    // crx_team1 = 4;
+    // crx_team2 = 13;
+    // crx_team3 = 12;
+    // crx_team4 = 3;
+    crx_teamsize1 = 0;
+    crx_teamsize2 = 0;
+    // crx_teamsize3 = 0;
+    // crx_teamsize4 = 0;
+    crx_matchteams = 0;
 
-    elohim_state = elohim_state - (elohim_state & ELOHIM_MATCH_WAIT);
+    crx_state = crx_state - (crx_state & STATE_MATCH_WAIT);
 
     // prevent items from respawning
     utils_do_items(match_item_reset);
@@ -129,11 +112,11 @@ void () match_reset =
     utils_do_players(match_unready_player);
 
     // remove all ghosts
-    utils_do_item(SUB_Remove, "elohim_ghost");
+    utils_do_item(SUB_Remove, "crx_ghost");
 
     bprint("No teams present\n");
 
-    if (self.classname == "elohim_match_timer")
+    if (self.classname == "crx_match_timer")
         remove(self);
 };
 
@@ -145,9 +128,9 @@ void () match_reset =
 //
 void () match_gib_player =
 {
-    if (self.style & ELOHIM_OBSERVER)
+    if (self.style & STYLE_OBSERVER)
         setcolor2(self, 0, 0);
-    else if (!(self.style & ELOHIM_READY))
+    else if (!(self.style & STYLE_READY))
         observer_start();
     else
     {
@@ -156,7 +139,7 @@ void () match_gib_player =
         self.deadflag = DEAD_DYING;
         self.think = respawn;
         self.nextthink = time + 1;
-        if (elohim_state & ELOHIM_MATCH_STARTED)
+        if (crx_state & STATE_MATCH_STARTED)
         {
             //start of match
             self.frags = 0;
@@ -179,13 +162,13 @@ void () match_bprint_score =
     local string teamname;
     local string temp;
 
-    teamname = strings_get_teamname(elohim_team1);
-    score = ftos(elohim_teamfrags1);
-    temp = strings_szplural(elohim_teamfrags1);
+    teamname = strings_get_teamname(crx_team1);
+    score = ftos(crx_teamfrags1);
+    temp = strings_plural(crx_teamfrags1);
     bprint6("The ", teamname, " has ", score, " frag", temp);
-    teamname = strings_get_teamname(elohim_team2);
-    score = ftos(elohim_teamfrags2);
-    temp = strings_szplural(elohim_teamfrags2);
+    teamname = strings_get_teamname(crx_team2);
+    score = ftos(crx_teamfrags2);
+    temp = strings_plural(crx_teamfrags2);
     bprint6("The ", teamname, " has ", score, " frag", temp);
 };
 
@@ -196,10 +179,10 @@ void () match_bprint_time =
 {
     local string temp;
 
-    temp = ftos(elohim_match_timer.lip);
+    temp = ftos(crx_match_timer.lip);
     bprint3("Time remaining:  ", temp, ":");
-    temp = ftos(elohim_match_timer.count);
-    if (elohim_match_timer.count < 10)
+    temp = ftos(crx_match_timer.count);
+    if (crx_match_timer.count < 10)
         bprint("0");
     bprint2(temp, "\n");
 };
@@ -213,17 +196,17 @@ void () match_sprint_status =
 {
     local float team1, team2;
 
-    if (elohim_state & ELOHIM_MATCH_STARTED)
+    if (crx_state & STATE_MATCH_STARTED)
     {
-        team1 = elohim_team1;
-        team2 = elohim_team2;
+        team1 = crx_team1;
+        team2 = crx_team2;
     }
     else
     {
-        if (elohim_state & ELOHIM_MATCH_OVER)
+        if (crx_state & STATE_MATCH_OVER)
         {
-            team1 = elohim_lastteam1;
-            team2 = elohim_lastteam2;
+            team1 = crx_lastteam1;
+            team2 = crx_lastteam2;
         }
         else
         {
@@ -232,16 +215,16 @@ void () match_sprint_status =
         }
     }
 
-    if (elohim_state & ELOHIM_MATCH_OVER)
+    if (crx_state & STATE_MATCH_OVER)
         sprint(self, "Match over\n");
     else
     {
         local string temp;
     
-        temp = ftos(elohim_match_timer.lip);
+        temp = ftos(crx_match_timer.lip);
         sprint3(self, "Time remaining:  ", temp, ":");
-        temp = ftos(elohim_match_timer.count);
-        if (elohim_match_timer.count < 10)
+        temp = ftos(crx_match_timer.count);
+        if (crx_match_timer.count < 10)
             sprint(self, "0");
         sprint2(self, temp, "\n");
     }
@@ -251,12 +234,12 @@ void () match_sprint_status =
     local string temp2;
 
     teamname = strings_get_teamname(team1);
-    score = ftos(elohim_teamfrags1);
-    temp2 = strings_szplural(elohim_teamfrags1);
+    score = ftos(crx_teamfrags1);
+    temp2 = strings_plural(crx_teamfrags1);
     sprint6(self, "The ", teamname, " has ", score, " frag", temp2);
     teamname = strings_get_teamname(team2);
-    score = ftos(elohim_teamfrags2);
-    temp2 = strings_szplural(elohim_teamfrags2);
+    score = ftos(crx_teamfrags2);
+    temp2 = strings_plural(crx_teamfrags2);
     sprint6(self, "The ", teamname, " has ", score, " frag", temp2);
 };
 
@@ -271,14 +254,14 @@ void () match_end =
     local string teamname;
     float aborted = 0;
 
-    if (self.classname == "elohim_match_timer")
+    if (self.classname == "crx_match_timer")
     {
         // Regular match end (timer ran out)
-        if ((elohim_teamfrags1 == elohim_teamfrags2) && elohim_overtime)
+        if ((crx_teamfrags1 == crx_teamfrags2) && crx_overtime)
         {
             // go into overtime
             bprint("Match tied - Overtime!!\n");
-			self.lip = elohim_overtime;
+			self.lip = crx_overtime;
 			self.count = 0;
             self.think = match_timer_think2;
             match_timer_think2();
@@ -288,43 +271,43 @@ void () match_end =
     else
     {
         // Administrator aborted the match
-        if (!(elohim_state & ELOHIM_MATCH_STARTED))
+        if (!(crx_state & STATE_MATCH_STARTED))
             return;
     
-        if (elohim_state & ELOHIM_MATCH_PAUSED) // if administrator aborts match
+        if (crx_state & STATE_MATCH_PAUSED) // if administrator aborts match
         {
             WriteByte(MSG_ALL, SVC_CENTERPRINT);
             WriteShort(MSG_ALL,1);
             WriteString(MSG_ALL, " ");
-            elohim_state = elohim_state - ELOHIM_MATCH_PAUSED;
+            crx_state = crx_state - STATE_MATCH_PAUSED;
         }
 
         aborted = 1;
     }
 
-    if (elohim_state - ELOHIM_MATCH_STARTED)
-        elohim_state = elohim_state - ELOHIM_MATCH_STARTED;
-    if (elohim_state & ELOHIM_TIMER_STARTED)
-        elohim_state = elohim_state - ELOHIM_TIMER_STARTED;
-    elohim_state = elohim_state | ELOHIM_MATCH_OVER | ELOHIM_MATCH_WAIT;
+    if (crx_state - STATE_MATCH_STARTED)
+        crx_state = crx_state - STATE_MATCH_STARTED;
+    if (crx_state & STATE_TIMER_STARTED)
+        crx_state = crx_state - STATE_TIMER_STARTED;
+    crx_state = crx_state | STATE_MATCH_OVER | STATE_MATCH_WAIT;
 
     utils_do_players(match_gib_player); 
     match_show_timelimit();       
     bprint("The match is over\n");
     match_bprint_score();
-    teamname = strings_get_teamname(elohim_winning_team);
+    teamname = strings_get_teamname(crx_winning_team);
 
-    if (elohim_teamfrags1 == elohim_teamfrags2)
+    if (crx_teamfrags1 == crx_teamfrags2)
         bprint("Tie game!\n");
     else
         bprint3("The ", teamname, " has won\n");
 
     // remember teams so that 'score' will continue to work
-    elohim_lastteam1 = elohim_team1;
-    elohim_lastteam2 = elohim_team2;
+    crx_lastteam1 = crx_team1;
+    crx_lastteam2 = crx_team2;
 
-    elohim_match_timer.think = match_reset;
-    elohim_match_timer.nextthink = time + 5;
+    crx_match_timer.think = match_reset;
+    crx_match_timer.nextthink = time + 5;
 
 	score_update_time();
 
@@ -373,9 +356,9 @@ void () match_timer_think2 =
     else if (self.count == 30)
     {
         bprint("Match ends in 30 seconds\n");
-        if (elohim_overtime)
+        if (crx_overtime)
         {
-            temp = ftos(elohim_overtime);
+            temp = ftos(crx_overtime);
             bprint2(temp, " minute overtime in case of tie\n");
         }
     }
@@ -403,7 +386,7 @@ void () match_timer_think2 =
 //
 void () match_add_spawn =
 {
-    self.mdl = "elohim_start_point";
+    self.mdl = "crx_start_point";
     self.classname = "info_player_deathmatch";
 };
 
@@ -415,7 +398,7 @@ void () match_add_spawn =
 //
 void () match_remove_start =
 {
-    if (self.mdl == "elohim_start_point")
+    if (self.mdl == "crx_start_point")
         self.classname = self.mdl;
 };
 
@@ -427,7 +410,7 @@ void () match_remove_start =
 void () match_remove_starts =
 {
     utils_do_item(match_remove_start, "info_player_deathmatch");
-    elohim_num_spawns = elohim_num_spawns - elohim_num_starts;
+    num_spawns = num_spawns - num_starts;
 };
 
 //
@@ -437,13 +420,13 @@ void () match_remove_starts =
 float () match_count_active_teams =
 {
     local float activeteams = 0;
-    if (elohim_teamsize1 > 0)
+    if (crx_teamsize1 > 0)
         activeteams++;
-    if (elohim_teamsize2 > 0)
+    if (crx_teamsize2 > 0)
         activeteams++;
-    // if (elohim_teamsize3 > 0)
+    // if (crx_teamsize3 > 0)
     //     activeteams++;
-    // if (elohim_teamsize4 > 0)
+    // if (crx_teamsize4 > 0)
     //     activeteams++;
     return activeteams;
 };
@@ -460,32 +443,32 @@ void () match_begin =
     
     match_start_time = time;
 
-    elohim_state = elohim_state | ELOHIM_MATCH_STARTED;
+    crx_state = crx_state | STATE_MATCH_STARTED;
     utils_do_players(match_gib_player);
     utils_do_projectiles(SUB_Remove);
 
     // Set the team size so that unwanted A-holes can't join in
-    elohim_maxsize = utils_max(elohim_teamsize1, elohim_teamsize2);
-    temp = ftos(elohim_maxsize);
+    crx_maxsize = utils_max(crx_teamsize1, crx_teamsize2);
+    temp = ftos(crx_maxsize);
     bprint5("Match is ", temp, "v", temp, "\n");
 
     //set number of teams for match
-    elohim_matchteams = match_count_active_teams();
+    crx_matchteams = match_count_active_teams();
 
-    temp = ftos(elohim_timelimit);
+    temp = ftos(crx_timelimit);
     bprint2(temp, " minutes remaining\n");
 
     self.think = match_timer_think2;
     self.nextthink = time + 1;
-    self.lip = elohim_timelimit;
+    self.lip = crx_timelimit;
 	self.count = 0;
     match_show_timelimit();
 
     // Temporarily turn the extra start points into spawn points if necessary
-    if (elohim_teamsize1 + elohim_teamsize2 > elohim_num_spawns)
+    if (crx_teamsize1 + crx_teamsize2 > num_spawns)
     {
-        utils_do_item(match_add_spawn, "elohim_start_point");
-        elohim_num_spawns = elohim_num_spawns + elohim_num_starts;
+        utils_do_item(match_add_spawn, "crx_start_point");
+        num_spawns = num_spawns + num_starts;
         utils_make_scheduled_event(match_remove_starts, 2);
     }
 
@@ -508,18 +491,18 @@ void () match_timer_think1 =
 
     if (self.count == 13)
     {
-        elohim_maxsize = utils_max(elohim_teamsize1, elohim_teamsize2);
-        temp = ftos(elohim_maxsize);
+        crx_maxsize = utils_max(crx_teamsize1, crx_teamsize2);
+        temp = ftos(crx_maxsize);
         bprint5("Match is currently ", temp, "v", temp, "\n");
     }
     else if (self.count == 11)
     {
         utils_do_items(SUB_regen);
-        if (elohim_playmode & ELOHIM_NO_QUAD)
+        if (crx_playmode & MODE_NO_QUAD)
             utils_do_item(admin_disable_item, "item_artifact_super_damage");
-        if (elohim_playmode & ELOHIM_NO_PENT)
+        if (crx_playmode & MODE_NO_PENT)
             utils_do_item(admin_disable_item, "item_artifact_invulnerability");
-        if (elohim_playmode & ELOHIM_NO_RING)
+        if (crx_playmode & MODE_NO_RING)
             utils_do_item(admin_disable_item, "item_artifact_invisibility");
 
         //TODO: Respawn runes?
@@ -565,26 +548,26 @@ float () match_put_player_in_team =
     self.height = self.team - 1;
     create = 0;
 
-    if (self.height == elohim_team1)
+    if (self.height == crx_team1)
     {
         // Add to team1 if possible
-        if ((elohim_state & ELOHIM_MATCH_STARTED) &&
-            (elohim_teamsize1 == elohim_maxsize))
+        if ((crx_state & STATE_MATCH_STARTED) &&
+            (crx_teamsize1 == crx_maxsize))
         {
             sprint(self, "Team full.  Enter 'unlock' in console\n");
             sprint(self, "to request permission to join.\n");
             return FALSE;
         }
         self.player_flag |= PF_TEAM_RED;
-        elohim_teamsize1 = elohim_teamsize1 + 1;
-        if (elohim_teamsize1 == 1)
+        crx_teamsize1 = crx_teamsize1 + 1;
+        if (crx_teamsize1 == 1)
             create = 1;
     }
-    else if (self.height == elohim_team2)
+    else if (self.height == crx_team2)
     {
         // Add to team2 if possible
-        if ((elohim_state & ELOHIM_MATCH_STARTED) &&
-            (elohim_teamsize2 == elohim_maxsize))
+        if ((crx_state & STATE_MATCH_STARTED) &&
+            (crx_teamsize2 == crx_maxsize))
         {
             sprint(self, "Team full.  Administrator or match\n");
             sprint(self, "participant must enter 'unlock' in\n");
@@ -592,20 +575,20 @@ float () match_put_player_in_team =
             return FALSE;
         }
         self.player_flag |= PF_TEAM_BLUE;
-        elohim_teamsize2 = elohim_teamsize2 + 1;
-        if (elohim_teamsize2 == 1)
+        crx_teamsize2 = crx_teamsize2 + 1;
+        if (crx_teamsize2 == 1)
             create = 1;
     }
     else
     {
         sprint(self, "You must pick a valid pants color:\n");
-        teamname = strings_get_teamname(elohim_team1);
+        teamname = strings_get_teamname(crx_team1);
 		sprint(self, teamname);
-		teamname = ftos(elohim_team1);
+		teamname = ftos(crx_team1);
         sprint3(self, " (color ", teamname, ") or\n");
-        teamname = strings_get_teamname(elohim_team2);
+        teamname = strings_get_teamname(crx_team2);
 		sprint(self, teamname);
-		teamname = ftos(elohim_team2);
+		teamname = ftos(crx_team2);
         sprint3(self, " (color ", teamname, ")\n");
 
         //self.frags = -99;
@@ -618,7 +601,7 @@ float () match_put_player_in_team =
     if (create)
         bprint2(teamname, " created\n");
     bprint4(self.netname, " has joined the ", teamname, "\n");
-    if (!elohim_team2)
+    if (!crx_team2)
         bprint("Only one team present\n");
 
     return TRUE;
@@ -636,8 +619,8 @@ float () match_all_ready =
     player = find(world, classname, "player");
     while (player)
     {
-        if (!(player.style & (ELOHIM_OBSERVER | ELOHIM_READY)) && 
-            (player.style & ELOHIM_CONNECTED))
+        if (!(player.style & (STYLE_OBSERVER | STYLE_READY)) && 
+            (player.style & STYLE_CONNECTED))
             return FALSE;
         player = find(player, classname, "player");
     }
@@ -651,23 +634,23 @@ float () match_all_ready =
 //
 void () match_start_timer =
 {
-    if ((elohim_playmode & ELOHIM_MATCH_MODE)) {
-        elohim_match_timer = spawn();
-        elohim_match_timer.classname = "elohim_match_timer";
-        elohim_match_timer.think = match_timer_think1;
-        elohim_match_timer.nextthink = time + 2;
-        elohim_match_timer.count = 16;
+    if ((crx_playmode & MATCH_MODE)) {
+        crx_match_timer = spawn();
+        crx_match_timer.classname = "crx_match_timer";
+        crx_match_timer.think = match_timer_think1;
+        crx_match_timer.nextthink = time + 2;
+        crx_match_timer.count = 16;
 
-        elohim_teamfrags1 = 0;
-        elohim_teamfrags2 = 0;
-        // elohim_teamfrags3 = 0;
-        // elohim_teamfrags4 = 0;
-        elohim_state = elohim_state | ELOHIM_TIMER_STARTED;
-        elohim_state = elohim_state - (elohim_state & ELOHIM_MATCH_OVER);
+        crx_teamfrags1 = 0;
+        crx_teamfrags2 = 0;
+        // crx_teamfrags3 = 0;
+        // crx_teamfrags4 = 0;
+        crx_state = crx_state | STATE_TIMER_STARTED;
+        crx_state = crx_state - (crx_state & STATE_MATCH_OVER);
         match_show_timelimit();
         //bprint("Match begins in 1 minute\n");
         bprint("Timelimit is ");
-        utils_bprint_float(elohim_timelimit);
+        utils_bprint_float(crx_timelimit);
         bprint("Match begins in 15 seconds\n");
     }
 };
@@ -682,9 +665,9 @@ entity (float code) match_find_ghost =
 {
     local entity e;
 
-    e = find(world, classname, "elohim_ghost");
+    e = find(world, classname, "crx_ghost");
     while ((e != world) && (e.count != code))
-        e = find(e, classname, "elohim_ghost");
+        e = find(e, classname, "crx_ghost");
     return e;
 };
 
@@ -708,7 +691,7 @@ void () match_make_ghost =
 
     // initialize ghost
     self.owner = spawn();
-    self.owner.classname = "elohim_ghost";
+    self.owner.classname = "crx_ghost";
     self.owner.owner = self;
     self.owner.frags = 0;
     self.owner.dmg_tally = 0;
@@ -741,14 +724,14 @@ void () match_show_ghost_code =
 //
 void () match_request_restore_ghost =
 {
-    if (!(elohim_state & ELOHIM_MATCH_STARTED))
+    if (!(crx_state & STATE_MATCH_STARTED))
     {
         sprint(self, "There is no match in progress\n");
         return;
     }
 
     // only uncomitted players can ghost themselves
-    if (self.style & ELOHIM_READY)
+    if (self.style & STYLE_READY)
     {
         sprint(self, "You are already in the match\n");
         return;
@@ -814,7 +797,7 @@ void (entity ghostent) match_restore_ghost =
 
         // Must ready before observer_end, or will be made observer again
         // Must observer_end before setting frags, or frags will be set to 0
-        self.style = self.style | ELOHIM_READY;
+        self.style = self.style | STYLE_READY;
         observer_end();
         self.frags = ghostent.frags;
         self.dest = ghostent.dest;
@@ -841,12 +824,12 @@ void (entity ghostent) match_restore_ghost =
 //
 void () match_ready =
 {
-    if (elohim_state & ELOHIM_MATCH_WAIT)
+    if (crx_state & STATE_MATCH_WAIT)
     {
         sprint(self, "Try again in 5 seconds\n");
         return;
     }
-    if (self.style & ELOHIM_READY)
+    if (self.style & STYLE_READY)
     {
         sprint(self, "You are already committed\n");
         return;
@@ -868,20 +851,20 @@ void () match_ready =
             return;
         }
 
-        self.style = self.style | ELOHIM_READY;
+        self.style = self.style | STYLE_READY;
 
-        if (elohim_playmode & ELOHIM_MATCH_MODE && (elohim_teamsize1 > 0 && elohim_teamsize2 > 0 && elohim_teamsize1 == elohim_teamsize2)) 
-        //if (elohim_playmode & ELOHIM_MATCH_MODE && (elohim_teamsize1 > 0 || elohim_teamsize2 > 0))   //match debug  021824
+        if (crx_playmode & MATCH_MODE && (crx_teamsize1 > 0 && crx_teamsize2 > 0 && crx_teamsize1 == crx_teamsize2)) 
+        //if (crx_playmode & MATCH_MODE && (crx_teamsize1 > 0 || crx_teamsize2 > 0))   //match debug  021824
         {
             // check to see if we need to start the timer
-            if (!(elohim_state & ELOHIM_TIMER_STARTED) && match_all_ready())
+            if (!(crx_state & STATE_TIMER_STARTED) && match_all_ready())
                 match_start_timer();
         }
 
         // Give the player a ghost
         match_make_ghost();
 
-        if (self.style & ELOHIM_OBSERVER)
+        if (self.style & STYLE_OBSERVER)
             observer_end();
     
 
@@ -897,24 +880,24 @@ void () match_notready =
 
         local string teamname; 
 
-        if (elohim_state & ELOHIM_MATCH_WAIT)
+        if (crx_state & STATE_MATCH_WAIT)
         {
             sprint(self, "Try again in 5 seconds\n");
             return;
         }
-        if (!(self.style & ELOHIM_READY))
+        if (!(self.style & STYLE_READY))
         {
             sprint(self, "You have not yet committed\n");
             return;
         }
-        if (elohim_state & ELOHIM_MATCH_STARTED)
+        if (crx_state & STATE_MATCH_STARTED)
         {
             sprint(self, "Cannot uncommit during match\n");
             sprint(self, "Type 'observer' to leave match\n");
             return;
         }
 
-        self.style = self.style - ELOHIM_READY;
+        self.style = self.style - STYLE_READY;
 
         if (mode_is_public()) {
             self.player_flag = self.player_flag - (self.player_flag & PF_FIRST_SPAWN);
@@ -932,22 +915,22 @@ void () match_notready =
         self.owner = world;
 
         // Remove from team
-        if (self.height == elohim_team1)
+        if (self.height == crx_team1)
         {
-            elohim_teamsize1 = elohim_teamsize1 - 1;
+            crx_teamsize1 = crx_teamsize1 - 1;
             self.player_flag -= PF_TEAM_RED;
         }
-        else if (self.height == elohim_team2)
+        else if (self.height == crx_team2)
         {
-            elohim_teamsize2 = elohim_teamsize2 - 1;
+            crx_teamsize2 = crx_teamsize2 - 1;
             self.player_flag -= PF_TEAM_BLUE;
         }
 
-        if (elohim_state & ELOHIM_TIMER_STARTED)
+        if (crx_state & STATE_TIMER_STARTED)
         {
             bprint("Timer stopped\n");
-            remove(elohim_match_timer);
-            elohim_state = elohim_state - ELOHIM_TIMER_STARTED;
+            remove(crx_match_timer);
+            crx_state = crx_state - STATE_TIMER_STARTED;
             match_show_timelimit();
         }
     
@@ -960,7 +943,7 @@ void () match_notready =
 //
 void () match_unlock =
 {
-    elohim_maxsize = 16;
+    crx_maxsize = 16;
     bprint("Match has been unlocked\n");
     bprint("New players may join at will\n");
 };
@@ -972,21 +955,21 @@ void () match_unlock =
 //
 void () match_request_unlock =
 {
-    if (!(elohim_state & ELOHIM_MATCH_STARTED))
+    if (!(crx_state & STATE_MATCH_STARTED))
     {
         sprint(self, "No match in progress\n");
         return;
     }
-    if (elohim_maxsize == 16)
+    if (crx_maxsize == 16)
     {
         sprint(self, "Match is already unlocked\n");
         return;
     }
 
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         match_unlock();
-    else if (self.style & ELOHIM_READY)
+    else if (self.style & STYLE_READY)
     {
         if (vote_init("allow new players to join", "", match_unlock))
             vote_yes();
@@ -1005,11 +988,11 @@ void () match_request_unlock =
 //
 void () match_lock =
 {
-    elohim_maxsize = utils_max(elohim_teamsize1, elohim_teamsize2);
+    crx_maxsize = utils_max(crx_teamsize1, crx_teamsize2);
 
     bprint("Match has been locked\n");
     bprint("Max teamsize set to ");
-    utils_bprint_float(elohim_maxsize);
+    utils_bprint_float(crx_maxsize);
 };
 
 //
@@ -1019,21 +1002,21 @@ void () match_lock =
 //
 void () match_request_lock =
 {
-    if (!(elohim_state & ELOHIM_MATCH_STARTED))
+    if (!(crx_state & STATE_MATCH_STARTED))
     {
         sprint(self, "No match in progress\n");
         return;
     }
-    if (elohim_maxsize == utils_max(elohim_teamsize1, elohim_teamsize2))
+    if (crx_maxsize == utils_max(crx_teamsize1, crx_teamsize2))
     {
         sprint(self, "Match is already locked\n");
         return;
     }
 
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         match_lock();
-    else if (self.style & ELOHIM_READY)
+    else if (self.style & STYLE_READY)
     {
         if (vote_init("lock the match", "", match_lock))
             vote_yes();
@@ -1075,7 +1058,7 @@ void () match_show_not_ready =
 {
     if (match_all_ready())
     {
-        if (elohim_teamsize1 < 1 && elohim_teamsize2 < 1)
+        if (crx_teamsize1 < 1 && crx_teamsize2 < 1)
             sprint(self, "No teams present\n");
         else
         {
@@ -1094,8 +1077,8 @@ void () match_show_not_ready =
         player = find(world, classname, "player");
         while (player)
         {
-            if (!(player.style & (ELOHIM_OBSERVER | ELOHIM_READY)) && 
-				(player.style & ELOHIM_CONNECTED))
+            if (!(player.style & (STYLE_OBSERVER | STYLE_READY)) && 
+				(player.style & STYLE_CONNECTED))
                 bprint3(" ", player.netname, "\n");
             player = find(player, classname, "player");
         }
@@ -1119,8 +1102,8 @@ void () match_show_pause =
 {
     WriteByte(MSG_ALL, SVC_CENTERPRINT);
     WriteString(MSG_ALL, "\nPAUSED\n");
-    elohim_match_timer.nextthink = time + 0.5;
-    elohim_match_timer.think = match_show_pause;
+    crx_match_timer.nextthink = time + 0.5;
+    crx_match_timer.think = match_show_pause;
 };
 
 //
@@ -1130,14 +1113,14 @@ void () match_show_pause =
 //
 void () match_pause =
 {
-    elohim_state = elohim_state | ELOHIM_MATCH_PAUSED;
-    elohim_match_pause_time = time;
+    crx_state = crx_state | STATE_MATCH_PAUSED;
+    match_pause_time = time;
     utils_do_items(match_pause_item);
     bprint("Match paused\n");
     match_bprint_time();
     match_bprint_score();
-    elohim_match_timer.think1 = elohim_match_timer.think;
-    elohim_match_timer.cnt = elohim_match_timer.nextthink;
+    crx_match_timer.think1 = crx_match_timer.think;
+    crx_match_timer.cnt = crx_match_timer.nextthink;
     match_show_pause();
 };
 
@@ -1147,19 +1130,19 @@ void () match_pause =
 void () match_request_pause =
 {
   
-        if (!(elohim_state & ELOHIM_MATCH_STARTED))
+        if (!(crx_state & STATE_MATCH_STARTED))
         {
             sprint(self, "No match in progress\n");
             return;
         }
-        if (elohim_state & ELOHIM_MATCH_PAUSED)
+        if (crx_state & STATE_MATCH_PAUSED)
         {
             sprint(self, "Match is already paused\n");
             return;
         }
 
         // Do it right away if we're an administrator, otherwise vote
-        if (self.style & ELOHIM_ADMINISTRATOR)
+        if (self.style & STYLE_ADMINISTRATOR)
             match_pause();
         else if (vote_init("pause the match", (""), match_pause))
             vote_yes();
@@ -1171,7 +1154,7 @@ void () match_request_pause =
 //
 void () match_unpause_item =
 {
-    self.nextthink = self.nextthink - 1000000 + elohim_match_pause_time;
+    self.nextthink = self.nextthink - 1000000 + match_pause_time;
 };
 
 //
@@ -1181,23 +1164,23 @@ void () match_unpause_player =
 {
     if (self.super_damage_finished)
         self.super_damage_finished = self.super_damage_finished +
-                                     elohim_match_pause_time;
+                                     match_pause_time;
     if (self.invisible_finished)
         self.invisible_finished = self.invisible_finished +
-                                  elohim_match_pause_time;
+                                  match_pause_time;
     if (self.invincible_finished)
         self.invincible_finished = self.invincible_finished +
-                                   elohim_match_pause_time;
+                                   match_pause_time;
     if (self.radsuit_finished)
         self.radsuit_finished = self.radsuit_finished +
-                                elohim_match_pause_time;
-    self.air_finished = self.air_finished + elohim_match_pause_time;
-    self.pain_finished = self.pain_finished + elohim_match_pause_time;
+                                match_pause_time;
+    self.air_finished = self.air_finished + match_pause_time;
+    self.pain_finished = self.pain_finished + match_pause_time;
 
-	if ((self.style & ELOHIM_OBSERVER) || self.deadflag)
+	if ((self.style & STYLE_OBSERVER) || self.deadflag)
 		return;
 
-    self.last_hurt_carrier 	= (self.last_hurt_carrier + elohim_match_pause_time);
+    self.last_hurt_carrier 	= (self.last_hurt_carrier + match_pause_time);
 };
 
 //
@@ -1207,15 +1190,15 @@ void () match_unpause_player =
 //
 void () match_unpause =
 {
-    elohim_state = elohim_state - ELOHIM_MATCH_PAUSED;
-    elohim_match_pause_time = time - elohim_match_pause_time;
+    crx_state = crx_state - STATE_MATCH_PAUSED;
+    match_pause_time = time - match_pause_time;
     utils_do_items(match_unpause_item);
     utils_do_players(match_unpause_player);
     bprint("Match unpaused\n");
     match_bprint_time();
     match_bprint_score();
-    elohim_match_timer.nextthink = elohim_match_timer.cnt + elohim_match_pause_time;
-    elohim_match_timer.think = elohim_match_timer.think1;
+    crx_match_timer.nextthink = crx_match_timer.cnt + match_pause_time;
+    crx_match_timer.think = crx_match_timer.think1;
     WriteByte(MSG_ALL, SVC_CENTERPRINT);
     WriteShort(MSG_ALL,1);
     WriteString(MSG_ALL, " ");
@@ -1229,16 +1212,16 @@ void () match_unpause =
 void () match_request_unpause =
 {
 
-        if (!(elohim_state & ELOHIM_MATCH_STARTED))
+        if (!(crx_state & STATE_MATCH_STARTED))
         {
-            if (elohim_state & ELOHIM_TIMER_STARTED)
+            if (crx_state & STATE_TIMER_STARTED)
             {
                 sprint(self, "Timer has already started\n");
                 return;
             }
-            if (!elohim_team2)
+            if (!crx_team2)
             {
-                if (!elohim_team1)
+                if (!crx_team1)
                     sprint(self, "There are no teams present\n");
                 else
                     sprint(self, "There is only one team present\n");
@@ -1246,20 +1229,20 @@ void () match_request_unpause =
             }
             // request to force the timer to start.
             // Do it right away if we're an administrator, otherwise vote
-            if (self.style & ELOHIM_ADMINISTRATOR)
+            if (self.style & STYLE_ADMINISTRATOR)
                 match_start_timer();
             else if (vote_init("start the timer", "", match_start_timer))
                 vote_yes();
             return;
         }
-        if (!(elohim_state & ELOHIM_MATCH_PAUSED))
+        if (!(crx_state & STATE_MATCH_PAUSED))
         {
             sprint(self, "Match is not paused\n");
             return;
         }
 
         // Do it right away if we're an administrator, otherwise vote
-        if (self.style & ELOHIM_ADMINISTRATOR)
+        if (self.style & STYLE_ADMINISTRATOR)
             match_unpause();
         else if (vote_init("unpause the match", "", match_unpause))
             vote_yes();
@@ -1284,9 +1267,9 @@ void () match_impulse =
             match_ready();
             return;
         } 
-        else if (!(elohim_playmode & ELOHIM_MATCH_MODE))
+        else if (!(crx_playmode & MATCH_MODE))
         {
-            if (self.style & ELOHIM_OBSERVER)
+            if (self.style & STYLE_OBSERVER)
                 observer_end();
             else
                 sprint(self, "You are not an observer\n");
@@ -1294,7 +1277,7 @@ void () match_impulse =
         }
     }
 
-    if (!(elohim_playmode & ELOHIM_MATCH_MODE))
+    if (!(crx_playmode & MATCH_MODE))
     {
         sprint(self, "Command valid in match mode only\n");
         return;
@@ -1336,10 +1319,10 @@ void () match_impulse =
 //
 void (entity player) match_verify_team =
 {
-    if (!(elohim_playmode & ELOHIM_MATCH_MODE))
+    if (!(crx_playmode & MATCH_MODE))
         return;
 
-    if (!(player.style & ELOHIM_READY))
+    if (!(player.style & STYLE_READY))
         return;
 
     if (player.height != player.team - 1)
@@ -1360,14 +1343,14 @@ void (entity player) match_verify_team =
 //
 void (entity player) match_disconnect_notify =
 {
-    if (!(player.style & ELOHIM_READY) && (elohim_playmode & ELOHIM_MATCH_MODE))
+    if (!(player.style & STYLE_READY) && (crx_playmode & MATCH_MODE))
     {
         // Check to see if we need to start the timer
-        if (!(elohim_state & ELOHIM_MATCH_WAIT))
+        if (!(crx_state & STATE_MATCH_WAIT))
         {
-            if (!(elohim_state & ELOHIM_TIMER_STARTED))
+            if (!(crx_state & STATE_TIMER_STARTED))
             {
-                if ((elohim_teamsize1 > 0 && elohim_teamsize2 > 0))
+                if ((crx_teamsize1 > 0 && crx_teamsize2 > 0))
                 {
                     if (match_all_ready())
                         match_start_timer();
@@ -1378,19 +1361,19 @@ void (entity player) match_disconnect_notify =
     }
 
 
-    if (player.style & ELOHIM_READY)
+    if (player.style & STYLE_READY)
     {
-        player.style = player.style - ELOHIM_READY;
+        player.style = player.style - STYLE_READY;
 
         // Remove the player from the appropriate team
-        if (player.height == elohim_team1)
-            elohim_teamsize1 = elohim_teamsize1 - 1;
-        else if (player.height == elohim_team2)
-            elohim_teamsize2 = elohim_teamsize2 - 1;
-        // else if (player.height == elohim_team3)
-        //     elohim_teamsize3 = elohim_teamsize3 - 1;
-        // else if (player.height == elohim_team4)
-        //     elohim_teamsize4 = elohim_teamsize4 - 1;    
+        if (player.height == crx_team1)
+            crx_teamsize1 = crx_teamsize1 - 1;
+        else if (player.height == crx_team2)
+            crx_teamsize2 = crx_teamsize2 - 1;
+        // else if (player.height == crx_team3)
+        //     crx_teamsize3 = crx_teamsize3 - 1;
+        // else if (player.height == crx_team4)
+        //     crx_teamsize4 = crx_teamsize4 - 1;    
     }
     // Copy his info to his ghost
     if (self.owner)
@@ -1403,11 +1386,11 @@ void (entity player) match_disconnect_notify =
     }
 
     // Check to see if we need to stop the match
-    if (elohim_state & ELOHIM_MATCH_STARTED)
+    if (crx_state & STATE_MATCH_STARTED)
     {
         // if he's turned himself into an observer, then get rid of his
         // ghost
-        if (self.style & ELOHIM_OBSERVER)
+        if (self.style & STYLE_OBSERVER)
 		{
 			if (self.owner)
 				remove(self.owner);
@@ -1416,15 +1399,15 @@ void (entity player) match_disconnect_notify =
 		}
         self.owner = world;
 
-        if (!elohim_teamsize1 && !elohim_teamsize2)
+        if (!crx_teamsize1 && !crx_teamsize2)
         {
             match_reset();
             bprint("Match aborted\n");
-            remove(elohim_match_timer);
-            elohim_state = elohim_state - (elohim_state & ELOHIM_MATCH_PAUSED);
-            if (elohim_state & ELOHIM_TIMER_STARTED)
-                elohim_state = elohim_state - ELOHIM_TIMER_STARTED;
-            elohim_state = elohim_state - ELOHIM_MATCH_STARTED;
+            remove(crx_match_timer);
+            crx_state = crx_state - (crx_state & STATE_MATCH_PAUSED);
+            if (crx_state & STATE_TIMER_STARTED)
+                crx_state = crx_state - STATE_TIMER_STARTED;
+            crx_state = crx_state - STATE_MATCH_STARTED;
             match_show_timelimit();
         }
         return;
@@ -1435,7 +1418,7 @@ void (entity player) match_disconnect_notify =
 	// For the 5 seconds after a match ends, players are "ready" but they
 	// have no ghost.  So let's return before we remove world, okay? :p
 	// That's what was causing it!
-	if (elohim_state & ELOHIM_MATCH_WAIT)
+	if (crx_state & STATE_MATCH_WAIT)
 		return;
 
     // He was ready but the match hadn't started, so remove his ghost
@@ -1452,16 +1435,16 @@ void (entity player) match_disconnect_notify =
     }
     else 
     {
-        if ((elohim_state & ELOHIM_TIMER_STARTED) && (match_count_active_teams() < elohim_matchteams))
+        if ((crx_state & STATE_TIMER_STARTED) && (match_count_active_teams() < crx_matchteams))
         {
             bprint("Need two teams to play\n");
             bprint("Timer stopped\n");
-            remove(elohim_match_timer);
-            elohim_state = elohim_state - ELOHIM_TIMER_STARTED;
+            remove(crx_match_timer);
+            crx_state = crx_state - STATE_TIMER_STARTED;
             match_show_timelimit();
         }
 
-        if (!elohim_teamsize1 && !elohim_teamsize2)
+        if (!crx_teamsize1 && !crx_teamsize2)
             bprint("No teams present\n");
     }
 };

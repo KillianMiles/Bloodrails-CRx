@@ -585,8 +585,6 @@ float teams_are_even;             //    ^^^ END -- PLAYER AND TEAM STATS
 //.float blocked_rail;
 //.float first_block;
 
-
-float fte_server;
 string(entity e, string key) infokey = #80;
 float(string) stof = #81;
 
@@ -727,7 +725,6 @@ float ghost_blue;
 
 string(string fmt, ...) sprintf = #627;
 
-
 float(string model) precache_vwep_model = #532;
 
 void(vector start, vector mins, vector maxs, vector end, float nomonsters, entity ent) tracebox = #90; // Part of DP_QC_TRACEBOX
@@ -793,8 +790,6 @@ float IT2_SIGIL2 = 2;
 float IT2_SIGIL3 = 4;
 float IT2_SIGIL4 = 8;
 
-
-
 .float dash_button;
 .float dash_time;
 
@@ -804,10 +799,9 @@ entity red_flag_ent;
 entity blue_flag_ent;
 entity crown_ent;
 
-
 float smoke_generated;
 float ground_smoke_number;
 float smoke_ent_number;
 
 .float chain_too_short;
-
+.float dmg_tally;

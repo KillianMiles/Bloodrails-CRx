@@ -335,7 +335,7 @@ void(vector org, entity death_owner) spawn_tdeath =
 
 void() teleport_touch =
 {
-	if(elohim_playmode & RACE_MODE && mapname !="tut1" && mapname !="tut2" && mapname !="tut3" && mapname !="tut4" && mapname !="tut5" && mapname !="tut6" && mapname !="tut7") return;
+	if(crx_playmode & RACE_MODE && mapname !="tut1" && mapname !="tut2" && mapname !="tut3" && mapname !="tut4" && mapname !="tut5" && mapname !="tut6" && mapname !="tut7") return;
 	
 	local entity	t;
 	local vector	org;
@@ -392,8 +392,8 @@ void() teleport_touch =
 	{	
 		if(other.flag_carrier ==1)
 		{
-			if(other.height == elohim_team1) 		setmodel (blue_flag_ent, "mdl/flag_b_notr.mdl"); 
-			else if(other.height == elohim_team2) 		setmodel (red_flag_ent, "mdl/flag_r_notr.mdl");
+			if(other.height == crx_team1) 		setmodel (blue_flag_ent, "mdl/flag_b_notr.mdl"); 
+			else if(other.height == crx_team2) 		setmodel (red_flag_ent, "mdl/flag_r_notr.mdl");
 		}
 		
 		other.fixangle = 1;		// turn this way immediately

@@ -1,12 +1,3 @@
-//
-// Utils.qc
-//
-// This file contains a bunch of useful definitions and utilities.
-//
-// Written by J.P. Grossman, modified by bucksh0t.
-//
-
-// Overloaded centerprints
 void (entity client, string s1, string s2) centerprint2 = #73;
 void (entity client, string s1, string s2, string s3) centerprint3 = #73;
 void (entity client, string s1, string s2, string s3, string s4) centerprint4 = #73;
@@ -14,31 +5,18 @@ void (entity client, string s1, string s2, string s3, string s4, string s5) cent
 void (entity client, string s1, string s2, string s3, string s4, string s5, string s6) centerprint6 = #73;
 void (entity client, string s1, string s2, string s3, string s4, string s5, string s6, string s7) centerprint7 = #73;
 
-// Overloaded sprints
 void (entity client, string s1, string s2) sprint2 = #24;
 void (entity client, string s1, string s2, string s3) sprint3 = #24;
 void (entity client, string s1, string s2, string s3, string s4) sprint4 = #24;
 void (entity client, string s1, string s2, string s3, string s4, string s5) sprint5 = #24;
 void (entity client, string s1, string s2, string s3, string s4, string s5, string s6) sprint6 = #24;
 
-// Overloaded bprints
 void (string s1, string s2) bprint2 = #23;
 void (string s1, string s2, string s3) bprint3 = #23;
 void (string s1, string s2, string s3, string s4) bprint4 = #23;
 void (string s1, string s2, string s3, string s4, string s5) bprint5 = #23;
 void (string s1, string s2, string s3, string s4, string s5, string s6) bprint6 = #23;
 
-//
-// Functions for printing to console
-//
-// Caution:  when printing multiple strings to the same line, use cprint
-//           for the first string(s) and localcmd for subsequent strings.
-//
-// example:
-//
-// cprint3("my ", "name ", "is ");
-// localcmd2("bob", "\n");
-//
 void (string s1, string s2) localcmd2 =
 {
     localcmd(s1);
@@ -141,6 +119,14 @@ void (string s1, string s2, string s3, string s4, string s5, string s6) cprint6 
     localcmd(s6);
 };
 
+void (string s1) announce =
+{
+	bprint2(s1,"\n");
+	localcmd("cmd ");
+    localcmd(s1);
+	localcmd("\n");
+};
+
 //bucksh0t: change a player's colors
 void (entity e, float top, float bottom) setcolor2 =
 {
@@ -229,146 +215,6 @@ void (float f, float n) utils_print_floatn =
 };
 
 //
-//  P R I N T  I N T 3
-//
-//  Prints a 3 character integer to 'self'.
-//
-void (float f) utils_print_int3 =
-{
-    local float n;
-    local string s;
-
-    n = rint(f);
-    if (n < 0)
-    {
-        if (n < -99)
-            sprint(self, "-99");
-        else if (n > -10)
-            sprint(self, " ");
-    }
-    else
-    {
-        if (n < 100)
-            sprint(self, " ");
-        if (n < 10)
-            sprint(self, " ");
-    }
-    s = ftos(n);
-    sprint(self, s);
-};
-
-//
-//  C P R I N T  I N T 3
-//
-//  Prints a 3 character integer to the console.
-//
-void (float f) utils_cprint_int3 =
-{
-    local float n;
-    local string s;
-
-    n = rint(f);
-    if (n < 0)
-    {
-        if (n < -99)
-            localcmd("-99");
-        else if (n > -10)
-            localcmd(" ");
-    }
-    else
-    {
-        if (n < 100)
-            localcmd(" ");
-        if (n < 10)
-            localcmd(" ");
-    }
-    s = ftos(n);
-    localcmd(s);
-};
-
-//
-//  P R I N T  V E C
-//
-//  Prints a vector followed by CR to 'self'.
-//  Used for debugging.
-//
-void (vector v) utils_print_vec =
-{
-    local string s;
-
-    s = vtos(v);
-    sprint2(self, s, "\n");
-};
-
-//
-//  P R I N T  B I T
-//
-//  Prints a single bit to 'self'.
-//  Used for debugging.
-//
-void (float b) utils_print_bit =
-{
-    if (b)
-        sprint(self, "1");
-    else
-        sprint(self, "0");
-};
-
-//
-//  P R I N T  B I N
-//
-//  Prints a binary number followed by CR to 'self'.
-//  Used for debugging.
-//
-void (float n) utils_print_bin =
-{
-    local float bit;
-
-    if (!n)
-    {
-        sprint(self, "0\n");
-        return;
-    }
-
-    bit = 32768 * 32768 * 2;
-    while (bit > 0.5)
-    {
-        if (n & bit)
-        {
-            while (bit > 0.5)
-            {
-                utils_print_bit(n & bit);
-                bit = bit / 2;
-            }
-        }
-        bit = bit / 2;
-    }
-    sprint(self, "\n");
-};
-
-//
-//  D U M P  P O S I T I O N
-//
-//  Dumps all 3d position information for an entity to 'self'.
-//  Used for debugging.
-//
-void (entity e) utils_dump_position =
-{
-    sprint(self, "origin = ");
-    utils_print_vec(e.origin);
-    sprint(self, "mins = ");
-    utils_print_vec(e.mins);
-    sprint(self, "maxs = ");
-    utils_print_vec(e.maxs);
-    sprint(self, "size = ");
-    utils_print_vec(e.size);
-    sprint(self, "absmin = ");
-    utils_print_vec(e.absmin);
-    sprint(self, "absmax = ");
-    utils_print_vec(e.absmax);
-};
-
-//
 //  M I N
 //
 float (float a, float b) utils_min =
@@ -451,7 +297,7 @@ entity (void() think_function, float think_time) utils_make_scheduled_event =
 {
     local entity temp;
     temp = spawn();
-    temp.classname = "elohim_temp";
+    temp.classname = "crx_temp";
     temp.owner = self;
     temp.nextthink = time + think_time;
     temp.think = think_function;
@@ -545,7 +391,7 @@ void (void () dofunc) utils_do_players =
     self = find(world, classname, "player");
     while (self)
     {
-        if (self.style & ELOHIM_CONNECTED)
+        if (self.style & STYLE_CONNECTED)
             dofunc();
         self = find(self, classname, "player");
     }
@@ -570,30 +416,8 @@ float (string s) utils_stof =
     return f;
 };
 
-// CRMOD
-//  V I S I B L E
-//    by Paul Baker
-//
-//    returns 1 if the entity a can see entity b.
-//
-float (entity a, entity b) utils_visible =
-{
-	traceline (a.origin, b.origin, TRUE, a);	// see through other monsters
-	
-	if (trace_inopen && trace_inwater)
-		return FALSE;			// sight line crossed contents
-
-	if (trace_fraction == 1)
-		return TRUE;
-	return FALSE;
-};
-
 //
 //  N E W  V I S I B L E
-//     by Paul Baker
-//
-//  Corrected and optimized by J.P.
-//
 //  Return TRUE if entity a can 'see' entity b.
 //
 float (entity a, entity b) utils_new_visible =
@@ -627,11 +451,6 @@ float (entity a, entity b) utils_new_visible =
 
 
 // CRMOD
-//  T O G G L E  O F L A G
-//    by Paul Baker
-//
-//  Toggles the specified flag in self.oflags
-//
 void (float flag, string name) utils_toggle_oflag = 
 {
 	if (self.oflags & flag)
@@ -665,70 +484,6 @@ void (float flag, string name) utils_toggle_flag =
 	}
 };
 
-// CRMOD
-// S T U F F  T O  P L A Y E R
-//      by Paul Baker
-//
-//   stuffcmd's a message to the player by their entity number (status number).
-//   this is used primarily to tell a person they've been kicked.
-//
-
-void (float i, string txt) utils_stuff_to_player =
-{
-	local entity e;
-	e = find(world, classname, "player");
-	while (e != world)
-	{
-		if (e.colormap == i)
-		{
-			stuffcmd(e, txt);
-			return;
-		}
-		e = find(e, classname, "player");
-	}
-};
-
-//
-//  G E T  B I T
-//
-//  Returns 1 << index
-//
-float (float index) utils_get_bit =
-{
-	local float bit;
-
-	if (index & 8)
-		bit = 256;
-	else
-		bit = 1;
-	if (index & 4)
-		bit = bit * 16;
-	if (index & 2)
-		bit = bit * 4;
-	if (index & 1)
-		bit = bit * 2;
-	return bit;
-};
-
-//
-//  F I N D  Z E R O
-//
-//  Returns the index of the first zero in a binary number
-//
-float (float num) utils_find_zero = 
-{
-	local float bit, index;
-
-	index = 0;
-	bit = 1;
-	while (num & bit)
-	{
-		bit = bit * 2;
-		index = index + 1;
-	}
-	return index;
-};
-
 //
 //  I L L E G A L  N A M E
 //
@@ -737,7 +492,7 @@ float (float num) utils_find_zero =
 float (string cname) utils_illegal_name = 
 {
     if (cname == "" || cname == "unconnected" || 
-		cname == elohim_teamname1 || cname == elohim_teamname2)
+		cname == crx_teamname1 || cname == crx_teamname2)
 	{
 		return TRUE;
 	}
@@ -746,8 +501,8 @@ float (string cname) utils_illegal_name =
 
 float () mode_is_public_ctf =
 {
-  if ((elohim_playmode & CLANRING_CTF_MODE) && 
-    (!(elohim_playmode & RACE_MODE) && !(elohim_playmode & ELOHIM_MATCH_MODE)))
+  if ((crx_playmode & CTF_MODE) && 
+    (!(crx_playmode & RACE_MODE) && !(crx_playmode & MATCH_MODE)))
     return TRUE;
   else 
     return FALSE;
@@ -755,31 +510,29 @@ float () mode_is_public_ctf =
 
 float () mode_is_public =
 {
-  if ((elohim_playmode & DM_PUBLIC_MODE) || (mode_is_public_ctf() == TRUE))
+  if ((crx_playmode & DM_PUBLIC_MODE) || (mode_is_public_ctf() == TRUE))
     return TRUE;
   else 
     return FALSE;
 };
 
-float () mode_is_prewar =
+float () mode_is_prematch =
 {
-     if ((elohim_playmode & ELOHIM_MATCH_MODE) && !(elohim_state & ELOHIM_MATCH_STARTED))
+     if ((crx_playmode & MATCH_MODE) && !(crx_state & STATE_MATCH_STARTED))
         return TRUE;
     return FALSE;   
 }
 
 float () mode_is_ffa =
 {
-    if ((elohim_playmode & DM_PUBLIC_MODE) || (elohim_playmode & CLANRING_CTF_MODE))
+    if ((crx_playmode & DM_PUBLIC_MODE) || (crx_playmode & CTF_MODE))
         return FALSE;
-    if (elohim_playmode & RACE_MODE)
+    if (crx_playmode & RACE_MODE)
         return FALSE;
-    if (elohim_playmode & ELOHIM_MATCH_MODE)
+    if (crx_playmode & MATCH_MODE)
         return FALSE;
     return TRUE;
 };
-
-
 
 float () players_connected =
 {
@@ -789,13 +542,12 @@ float () players_connected =
     e = find(world, classname, "player");
     while (e)
     {
-        if (e.style & ELOHIM_CONNECTED)
+        if (e.style & STYLE_CONNECTED)
             pcount += 1;
         e = find(e, classname, "player");
     }
     return pcount;
 }
-
 
 float () anybody_connected =
 {
@@ -804,11 +556,6 @@ float () anybody_connected =
         return TRUE;
     return FALSE;
 }; 
-
-
-
-/////////   MATH
-
 
 float(float n1,float n2) math_min =
 {
@@ -825,52 +572,19 @@ float(float nValue,float nMin,float nMax) math_clamp =
     return math_max(math_min(nValue,nMax),nMin);
 }
 
-
-
-
-
-
-//////// CTF UTILS   ////////////////
-
-
-//
-//  F I N D   P L A Y E R   F U N C T I O N S
-//
-
-entity findPlayerInTeam(float findTeam,entity start) {
-    local entity ent = start;
-    while((ent = find(ent,classname,"player"))) {
-        if(ent.team == findTeam)
-            return ent;
-    }
-
-    return FALSE;
-}
-
-entity findPlayer(entity start) {
-    return find(start,classname,"player");
-}
-
-entity findPlayerSpawn(entity start,float findTeam) {
-    local entity ent;
-
-    if (findTeam == TEAM_RED)
-        ent = find(start,classname,"info_player_team1");
-    else if (findTeam == TEAM_BLUE)
-        ent = find(start,classname,"info_player_team2");
-    else
-        ent = find(start,classname,"info_player_deathmatch");
-
-    return ent;
-}
-
-
-
-void (string s1) announce =
+float () utils_get_mode =
 {
-	bprint2(s1,"\n");
-	localcmd("cmd ");
-    localcmd(s1);
-	localcmd("\n");
+    // if (crx_playmode & RACE_MODE && !(crx_playmode & CTF_MODE))
+    //     return ADMIN_CTF_PRACTICE_MODE;
+    if (crx_playmode & DM_PUBLIC_MODE)
+        return ADMIN_DM_PUBLIC_MODE;
+    if (crx_playmode & RACE_MODE)
+        return ADMIN_RACE_MODE;
+    if (crx_playmode & MATCH_MODE && !(crx_playmode & CTF_MODE))
+        return ADMIN_MATCH_MODE;
+    if (crx_playmode & MATCH_MODE)
+        return ADMIN_CTF_MATCH_MODE;
+    if (crx_playmode & CTF_MODE)
+        return ADMIN_CTF_PUBLIC_MODE;
+    return ADMIN_NORMAL_MODE;
 };
-

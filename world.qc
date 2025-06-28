@@ -118,19 +118,19 @@ void() worldspawn =
 	lastspawn_red = world;
 	runespawn = world;
 	
-	elohim_playmode = cvar("samelevel");
+	crx_playmode = cvar("samelevel");
 	ctf_precache();
 	runes_precache();
 	bloodrails_precache();
 
-	elohim_num_spawns = 0;
-	elohim_num_redspawns = 0;
-	elohim_num_bluespawns = 0;
+	num_spawns = 0;
+	num_redspawns = 0;
+	num_bluespawns = 0;
 
 	cvar_set("scr_usekfont", "0");
-	if (elohim_playmode & CLANRING_CTF_MODE)
+	if (crx_playmode & CTF_MODE)
 		cvar_set("teamplay", "4");
-	else if (elohim_playmode & ELOHIM_MATCH_MODE)
+	else if (crx_playmode & MATCH_MODE)
 		cvar_set("teamplay","2");
 	else
     	cvar_set("teamplay", "0");
@@ -215,18 +215,15 @@ void() worldspawn =
 	
 	spawn_new_entities();
 
-	elohim_init_world();
+	crx_init_world();
 
-
-	if (elohim_playmode & CLANRING_RUNES)
+	if (crx_playmode & MODE_RUNES)
 	{
 		local entity stspawn;
 		stspawn = spawn();
 		stspawn.nextthink = time + 0.5;
 		stspawn.think = rune_spawn_start;
 	}
-		
-		
 };
 
 void() StartFrame =
@@ -237,8 +234,6 @@ void() StartFrame =
 		update_old_entities();
 	}
 
-    // teamplay = cvar("teamplay"); // ELOHIM_MOD - moved to elohim_start_frame
-    skill = cvar("skill"); // ELOHIM_MOD - unused
 	framecount = framecount + 1;
 	
 	if (time > responsetimecheck)
@@ -247,13 +242,8 @@ void() StartFrame =
 		client_responsetime_get_all();
 	}
 
-    // ELOHIM_MOD - do elohim specific stuff
-    elohim_start_frame();
-    // END_MOD
-    
+    crx_start_frame();  
 };
-
-
 
 /*
 ==============================================================================

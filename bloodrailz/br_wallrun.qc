@@ -556,7 +556,7 @@ void(float radius, float force) flag_homing_slide =
 				while (head)
 				{
 
-							if (head.classname == "item_flag_team1" && self.flag_carrier && self.height == elohim_team1)
+							if (head.classname == "item_flag_team1" && self.flag_carrier && self.height == crx_team1)
 							{	
 								dir1 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								dir1 = normalize(dir1);
@@ -573,7 +573,7 @@ void(float radius, float force) flag_homing_slide =
 								
 							}
 
-							else if (head.classname == "item_flag_team2" && self.flag_carrier && self.height == elohim_team2)
+							else if (head.classname == "item_flag_team2" && self.flag_carrier && self.height == crx_team2)
 							{	
 								dir1 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								dir1 = normalize(dir1);
@@ -591,7 +591,7 @@ void(float radius, float force) flag_homing_slide =
 							}
 							
 							
-							else if (head.classname == "item_flag_team1" && !self.flag_carrier && self.height == elohim_team2)
+							else if (head.classname == "item_flag_team1" && !self.flag_carrier && self.height == crx_team2)
 							{	
 								dir1 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								dir1 = normalize(dir1);
@@ -608,7 +608,7 @@ void(float radius, float force) flag_homing_slide =
 								
 							}
 
-							else if (head.classname == "item_flag_team2" && !self.flag_carrier && self.height == elohim_team1)
+							else if (head.classname == "item_flag_team2" && !self.flag_carrier && self.height == crx_team1)
 							{	
 								dir1 = head.origin - (self.absmin + self.absmax) * 0.5;              
 								dir1 = normalize(dir1);
@@ -815,7 +815,7 @@ void() Skiing =
 		
 		if (self.flags & FL_ONGROUND) self.boost_time = 0;
 		
-		if(self.impulse ==42 && self.airborn_pos >= 3 && self.skiing_on ==0 && already_jumped ==0 && !(self.style & ELOHIM_OBSERVER))
+		if(self.impulse ==42 && self.airborn_pos >= 3 && self.skiing_on ==0 && already_jumped ==0 && !(self.style & STYLE_OBSERVER))
 		{
 			if(self.boost_time == 0 && self.angles_not_zero == 0)
 			{

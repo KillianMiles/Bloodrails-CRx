@@ -143,12 +143,7 @@ string (float mode) strings_get_mode =
     else                return "Normal";
 };
 
-
-//  S Z P L U R A L
-//
-//  Helper string for printing.
-//
-string (float n) strings_szplural =
+string (float n) strings_plural =
 {
     if (n == 1)
         return "\n";

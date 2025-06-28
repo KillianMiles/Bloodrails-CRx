@@ -18,7 +18,7 @@ void () admin_request_set_mode =
         local float newmode = self.finaldest_z - 1;
         local string mode;
         mode = strings_get_mode(newmode);
-        if (newmode == options_get_mode())
+        if (newmode == utils_get_mode())
         {
             if (self == world)
                 cprint3("Already in ", mode, " mode\n");
@@ -27,8 +27,8 @@ void () admin_request_set_mode =
             return;
         }
 
-        if ((elohim_playmode & ELOHIM_MATCH_MODE) &&
-            (elohim_state & ELOHIM_TIMER_STARTED))
+        if ((crx_playmode & MATCH_MODE) &&
+            (crx_state & STATE_TIMER_STARTED))
         {
             if (self == world)
                 cprint("Cannot change mode while match is in progress\n");
@@ -45,12 +45,12 @@ void () admin_request_set_mode =
 
 
         // Do it right away if we're an administrator, otherwise vote
-        if (self.style & ELOHIM_ADMINISTRATOR)
+        if (self.style & STYLE_ADMINISTRATOR)
         {
             request_mode = newmode;
             admin_set_mode();
         }
-        else if (elohim_playmode & ELOHIM_MODE_VOTE)
+        else if (crx_playmode & MODE_VOTE)
         {
             if (vote_init("change mode to ", mode, admin_set_mode))
             {
@@ -79,35 +79,22 @@ void () admin_set_dm3 =
 	announce("deathmatch changed to 3");
 };
 
-
-
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
 
 void () admin_set_physics =
 {
-	if (elohim_server_physics == 3)
+	if (crx_server_physics == 3)
 	{
 		cvar_set("sys_ticrate", ".016666667");
 		announce("60Hz tic enabled");
 	}
 	
-	else if (elohim_server_physics == 2)
+	else if (crx_server_physics == 2)
 	{
 		cvar_set("sys_ticrate", "0.01388889");
 		announce("72Hz tic enabled");
 	}
-	else if (elohim_server_physics == 1)
+	else if (crx_server_physics == 1)
 	{
 		cvar_set("sys_ticrate", ".015625");
 		announce("64Hz tic enabled");
@@ -121,31 +108,12 @@ void () admin_set_physics =
 
 void () admin_toggle_physics =
 {
-	elohim_server_physics = elohim_request_physics;
+	crx_server_physics = crx_request_physics;
 	admin_set_physics();
 };
 
-void () admin_toggle_effects =
-{
-	if (ogEffects)
-	{
-		announce("og effects disabled");
-		ogEffects = 0;
-	}
-	else
-	{
-		announce("og effects enabled");
-		ogEffects = 1;
-	}
-};
-
-
-
-
 
 ////////////////// START SHUFFLE TEAMS///////////////////////////////////////////////////
-
-
 
 void () admin_shuffle_teams =
 {
@@ -156,7 +124,7 @@ void () admin_shuffle_teams =
 void () admin_request_shuffle_teams =
 {
 	// Do it right away if we're an administrator, otherwise vote
-	if (self.style & ELOHIM_ADMINISTRATOR)
+	if (self.style & STYLE_ADMINISTRATOR)
         {
 		Shuffle_Teams();
 		bprint("Shuffle teams\n");
@@ -180,7 +148,7 @@ void () admin_rebalance_teams =
 void () admin_request_rebalance_teams =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         {
 		Rebalance_Teams();
 		bprint("Rebalance teams\n");
@@ -222,32 +190,32 @@ void () admin_disable_hook =
 
 void () admin_set_hook =
 {
-    if (elohim_playmode & ELOHIM_NO_HOOK)
+    if (crx_playmode & MODE_NO_HOOK)
     {
         utils_do_players(admin_enable_hook);
         announce("Hook enabled");
-        elohim_playmode = elohim_playmode - ELOHIM_NO_HOOK;
+        crx_playmode = crx_playmode - MODE_NO_HOOK;
     }
     else
     {
         utils_do_players(admin_disable_hook);
         announce("Hook disabled");
-        elohim_playmode = elohim_playmode | ELOHIM_NO_HOOK;
+        crx_playmode = crx_playmode | MODE_NO_HOOK;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 
 void () admin_request_set_hook =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         admin_set_hook();
     else
     {
         local string newstate;
     
-        if (elohim_playmode & ELOHIM_NO_HOOK)
+        if (crx_playmode & MODE_NO_HOOK)
             newstate = "enable";
         else
             newstate = "disable";
@@ -265,7 +233,7 @@ void () admin_request_set_hook =
 
 void () admin_set_runes =
 {
-    if (!(elohim_playmode & CLANRING_RUNES))
+    if (!(crx_playmode & MODE_RUNES))
     {
 		local entity stspawn;
 		stspawn = spawn();
@@ -274,7 +242,7 @@ void () admin_set_runes =
 
         bprint("Runes enabled\n");
         cprint("Runes enabled\n");
-        elohim_playmode = elohim_playmode | CLANRING_RUNES;
+        crx_playmode = crx_playmode | MODE_RUNES;
     }
     else
     {
@@ -282,22 +250,22 @@ void () admin_set_runes =
 		utils_do_item(SUB_Remove, "item_rune");
         bprint("Runes disabled\n");
         cprint("Runes disabled\n");
-        elohim_playmode = elohim_playmode - CLANRING_RUNES;
+        crx_playmode = crx_playmode - MODE_RUNES;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 void () admin_request_set_runes =
 {
     // Do it right away if we're an administrator, otherwise vote
 
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         admin_set_runes();
     else
     {
         local string newstate;
     
-        if (!(elohim_playmode & CLANRING_RUNES))
+        if (!(crx_playmode & MODE_RUNES))
             newstate = "enable";
         else
             newstate = "disable";
@@ -322,14 +290,14 @@ void () admin_request_set_runes =
 //
 void () admin_set_armor =
 {
-    if (elohim_playmode & ELOHIM_NO_ARMOR)
+    if (crx_playmode & MODE_NO_ARMOR)
     {
         utils_do_item(SUB_regen, "item_armor1"); 
         utils_do_item(SUB_regen, "item_armor2");
         utils_do_item(SUB_regen, "item_armorInv");    //?
         bprint("Armor enabled\n");
         cprint("Armor enabled\n");
-        elohim_playmode = elohim_playmode - ELOHIM_NO_ARMOR;
+        crx_playmode = crx_playmode - MODE_NO_ARMOR;
     }
     else
     {
@@ -338,9 +306,9 @@ void () admin_set_armor =
         utils_do_item(admin_disable_item, "item_armorInv");    //?
         bprint("Armor disabled\n");
         cprint("Armor disabled\n");
-        elohim_playmode = elohim_playmode | ELOHIM_NO_ARMOR;
+        crx_playmode = crx_playmode | MODE_NO_ARMOR;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 //
@@ -351,13 +319,13 @@ void () admin_set_armor =
 void () admin_request_set_armor =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         admin_set_armor();
     else
     {
         local string newstate;
     
-        if (elohim_playmode & ELOHIM_NO_ARMOR)
+        if (crx_playmode & MODE_NO_ARMOR)
             newstate = "enable";
         else
             newstate = "disable";
@@ -380,7 +348,7 @@ void () admin_request_set_armor =
 //
 void () admin_set_powerups =
 {
-    if (elohim_playmode & ELOHIM_NO_QUAD)
+    if (crx_playmode & MODE_NO_QUAD)
     {
         utils_do_item(SUB_regen, "item_artifact_super_damage");
         utils_do_item(SUB_regen, "item_artifact_invulnerability");
@@ -388,7 +356,7 @@ void () admin_set_powerups =
         
         bprint("Power-ups enabled\n");
         cprint("Power-ups enabled\n");
-        elohim_playmode = elohim_playmode - ELOHIM_NO_QUAD;
+        crx_playmode = crx_playmode - MODE_NO_QUAD;
     }
     else
     {
@@ -398,9 +366,9 @@ void () admin_set_powerups =
         
         bprint("Power-ups disabled\n");
         cprint("Power-ups disabled\n");
-        elohim_playmode = elohim_playmode | ELOHIM_NO_QUAD;
+        crx_playmode = crx_playmode | MODE_NO_QUAD;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 
@@ -409,13 +377,13 @@ void () admin_set_powerups =
 void () admin_request_set_powerups =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         admin_set_powerups();
     else
     {
         local string newstate;
     
-        if (elohim_playmode & ELOHIM_NO_QUAD)
+        if (crx_playmode & MODE_NO_QUAD)
             newstate = "enable";
         else
             newstate = "disable";
@@ -440,19 +408,19 @@ void () admin_request_set_powerups =
 void () admin_set_atx =
 {
     
-    if (!(elohim_playmode & ELOHIM_NO_PENT))
+    if (!(crx_playmode & MODE_NO_PENT))
     {
         cvar_set ("sv_gravity", "650");
         announce("ATX mode enabled");
-        elohim_playmode = elohim_playmode | ELOHIM_NO_PENT;
+        crx_playmode = crx_playmode | MODE_NO_PENT;
     }
     else
     {
         cvar_set ("sv_gravity", "800");
         announce("ATX mode disabled");
-        elohim_playmode = elohim_playmode - ELOHIM_NO_PENT;
+        crx_playmode = crx_playmode - MODE_NO_PENT;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 //
@@ -463,13 +431,13 @@ void () admin_set_atx =
 void () admin_request_set_atx =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         admin_set_atx();
     else
     {
         local string newstate;
     
-        if (elohim_playmode & ELOHIM_NO_PENT)
+        if (crx_playmode & MODE_NO_PENT)
             newstate = "enable";
         else
             newstate = "disable";
@@ -547,32 +515,32 @@ return;
 void () admin_set_fullbright =
 {
 
-    if (!(elohim_playmode & ELOHIM_CLASSIC))
+    if (!(crx_playmode & CLASSIC_MODE))
     {
         utils_do_players(admin_enable_fullbright);
         announce("classic instagib enabled");
-        elohim_playmode = elohim_playmode | ELOHIM_CLASSIC;
+        crx_playmode = crx_playmode | CLASSIC_MODE;
     }
     else
     {
         utils_do_players(admin_disable_fullbright);
         announce("classic instagib disabled");
-        elohim_playmode = elohim_playmode - ELOHIM_CLASSIC;
+        crx_playmode = crx_playmode - CLASSIC_MODE;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 
 void () admin_request_set_fullbright =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         admin_set_fullbright();
     else
     {
         local string newstate;
     
-        if (elohim_playmode & ELOHIM_CLASSIC)
+        if (crx_playmode & CLASSIC_MODE)
             newstate = "enable";
         else
             newstate = "disable";
@@ -596,17 +564,17 @@ void () admin_request_set_fullbright =
 void () admin_set_airwalk =
 {
     
-    if (!(elohim_playmode & ELOHIM_NO_RING))
+    if (!(crx_playmode & MODE_NO_RING))
     {
         announce("Airwalk mode enabled");
-        elohim_playmode = elohim_playmode | ELOHIM_NO_RING;
+        crx_playmode = crx_playmode | MODE_NO_RING;
     }
     else
     {
         announce("Airwalk mode disabled");
-        elohim_playmode = elohim_playmode - ELOHIM_NO_RING;
+        crx_playmode = crx_playmode - MODE_NO_RING;
     }
-    utils_set_cvar("samelevel", elohim_playmode);
+    utils_set_cvar("samelevel", crx_playmode);
 };
 
 
@@ -617,13 +585,13 @@ void () admin_set_airwalk =
 void () admin_request_set_airwalk =
 {
     // Do it right away if we're an administrator, otherwise vote
-    if (self.style & ELOHIM_ADMINISTRATOR)
+    if (self.style & STYLE_ADMINISTRATOR)
         admin_set_airwalk();
     else
     {
         local string newstate;
     
-        if (elohim_playmode & ELOHIM_NO_RING)
+        if (crx_playmode & MODE_NO_RING)
             newstate = "enable";
         else
             newstate = "disable";
@@ -660,8 +628,8 @@ void () admin_request_set_mode2 =
         local float newmode = self.finaldest_z;
         local string mode = "";
 
-        if ((elohim_playmode & ELOHIM_MATCH_MODE) &&
-            (elohim_state & ELOHIM_TIMER_STARTED))
+        if ((crx_playmode & MATCH_MODE) &&
+            (crx_state & STATE_TIMER_STARTED))
         {
             if (self == world)
                 cprint("Cannot change mode while match is in progress\n");
@@ -670,171 +638,171 @@ void () admin_request_set_mode2 =
             return;
         }
 
-        if (!(self.style & ELOHIM_ADMINISTRATOR) && newmode > 4)
+        if (!(self.style & STYLE_ADMINISTRATOR) && newmode > 4)
             return;
 
         void () dofunc = SUB_Null;
-        if (newmode == 1 && self.style & ELOHIM_ADMINISTRATOR)
+        if (newmode == 1 && self.style & STYLE_ADMINISTRATOR)
         {
-             if (!(elohim_playmode & ELOHIM_NO_SHIELD))
+             if (!(crx_playmode & MODE_NO_SHIELD))
 		{
 			announce("Pulse Shield disabled");
-			elohim_playmode = elohim_playmode | ELOHIM_NO_SHIELD;
+			crx_playmode = crx_playmode | MODE_NO_SHIELD;
 		}
 		else
 		{
 			announce("Pulse Shield enabled");
-			elohim_playmode = elohim_playmode - ELOHIM_NO_SHIELD;
+			crx_playmode = crx_playmode - MODE_NO_SHIELD;
 		}
           
           
-		utils_set_cvar("samelevel", elohim_playmode);
+		utils_set_cvar("samelevel", crx_playmode);
         }
-        else if (newmode == 2 && self.style & ELOHIM_ADMINISTRATOR)
+        else if (newmode == 2 && self.style & STYLE_ADMINISTRATOR)
         {
-            if (!(elohim_playmode & ELOHIM_NO_THROWABLES))
+            if (!(crx_playmode & MODE_NO_THROWABLES))
 		{
 			announce("Throwable rune effects disabled");
-			elohim_playmode = elohim_playmode | ELOHIM_NO_THROWABLES;
+			crx_playmode = crx_playmode | MODE_NO_THROWABLES;
 		}
 		else
 		{
 			announce("Throwable rune effects enabled");
-			elohim_playmode = elohim_playmode - ELOHIM_NO_THROWABLES;
+			crx_playmode = crx_playmode - MODE_NO_THROWABLES;
 		}
           
           
-		utils_set_cvar("samelevel", elohim_playmode);
+		utils_set_cvar("samelevel", crx_playmode);
         }
-        else if (newmode == 3 && self.style & ELOHIM_ADMINISTRATOR)
+        else if (newmode == 3 && self.style & STYLE_ADMINISTRATOR)
         {
-              if (!(elohim_playmode & ELOHIM_NO_SPAWN_PROTECT))
+              if (!(crx_playmode & MODE_NO_SPAWN_PROTECT))
 		{
 			announce("Spawn protection disabled");
-			elohim_playmode = elohim_playmode | ELOHIM_NO_SPAWN_PROTECT;
+			crx_playmode = crx_playmode | MODE_NO_SPAWN_PROTECT;
 		}
 		else
 		{
 			announce("Spawn protection enabled");
-			elohim_playmode = elohim_playmode - ELOHIM_NO_SPAWN_PROTECT;
+			crx_playmode = crx_playmode - MODE_NO_SPAWN_PROTECT;
 		}
           
           
-		utils_set_cvar("samelevel", elohim_playmode);
+		utils_set_cvar("samelevel", crx_playmode);
         }
         else if (newmode == 4)
         {
        
-		if (!(elohim_playmode & PROJECTILES))
+		if (!(crx_playmode & MODE_PROJECTILES))
 		{
 			announce("Projectile mode enabled");
-			elohim_playmode = elohim_playmode | PROJECTILES;
+			crx_playmode = crx_playmode | MODE_PROJECTILES;
 		}
 		else
 		{
 			announce("Projectile mode disabled");
-			elohim_playmode = elohim_playmode - PROJECTILES;
+			crx_playmode = crx_playmode - MODE_PROJECTILES;
 		}
           
           
-		utils_set_cvar("samelevel", elohim_playmode); 
+		utils_set_cvar("samelevel", crx_playmode); 
         }
         else if (newmode == 5)
         {
             dofunc = admin_toggle_physics;
             mode = "enable 60Hz tic";    //
-            elohim_request_physics = 0;
+            crx_request_physics = 0;
         }
         else if (newmode == 6)
         {
    
             dofunc = admin_toggle_physics;
             mode = "enable 64Hz tic";
-            elohim_request_physics = 1;
+            crx_request_physics = 1;
         }
         else if (newmode == 7)
         {
-           if (!(elohim_playmode & ELOHIM_NOAMMO))
+           if (!(crx_playmode & MODE_NOAMMO))
 		{
 			announce("Limited ammo disabled");
-			elohim_playmode = elohim_playmode | ELOHIM_NOAMMO;
+			crx_playmode = crx_playmode | MODE_NOAMMO;
 			
 		}
 		else
 		{
 			announce("Limited ammo enabled");
-			elohim_playmode = elohim_playmode - ELOHIM_NOAMMO;
+			crx_playmode = crx_playmode - MODE_NOAMMO;
 		}
           
           
-		utils_set_cvar("samelevel", elohim_playmode); 
+		utils_set_cvar("samelevel", crx_playmode); 
         }
         else if (newmode == 8)
         {
-		if (!(elohim_playmode & ELOHIM_WRAITH))
+		if (!(crx_playmode & MODE_WRAITH))
 		{
 			announce("Ghost mode enabled");
-			elohim_playmode = elohim_playmode | ELOHIM_WRAITH;
+			crx_playmode = crx_playmode | MODE_WRAITH;
 		}
 		else
 		{
 			announce("Ghost mode disabled");
-			elohim_playmode = elohim_playmode - ELOHIM_WRAITH;
+			crx_playmode = crx_playmode - MODE_WRAITH;
 		}
           
           
-		utils_set_cvar("samelevel", elohim_playmode); 
+		utils_set_cvar("samelevel", crx_playmode); 
         }
         
            else if (newmode == 9)
         {
-	if (!(elohim_playmode & ELOHIM_CLASSIC))
+	if (!(crx_playmode & CLASSIC_MODE))
 		{
 			announce("Classic instagib enabled");
-			elohim_playmode = elohim_playmode | ELOHIM_CLASSIC;
-			if(!(elohim_playmode & ELOHIM_NOAMMO)) elohim_playmode = elohim_playmode | ELOHIM_NOAMMO;
-			if(!(elohim_playmode & ELOHIM_NO_SHIELD)) elohim_playmode = elohim_playmode | ELOHIM_NO_SHIELD;
+			crx_playmode = crx_playmode | CLASSIC_MODE;
+			if(!(crx_playmode & MODE_NOAMMO)) crx_playmode = crx_playmode | MODE_NOAMMO;
+			if(!(crx_playmode & MODE_NO_SHIELD)) crx_playmode = crx_playmode | MODE_NO_SHIELD;
 			
 			utils_do_item(admin_disable_item, "item_armor1"); 
 			utils_do_item(admin_disable_item, "item_armor2");
 			utils_do_item(admin_disable_item, "item_armorInv");    //?
-			if(!(elohim_playmode & ELOHIM_NO_ARMOR)) elohim_playmode = elohim_playmode | ELOHIM_NO_ARMOR;
+			if(!(crx_playmode & MODE_NO_ARMOR)) crx_playmode = crx_playmode | MODE_NO_ARMOR;
 			
 			utils_do_players(rune_drop);
 			utils_do_item(SUB_Remove, "item_rune");
-			if(elohim_playmode & CLANRING_RUNES) elohim_playmode = elohim_playmode - CLANRING_RUNES;
+			if(crx_playmode & MODE_RUNES) crx_playmode = crx_playmode - MODE_RUNES;
 		}
 		else
 		{
 			announce("Classic instagib disabled");
-			elohim_playmode = elohim_playmode - ELOHIM_CLASSIC;
-			if(elohim_playmode & ELOHIM_NOAMMO) elohim_playmode = elohim_playmode - ELOHIM_NOAMMO;
-			if(elohim_playmode & ELOHIM_NO_SHIELD) elohim_playmode = elohim_playmode - ELOHIM_NO_SHIELD;
+			crx_playmode = crx_playmode - CLASSIC_MODE;
+			if(crx_playmode & MODE_NOAMMO) crx_playmode = crx_playmode - MODE_NOAMMO;
+			if(crx_playmode & MODE_NO_SHIELD) crx_playmode = crx_playmode - MODE_NO_SHIELD;
 			
 			 utils_do_item(SUB_regen, "item_armor1"); 
 			utils_do_item(SUB_regen, "item_armor2");
 			utils_do_item(SUB_regen, "item_armorInv");    //?
-			if(elohim_playmode & ELOHIM_NO_ARMOR) elohim_playmode = elohim_playmode - ELOHIM_NO_ARMOR;
+			if(crx_playmode & MODE_NO_ARMOR) crx_playmode = crx_playmode - MODE_NO_ARMOR;
 			
 			local entity stspawn;
 			stspawn = spawn();
 			stspawn.nextthink = time + 0.5;
 			stspawn.think = rune_spawn_start;
-			if(!(elohim_playmode & CLANRING_RUNES)) elohim_playmode = elohim_playmode | CLANRING_RUNES;
+			if(!(crx_playmode & MODE_RUNES)) crx_playmode = crx_playmode | MODE_RUNES;
 		}
 		
 		
-		utils_set_cvar("samelevel", elohim_playmode); 
+		utils_set_cvar("samelevel", crx_playmode); 
 
         }
 
         if (dofunc != SUB_Null)
         {
-            if (self.style & ELOHIM_ADMINISTRATOR)
+            if (self.style & STYLE_ADMINISTRATOR)
             {
                 dofunc();
             }
-            else if (elohim_playmode & ELOHIM_MODE_VOTE)
+            else if (crx_playmode & MODE_VOTE)
             {
                 if (vote_init("", mode, dofunc))
                 {

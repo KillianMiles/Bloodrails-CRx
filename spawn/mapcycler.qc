@@ -21,7 +21,7 @@ __accumulate void() worldspawn =
 		
 		
 	
-		if (elohim_playmode & CLANRING_CTF_MODE) localcmd("fraglimit 120\n");
+		if (crx_playmode & CTF_MODE) localcmd("fraglimit 120\n");
 		else localcmd("fraglimit 40\n");
 	
 	}
@@ -252,13 +252,13 @@ void () spawn_race_entities =
 
 void () spawn_new_entities =
 {
-	if (elohim_playmode & CLANRING_CTF_MODE) spawn_ctf_entities();
-	else if (elohim_playmode & DM_PUBLIC_MODE) spawn_pubtdm_entities();
-	else if(elohim_playmode & RACE_MODE) spawn_race_entities();
+	if (crx_playmode & CTF_MODE) spawn_ctf_entities();
+	else if (crx_playmode & DM_PUBLIC_MODE) spawn_pubtdm_entities();
+	else if(crx_playmode & RACE_MODE) spawn_race_entities();
 };
 
 void () update_old_entities = 
 {
-	if (elohim_playmode & CLANRING_CTF_MODE) update_ctf_entities();
-	else if (elohim_playmode & DM_PUBLIC_MODE) update_pubtdm_entities();
+	if (crx_playmode & CTF_MODE) update_ctf_entities();
+	else if (crx_playmode & DM_PUBLIC_MODE) update_pubtdm_entities();
 };

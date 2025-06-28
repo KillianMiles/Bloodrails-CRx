@@ -64,7 +64,7 @@ void() update_rhud =
 	
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
-	if (self.owner.style & ELOHIM_OBSERVER) self.alpha =0.001;    //021824
+	if (self.owner.style & STYLE_OBSERVER) self.alpha =0.001;    //021824
 	
 	if ((self.owner.player_flag & PF_ITEM_RUNE_MASK) && (self.owner.items2 & IT2_SIGIL2)) 
 	{
@@ -80,7 +80,7 @@ void() update_rhud =
 
 void() Rail_HUD =  
 {
-	if ((elohim_playmode & RACE_MODE) && mapname != "tut1") return;
+	if ((crx_playmode & RACE_MODE) && mapname != "tut1") return;
 	if(self.rail_HUD == 0)
 	{
 		self.rail_HUD = 1;
@@ -167,7 +167,7 @@ void() update_shud =
 	}
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
-	if (self.owner.style & ELOHIM_OBSERVER) self.alpha =0.001;  
+	if (self.owner.style & STYLE_OBSERVER) self.alpha =0.001;  
 	
 	if ((self.owner.player_flag & PF_ITEM_RUNE_MASK) && (self.owner.items2 & IT2_SIGIL3)) 
 	{
@@ -183,7 +183,7 @@ void() update_shud =
 
 void() Shield_HUD =  
 {
-	if ((elohim_playmode & RACE_MODE) && mapname !="tut1") return;
+	if ((crx_playmode & RACE_MODE) && mapname !="tut1") return;
 	if(self.shield_HUD == 0)
 	{
 		self.shield_HUD = 1;
@@ -238,7 +238,7 @@ void() update_flag_status =
 	
 	if ((bflag.cnt == CTF_FLAG_DROPPED) && (rflag.cnt == CTF_FLAG_DROPPED)) self.skin = 2;   //D-D
 	
-	if (!(elohim_playmode & CLANRING_CTF_MODE) && !(elohim_playmode & DM_PUBLIC_MODE) && !(elohim_playmode & ELOHIM_MATCH_MODE))
+	if (!(crx_playmode & CTF_MODE) && !(crx_playmode & DM_PUBLIC_MODE) && !(crx_playmode & MATCH_MODE))
 	{
 		self.think = SUB_Remove;
 		self.ctfhud = 0;
@@ -251,7 +251,7 @@ void() update_flag_status =
 		self.skin = 0;
 	}
 		
-	if (elohim_playmode & DM_PUBLIC_MODE || elohim_playmode & ELOHIM_MATCH_MODE) self.skin = 0;
+	if (crx_playmode & DM_PUBLIC_MODE || crx_playmode & MATCH_MODE) self.skin = 0;
 		
 		
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
@@ -265,7 +265,7 @@ void() update_flag_status =
 void() Flag_Status =
 {
 
-	if ((elohim_playmode & CLANRING_CTF_MODE || elohim_playmode & DM_PUBLIC_MODE || elohim_playmode & ELOHIM_MATCH_MODE) && self.ctfhud == 0)
+	if ((crx_playmode & CTF_MODE || crx_playmode & DM_PUBLIC_MODE || crx_playmode & MATCH_MODE) && self.ctfhud == 0)
 
 	{
 		self.ctfhud = 1;
@@ -329,7 +329,7 @@ void() You_Have_Flag =
 		
 		haveflag.skin = 1;
 		//self.effects = EF_RED;
-		if (self.height == elohim_team1) 
+		if (self.height == crx_team1) 
 		{
 			haveflag.skin = 0;
 			//self.effects = EF_BLUE;
@@ -518,7 +518,7 @@ void() You_Have_Rune =
 
 void() update_jumbo_blue =
 {
-	if (!(elohim_playmode & CLANRING_CTF_MODE) && !(elohim_playmode & DM_PUBLIC_MODE) && !(elohim_playmode & ELOHIM_MATCH_MODE))
+	if (!(crx_playmode & CTF_MODE) && !(crx_playmode & DM_PUBLIC_MODE) && !(crx_playmode & MATCH_MODE))
 	{
 		self.think = SUB_Remove;
 		self.owner.flagscores_red = 0;
@@ -531,48 +531,48 @@ void() update_jumbo_blue =
 	if(self.weapon == 2) setorigin(self, '0 80.1 41');
 	if(self.weapon == 3) setorigin(self, '0 83.6 41');
 	
-	//elohim_teamfrags2 = 395;
+	//crx_teamfrags2 = 395;
 	
-	if(elohim_teamfrags2 < 0) 
+	if(crx_teamfrags2 < 0) 
 	{
 		if(self.weapon == 3) self.skin = 10;
 		if(self.weapon == 2) self.skin = 10;
 		if(self.weapon == 1) self.skin = 10;
 	}
 	
-	if(elohim_teamfrags2/10 < 1 || elohim_teamfrags2 == 0) 
+	if(crx_teamfrags2/10 < 1 || crx_teamfrags2 == 0) 
 	{
 		if(self.weapon == 3) self.skin = 10;
 		if(self.weapon == 2) self.skin = 10;
-		if(self.weapon == 1) self.skin = elohim_teamfrags2;
+		if(self.weapon == 1) self.skin = crx_teamfrags2;
 	}
 	
-	else if(elohim_teamfrags2/10 >= 1 && elohim_teamfrags2/100 < 1) 
+	else if(crx_teamfrags2/10 >= 1 && crx_teamfrags2/100 < 1) 
 	{
 		if(self.weapon == 1)
 		{
-			self.skin = elohim_teamfrags2 % 10;
+			self.skin = crx_teamfrags2 % 10;
 		}
 		if(self.weapon == 2) 
 		{	
-			self.skin = (elohim_teamfrags2 - (elohim_teamfrags2 % 10))/10;
+			self.skin = (crx_teamfrags2 - (crx_teamfrags2 % 10))/10;
 		}
 		if(self.weapon == 3) self.skin = 10;
 	}
 	
-	else if (elohim_teamfrags2/100 >= 1)
+	else if (crx_teamfrags2/100 >= 1)
 	{
 		if(self.weapon == 1)
 		{
-			self.skin = elohim_teamfrags2 % 10;
+			self.skin = crx_teamfrags2 % 10;
 		}
 		if(self.weapon == 2) 
 		{	
-			self.skin = ((elohim_teamfrags2 - (elohim_teamfrags2 % 10))/10) % 10;
+			self.skin = ((crx_teamfrags2 - (crx_teamfrags2 % 10))/10) % 10;
 		}
 		if(self.weapon == 3) 
 		{	
-			local float tens = (elohim_teamfrags2 - (elohim_teamfrags2 % 10)) /10;
+			local float tens = (crx_teamfrags2 - (crx_teamfrags2 % 10)) /10;
 			self.skin = (tens - (tens % 10)) /10;
 		}
 	
@@ -600,7 +600,7 @@ void() update_jumbo_blue =
 
 void() make_jumbo_blue =
 {
-	if ((elohim_playmode & CLANRING_CTF_MODE || elohim_playmode & DM_PUBLIC_MODE || elohim_playmode & ELOHIM_MATCH_MODE) && self.flagscores_blue == 0)
+	if ((crx_playmode & CTF_MODE || crx_playmode & DM_PUBLIC_MODE || crx_playmode & MATCH_MODE) && self.flagscores_blue == 0)
 	{
 		local entity prj;
 		float digits = 3;
@@ -637,7 +637,7 @@ void() make_jumbo_blue =
 
 void() update_jumbo_red =
 {
-	if (!(elohim_playmode & CLANRING_CTF_MODE) && !(elohim_playmode & DM_PUBLIC_MODE) && !(elohim_playmode & ELOHIM_MATCH_MODE))
+	if (!(crx_playmode & CTF_MODE) && !(crx_playmode & DM_PUBLIC_MODE) && !(crx_playmode & MATCH_MODE))
 	{
 		self.think = SUB_Remove;
 		self.owner.flagscores_red = 0;
@@ -650,48 +650,48 @@ void() update_jumbo_red =
 	if(self.weapon == 2) setorigin(self, '0 92.2 41');
 	if(self.weapon == 3) setorigin(self, '0 95.7 41');
 	
-	//elohim_teamfrags1 = 395;
+	//crx_teamfrags1 = 395;
 	
-	if(elohim_teamfrags1 < 0) 
+	if(crx_teamfrags1 < 0) 
 	{
 		if(self.weapon == 3) self.skin = 10;
 		if(self.weapon == 2) self.skin = 10;
 		if(self.weapon == 1) self.skin = 10;
 	}
 	
-	if(elohim_teamfrags1/10 < 1 || elohim_teamfrags1 == 0) 
+	if(crx_teamfrags1/10 < 1 || crx_teamfrags1 == 0) 
 	{
 		if(self.weapon == 3) self.skin = 10;
 		if(self.weapon == 2) self.skin = 10;
-		if(self.weapon == 1) self.skin = elohim_teamfrags1;
+		if(self.weapon == 1) self.skin = crx_teamfrags1;
 	}
 	
-	else if(elohim_teamfrags1/10 >= 1 && elohim_teamfrags1/100 < 1) 
+	else if(crx_teamfrags1/10 >= 1 && crx_teamfrags1/100 < 1) 
 	{
 		if(self.weapon == 1)
 		{
-			self.skin = elohim_teamfrags1 % 10;
+			self.skin = crx_teamfrags1 % 10;
 		}
 		if(self.weapon == 2) 
 		{	
-			self.skin = (elohim_teamfrags1 - (elohim_teamfrags1 % 10))/10;
+			self.skin = (crx_teamfrags1 - (crx_teamfrags1 % 10))/10;
 		}
 		if(self.weapon == 3) self.skin = 10;
 	}
 	
-	else if (elohim_teamfrags1/100 >= 1)
+	else if (crx_teamfrags1/100 >= 1)
 	{
 		if(self.weapon == 1)
 		{
-			self.skin = elohim_teamfrags1 % 10;
+			self.skin = crx_teamfrags1 % 10;
 		}
 		if(self.weapon == 2) 
 		{	
-			self.skin = ((elohim_teamfrags1 - (elohim_teamfrags1 % 10))/10) % 10;
+			self.skin = ((crx_teamfrags1 - (crx_teamfrags1 % 10))/10) % 10;
 		}
 		if(self.weapon == 3) 
 		{	
-			local float tens = (elohim_teamfrags1 - (elohim_teamfrags1 % 10)) /10;
+			local float tens = (crx_teamfrags1 - (crx_teamfrags1 % 10)) /10;
 			self.skin = (tens - (tens % 10)) /10;
 		}
 	
@@ -719,7 +719,7 @@ void() update_jumbo_red =
 
 void() make_jumbo_red =
 {
-	if ((elohim_playmode & CLANRING_CTF_MODE || elohim_playmode & DM_PUBLIC_MODE || elohim_playmode & ELOHIM_MATCH_MODE) && self.flagscores_red == 0)
+	if ((crx_playmode & CTF_MODE || crx_playmode & DM_PUBLIC_MODE || crx_playmode & MATCH_MODE) && self.flagscores_red == 0)
 	{
 		local entity prj;
 		float digits = 3;
@@ -821,7 +821,7 @@ void() update_press_move =
 	}
 	if(self.weapon == 4)
 	{
-		if (!(elohim_playmode & ELOHIM_WRAITH) || self.owner.wraith == 0)
+		if (!(crx_playmode & MODE_WRAITH) || self.owner.wraith == 0)
 		{
 			if(!self.owner.button0) self.skin = 12;
 			else if(self.owner.hook_out == 1 && self.owner.weapon == IT_HOOK) self.skin = 13;
@@ -830,7 +830,7 @@ void() update_press_move =
 			else if(self.owner.hook_out == 0 && self.owner.weapon == IT_RAILGUN && self.owner.button0) self.skin = 16;
 			else if(self.owner.hook_out == 0 && self.owner.weapon == IT_AXE && self.owner.button0) self.skin = 17;
 		}
-		else if ((elohim_playmode & ELOHIM_WRAITH) && self.owner.wraith == 1)
+		else if ((crx_playmode & MODE_WRAITH) && self.owner.wraith == 1)
 		{
 			if(!self.owner.button0) self.skin = 29;
 			else if(self.owner.hook_out == 1 && self.owner.weapon == IT_HOOK) self.skin = 27;
@@ -854,12 +854,12 @@ void() update_press_move =
 	
 	if(self.weapon == 6)
 	{
-		if (elohim_playmode & ELOHIM_WRAITH && self.owner.wraith == 1) self.skin =25;
+		if (crx_playmode & MODE_WRAITH && self.owner.wraith == 1) self.skin =25;
 		else self.skin =24;
 	}
 	
 	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
-	if (self.owner.style & ELOHIM_OBSERVER) self.alpha =0.001;   
+	if (self.owner.style & STYLE_OBSERVER) self.alpha =0.001;   
 
 	if(random() < 0.5) self.nextthink = time + my_ticrate*3;  //DECEM
 	else self.nextthink = time + my_ticrate*4;  //DECEM
@@ -934,8 +934,8 @@ void() update_flick_marker =
 	}
 		
 	
-	if (self.owner.height == elohim_team1) self.skin = 6;   //red
-	else if (self.owner.height == elohim_team2) self.skin = 4;   //blue
+	if (self.owner.height == crx_team1) self.skin = 6;   //red
+	else if (self.owner.height == crx_team2) self.skin = 4;   //blue
 	else self.skin = 0;   //white	
 	
 	if(self.hanim ==0)
@@ -1024,7 +1024,7 @@ void() make_flick_marker =
 
 void() update_rail_ammo =
 {
-	if (elohim_playmode & ELOHIM_NOAMMO)
+	if (crx_playmode & MODE_NOAMMO)
 	{
 		self.think = SUB_Remove;
 	}
@@ -1115,11 +1115,11 @@ void() update_rail_ammo =
 
 void() make_rail_ammo =
 {
-	if(self.ammo_slugs < 10 && elohim_playmode & ELOHIM_NOAMMO) self.ammo_slugs = 999;
+	if(self.ammo_slugs < 10 && crx_playmode & MODE_NOAMMO) self.ammo_slugs = 999;
 	
-	if(elohim_playmode & ELOHIM_NOAMMO) self.rail_ammo_displayed = 0;
+	if(crx_playmode & MODE_NOAMMO) self.rail_ammo_displayed = 0;
 	
-	if(self.rail_ammo_displayed == 0 && !(elohim_playmode & ELOHIM_NOAMMO))
+	if(self.rail_ammo_displayed == 0 && !(crx_playmode & MODE_NOAMMO))
 	{
 		self.rail_ammo_displayed =1;
 		self.ammo_slugs = 6;
@@ -1243,7 +1243,7 @@ void hud_update() =
 	
 	if(mapname =="tut1") self.frags =0; //dont increment frags when on Tut map	
 	
-	if ((elohim_playmode & ELOHIM_MATCH_MODE || (mode_is_public() == TRUE)))
+	if ((crx_playmode & MATCH_MODE || (mode_is_public() == TRUE)))
 	{
 		//if(self.print_killa == 0 && !(self.player_flag & PF_HUD) && !self.suppress_hud) centerprint5(self, spacing_top, "  \n \svel:", ftos(current_speed), bracket_spacer, rune_status);   //debug?   hud   //9-24-23
 		if (mode_is_public() == TRUE)
@@ -1256,9 +1256,9 @@ void hud_update() =
 			}
 		}
 		
-		if (elohim_playmode & ELOHIM_MATCH_MODE)
+		if (crx_playmode & MATCH_MODE)
 		{
-			if(!(elohim_state & ELOHIM_MATCH_STARTED) && !(elohim_state & ELOHIM_MATCH_PAUSED) && !(elohim_state & ELOHIM_TIMER_STARTED))
+			if(!(crx_state & STATE_MATCH_STARTED) && !(crx_state & STATE_MATCH_PAUSED) && !(crx_state & STATE_TIMER_STARTED))
 			{
 				centerprint5(self, "NO MATCH IN PROGRESS\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n       \svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n");   //debug?   hud 
 			
@@ -1274,13 +1274,13 @@ void hud_update() =
 		
 	}
 	
-	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && (mapname !="tut1" && mapname !="tut2")  && self.classname == "player")
+	else if (crx_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && (mapname !="tut1" && mapname !="tut2")  && self.classname == "player")
 	{
 		if(self.racing_on == 1) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n\x10", utils_get_time(time - chrono_time), "\x11                              \n\x10\svel:", ftos(current_speed), bracket_spacer);   //debug?   hud 
 		else if(self.racing_on == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n\x10", utils_get_time(self.my_previous_time), "\x11                              \n\x10\svel:",    ftos(current_speed), bracket_spacer);   //debug?   hud 
 	}
 	
-	else if (elohim_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && (mapname =="tut1") && self.classname == "player")
+	else if (crx_playmode & RACE_MODE && !(self.player_flag & PF_HUD) && !self.suppress_hud && (mapname =="tut1") && self.classname == "player")
 	{
 		if(self.have_rune_center == 0) centerprint5(self, "\n\n\n\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n    \bF1\b: tutorial restart\n    \bF2\b: Combat practice\n    \bF3\b: Play demo");   //debug?   hud 
 		else if(self.have_rune_center == 1) centerprint5(self, "\n\n\nalready got a rune\n\n\n\n\n\n\n\n", "                               \n\n\svel:",    ftos(current_speed), bracket_spacer , "\n\n\n\n\n\n\n    \bF1\b: tutorial restart\n    \bF2\b: Combat practice\n    \bF3\b: Play demo");   //debug?   hud 
@@ -1296,11 +1296,11 @@ void hud_update() =
 	
 	
 	
-	if (self.print_killa == 1 && self.ammo_rockets == 0 && !(elohim_playmode & RACE_MODE))  //ammo_rockets = killedbyworld
+	if (self.print_killa == 1 && self.ammo_rockets == 0 && !(crx_playmode & RACE_MODE))  //ammo_rockets = killedbyworld
 	{
 			if (self.dmg_inflictor)  //dmg_inflictor = killedby
 			{
-				if (self.dmg_inflictor.style & ELOHIM_CONNECTED)
+				if (self.dmg_inflictor.style & STYLE_CONNECTED)
 				{
 					if(self.ammo_nails == 1) centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\naxe-murdered by ", self.dmg_inflictor.netname);    //ammo_nails = killedwep //dmg_inflictor = killedby
 					else if(self.ammo_nails == 2) centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nhooked by ", self.dmg_inflictor.netname);     //ammo_nails = killedwep//dmg_inflictor = killedby
@@ -1315,7 +1315,7 @@ void hud_update() =
 			}
 	} 
 		
-	if(self.print_killa == 1 && self.ammo_rockets == 1 && !(elohim_playmode & RACE_MODE)) centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n    killed by ", "world");    //ammo_rockets = killedbyworld
+	if(self.print_killa == 1 && self.ammo_rockets == 1 && !(crx_playmode & RACE_MODE)) centerprint(self, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n    killed by ", "world");    //ammo_rockets = killedbyworld
 		
 	if(time - self.ammo_cells > 2) self.print_killa = 0; //ammo_cells = print_killa_time
 		
@@ -1348,44 +1348,44 @@ void() update_icon =
 
 	if(self.weapon == 1) //regular frag
 	{
-		if (self.owner.height == elohim_team1) self.skin = 8;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 7;   //blue
+		if (self.owner.height == crx_team1) self.skin = 8;   //red
+		else if (self.owner.height == crx_team2) self.skin = 7;   //blue
 		else self.skin = 7;   //blue
 	}
 	else if(self.weapon == 2) //killed point leader
 	{
-		if (self.owner.height == elohim_team1) self.skin = 6;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 5;   //blue
+		if (self.owner.height == crx_team1) self.skin = 6;   //red
+		else if (self.owner.height == crx_team2) self.skin = 5;   //blue
 		else self.skin = 5; 
 	}
 	else if(self.weapon == 3)	//killed flag carrier
 	{
-		if (self.owner.height == elohim_team1) self.skin = 10;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 9;   //blue
+		if (self.owner.height == crx_team1) self.skin = 10;   //red
+		else if (self.owner.height == crx_team2) self.skin = 9;   //blue
 		else self.skin = 9;
 	}
 	else if(self.weapon == 4)   //killed flag carrier/point leader
 	{
-		if (self.owner.height == elohim_team1) self.skin = 12;   //red 
-		else if (self.owner.height == elohim_team2) self.skin = 11;   //blue
+		if (self.owner.height == crx_team1) self.skin = 12;   //red 
+		else if (self.owner.height == crx_team2) self.skin = 11;   //blue
 		else  self.skin = 11;
 	}
 	else if(self.weapon == 5)	//flag return
 	{
-		if (self.owner.height == elohim_team1) self.skin = 4;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 3;   //blue
+		if (self.owner.height == crx_team1) self.skin = 4;   //red
+		else if (self.owner.height == crx_team2) self.skin = 3;   //blue
 		else self.skin = 3; 
 	}
 	else if(self.weapon == 6) //Flag Cap
 	{
-		if (self.owner.height == elohim_team1) self.skin = 1;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 2;   //blue
+		if (self.owner.height == crx_team1) self.skin = 1;   //red
+		else if (self.owner.height == crx_team2) self.skin = 2;   //blue
 		else self.skin = 1;
 	}
 	else if(self.weapon == 7) //TK and self
 	{
-		if (self.owner.height == elohim_team1) self.skin = 18;   //red
-		else if (self.owner.height == elohim_team2) self.skin = 17;   //blue
+		if (self.owner.height == crx_team1) self.skin = 18;   //red
+		else if (self.owner.height == crx_team2) self.skin = 17;   //blue
 		else self.skin = 17;
 	}
 	
@@ -1700,7 +1700,9 @@ void() update_reticule =
 	
 	//if(self.skin ==0) self.alpha = 0.10;
 	
-	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;
+	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
+	else if (self.owner.style & STYLE_OBSERVER) self.alpha =0.001;  
+	else self.alpha =0.18;  
 	
 	if(intermission_running)   //dont show during intermission
 	{

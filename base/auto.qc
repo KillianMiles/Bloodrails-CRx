@@ -1,43 +1,13 @@
-//
-// auto.qc
-//
-// This is the autocam handling code for CRMod++.
-//
-// All code by Paul Baker unless otherwise commented.
-//
-// // Global variables used:
-// crmod_best_to_chase          this is calculated every frame to state who is the best target right now
-//
-//  TODO 4.1 : move computation from auto_camera_think to auto_compute_score
-
-
-// // Client fields used:
-//
-// .attack_finished				used to tell when a person last fired a weapon
-// .super_damage_finished		find person with quad
-// .crmod_autotime				time change targets
-//
-// Prototypes:
 void () observer_chase_start;
 void () observer_set_chase_position;
 vector (vector from, vector to) angles_bestaim;
 void (vector v) angles_fixangle;
 
-
-// CRMOD
-// A U T O  C O M P U T E  S C O R E
-//		by Paul Baker
-//
-//  Renamed and revamped by J.P. Grossman
-//
-//  based on specified criteria, rates the player to see if they are the best player to watch
-//
 void () auto_compute_score =
 {
 	local float score, dist, temp;
 	local entity tempe;
 	
-	// JP - dead players don't get a score
 	if (self.deadflag != DEAD_NO)
 		return;
 	
@@ -71,13 +41,12 @@ void () auto_compute_score =
 		score = score + 50;
 	
 	// potential for action (ie how many enemies are near by?)
-	// JP - fixed bug; code was looking at observers only!  Optimized slightly
 	local float dscore;
 	dscore = 0;
 	tempe = find(world, classname, "player");
 	while (tempe != world)
 	{
-		if ((tempe.height != self.height) && (tempe.style & ELOHIM_CONNECTED) && !(tempe.style & ELOHIM_OBSERVER))
+		if ((tempe.height != self.height) && (tempe.style & STYLE_CONNECTED) && !(tempe.style & STYLE_OBSERVER))
 		{
 			dist = vlen(self.origin - tempe.origin);
 			if (dist < 600)
@@ -90,35 +59,26 @@ void () auto_compute_score =
 	// now store their score for later
 	self.crmod_chase_score = score;
 };
-	
-// CRMOD
-// A U T O  C A M E R A  T H I N K
-//   by Paul Baker
-//
-//   Once every second or two by each camera to rate them.
-//
-//   JP - added self.count to compute a 'visible player' score
-//	 JP - got rid of 'best'; used self.movetarget throughout
-//
+
 void () auto_camera_think =
 {
 	local float score, seeable;
 	local entity player;
 		
-	self.movetarget = world;	// JP - added this
-	score = 0;		// JP - added this
-	self.count = 0;	// JP - added this
+	self.movetarget = world;
+	score = 0;
+	self.count = 0;
 	player = find(world, classname, "player");
 	while (player != world)
 	{
-		if (player.crmod_chase_score != ELOHIM_NEGINF)
+		if (player.crmod_chase_score != CONST_NEGINF)
 		{
 			seeable = utils_new_visible(self, player);
 			if (seeable)
 			{
-				local float temp;	// JP - added this
+				local float temp;
 
-				self.count = self.count + seeable; // JP added this
+				self.count = self.count + seeable;
 
 				// Bonus points for activity
 				temp = player.attack_finished + 5 - time;
@@ -128,7 +88,7 @@ void () auto_camera_think =
 					temp = player.crmod_chase_score;
 				score = score + seeable * temp;
 
-				if (seeable == 4) // JP - removed unnecessary call to utils_new_visible
+				if (seeable == 4)
 				{
 					// Bonus points for proximity
 					if (vlen(self.origin - player.origin) < 500)
@@ -152,17 +112,12 @@ void () auto_camera_think =
 		self.count = 1;
 	self.crmod_chase_score = score / self.count;
 	
-	self.nextthink = time + 0.5 + random();  // JP - minimum 0.5 second delay
+	self.nextthink = time + 0.5 + random();
 	self.super_time = time;	// remember last think time
 };
 	
 //
 //  F I N D  B E S T
-//
-//  By J.P. Grossman
-//
-//  Compute crmod_best_chase_target and crmod_best_camera.
-//  Called once every second from elohim_start_frame.
 //
 void () auto_find_best = 
 {
@@ -173,7 +128,7 @@ void () auto_find_best =
 	e = find(world, classname, "player");
 	while (e)
 	{
-		if ((e.style & ELOHIM_CONNECTED) && !(e.style & ELOHIM_OBSERVER))
+		if ((e.style & STYLE_CONNECTED) && !(e.style & STYLE_OBSERVER))
 		{
 			if (crmod_best_chase_target == world)
 				crmod_best_chase_target = e;
@@ -185,7 +140,7 @@ void () auto_find_best =
 
 	// Now find the best camera (either a camera or the best chase target)
 	crmod_best_camera = crmod_best_chase_target;
-	e = find(world, classname, "elohim_camera");
+	e = find(world, classname, "crx_camera");
 	while (e)
 	{
 		if (e.count >= 6)
@@ -195,29 +150,16 @@ void () auto_find_best =
 			else if (e.crmod_chase_score > crmod_best_camera.crmod_chase_score)
 				crmod_best_camera = e;
 		}
-		e = find(e, classname, "elohim_camera");
+		e = find(e, classname, "crx_camera");
 	}
 };
 	
-
-
-// CRMOD
-//  A U T O  C H A S E  S T A R T
-//    by Paul Baker
-//
-//  start autochase from anywhere
 void () auto_chase_start =
 {
 	self.oflags = self.oflags | OBSERVER_GO_AUTO;
 	observer_chase_start();
 };
-	
-// CRMOD
-// A U T O  C H A S E
-//   by Paul Baker
-//
-//   checks if it's time to switch to a new target
-//
+
 void () auto_chase =
 {
 	local float temp1, temp2, vSwitch;
@@ -225,11 +167,9 @@ void () auto_chase =
 
 	vSwitch = FALSE;
 
-	// JP - added mandantory delays
 	if (time < self.crmod_cam_delay || time < self.movetarget.crmod_cam_delay)
 		return;
 
-	// JP - *Don't* switch to crmod_best_chase_target if it is world
 	if (crmod_best_chase_target == world)
 		return;	
 	
@@ -258,7 +198,7 @@ void () auto_chase =
 		temp2 = self.movetarget.attack_finished + 5;
 		if ((temp1 > auto_parm4) && (time > temp2))
 			vSwitch = TRUE;
-		else if (self.movetarget.crmod_chase_score == ELOHIM_NEGINF)
+		else if (self.movetarget.crmod_chase_score == CONST_NEGINF)
 			vSwitch = TRUE;
 	}
 
@@ -270,14 +210,6 @@ void () auto_chase =
 	}
 };
 
-// CRMOD
-// A U T O  C A M E R A
-//   by Paul Baker
-//
-// Runs autocam for observers
-//
-// Rewritten by J.P. Grossman
-//
 void () auto_camera =
 {	
 	local float temp1, temp2, temp3, vSwitch;
@@ -344,11 +276,11 @@ void () auto_camera =
 			// or if it's a camera looking at the current target.
 			temp1 = crmod_best_camera.crmod_chase_score - self.movetarget.crmod_chase_score;
 			temp2 = self.movetarget.attack_finished + 5;
-			if ((crmod_best_camera.classname == "elohim_camera") && (crmod_best_camera.movetarget == self.movetarget))
+			if ((crmod_best_camera.classname == "crx_camera") && (crmod_best_camera.movetarget == self.movetarget))
 				vSwitch = TRUE;
 			if ((temp1 > auto_parm4) && (time > temp2))
 				vSwitch = TRUE;
-			else if (self.movetarget.crmod_chase_score == ELOHIM_NEGINF)
+			else if (self.movetarget.crmod_chase_score == CONST_NEGINF)
 				vSwitch = TRUE;
 		}
 	}
@@ -396,7 +328,7 @@ void () auto_camera =
 		self.movetarget = crmod_best_camera;
 		self.crmod_cam_delay = time + 4;
 		self.delay = 0;
-		if (crmod_best_camera.classname == "elohim_camera")
+		if (crmod_best_camera.classname == "crx_camera")
 		{
 			local vector angle;
 			setorigin(self, crmod_best_camera.origin);

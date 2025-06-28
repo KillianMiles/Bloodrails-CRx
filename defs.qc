@@ -337,22 +337,21 @@ vector  VEC_HULL2_MIN = '-32 -32 -24';
 vector  VEC_HULL2_MAX = '32 32 64';
 
 // protocol bytes
-float   SVC_SETVIEWPORT     = 5;  // ELOHIM_MOD - added this
-float   SVC_STUFFCMD        = 9;  // ELOHIM_MOD - added this
-float   SVC_SETANGLES       = 10; // ELOHIM_MOD - added this
-float   SVC_UPDATENAME      = 13; // ELOHIM_MOD - added this
-float   SVC_UPDATEFRAGS     = 14; // ELOHIM_MOD - added this
-float   SVC_CLIENTDATA      = 15; // ELOHIM_MOD - added this
-float   SVC_UPDATECOLORS    = 17; // ELOHIM_MOD - added this
+float   SVC_SETVIEWPORT     = 5;
+float   SVC_STUFFCMD        = 9;
+float   SVC_SETANGLES       = 10;
+float   SVC_UPDATENAME      = 13;
+float   SVC_UPDATEFRAGS     = 14;
+float   SVC_CLIENTDATA      = 15;
+float   SVC_UPDATECOLORS    = 17;
 float   SVC_TEMPENTITY          = 23;
-//float   SVC_CENTERPRINT     = 26; // ELOHIM_MOD - added this
+//float   SVC_CENTERPRINT     = 26; //old
 float   SVC_CENTERPRINT     = 58;
 float   SVC_KILLEDMONSTER       = 27;
 float   SVC_FOUNDSECRET         = 28;
 float   SVC_INTERMISSION        = 30;
 float   SVC_FINALE                      = 31;
 float   SVC_SELLSCREEN          = 33;
-
 
 float   TE_SPIKE                = 0;
 float   TE_SUPERSPIKE   = 1;
@@ -418,7 +417,7 @@ entity  activator;              // the entity that activated a trigger or brush
 entity  damage_attacker;        // set by T_Damage
 float   framecount;
 
-float       skill; // ELOHIM_MOD - unused
+//float       skill; //unused
 
 //================================================
 
@@ -443,23 +442,22 @@ float       skill; // ELOHIM_MOD - unused
 //
 // monster ai
 //
-//.void()     th_stand; // ELOHIM_MOD - unused
-//.void()     th_walk;  // ELOHIM_MOD - unused
-//.void()     th_run;   // ELOHIM_MOD - unused
-//.void()     th_missile; // ELOHIM_MOD - unused
-//.void()     th_melee; // ELOHIM_MOD - unused
+//.void()     th_stand; // unused
+//.void()     th_walk;  // unused
+//.void()     th_run;   // unused
+//.void()     th_missile; // unused
+//.void()     th_melee; // unused
 
 .void()         th_pain;
 .void()         th_die;
 
-// ELOHIM_MOD - unused
 .entity     oldenemy;       // mad at this player before taking damage
 
 .float          speed;
 
-//.float  lefty;         // ELOHIM_MOD - unused
-//.float  search_time;   // ELOHIM_MOD - unused
-//.float  attack_state;  // ELOHIM_MOD - unused
+//.float  lefty;         // unused
+//.float  search_time;   // unused
+//.float  attack_state;  // unused
 
 float   AS_STRAIGHT             = 1;
 float   AS_SLIDING              = 2;
@@ -519,7 +517,7 @@ float   AS_MISSILE              = 4;
 //
 // monsters
 //
-//.float      pausetime;  // ELOHIM_MOD - unused
+//.float      pausetime;  //unused
 .entity     movetarget;
 
 
@@ -543,7 +541,7 @@ float   AS_MISSILE              = 4;
 // subs
 //
 .void()         think1;
-.vector         finaldest; // , finalangle; ELOHIM_MOD - unused
+.vector         finaldest; // , finalangle; unused
 
 //
 // triggers
@@ -562,9 +560,9 @@ float   AS_MISSILE              = 4;
 //
 // sounds
 //
-//.float      waitmin, waitmax; // ELOHIM_MOD - unused
-//.float      distance;         // ELOHIM_MOD - unused
-//.float      volume;           // ELOHIM_MOD - unused
+//.float      waitmin, waitmax; //unused
+//.float      distance;         //unused
+//.float      volume;           //unused
 
 
 
@@ -719,7 +717,7 @@ void setcolor( entity client, float color ) = #401;
 //
 // subs.qc
 //
-// ELOHIM_MOD - SUB_CalcAngleMove and SUB_CalcAngleMoveDone are unused
+// SUB_CalcAngleMove and SUB_CalcAngleMoveDone are unused
 //
 void(vector tdest, float tspeed, void() func) SUB_CalcMove;
 void(entity ent, vector tdest, float tspeed, void() func) SUB_CalcMoveEnt;
@@ -776,11 +774,6 @@ float bottom_KDR_global;
 float total_players_global;
 float total_score_global;
 
-
-
-
-
-float fte_server;
 string(entity e, string key) infokey = #80;
 float(string) stof = #81;
 
@@ -794,7 +787,6 @@ float(string) stof = #81;
 
 .float frame_count;
 .float old_vel;
-
 
 .float stored_frame2;
 .float stored_z1;

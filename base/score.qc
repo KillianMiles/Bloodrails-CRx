@@ -1,13 +1,3 @@
-//
-// Score.qc
-//
-// Routines to keep track of team scores in matches.
-//
-// All code by J.P. Grossman unless otherwise commented
-//
-// Scoreboard code is incomplete; will be finished for V4.1
-//
-
 void () score_update_frags;
 void () score_restore_scoreboard;
 
@@ -18,10 +8,10 @@ void () score_restore_scoreboard;
 //
 void () score_init = 
 {
-	elohim_winning_teamname = ELOHIM_STRING_TIED;
-	elohim_score_number = 0;
-	elohim_teamname1 = strings_get_teamname_bronze(elohim_team1);
-	elohim_teamname2 = strings_get_teamname_bronze(elohim_team2);
+	crx_winning_teamname = STRING_TIED;
+	crx_score_number = 0;
+	crx_teamname1 = strings_get_teamname_bronze(crx_team1);
+	crx_teamname2 = strings_get_teamname_bronze(crx_team2);
 };
 
 //
@@ -29,7 +19,7 @@ void () score_init =
 //
 void () score_init_world = 
 {
-	ELOHIM_STRING_TIED = "            Tied at ";
+	STRING_TIED = "            Tied at ";
 };
 
 //
@@ -40,42 +30,42 @@ void () score_init_world =
 void (float teamnum, float fragval) score_frag =
 {
 	// update the team score
-	if (teamnum == elohim_team1)
+	if (teamnum == crx_team1)
 	{
-		elohim_teamfrags1 = elohim_teamfrags1 + fragval;
+		crx_teamfrags1 = crx_teamfrags1 + fragval;
 	}
 	else
 	{
-		elohim_teamfrags2 = elohim_teamfrags2 + fragval;
+		crx_teamfrags2 = crx_teamfrags2 + fragval;
 	}
 
-	if (elohim_winning_teamname == ELOHIM_STRING_TIED)
+	if (crx_winning_teamname == STRING_TIED)
 	{
 		// just broke a tie
-		if (elohim_teamfrags1 > elohim_teamfrags2)
-			elohim_winning_team = elohim_team1;
+		if (crx_teamfrags1 > crx_teamfrags2)
+			crx_winning_team = crx_team1;
 		else
-			elohim_winning_team = elohim_team2;
+			crx_winning_team = crx_team2;
 
-		elohim_winning_teamname = strings_get_teamname_up_by(elohim_winning_team);
-		elohim_score_number = 1;
+		crx_winning_teamname = strings_get_teamname_up_by(crx_winning_team);
+		crx_score_number = 1;
 	}
 	else
 	{
-		if (teamnum == elohim_winning_team)
-			elohim_score_number = elohim_score_number + fragval;
+		if (teamnum == crx_winning_team)
+			crx_score_number = crx_score_number + fragval;
 		else
-			elohim_score_number = elohim_score_number - fragval;
+			crx_score_number = crx_score_number - fragval;
 
-		if (elohim_score_number == 0)
+		if (crx_score_number == 0)
 		{
 			// just created a tie
-			elohim_winning_teamname = ELOHIM_STRING_TIED;
-			elohim_score_number = elohim_teamfrags1;
+			crx_winning_teamname = STRING_TIED;
+			crx_score_number = crx_teamfrags1;
 		}
 	}
 
-	if (elohim_score_count)
+	if (crx_score_count)
 		utils_make_scheduled_event(score_update_frags, 0.1);
 };
 
@@ -124,7 +114,7 @@ void (float client) score_write_time =
 {
 	WriteByte(MSG_ONE, SVC_UPDATENAME);
 	WriteByte(MSG_ONE, client);
-	if (elohim_state & ELOHIM_MATCH_OVER)
+	if (crx_state & STATE_MATCH_OVER)
 		WriteString(MSG_ONE, "Match Over");
 	else
 	{
@@ -133,8 +123,8 @@ void (float client) score_write_time =
         local float seconds;
 		local float temp;
     
-        minutes = elohim_match_timer.lip;
-        seconds = elohim_match_timer.count;
+        minutes = crx_match_timer.lip;
+        seconds = crx_match_timer.count;
 		
 		if (minutes > 10)
 		{
@@ -161,9 +151,9 @@ void () score_fix_connect =
 	msg_entity = find(world, classname, "player");
 	while(msg_entity)
 	{
-		if (msg_entity.style & ELOHIM_SCOREBOARD)
+		if (msg_entity.style & STYLE_SCOREBOARD)
 		{
-			if (msg_entity.style & ELOHIM_CONNECTED)
+			if (msg_entity.style & STYLE_CONNECTED)
 			{
 				if (self.colormap == msg_entity.scoreboard_z)
 					score_write_time(msg_entity.scoreboard_z);
@@ -183,7 +173,7 @@ void () score_fix_connect =
 //
 void () score_client_connect = 
 {
-	if (!elohim_score_count)
+	if (!crx_score_count)
 		return;
 
 	local entity e;
@@ -201,19 +191,19 @@ void () score_fix_disconnect =
 	msg_entity = find(world, classname, "player");
 	while(msg_entity)
 	{
-		if (msg_entity.style & ELOHIM_SCOREBOARD)
+		if (msg_entity.style & STYLE_SCOREBOARD)
 		{
-			if (msg_entity.style & ELOHIM_CONNECTED)
+			if (msg_entity.style & STYLE_CONNECTED)
 			{
 				if (self.colormap == msg_entity.scoreboard_x)
 				{
-					score_write_name(msg_entity.scoreboard_x, elohim_teamname1);
-					score_write_colour(msg_entity.scoreboard_x, 17 * elohim_team1);
+					score_write_name(msg_entity.scoreboard_x, crx_teamname1);
+					score_write_colour(msg_entity.scoreboard_x, 17 * crx_team1);
 				}
 				else if (self.colormap == msg_entity.scoreboard_y)
 				{
-					score_write_name(msg_entity.scoreboard_y, elohim_teamname2);
-					score_write_colour(msg_entity.scoreboard_y, 17 * elohim_team2);
+					score_write_name(msg_entity.scoreboard_y, crx_teamname2);
+					score_write_colour(msg_entity.scoreboard_y, 17 * crx_team2);
 				}
 				else if (self.colormap == msg_entity.scoreboard_z)
 					score_write_time(msg_entity.scoreboard_z);
@@ -231,7 +221,7 @@ void () score_fix_disconnect =
 //
 void () score_client_disconnect = 
 {
-	if (!elohim_score_count)
+	if (!crx_score_count)
 		return;
 
 	local entity e;
@@ -249,39 +239,39 @@ void () score_show_teamscores =
 	local float team1;
 	local float team2;
 
-	if (self.style & ELOHIM_SCOREBOARD)
+	if (self.style & STYLE_SCOREBOARD)
 		return;
 
-    if (elohim_state & ELOHIM_MATCH_STARTED || (mode_is_public()))
+    if (crx_state & STATE_MATCH_STARTED || (mode_is_public()))
     {
-        team1 = elohim_team1;
-        team2 = elohim_team2;
+        team1 = crx_team1;
+        team2 = crx_team2;
     }
-    else if (elohim_state & ELOHIM_MATCH_OVER)
+    else if (crx_state & STATE_MATCH_OVER)
     {
-        team1 = elohim_lastteam1;
-        team2 = elohim_lastteam2;
+        team1 = crx_lastteam1;
+        team2 = crx_lastteam2;
     }
     else
 		return;
 
 	msg_entity = self;
-	self.style = self.style | ELOHIM_SCOREBOARD;
-	elohim_score_count = elohim_score_count + 1;
+	self.style = self.style | STYLE_SCOREBOARD;
+	crx_score_count = crx_score_count + 1;
 
 	// first erase the scoreboard and find slots
 	self.scoreboard_x = self.scoreboard_y = self.scoreboard_z = -1;
 	e = find(world, classname, "player");
 	while(e)
 	{
-		if (e.style & ELOHIM_CONNECTED)
+		if (e.style & STYLE_CONNECTED)
 		{
 			score_write_name(e.colormap - 1, "");
 			if ((self.scoreboard_x == -1) && (e.height == team1))
 				self.scoreboard_x = e.colormap - 1;
 			else if ((self.scoreboard_y == -1) && (e.height == team2))
 				self.scoreboard_y = e.colormap - 1;
-			else if ((self.scoreboard_z == -1) && (e.style & ELOHIM_OBSERVER))
+			else if ((self.scoreboard_z == -1) && (e.style & STYLE_OBSERVER))
 				self.scoreboard_z = e.colormap - 1;
 		}
 		else if (self.scoreboard_z == -1)
@@ -303,7 +293,7 @@ void () score_show_teamscores =
 	// make sure we have a slot for time
 	if (self.scoreboard_z == -1)
 	{
-		if (elohim_teamsize1 + elohim_teamsize2 < 8)
+		if (crx_teamsize1 + crx_teamsize2 < 8)
 		{
 			// 7 is unused - grab it
 			self.scoreboard_z = 7;
@@ -332,10 +322,10 @@ void () score_show_teamscores =
 	}
 	
 	// now send the team scores
-	score_write_name(self.scoreboard_x, elohim_teamname1);
-	score_write_frags(self.scoreboard_x, elohim_teamfrags1);
-	score_write_name(self.scoreboard_y, elohim_teamname2);
-	score_write_frags(self.scoreboard_y, elohim_teamfrags2);
+	score_write_name(self.scoreboard_x, crx_teamname1);
+	score_write_frags(self.scoreboard_x, crx_teamfrags1);
+	score_write_name(self.scoreboard_y, crx_teamname2);
+	score_write_frags(self.scoreboard_y, crx_teamfrags2);
 
 	// now send the time
 	score_write_time(self.scoreboard_z);
@@ -350,12 +340,12 @@ void () score_restore_scoreboard =
 {
 	local entity e;
 
-	if (!(self.style & ELOHIM_SCOREBOARD))
+	if (!(self.style & STYLE_SCOREBOARD))
 		return;
 
 	msg_entity = self;
-	self.style = self.style - ELOHIM_SCOREBOARD;
-	elohim_score_count = elohim_score_count - 1;
+	self.style = self.style - STYLE_SCOREBOARD;
+	crx_score_count = crx_score_count - 1;
 
 	// Clear time remaining seperately since it might not be a client
 	score_write_name(self.scoreboard_z, "");
@@ -363,7 +353,7 @@ void () score_restore_scoreboard =
 	e = find(world, classname, "player");
 	while(e)
 	{
-		if (e.style & ELOHIM_CONNECTED)
+		if (e.style & STYLE_CONNECTED)
 		{
 			score_write_name(e.colormap - 1, e.netname);
 			score_write_frags(e.colormap - 1, e.frags);
@@ -382,12 +372,12 @@ void () score_update_frags =
 	msg_entity = find(world, classname, "player");
 	while(msg_entity)
 	{
-		if (msg_entity.style & ELOHIM_SCOREBOARD)
+		if (msg_entity.style & STYLE_SCOREBOARD)
 		{
-			if (msg_entity.style & ELOHIM_CONNECTED)
+			if (msg_entity.style & STYLE_CONNECTED)
 			{
-				score_write_frags(msg_entity.scoreboard_x, elohim_teamfrags1);
-				score_write_frags(msg_entity.scoreboard_y, elohim_teamfrags2);
+				score_write_frags(msg_entity.scoreboard_x, crx_teamfrags1);
+				score_write_frags(msg_entity.scoreboard_y, crx_teamfrags2);
 			}
 		}
 		msg_entity = find(msg_entity, classname, "player");
@@ -401,15 +391,15 @@ void () score_update_frags =
 //
 void () score_update_time = 
 {
-	if (!elohim_score_count)
+	if (!crx_score_count)
 		return;
 
 	msg_entity = find(world, classname, "player");
 	while(msg_entity)
 	{
-		if (msg_entity.style & ELOHIM_SCOREBOARD)
+		if (msg_entity.style & STYLE_SCOREBOARD)
 		{
-			if (msg_entity.style & ELOHIM_CONNECTED)
+			if (msg_entity.style & STYLE_CONNECTED)
 				score_write_time(msg_entity.scoreboard_z);
 		}
 		msg_entity = find(msg_entity, classname, "player");

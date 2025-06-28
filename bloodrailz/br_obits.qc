@@ -172,7 +172,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 			else
 			{
 				// killed enemy
-				if (elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & RACE_MODE))
+				if (crx_playmode & CTF_MODE && !(crx_playmode & RACE_MODE))
 				{
 					flag_radius = 0;
 					flag_carrier_radius = 0;
@@ -467,7 +467,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				self.total_deaths = self.total_deaths +1;
 				
 				/*	
-				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
+				if(targ.frags == top_score_global && (teamplay || (crx_playmode & CTF_MODE) || (crx_playmode & MATCH_MODE) || (crx_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
 				{
 					client_frag(attacker, 1);
 					bprint ("the king was stomped by ");
@@ -550,7 +550,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				self.total_deaths = self.total_deaths +1;
 				//k_AXE=attacker.kills_AXE;    
 					
-				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
+				if(targ.frags == top_score_global && (teamplay || (crx_playmode & CTF_MODE) || (crx_playmode & MATCH_MODE) || (crx_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
 				{
 					client_frag(attacker, 1);
 						
@@ -686,7 +686,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				self.total_deaths = self.total_deaths +1;   //count deaths by hook
 				attacker.total_kills = attacker.total_kills +1;
 					
-				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
+				if(targ.frags == top_score_global && (teamplay || (crx_playmode & CTF_MODE) || (crx_playmode & MATCH_MODE) || (crx_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
 				{
 					client_frag(attacker, 1);
 							
@@ -771,7 +771,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 				}
 					
 				/*
-				if(targ.frags == top_score_global && (teamplay || (elohim_playmode & CLANRING_CTF_MODE) || (elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
+				if(targ.frags == top_score_global && (teamplay || (crx_playmode & CTF_MODE) || (crx_playmode & MATCH_MODE) || (crx_playmode & DM_PUBLIC_MODE) || mode_is_public_ctf()) )
 				{
 					//attacker.frags += 1;
 					client_frag(attacker, 1);
@@ -970,7 +970,7 @@ void(entity targ, entity attacker, float damage) ClientObituary =
 
 			// hell if I know; he's just dead!!!
 			bprint (" died\n");
-			if(elohim_playmode & RACE_MODE)
+			if(crx_playmode & RACE_MODE)
 			{
 				countdown = 0;
 				countdown_ct = 0;

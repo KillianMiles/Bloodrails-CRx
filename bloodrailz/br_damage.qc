@@ -1,8 +1,6 @@
 void() info_player_start;
 void(entity targ, entity attacker, float damage) ClientObituary;
-void (entity client, float fragval) client_frag; // ELOHIM_MOD  --moved from client.qc for CAx
-
-
+void (entity client, float fragval) client_frag;
 
 float(entity targ, entity inflictor) CanDamage =       //Returns true if the inflictor can directly damage the target.  Used for explosions and melee attacks.
 {
@@ -76,7 +74,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 	
 	if (!targ.takedamage) return;
 		
-	if (elohim_playmode & RACE_MODE && !(mapname !="tut1" || mapname !="tut2" || mapname !="tut3" || mapname !="tut4" || mapname !="tut5" || mapname !="tut6" || mapname !="tut7")) return;  //dont deal damage if in racing mode
+	if (crx_playmode & RACE_MODE && !(mapname !="tut1" || mapname !="tut2" || mapname !="tut3" || mapname !="tut4" || mapname !="tut5" || mapname !="tut6" || mapname !="tut7")) return;  //dont deal damage if in racing mode
 	
 	// HorrorScope deathmatch camera - store players last enemy entity
 	if (attacker.flags & FL_CLIENT)
@@ -85,7 +83,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 				attacker.last_enemy = targ;
 	
 	
-	if (elohim_playmode & PROJECTILES && inflictor.classname == "missile")
+	if (crx_playmode & MODE_PROJECTILES && inflictor.classname == "missile")
 	{
 
 		if(attacker == targ && inflictor.classname == "missile") damage = damage/5;
@@ -104,9 +102,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		take = ceil(damage-save);
 	}
 	
-	
-
-
 	// figure momentum add
 	if ( (inflictor.classname == "missile") && (targ.movetype == MOVETYPE_WALK) )
 	{
@@ -114,14 +109,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		dir = normalize(dir);
 		targ.velocity = targ.velocity + dir*damage*8;
 	}
-	
-	
-	
-	// ELOHIM_MOD - stats
+
 	if (attacker.classname == "player" && targ != attacker)
 	{
-		attacker.crmod_inflicted = targ;  // CRMOD - to see who attacker attacked
-		attacker.crmod_did_damage = time;  // CRMOD keep track of last time they hurt someone
+		attacker.crmod_inflicted = targ;
+		attacker.crmod_did_damage = time;
 	
 		if (targ.classname != "player" || attacker.team != targ.team || !teamplay)
 		{
@@ -129,7 +121,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			{
 				if (attacker.weapon == IT_SHOTGUN || attacker.weapon == IT_RAILGUN)
 				{
-					if (!(elohim_playmode & ELOHIM_MATCH_MODE) || (elohim_state & ELOHIM_MATCH_STARTED)) attacker.dest2_x = attacker.dest2_x + damage;
+					if (!(crx_playmode & MATCH_MODE) || (crx_state & STATE_MATCH_STARTED)) attacker.dest2_x = attacker.dest2_x + damage;
 				}
 				else if (attacker.weapon == IT_LIGHTNING)
 				{
@@ -145,11 +137,8 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		}
 	}                        
   
-
 	// used by buttons and triggers to set activator for target firing
 	damage_attacker = attacker;
-
-	
 
 	if (targ.flags & FL_CLIENT)
 	{
@@ -157,10 +146,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		targ.dmg_save = targ.dmg_save + save;
 		targ.dmg_inflictor = inflictor;
 	}
-
-
-
-	else if (elohim_playmode & CLANRING_CTF_MODE && !(elohim_playmode & RACE_MODE))
+	else if (crx_playmode & CTF_MODE && !(crx_playmode & RACE_MODE))
 	{
 		if ((attacker.classname == "player") && (targ.flag_carrier) && (attacker.team != targ.team))
 		{
@@ -168,8 +154,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		}
 	}
 
-	// ELOHIM_MOD - print info for practice mode; check for pre-match
-	if (elohim_playmode & RACE_MODE)
+	if (crx_playmode & RACE_MODE)
 	{
 		if (targ.classname == "player" && attacker.classname == "player" && targ != attacker)
 		{
@@ -179,7 +164,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		}
 	}
 	
-	if (mode_is_prewar() == TRUE)
+	if (mode_is_prematch() == TRUE)
 	{
 		if (attacker.classname == "player" && targ != attacker)
 		{
@@ -220,7 +205,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 		// team play damage avoidance
 
 	
-		if((elohim_playmode & ELOHIM_WRAITH) && targ.wraith ==1 && attacker.weapon == IT_RAILGUN && targ.airborn_pos < 40)    //WRAITH MODE - if wraith - cant be damaged by rail
+		if((crx_playmode & MODE_WRAITH) && targ.wraith ==1 && attacker.weapon == IT_RAILGUN && targ.airborn_pos < 40)    //WRAITH MODE - if wraith - cant be damaged by rail
 				{
 					make_spawnprotect(targ);	 //shield visual
 					sound (targ, CHAN_VOICE, "weap/br_armorhit.wav", 1, ATTN_NORM);    //SHIELD SOUND
@@ -311,7 +296,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 
 			
 			
-	if ((elohim_playmode & ELOHIM_NO_PENT) && self.airborn_pos < 50)
+	if ((crx_playmode & MODE_NO_PENT) && self.airborn_pos < 50)
 	{
 		dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
 		dir = normalize(dir);
@@ -525,9 +510,8 @@ void(entity targ, entity inflictor, entity attacker, float damage, vector dmg_or
 			attacker.death_aura_frag = 1;
 			death_aura_counter = 0;
 		}
-		
-		// ELOHIM_MOD - print info for practice mode
-		if (elohim_playmode & RACE_MODE)
+	
+		if (crx_playmode & RACE_MODE)
 		{
 			if (targ.classname == "player" && attacker.classname == "player" && targ != attacker)
 			{
