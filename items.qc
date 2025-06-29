@@ -306,14 +306,14 @@ void() item_artifact_invulnerability =
 	self.touch = powerup_touch;
 	if (!(crx_playmode & RACE_MODE)) 
 	{
-		self.noise = "items/br_protec.wav";
+		self.noise = "item/br_protec.wav";
 		setmodel (self, "mdl/br_pent.mdl");
 		self.netname = "Shield Amplifier";
 		setsize (self, '-16 -16 -24', '16 16 32');
 	}
 	else
 	{
-		self.noise = "items/br_protec.wav";
+		self.noise = "item/br_protec.wav";
 		setmodel (self, "mdl/br_pent.mdl");
 		self.netname = "Shield Amplifier";
 		setsize (self, '-32 -32 -24', '32 32 75');
@@ -331,7 +331,7 @@ void() item_artifact_invisibility =
 	self.touch = powerup_touch;
 	if (!(crx_playmode & RACE_MODE)) 
 	{
-		self.noise = "items/br_inv1.wav";
+		self.noise = "item/br_inv1.wav";
 		setmodel (self, "mdl/br_ring1.mdl");
 		self.netname = "Cloaking matrix";
 		setsize (self, '-16 -16 -24', '16 16 32');

@@ -498,21 +498,21 @@ void(vector origin1, float radius, float steam) make_smoke =
 		if(random() < 0.33 && ground_smoke_number < 15) 
 		{
 			ground_smoke_number +=1;
-			setmodel (smoke, "mdl/ef_smoke2.mdl");
 			smoke.classname = "ground_smoke";
 		}
 		else if(smoke_ent_number < 22)
 		{
-			setmodel (smoke, "mdl/ef_smoke2.mdl");
 			smoke.classname = "smoke";
 			smoke.weapon =1;
 		}
 		else
 		{
-			setmodel (smoke, "mdl/ef_smoke2.mdl");
 			smoke.classname = "smoke";
 			smoke.weapon =0;
 		}
+			
+			if(random()<=0.5) setmodel (smoke, "mdl/ef_smoke2.mdl");
+			else setmodel (smoke, "mdl/ef_smoke2a.mdl");
 			
 		setorigin(smoke, origin1 + randomizer + '0 0 -10');
 		smoke.frame = frand;
@@ -520,9 +520,6 @@ void(vector origin1, float radius, float steam) make_smoke =
 		smoke.solid = SOLID_TRIGGER;
 		setsize (smoke, 0,0);
 		
-		//if(random()<0.4) smoke.avelocity = '-50 -50 -325'; //500 -> 300
-		//else smoke.avelocity = 0;
-		smoke.avelocity = '-50 -50 -325'; //500 -> 300
 		
 		smoke.velocity = '0 0 0';
 		
@@ -573,7 +570,6 @@ void(vector origin1, float radius, float steam) make_smoke =
 		self.movetype = MOVETYPE_FLY;
 		self.solid = SOLID_TRIGGER;
 		
-		//self.avelocity = '-50 -50 -325'; //500 -> 300
 		
 		self.tarzan_time = 0;
 		self.speed = 0;
@@ -720,7 +716,7 @@ void() bangs =
 		if (self.weapon ==1)         				 // FIRE CLOUD
 		{
 			smoke_owner = self.owner;
-			setmodel (self, "mdl/ef_aura1.mdl");
+			setmodel (self, "mdl/ef_aura.mdl");
 			self.skin = 26; //23;
 			self.frame = 6;
 			self.alpha =0.55;
@@ -1031,7 +1027,7 @@ void() bangs =
 				{
 					self.rune_displayed =1;
 					aura1 = spawn();
-					setmodel (aura1, "mdl/ef_aura1.mdl");
+					setmodel (aura1, "mdl/rune_aura.mdl");
 					//setorigin(aura1, self.origin + '0 0 8');
 					//setorigin(aura1, self.origin);
 					//setorigin(aura1, self.origin + randomizer);
@@ -1045,14 +1041,13 @@ void() bangs =
 					aura1.owner = self;
 					aura1.weapon = 3;
 					aura1.nextthink = time + 0.01;
-					aura1.avelocity = '-50 -100 -50';
 					aura1.weapon = 3;
 					aura1.think = update_aura1;
 					
 				}
 			
 			
-			setmodel (self, "mdl/ef_aura1.mdl");
+			setmodel (self, "mdl/rune_core.mdl");
 			self.skin = 3;
 			self.frame = 1;
 			
@@ -1063,7 +1058,6 @@ void() bangs =
 				local vector dynamic_origin = self.origin;
 				//dynamic_origin_z = 0;
 				local vector dirx = gravity_origin-dynamic_origin;
-				self.avelocity = '-50 -50 -50';
 				
 				gravity_origin1 = self.origin;
 			
@@ -1231,7 +1225,7 @@ void() bangs =
 				{
 					self.rune_displayed =1;
 					aura1 = spawn();
-					setmodel (aura1, "mdl/ef_aura1.mdl");
+					setmodel (aura1, "mdl/rune_aura.mdl");
 					setorigin(aura1, self.origin + '0 0 8');
 					aura1.movetype = MOVETYPE_NOCLIP;
 					aura1.solid = SOLID_NOT;
@@ -1245,7 +1239,6 @@ void() bangs =
 					aura1.nextthink = time + 0.01;
 					aura1.think = update_aura1;
 					aura1.weapon = 4;
-					aura1.avelocity = '-50 -100 -50';
 
 				}
 			
@@ -1275,7 +1268,7 @@ void() bangs =
 			}
 			
 			
-			setmodel (self, "mdl/ef_aura1.mdl");
+			setmodel (self, "mdl/rune_core.mdl");
 			self.skin = 6;
 			self.frame = 3;
 			//self.velocity = '0 0 0';
@@ -1289,7 +1282,7 @@ void() bangs =
 				local vector dynamic_origin1 = self.origin;
 				//dynamic_origin1_z = 0;
 				local vector dirx1 = quasar_origin-dynamic_origin1;
-				self.avelocity = '-50 -50 -50';
+
 				
 				quasar_origin1 = self.origin;
 			
@@ -1459,7 +1452,7 @@ void() rune_bang_think =
 		//self.owner.rune_bang =0;
 	}
 	
-	//if(self.owner.rune_bang == 11 && self.weapon ==1 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(crx_playmode & MODE_NO_THROWABLES) && self.solid == SOLID_NOT)
+	//if(self.owner.rune_bang == 11 && self.weapon ==1 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(elohim_playmode & ELOHIM_NO_THROWABLES) && self.solid == SOLID_NOT)
 	if((self.owner.rune_bang == 11 || self.shot_time ==1) && self.weapon ==1 && time - self.ltime >1.3 && time - self.ltime <1.5 && !(crx_playmode & MODE_NO_THROWABLES) && self.solid == SOLID_NOT)
 	{	
 		self.alpha = 1;
@@ -1503,7 +1496,6 @@ void() rune_bang_think =
 		sound (self, CHAN_AUTO, "weap/br_shield.wav", 1, ATTN_NORM);
 		
 		self.movetype = MOVETYPE_FLY;
-		self.avelocity = '-50 -50 -500';
 		self.speed = 0;
 		self.velocity = '0 0 0';
 		gravity_origin = self.origin;
@@ -1525,7 +1517,6 @@ void() rune_bang_think =
 		sound (self, CHAN_AUTO, "weap/br_shield.wav", 1, ATTN_NORM);
 		
 		self.movetype = MOVETYPE_FLY;
-		self.avelocity = '-50 -50 -500';
 		self.speed = 0;
 		self.velocity = '0 0 0';
 		quasar_origin = self.origin;

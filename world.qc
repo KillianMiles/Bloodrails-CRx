@@ -146,9 +146,11 @@ void() worldspawn =
 	precache_sound ("trig/br_tp3.wav");
 	precache_sound ("trig/br_tp4.wav");
 	precache_model ("mdl/player.md3");
+	
 	precache_model ("mdl/br_gib1.mdl");         // LibreQuake //gibs
 	precache_model ("mdl/br_gib2.mdl");	 // LibreQuake //gibs
 	precache_model ("mdl/br_gib3.mdl");	 // LibreQuake //gibs
+	precache_model ("mdl/br_gib4.mdl");	 // LibreQuake //gibs
 
 
 	

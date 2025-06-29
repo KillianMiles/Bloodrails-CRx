@@ -48,9 +48,9 @@ void () crx_init_world =
 	local float mode;
 	local string szmode;
 
-  br_version = "BR v1.1"; 
+  br_version = "BR v1.2"; 
   br_version_info = "Bloodrailz CRx";
-  bloodrailz_version_number = "v1.1";
+  bloodrailz_version_number = "v1.2";
 
 	// Initialize
 	motd_init_world();
@@ -67,6 +67,31 @@ void () crx_init_world =
   
   
   crx_playmode = cvar("samelevel");
+  
+		if (mapname == "ctf_takayama_r1") map_is_dark = 1;
+		else if (mapname == "ctf_dissocia_r1") map_is_dark = 1;
+		else if (mapname == "ctf_bridge_r1") map_is_dark = 1;
+		else if (mapname == "ctf_hanghigh_r1") map_is_dark = 1;
+		else if (mapname == "ctf_swingest_r1") map_is_dark = 0;
+		else if (mapname == "ctf_teardown_r1") map_is_dark = 1;
+		else if (mapname == "ctf_eyesout_r1") map_is_dark = 1;
+		else if (mapname == "ctf_relic2_r1") map_is_dark = 1;
+		else if (mapname == "ctf_rebirth_r1") map_is_dark = 0;
+		else if (mapname == "ctf_edge3_r1") map_is_dark = 1;
+		else if (mapname == "ctf_faceoff_r1") map_is_dark = 1;
+		else if (mapname == "ctf_sandstorm_r1") map_is_dark = 0;
+		else if (mapname == "ctf_lasertag_r1") map_is_dark = 1;
+		else if (mapname == "ctf_dreamland_r1") map_is_dark = 1;
+		else if (mapname == "ctf_bikini_r1") map_is_dark = 0;
+		else if (mapname == "ctf_doglyfe_r1") map_is_dark = 0;
+		else if (mapname == "ctf_bamboo_r1") map_is_dark = 1;
+		else if (mapname == "ctf_daywalker_r1") map_is_dark = 0;
+		else if (mapname == "ctf_easter_r1") map_is_dark = 0;
+		else if (mapname == "ctf_fulcrum_r1") map_is_dark = 1;
+		else if (mapname == "ctf_albatross_r1") map_is_dark = 1;
+		else if (mapname == "ctf_firestorm_r1") map_is_dark = 1;
+		else if (mapname == "ctf_feral_r1") map_is_dark = 1;
+		else if (mapname == "ctf_gulch_r1") map_is_dark = 0;
 
 
 

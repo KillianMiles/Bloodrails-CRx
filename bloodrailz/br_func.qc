@@ -41,10 +41,10 @@ void() Called_in_PreThink =
 			//stuffcm(self, "scr_matchclock_x 72.7\n");
 			stuffcmd(self, "mclok01\n");
 		}
-		else if(timelimit-time <0.2 && timelimit-time > 0) //back to small clock
+		else if(timelimit-time <0.20 && timelimit-time > 0) //back to small clock
 		{
 			stuffcmd(self, "scr_matchclock 3\n");
-			stuffcmd(self, "scr_matchclockscale 3.47\n");
+			//stuffcmd(self, "scr_matchclockscale 3.47\n");
 		}
 		
 		if ((self.flags & FL_ONGROUND) && self.skiing_on!=0) 
@@ -1033,10 +1033,10 @@ void () LandingCheck =
             }
             else
                 {
-			if(random()<0.33) sound (self, CHAN_AUTO, "body/br_land1.wav", 0.7, ATTN_NORM);  // 1 -> 0.5      
-			else if(random()<0.62) sound (self, CHAN_AUTO, "body/br_land2.wav", 0.7, ATTN_NORM);
-			else if(random()<0.8) sound (self, CHAN_AUTO, "body/br_land3.wav", 0.7, ATTN_NORM);
-			else if(random()<=1) sound (self, CHAN_AUTO, "body/br_land4.wav", 0.7, ATTN_NORM);
+			if(random()<0.33) sound (self, CHAN_AUTO, "body/br_land1.wav", 0.7, ATTN_IDLE);  // 1 -> 0.5      
+			else if(random()<0.62) sound (self, CHAN_AUTO, "body/br_land2.wav", 0.7, ATTN_IDLE);
+			else if(random()<0.8) sound (self, CHAN_AUTO, "body/br_land3.wav", 0.7, ATTN_IDLE);
+			else if(random()<=1) sound (self, CHAN_AUTO, "body/br_land4.wav", 0.7, ATTN_IDLE);
 		}
     
             self.jump_flag = 0;
@@ -1109,17 +1109,17 @@ void() PlayerJump =
 	{
 		if (random() < 0.4) 
 		{
-			sound (self, CHAN_BODY, "body/br_jmp1.wav", 0.57, ATTN_NORM);   // 1 -> 0.9
+			sound (self, CHAN_BODY, "body/br_jmp1.wav", 0.57, ATTN_IDLE);   // 1 -> 0.9
 			//ex_localsound(self, "body/br_jmp1.wav");
 		}
 		else if (random() < 0.7) 
 		{
-			sound (self, CHAN_BODY, "body/br_jmp2.wav", 0.57, ATTN_NORM);  
+			sound (self, CHAN_BODY, "body/br_jmp2.wav", 0.57, ATTN_IDLE);  
 			//ex_localsound(self, "body/br_jmp2.wav");
 		}
 		else 
 		{
-			sound (self, CHAN_BODY, "body/br_jmp3.wav", 0.57, ATTN_NORM);   // alternative jump noise
+			sound (self, CHAN_BODY, "body/br_jmp3.wav", 0.57, ATTN_IDLE);   // alternative jump noise
 			//ex_localsound(self, "body/br_jmp3.wav");
 		}
 		
@@ -1206,7 +1206,7 @@ void() make_aura =
 {
 	local entity aura;
 	aura = spawn();
-	setmodel (aura, "mdl/ef_aura1.mdl");
+	setmodel (aura, "mdl/ef_aura.mdl");
 	setorigin(aura, self.origin + '0 0 8');
 	aura.movetype = MOVETYPE_NOCLIP;
 	aura.solid = SOLID_NOT;

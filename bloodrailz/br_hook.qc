@@ -115,16 +115,13 @@ void() update_plasma =
 	else if(vlen(self.velocity) <= 200) 
 	{
 		self.velocity = self.punchangle + v_up*250;  //punchangle = old_velocity
-		self.avelocity = '50 -50 -125';
 	}
 	if((vlen(self.velocity) > 249 && vlen(self.velocity) < 251) || (self.velocity_x != 0 && self.velocity_y != 0)) 
 	{
 		self.velocity = self.punchangle;  //punchangle = old_velocity
-		self.avelocity = '75 -75 -250';
 	}
 	
 	if ( self.flags & FL_ONGROUND ) self.flags = self.flags - FL_ONGROUND;
-	if(vlen(self.velocity) < 50) self.avelocity = '75 -75 -250';
 	
 
 		traceline(self.origin, self.origin + '0 0 -21', FALSE, self);
@@ -390,10 +387,9 @@ void(float speed1, float f_offset) make_plasma =
 		
 		plasma.velocity = speed1* v_forward;
 		
-        	plasma.avelocity = '0 0 -500';
 		plasma.nextthink 	= time + 0.05;   
 		plasma.think 		= update_plasma;
-        	setmodel (plasma, "mdl/ef_aura1.mdl");
+        	setmodel (plasma, "mdl/br_plasma.mdl");
         	plasma.frame = 2;
         	plasma.alpha = 0.001;
         	
@@ -859,9 +855,14 @@ void () HookVanish =
 		self.hook_tilt=0;
 };
 
+
+
+
+
 void() UnHookPlayer =
 {
 	local entity oself;
+	
 
 	if (self.hook_out) 
 	{
@@ -871,6 +872,11 @@ void() UnHookPlayer =
 		self = oself;	
 		
 	}
+		
+		
+		
+		
+	
 };
 
 void () HookPull =
@@ -1320,6 +1326,7 @@ void () HookPull =
 			else if ( v > 100) self.owner.velocity = normalize(vel) * hookspeedpull;
 			
 			
+			
 			//  attempt to straighten the pull
 			/*
 			local vector straight_vel;
@@ -1377,6 +1384,8 @@ void () HookPull =
 	
 
 		self.dest = self.owner.origin;
+		
+		
 		self.nextthink = time + 0.01;   //HOOK_THINK_
 	}
 };
@@ -1441,7 +1450,7 @@ void() T_ChainTouch =
 		self.owner.hook_is_anchored = 1;
 		if (((self.owner.player_flag & PF_ITEM_RUNE_MASK) && (self.owner.player_flag & PF_ITEM_RUNE1_FLAG) ))
 		{
-			setmodel (self, "mdl/ef_aura1.mdl");
+			setmodel (self, "mdl/br_plasma.mdl");
 			self.frame = 2;
 			
 			if (self.owner.height == crx_team1) 
@@ -1462,7 +1471,8 @@ void() T_ChainTouch =
 		}
 		
 		
-		self.avelocity = '0 0 0';
+		self.angles = '0 0 0';
+		//setmodel (self, "mdl/star2.mdl");
 	}
                 
 	if (!self.owner.button0) {
@@ -1670,7 +1680,6 @@ void() W_FireChain =
 		
 
         hook.angles = vectoangles(hook.velocity);
-        hook.avelocity = '0 0 -500';
 	
         hook.touch = T_ChainTouch;
 	

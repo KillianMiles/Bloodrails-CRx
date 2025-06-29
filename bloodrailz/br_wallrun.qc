@@ -292,6 +292,8 @@ void() WallRun =
 
 		if (trace_frac_plus == 1 && trace_frac_minus == 1) self.grind_completed = 1;   //added at swing hook debug
 		
+		
+		
 		if (trace_frac_plus > trace_frac_minus && self.grind_side_is != 2 && (self.movement_y <= -400)) // && (trace_frac_minus_long < 1 || self.grind_completed == 2))       //LEFT-SIDE GRIND
 		{
 			make_sparks();
@@ -300,29 +302,27 @@ void() WallRun =
 			
 			if (self.punchang < 4) self.punchang = self.punchang + 0.6;           //gradual lean for left-side (1) grind
 			else if (self.punchang < 9) self.punchang = self.punchang + 0.8;
-			else if (self.punchang < 13) self.punchang = self.punchang + 1.0;
-			else if (self.punchang >= 13) self.punchang = self.punchang + 1.25;
-			if (self.punchang >= 18) self.punchang = 18;
+			else if (self.punchang < 11) self.punchang = self.punchang + 1.0;
+			else if (self.punchang >= 11) self.punchang = self.punchang + 1.25;
+			
+			if (self.punchang >= 12) self.punchang = 12;
 			
 			
-			if(self.punchang < 6) //staged tilt
+			if(self.punchang < 4 && self.run_tilt != 6) //staged tilt
 			{
 				stuffcmd(self, "as20p6\n");
+				self.run_tilt = 6;
 				//bprint("tilting 1 yes!\n");
 				self.tilted =1;
 			}
-			else if(self.punchang < 12)
+			else if(self.punchang < 12 && self.run_tilt != 12)
 			{
 				stuffcmd(self, "as25p12\n");
-				//bprint("tilting 1 yes!\n");
+				self.run_tilt = 12;
+				//bprint("tilting 2 yes!\n");
 				self.tilted =1;
 			}
-			else if(self.punchang >= 12)
-			{
-				stuffcmd(self, "as27p18\n");
-				//bprint("tilting 1 yes!\n");
-				self.tilted =1;
-			}
+
 			
 			if (self.punchang >= 18)      self.angles_z = 20;
 			else if (self.punchang >16) self.angles_z = 16;
@@ -349,13 +349,17 @@ void() WallRun =
 		
 			if(self.movement_x ==400 || self.movement_x ==0) self.velocity = self.velocity + v_forward*13.3 +v_right*(-40) + '0 0 6.4';  //9 -> 6.4
 			else if(self.movement_x ==-400) self.velocity = self.velocity + adj_forward_left*(-18.3) +v_right*(-40) + '0 0 2';
+			
+			
 			//if(vlen(self.velocity) > 800) self.velocity = normalize(self.velocity)*(800);
-			setorigin(self, self.origin + v_right*0.99);
+			
 			
 			
 			
 			if (self.vel_before_wallrun <= 800 && vlen(self.velocity) > 800) self.velocity = normalize(self.velocity)*(800);
 			else if (self.vel_before_wallrun > 800 && vlen(self.velocity) > 800) self.velocity = normalize(self.velocity)*(self.vel_before_wallrun);
+			
+			setorigin(self, self.origin + v_right*0.99);
 		
 			if (self.grind_sound_counter == 64 && self.skiing_on ==0)
 			{	
@@ -397,29 +401,26 @@ void() WallRun =
 			
 			if (self.punchang > -4) self.punchang = self.punchang - 0.6;            //gradual lean for right-side (2) grind
 			else if (self.punchang > -9) self.punchang = self.punchang - 0.8;
-			else if (self.punchang > -13) self.punchang = self.punchang - 1.0;
-			else if (self.punchang <= -13) self.punchang = self.punchang - 1.25;
-			if (self.punchang <= -18) self.punchang = -18;
+			else if (self.punchang > -11) self.punchang = self.punchang - 1.0;
+			else if (self.punchang <= -11) self.punchang = self.punchang - 1.25;
+			if (self.punchang <= -12) self.punchang = -12;
 			
 			
-			if(self.punchang > -6) //staged tilt
+			if(self.punchang > -4 && self.run_tilt != -6) //staged tilt
 			{
 				stuffcmd(self, "as20n6\n");
+				self.run_tilt = -6;
 				//bprint("tilting 1 yes!\n");
 				self.tilted =1;
 			}
-			else if(self.punchang > -12)
+			else if(self.punchang > -12 && self.run_tilt != -12)
 			{
 				stuffcmd(self, "as25n12\n");
-				//bprint("tilting 1 yes!\n");
+				self.run_tilt = -12;
+				//bprint("tilting 2 yes!\n");
 				self.tilted =1;
 			}
-			else if(self.punchang <= -12)
-			{
-				stuffcmd(self, "as27n18\n");
-				//bprint("tilting 1 yes!\n");
-				self.tilted =1;
-			}
+
 			
 			if (self.punchang <= -18)      self.angles_z = -20;
 			else if (self.punchang <= -16) self.angles_z = -16;
@@ -447,10 +448,11 @@ void() WallRun =
 			else if(self.movement_x ==-400) self.velocity = self.velocity + adj_forward_right*(-18.3) +v_right*(40) + '0 0 2';                //9 -> 6.4
 			//if(vlen(self.velocity) > 800) self.velocity = normalize(self.velocity)*(800);
 			
-			setorigin(self, self.origin + v_right*-0.99);
 			
 			if (self.vel_before_wallrun <= 800 && vlen(self.velocity) > 800) self.velocity = normalize(self.velocity)*(800);
 			else if (self.vel_before_wallrun > 800 && vlen(self.velocity) > 800) self.velocity = normalize(self.velocity)*(self.vel_before_wallrun);
+			
+			setorigin(self, self.origin + v_right*-0.99);
 		
 		
 			if (self.grind_sound_counter == 64 && self.skiing_on ==0)
@@ -482,6 +484,13 @@ void() WallRun =
 			else if (self.grind_sound_counter < 64) self.grind_sound_counter = self.grind_sound_counter +1;
 		
 		}
+		
+		
+		if (pointcontents(self.origin + '0 0 59') == CONTENT_SOLID || pointcontents(self.origin + '0 0 64') == CONTENT_SOLID)   //Lets check head clearance to not get jammed up
+		{
+			self.velocity = self.velocity + '0 0 -15';   //add downward velocity if there is a ceiling above
+		}
+		
 		
 	}
 	
@@ -535,6 +544,8 @@ void() WallRun =
 			}
 					
 		}	
+		
+
 	
 }
 
@@ -791,9 +802,9 @@ void() Skiing =
 			
 			//sound (self, CHAN_BODY, "body/br_boost.wav", 0.7, ATTN_NORM);
 			
-			if (random() < 0.6) sound (self, CHAN_BODY, "body/br_jmp1.wav", 0.57, ATTN_NORM);   // 1 -> 0.9
-			else if (random() < 0.8) sound (self, CHAN_BODY, "body/br_jmp2.wav", 0.57, ATTN_NORM);  
-			else sound (self, CHAN_BODY, "body/br_jmp3.wav", 0.57, ATTN_NORM);   // alternative jump noise
+			if (random() < 0.6) sound (self, CHAN_BODY, "body/br_jmp1.wav", 0.57, ATTN_IDLE);   // 1 -> 0.9
+			else if (random() < 0.8) sound (self, CHAN_BODY, "body/br_jmp2.wav", 0.57, ATTN_IDLE);  
+			else sound (self, CHAN_BODY, "body/br_jmp3.wav", 0.57, ATTN_IDLE);   // alternative jump noise
 			
 			if(self.ski_tilt !=0) self.ski_tilt =0;
 			

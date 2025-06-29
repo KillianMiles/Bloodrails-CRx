@@ -1700,7 +1700,7 @@ void() update_reticule =
 	
 	//if(self.skin ==0) self.alpha = 0.10;
 	
-	if(self.owner.player_flag & PF_HUD) self.alpha =0.001;   //NOHUD
+	if(self.owner.player_flag & PF_HUD || self.owner.hide_reticle ==1) self.alpha =0.001;   //NOHUD or hide_reticle
 	else if (self.owner.style & STYLE_OBSERVER) self.alpha =0.001;  
 	else self.alpha =0.18;  
 	

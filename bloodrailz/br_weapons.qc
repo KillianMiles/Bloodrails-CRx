@@ -121,7 +121,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	shotcount_dmg = shotcount;
 
 
-	if (!(crx_playmode & MATCH_MODE) || (crx_state & STATE_MATCH_STARTED)) self.dest1_x = self.dest1_x + 4 * shotcount; //stats
+	if (!(crx_playmode & MATCH_MODE) || (crx_state & STATE_MATCH_STARTED)) self.dest1_x = self.dest1_x + 4 * shotcount; // ELOHIM_MOD - stats
 	
 	
 	src = self.origin + v_forward*10;
@@ -270,7 +270,7 @@ void() W_Attack =
 			self.dash_counter = 0;
 			self.dash_timer = time;
 		}
-		sound (self, CHAN_WEAPON, "weap/br_axe.wav", 1, ATTN_NORM);
+		sound (self, CHAN_WEAPON, "weap/br_axe.wav", 1, ATTN_IDLE);
 		
 		local float boostspeed2 = vlen(self.velocity);
 		local float AxLunge1 = 30;
@@ -458,15 +458,15 @@ void() W_ChangeWeapon =
 					if(timelimit - time < 16) 
 					{	
 						stuffcmd(self, "scr_matchclock 2\n");
-						stuffcmd(self, "scr_matchclockscale 3.4\n");
-						stuffcmd(self, "scr_matchclock_y 86.5\n");
+						//stuffcmd(self, "scr_matchclockscale 3.4\n");
+						//stuffcmd(self, "scr_matchclock_y 86.5\n");
 					}
 					else 
 					{
 						stuffcmd(self, "scr_matchclock 3\n");
-						stuffcmd(self, "scr_matchclockscale 3.47\n");
+						//stuffcmd(self, "scr_matchclockscale 3.47\n");
 					}
-					stuffcmd(self, "viewsize 110\n");
+					//stuffcmd(self, "viewsize 110\n");
 					sprint(self, "\bHUD is:\b ON\n");
 			}
 			else if (!(self.player_flag & PF_HUD))
@@ -474,38 +474,18 @@ void() W_ChangeWeapon =
 					self.player_flag = self.player_flag | PF_HUD;
 					self.button_press_display = 0;
 					stuffcmd(self, "scr_matchclock 0\n");
-					stuffcmd(self, "viewsize 130\n");
+					//stuffcmd(self, "viewsize 130\n");
 					sprint(self, "\bHUD is:\b OFF\n");
 			}
 	}
 	else if (self.impulse == 7)
 	{
-			if (self.player_flag & PF_OVERLAY) 
-			{
-				self.player_flag = self.player_flag - PF_OVERLAY;
-				//self.button_press_display = 0;
-				sprint(self, "\binput overlay:\b OFF\n");
-			}
-			else if (!(self.player_flag & PF_OVERLAY))
-			{
-				self.player_flag = self.player_flag | PF_OVERLAY;
-				self.button_press_display = 0;
-				sprint(self, "\binput overlay:\b ON\n");
-			}
+
 	}
 	
 	else if (self.impulse == 8)
 	{
-			if (self.player_flag & PF_CLEANTRAIL) 
-			{
-				self.player_flag = self.player_flag - PF_CLEANTRAIL;
-				sprint(self, "\bclean rail trails:\b OFF\n");
-			}
-			else if (!(self.player_flag & PF_CLEANTRAIL))
-			{
-				self.player_flag = self.player_flag | PF_CLEANTRAIL;
-				sprint(self, "\bclean rail trails:\b ON\n");
-			}
+
 	}
 	
 

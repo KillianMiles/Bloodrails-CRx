@@ -18,6 +18,9 @@ __wrap void(entity client, string s, optional string s1, optional string s2, opt
 };
 */
 
+void(vector start, vector p0, vector p1, vector p2, vector p3) comp_curved;
+void(vector start, vector end, vector myAngles, entity shooter) comp_straight;
+
 void()get_time;
 void()Splat;
 void()Splat2;
@@ -337,6 +340,7 @@ void() bloodrails_precache =
 	precache_model ("mdl/br_chain4.mdl");
 	
 	precache_model ("mdl/star.mdl");
+	precache_model ("mdl/star2.mdl");
 	precache_model ("mdl/hookx.mdl");
 	precache_model ("mdl/marker.mdl");
 	precache_model ("mdl/marker1.mdl");
@@ -398,12 +402,23 @@ void() bloodrails_precache =
 	
 	precache_model ("mdl/ef_smoke1.mdl");
 	precache_model ("mdl/ef_smoke2.mdl");
+	//precache_model ("mdl/ef_smoke1a.mdl");
+	precache_model ("mdl/ef_smoke2a.mdl");
+	
+	
 	precache_model ("mdl/ef_thor.mdl");
 	precache_model ("mdl/ef_power.mdl");
-	precache_model ("mdl/ef_aura1.mdl");
+	
+	//precache_model ("mdl/ef_aura1.mdl");
+	precache_model ("mdl/ef_aura.mdl");
+	precache_model ("mdl/br_plasma.mdl");
+	
 	precache_model ("mdl/ef_shield.mdl");
 	precache_model ("mdl/ef_speed.mdl");
 	precache_model ("mdl/ef_railpop.mdl");
+	
+	precache_model ("mdl/rune_core.mdl");
+	precache_model ("mdl/rune_aura.mdl");
 	
 	precache_model ("mdl/hud_r.mdl");
 	precache_model ("mdl/hud_s.mdl");
@@ -595,6 +610,7 @@ float(string) stof = #81;
 .float tilted;
 .float hook_tilt;
 .float ski_tilt;
+.float run_tilt;
 
 //AXE CHARGE UP STUFF
 .float axe_button_released;
@@ -805,3 +821,6 @@ float smoke_ent_number;
 
 .float chain_too_short;
 .float dmg_tally;
+
+.float hide_reticle;
+float map_is_dark;

@@ -219,7 +219,7 @@ void() rail_fade = {
 	}	
 	else if (self.cnt == 4)
 	{
-		self.avelocity = 0;   //turn off avelocity when frame changes	
+		self.angles = '0 0 0';   //stop the models from spinning	
 		self.frame = 2;
 			if (rand < 0.15 && self.weapon!=1)
 			{
@@ -283,7 +283,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 	local entity thedude;
 	local float traillen, segments;
 	entity prj;
-	local float rotation_amount;
+	//local float rotation_amount;
 	local float alpha_rand;
 	local float spacing_long;
 	
@@ -319,26 +319,26 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 	{
 			if (traillen < 50) segments = 1;		//short link
 			else if (traillen < 75) segments = 2;		//short link
-			else if (traillen < 150) segments = 3;		//short link
-			else if (traillen < 200) segments = 4;		//short link
+			else if (traillen < 150) segments = 2;		//short link
+			else if (traillen < 200) segments = 3;		//short link
 			
 			else if (traillen < 250) segments = 2;
 			else if (traillen < 300) segments = 2;
 			else if (traillen < 400) segments = 2;
 			else if (traillen < 600) segments = 3;
 			else if (traillen < 800) segments = 4;
-			else if (traillen < 1000) segments = 5;
-			else if (traillen < 1250) segments = 6;
-			else if (traillen < 1750) segments = 8;
-			else if (traillen < 2000) segments = 12; 	 //4,7,10,          13  //5,10,13
-			else if (traillen < 2500) segments = 13;         //4,7,10,13,       15  //5,10,13,15
-			else if (traillen < 3000) segments = 15; //14    //4,7,10,13,       16  //5,10,13,16
-			else if (traillen < 3500) segments = 17; //14    //4,7,10,13,       17  //5,10,13,17
-			else if (traillen < 4000) segments = 19; //16    //4,7,10,13,16,    19  //5,10,13,16,19
-			else if (traillen < 5000) segments = 20; //17    //4,7,10,13,16,    20  //5,10,13,16,20
-			else if (traillen < 6000) segments = 21; //18    //4,7,10,13,16,19, 21  //5,10,13,16,21
-			else if (traillen < 7000) segments = 22; //18    //4,7,10,13,16,19, 22  //5,10,13,16,19,22
-			else if (traillen >=7000) segments = 22; //18    //4,7,10,13,16,19, 22  //5,10,13,16,19,22
+			else if (traillen < 1000) segments = 4;
+			else if (traillen < 1250) segments = 5;
+			else if (traillen < 1750) segments = 7;
+			else if (traillen < 2000) segments = 9; 	 //4,7,10,          13  //5,10,13
+			else if (traillen < 2500) segments = 10;         //4,7,10,13,       15  //5,10,13,15
+			else if (traillen < 3000) segments = 11; //14    //4,7,10,13,       16  //5,10,13,16
+			else if (traillen < 3500) segments = 12; //14    //4,7,10,13,       17  //5,10,13,17
+			else if (traillen < 4000) segments = 13; //16    //4,7,10,13,16,    19  //5,10,13,16,19
+			else if (traillen < 5000) segments = 15; //17    //4,7,10,13,16,    20  //5,10,13,16,20
+			else if (traillen < 6000) segments = 15; //18    //4,7,10,13,16,19, 21  //5,10,13,16,21
+			else if (traillen < 7000) segments = 16; //18    //4,7,10,13,16,19, 22  //5,10,13,16,19,22
+			else if (traillen >=7000) segments = 17; //18    //4,7,10,13,16,19, 22  //5,10,13,16,19,22
 			
 			local float sky_shot =0;
 			if(pointcontents(trace_endpos) == CONTENT_SKY && traillen >= 1000) sky_shot =1;  //rail hits SKY brush so we dont care if rail draws super long
@@ -348,14 +348,6 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 			//bprint(" nominal segments\n");
 			//local float count_segs =0;
 			//
-			
-			if((total_players_global > 8 || smoke_ent_number > 8) ) 
-			{
-				if(segments >= 22) segments = segments - 2;
-				else if(segments >= 21) segments = segments - 2;
-				else if(segments >= 20) segments = segments - 2;
-			}
-			
 			
 		
 			local float old_seg = segments;
@@ -422,9 +414,9 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				prj.owner = shooter;
 				prj.movetype = MOVETYPE_NOCLIP;
 				prj.solid = SOLID_NOT;
-				prj.angles = vectoangles(shootDir);
 				
-				prj.angles_z = (2*random()-1) * 25;
+				prj.angles = vectoangles(shootDir);
+				prj.angles_z = (2*random()-1) * 90;
 				
 				prj.touch = SUB_Null;
 				prj.classname = "railtrail";
@@ -439,7 +431,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 
 			
 				
-				setsize (prj, 0, 0);	
+				
 				if (self.height == crx_team1) 
 				{
 					if(random() < 0.13) prj.skin = 3;   //Orange
@@ -464,6 +456,8 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				
 				if (traillen < 200) setmodel (prj, "mdl/rail1.mdl");
 				else if (traillen>=200) setmodel (prj, "mdl/rail1c.mdl");
+				
+				setsize (prj, 0, 0);	
 			
 				if(sky_shot==0)
 				{
@@ -492,7 +486,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				else setorigin (prj, drawsrc + vec * spacing_long * segments);
 				
 			
-				prj.velocity = '0 0 0';	
+				//prj.velocity = '0 0 0';	
 		
 				//teamred's magic
 				alpha_rand = random();
@@ -500,20 +494,7 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 				else prj.alpha = 1;
 				//else if (alpha_rand < 0.44) prj.alpha = 0.8;
 			
-					
-					prj.avelocity_x = random()-0.5;
-					prj.avelocity_y = random()-0.5;
-					prj.avelocity_z = random()-0.5;
-		
-					prj.avelocity = normalize(prj.avelocity);
-					rotation_amount = 8.0; // 6->9
-				
-					if(spacing_long >= 125 && sky_shot ==0 && low_rotation ==0) rotation_amount = 15.0;
-					else if(spacing_long >= 100 && sky_shot ==0 && low_rotation ==0) rotation_amount = 15.0;
-					else if(low_rotation ==1) rotation_amount = 6.0;
-				
-					prj.avelocity = prj.avelocity*rotation_amount;
-					
+	
 					
 
 			
@@ -625,15 +606,6 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 		
 		
 		
-		//teamred's magic
-	
-			prj.avelocity_x = random()-0.5;
-			prj.avelocity_y = random()-0.5;
-			prj.avelocity_z = random()-0.5;
-		
-			prj.avelocity = normalize(prj.avelocity);
-			rotation_amount = 12.0;  //11->12
-			prj.avelocity = prj.avelocity*rotation_amount;
 
 			
 		prj.frame = 4;	
@@ -651,7 +623,6 @@ void(vector start, vector end, vector myAngles, entity shooter) rail_make =
 	
 	
 };
-
 
 
 
@@ -692,12 +663,12 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 	else if (total_length < 2000) pointCount = 12;
 	else if (total_length < 3000) pointCount = 12;
 	else if (total_length < 4000) pointCount = 13;
-	else if (total_length < 5000) pointCount = 16;
-	else if (total_length < 6000) pointCount = 17;
-	else if (total_length < 7500)  pointCount = 18;
-	else if (total_length >=7500)  pointCount = 19;
+	else if (total_length < 5000) pointCount = 14;
+	else if (total_length < 6000) pointCount = 15;
+	else if (total_length < 7500)  pointCount = 16;
+	else if (total_length >=7500)  pointCount = 17;
 	
-	
+	/*
 	if((total_players_global > 8 || smoke_ent_number > 8)) 
 	{
 		if(pointCount == 16) pointCount = pointCount - 2;
@@ -705,6 +676,7 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 		else if(pointCount == 18) pointCount = pointCount - 2;
 		else if(pointCount == 19) pointCount = pointCount - 2;
 	}
+	*/
 	
 	
 	local float sky_long =0;
@@ -724,7 +696,7 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 	//bprint(ftos(total_length));
 	//bprint("\n");
 	
-	
+	local float skip =0;
 
 
 	
@@ -736,13 +708,22 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 			 (3*oneMinusT*oneMinusT*t)*p1 + 
 			 (3*oneMinusT*t*t)*p2 + 
 			 (t*t*t)*p3;
+			 
+				if	(count ==pointCount-4) skip =1;
+				else if(count ==pointCount-7) skip =1;
+				else if(count ==pointCount-9) skip =1;
+				else if(count ==pointCount-12) skip =1;
+				else if(count ==pointCount-14) skip =1;
+				else if(count ==pointCount-17) skip =1;
+				else skip =0;
+			 
 		if(t < 1)//-delta )
 		{
 			count +=1;
 			
 			local vector dir = last_result - result;
 			
-			if(sky_long ==0)
+			if(sky_long ==0 && skip==0)
 			{
 				local entity prj;
 				prj = spawn ();
@@ -750,7 +731,9 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 				prj.owner = self;
 				prj.movetype = MOVETYPE_NOCLIP;
 				prj.solid = SOLID_NOT;
+				
 				prj.angles = vectoangles(dir);
+				prj.angles_z = (2*random()-1) * 90;
 		
 				prj.touch = SUB_Null;
 				prj.classname = "railtrail";
@@ -832,9 +815,7 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 				else setorigin (prj, result);
 		
 			
-				//if(count ==pointCount) prj.skin = 3;
-				//if(count ==pointCount-1) prj.skin = 4;
-				//if(count ==pointCount-2) prj.skin = 3;
+
 			
 				prj.velocity = '0 0 0';	
 		
@@ -849,18 +830,6 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 				//else if (vlen(dir) < 400) setmodel (prj, "mdl/rail_g.mdl");  //376 length
 		
 		
-		
-				//teamred's magic
-			
-				
-					local float rotation_amount;
-					prj.avelocity_x = random()-0.5;
-					prj.avelocity_y = random()-0.5;
-					prj.avelocity_z = random()-0.5;
-		
-					prj.avelocity = normalize(prj.avelocity);
-					rotation_amount = 13.0;
-					prj.avelocity = prj.avelocity*rotation_amount;
 				
 				
 
@@ -876,7 +845,6 @@ void(vector start, vector p0, vector p1, vector p2, vector p3) DrawCurvedRail=
 		t = t - delta;
 	}
 }
-
 
 
 
@@ -1072,7 +1040,11 @@ void() FlickCurves=
 						controlPt = controlPt_12;
 						//sprint(self, "12 \n");
 					}
-					if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16' + v_forward*5, controlPt, controlPt , self.flickEnt.origin+'0 0 25');    // replaced viewOffset with '0 0 18'
+					if (!(self.player_flag & PF_CLEANTRAIL)) 
+					{
+						DrawCurvedRail(v_forward, self.origin + '0 0 16' + v_forward*5, controlPt, controlPt , self.flickEnt.origin+'0 0 25');    // replaced viewOffset with '0 0 18'
+						comp_curved(v_forward, self.origin + '0 0 16' + v_forward*5, controlPt, controlPt , self.flickEnt.origin+'0 0 25');
+					}
 					else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16' + v_forward*5, controlPt, controlPt , self.flickEnt.origin+'0 0 25');
 					
 					T_DamageOrg(self.flickEnt, self, self, 1000, controlPt_50);
@@ -1091,7 +1063,11 @@ void() FlickCurves=
 				t = self.origin + t;
 				if(self.health>0)
 				{
-					if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, t, t , self.lastMouseUp); 
+					if (!(self.player_flag & PF_CLEANTRAIL)) 
+					{
+						DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, t, t , self.lastMouseUp); 
+						comp_curved(v_forward, self.origin + '0 0 16'+ v_forward*5, t, t , self.lastMouseUp); 
+					}
 					else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, t, t , self.lastMouseUp); 
 					
 					self.ammo_slugs = self.ammo_slugs -1;
@@ -1139,6 +1115,29 @@ void() W_FireRailgun =
 	else 
 	{
 		if(self.player_flag & PF_CLEANTRAIL) self.player_flag = self.player_flag - PF_CLEANTRAIL;
+	}
+	
+	
+	if(infokey(self, "reticle_cvar") =="1")
+	{
+		if(self.hide_reticle==1) self.hide_reticle =0;
+	}
+	else if(infokey(self, "reticle_cvar") =="0")
+	{
+		if(self.hide_reticle ==0) self.hide_reticle =1;
+	}
+	
+	if(infokey(self, "input_overlay") =="1")
+	{
+		if(!(self.player_flag & PF_OVERLAY)) 
+		{
+			self.player_flag = self.player_flag | PF_OVERLAY;
+			self.button_press_display = 0;
+		}
+	}
+	else if(infokey(self, "input_overlay") =="0")
+	{
+		if(self.player_flag & PF_OVERLAY) self.player_flag = self.player_flag - PF_OVERLAY;
 	}
 	
 	
@@ -1364,14 +1363,23 @@ void() W_FireRailgun =
 	
 		if(antilag_hit_for_curve == 0)
 		{
-			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, self.v_angle, self);
+			if (!(self.player_flag & PF_CLEANTRAIL)) 
+			{
+				comp_straight(start, end, self.v_angle, self);
+				rail_make(start, end, self.v_angle, self);
+				
+			}
 			else clean_rail_make(start, end, self.v_angle, self);
 		}
 		else if(antilag_hit_for_curve == 1)
 		{
 			local float ref_length = vlen(adjusted_ent - self.origin);
 			local vector ref_controlPt = self.origin + v_forward*0.5*ref_length;
-			if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, ref_controlPt, ref_controlPt , adjusted_ent);
+			if (!(self.player_flag & PF_CLEANTRAIL)) 
+			{
+				DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, ref_controlPt, ref_controlPt , adjusted_ent);
+				comp_curved(v_forward, self.origin + '0 0 16'+ v_forward*5, ref_controlPt, ref_controlPt , adjusted_ent);
+			}
 			else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, ref_controlPt, ref_controlPt , adjusted_ent);
 			//bprint("adjusted\n");
 		}
@@ -1386,7 +1394,12 @@ void() W_FireRailgun =
 		
 		if(antilag_hit_for_curve == 0)
 		{
-			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, armored_ent.angles, armored_ent);
+			if (!(self.player_flag & PF_CLEANTRAIL)) 
+			{
+				comp_straight(start, end, armored_ent.angles, armored_ent);
+				rail_make(start, end, armored_ent.angles, armored_ent);
+				
+			}
 			else clean_rail_make(start, end, armored_ent.angles, armored_ent);
 		}
 		if(antilag_hit_for_curve == 1)
@@ -1394,7 +1407,12 @@ void() W_FireRailgun =
 			start = adjusted_ent;
 			mdir = mdir+v_up*75*(0.2+(random()*0.5)) + v_right*125*(random()-0.5);
 			end = start + (mdir * 750);
-			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, armored_ent.angles, armored_ent);
+			if (!(self.player_flag & PF_CLEANTRAIL)) 
+			{
+				comp_straight(start, end, armored_ent.angles, armored_ent);
+				rail_make(start, end, armored_ent.angles, armored_ent);
+				
+			}
 			else clean_rail_make(start, end, armored_ent.angles, armored_ent);
 		}
 	}
@@ -1407,7 +1425,12 @@ void() W_FireRailgun =
 
 		if(antilag_hit_for_curve == 0)
 		{
-			if (!(self.player_flag & PF_CLEANTRAIL)) rail_make(start, end, self.v_angle, self);
+			if (!(self.player_flag & PF_CLEANTRAIL)) 
+			{
+				comp_straight(start, end, self.v_angle, self);
+				rail_make(start, end, self.v_angle, self);
+				
+			}
 			else clean_rail_make(start, end, self.v_angle, self);
 			//bprint("un-adjusted\n");
 		}
@@ -1415,7 +1438,11 @@ void() W_FireRailgun =
 		{
 			local float length = vlen(adjusted_ent - self.origin);
 			local vector controlPt = self.origin + v_forward*0.5*length;
-			if (!(self.player_flag & PF_CLEANTRAIL)) DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, controlPt, controlPt , adjusted_ent);
+			if (!(self.player_flag & PF_CLEANTRAIL)) 
+			{
+				DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, controlPt, controlPt , adjusted_ent);
+				comp_curved(v_forward, self.origin + '0 0 16'+ v_forward*5, controlPt, controlPt , adjusted_ent);
+			}
 			else clean_DrawCurvedRail(v_forward, self.origin + '0 0 16'+ v_forward*5, controlPt, controlPt , adjusted_ent);
 			//bprint("adjusted\n");
 		}
@@ -1441,26 +1468,28 @@ void() T_MissileTouch =
 	}
 
 	damg = 100;  
+	
+	self.dmg = FALSE;  // ELOHIM_MOD - used to flag 0 damage rockets
 
-	self.dmg = FALSE;
+		local	entity	head;
+		head = findradius(self.origin, 130);
+		while (head)
+		{
+			if (head.classname == "smoke")
+					{				
+			
+						local vector dir4 = head.origin - self.origin;     
+						local float accel = 440*random() + 440;         
+						head.velocity = head.velocity + accel*(normalize(dir4));
+					}
+			
+			head = head.chain;
+		}
 
-	local	entity	head;
-	head = findradius(self.origin, 130);
-	while (head)
-	{
-		if (head.classname == "smoke")
-				{				
-		
-					local vector dir4 = head.origin - self.origin;     
-					local float accel = 440*random() + 440;         
-					head.velocity = head.velocity + accel*(normalize(dir4));
-				}
-		
-		head = head.chain;
-	}
 
 	if (other.health)
 	{
+  
 		if (other == self.owner) damg = damg * 0.5;  // mostly immune
 
 		T_DamageOrg (other, self, self.owner, damg, self.origin);
@@ -1469,6 +1498,10 @@ void() T_MissileTouch =
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
 	T_RadiusDamage (self, self.owner, 100, other, self.origin);
+
+	
+
+
 
 //	sound (self, CHAN_WEAPON, "weap/br_explo.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);

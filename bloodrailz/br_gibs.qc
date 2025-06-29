@@ -177,9 +177,20 @@ void(string gibname, float dm, float inair) ThrowGib =
 	
 	new.movetype = MOVETYPE_BOUNCE;
 	new.solid = SOLID_TRIGGER;  // _NOT -> _TRIGGER
-	new.avelocity_x = random()*600;
-	new.avelocity_y = random()*600;
-	new.avelocity_z = random()*600;
+	
+	
+	new.angles_x = random()*150*(0.5-random());
+	new.angles_y = random()*150*(0.5-random());
+	new.angles_z = random()*150*(0.5-random());
+	
+	
+	if(gibname != "mdl/br_gib1.mdl" && gibname != "mdl/br_gib4.mdl")   //dont give generally round-ish gibs avelocity
+	{
+
+			new.avelocity_x = random()*600;
+			new.avelocity_y = random()*600;
+			new.avelocity_z = random()*600;
+	}
 
 	new.alpha =0.8;
 	new.owner = self;
@@ -699,9 +710,9 @@ void() GibPlayerChangeTeams =
         local float inair;
    	if(self.airborn_pos > 55) inair = 1; //FEBRUARY
         ThrowGib ("mdl/br_gib1.mdl", self.health, inair);
-        ThrowGib ("mdl/br_gib2.mdl", self.health, inair);
+        ThrowGib ("mdl/br_gib4.mdl", self.health, inair);
             ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
-            ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
+            ThrowGib ("mdl/br_gib4.mdl", self.health, inair);
 
 	self.deadflag = DEAD_DYING;
 
@@ -733,9 +744,9 @@ void() GibPlayer =
    	
    	if(self.nogib_death ==0)
    	{
-		ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
+		ThrowGib ("mdl/br_gib4.mdl", self.health, inair);
 		ThrowGib ("mdl/br_gib1.mdl", self.health, inair);
-		if(total_players_global <= 12 && smoke_ent_number < 8) ThrowGib ("mdl/br_gib2.mdl", self.health, inair);
+		if(total_players_global <= 10 && smoke_ent_number < 8) ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
 		if(total_players_global <= 8 && smoke_ent_number < 8) ThrowGib ("mdl/br_gib3.mdl", self.health, inair);
 		if(total_players_global < 8 && smoke_ent_number < 8) ThrowGib ("mdl/br_gib2.mdl", self.health, inair);
 	}

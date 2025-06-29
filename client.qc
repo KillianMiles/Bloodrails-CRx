@@ -811,7 +811,6 @@ void() PutDummyInServer =
 	
 	dummy.deadflag = DEAD_NO;
 
-	dummy.avelocity 		= '0 0 0';
 	dummy.punchangle		= '0 0 0';
 
 
@@ -884,6 +883,31 @@ void() PutClientInServer =
 	{
 		if(self.player_flag & PF_CLEANTRAIL) self.player_flag = self.player_flag - PF_CLEANTRAIL;
 	}
+	///////////////
+	
+	if(infokey(self, "reticle_cvar") =="1")
+	{
+		if(self.hide_reticle==1) self.hide_reticle =0;
+	}
+	else if(infokey(self, "reticle_cvar") =="0")
+	{
+		if(self.hide_reticle ==0) self.hide_reticle =1;
+	}
+	//////////////
+	
+	if(infokey(self, "input_overlay") =="1")
+	{
+		if(!(self.player_flag & PF_OVERLAY)) 
+		{
+			self.player_flag = self.player_flag | PF_OVERLAY;
+			self.button_press_display = 0;
+		}
+	}
+	else if(infokey(self, "input_overlay") =="0")
+	{
+		if(self.player_flag & PF_OVERLAY) self.player_flag = self.player_flag - PF_OVERLAY;
+	}
+	/////////////
 
 	if (crx_playmode & CTF_MODE)
 	{
@@ -1406,8 +1430,8 @@ void() PlayerPostThink =
 			get_time();
 			if ((mode_is_public() == TRUE) && self.joinmsgtime >= time)
 			{
-				if (self.height == COLOR_RED)	centerprint(self, "You are on the RED team\n\n\bpress \b'F10'\b for quick-help\b");
-				else if (self.height == COLOR_BLUE) centerprint(self, "You are on the BLUE team\n\n\bpress \b'F10'\b for quick-help\b");
+				if (self.height == COLOR_RED)	centerprint(self, "You are on the RED team\n\n\bpress \b'F10'\b for quick-help\b\n\n\n\n");
+				else if (self.height == COLOR_BLUE) centerprint(self, "You are on the BLUE team\n\n\bpress \b'F10'\b for quick-help\b\n\n\n\n");
 			}
 			else	hud_update();
 		}
